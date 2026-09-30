@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gsms.local/circuit/precom-handoff.schema.json",
+  "title": "GSMS Précom ERP — Circuit handoff (read-only)",
+  "description": "Contrat d’export conceptuel Grace → Xacta / SimpleRisk / QAtrial / School. Pas de sync DB. Maturité operational_checklist.",
+  "type": "object",
+  "required": [
+    "version",
+    "auditType",
+    "assessment",
+    "disclaimer",
+    "siteContext",
+    "risks",
+    "capas",
+    "trainingHints"
+  ],
+  "properties": {
+    "version": { "type": "string", "const": "0.1.0" },
+    "auditType": { "type": "string", "const": "AUD.PRECOMMISSION.ERP" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "disclaimer": { "type": "string" },
+    "assessment": {
+      "type": "object",
+      "required": ["id", "title", "status", "packageSlug"],
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "title": { "type": "string" },
+        "status": { "type": "string" },
+        "period": { "type": ["string", "null"] },
+        "packageSlug": { "type": "string" },
+        "clusterId": { "type": ["string", "null"], "format": "uuid" },
+        "assetId": { "type": ["string", "null"], "format": "uuid" },
+        "scopeDescription": { "type": ["string", "null"] }
+      }
+    },
+    "siteContext": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "applicability": {
+      "type": "object",
+      "properties": {
+        "status": { "type": "string" },
+        "surveyKeys": { "type": "array", "items": { "type": "string" } },
+        "moduleSlugs": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["threatId", "label", "targetApp"],
+        "properties": {
+          "threatId": { "type": "string", "format": "uuid" },
+          "label": { "type": "string" },
+          "targetAssetName": { "type": ["string", "null"] },
+          "irv": { "type": ["string", "null"] },
+          "priority": { "type": ["string", "null"] },
+          "complianceTags": { "type": "array", "items": { "type": "string" } },
+          "targetApp": { "type": "string", "const": "simplerisk" }
+        }
+      }
+    },
+    "capas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "title", "targetApp"],
+        "properties": {
+          "id": { "type": "string" },
+          "kind": { "type": "string", "enum": ["action_plan", "gap"] },
+          "title": { "type": "string" },
+          "threatId": { "type": ["string", "null"] },
+          "owner": { "type": ["string", "null"] },
+          "dueDate": { "type": ["string", "null"] },
+          "status": { "type": ["string", "null"] },
+          "complianceTags": { "type": "array", "items": { "type": "string" } },
+          "targetApp": { "type": "string", "const": "qatrial" }
+        }
+      }
+    },
+    "trainingHints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "reason", "targetApp"],
+        "properties": {
+          "id": { "type": "string" },
+          "reason": { "type": "string" },
+          "relatedCapaId": { "type": ["string", "null"] },
+          "suggestedDomain": { "type": ["string", "null"] },
+          "targetApp": { "type": "string", "const": "gsms-school" }
+        }
+      }
+    },
+    "xactaHints": {
+      "type": "object",
+      "properties": {
+        "engagementTitle": { "type": "string" },
+        "suggestedWorkpapers": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

@@ -1,0 +1,873 @@
+{
+  "countermeasure_templates": [
+    {
+      "moduleSlug": "atm-network",
+      "slug": "atm-forensic-cctv",
+      "name": "Vidéosurveillance criminalistique du DAB avec conservation de 30 jours",
+      "description": "Vidéosurveillance apparente de qualité criminalistique couvrant la face du DAB (fascia, clavier, emplacement pour carte, trappe de distribution des billets) avec conservation ≥ 30 jours et stockage inviolable.",
+      "shapeCategory": "EQUIPMENT",
+      "ppsFunctions": [
+        "DETECT",
+        "DETER"
+      ],
+      "domain": "SURVEILLANCE",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "typicalCostEstimate": 2500,
+      "typicalAnnualCost": 300,
+      "tags": [
+        "atm",
+        "cctv",
+        "forensic"
+      ],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "atm-network",
+      "slug": "atm-top-box-intrusion-sensor",
+      "name": "Capteur d'intrusion du compartiment supérieur du DAB",
+      "description": "Capteur d'intrusion dans le couvercle/le boîtier supérieur qui déclenche une alarme silencieuse et verrouille le distributeur lors d'une tentative d'ouverture — contre-mesure principale contre le jackpotting de la boîte noire.",
+      "shapeCategory": "EQUIPMENT",
+      "ppsFunctions": [
+        "DETECT",
+        "DENY"
+      ],
+      "domain": "BUILDING",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "typicalCostEstimate": 900,
+      "typicalAnnualCost": 80,
+      "tags": [
+        "atm",
+        "jackpotting"
+      ],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "atm-network",
+      "slug": "atm-gas-detection-suppression",
+      "name": "Détection et suppression de gaz à l'intérieur du coffre du DAB",
+      "description": "Capteur d'hydrocarbures sécurisé avec inertage/suppression actif, déclenché sur seuil pour éviter les brèches oxy-acétylène et gaz explosifs.",
+      "shapeCategory": "EQUIPMENT",
+      "ppsFunctions": [
+        "DENY",
+        "DISRUPT"
+      ],
+      "domain": "BUILDING",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "typicalCostEstimate": 4500,
+      "typicalAnnualCost": 250,
+      "tags": [
+        "atm",
+        "gas-attack",
+        "explosive"
+      ],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "atm-network",
+      "slug": "atm-ibns-cash-staining",
+      "name": "Neutralisation des billets par IBNS (cassettes DAB)",
+      "description": "Système intelligent de neutralisation des billets à l'intérieur des cassettes de billets — déclenché par des événements d'inclinaison/explosion/ouverture non autorisée pour rendre les billets inutilisables.",
+      "shapeCategory": "EQUIPMENT",
+      "ppsFunctions": [
+        "DENY"
+      ],
+      "domain": "INFORMATION",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "typicalCostEstimate": 3200,
+      "typicalAnnualCost": 400,
+      "tags": [
+        "atm",
+        "ibns",
+        "cash"
+      ],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "atm-network",
+      "slug": "atm-bollards-anti-ramming",
+      "name": "Bornes anti-bélier / Barrières Jersey en bordure DAB",
+      "description": "Bornes K12/PAS-68 ou barrières Jersey devant le DAB encastré en façade pour empêcher l'extraction du DAB au moyen d'un véhicule-bélier.",
+      "shapeCategory": "ARCHITECTURAL",
+      "ppsFunctions": [
+        "DELAY",
+        "DETER"
+      ],
+      "domain": "PERIMETER",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "typicalCostEstimate": 8000,
+      "typicalAnnualCost": 100,
+      "tags": [
+        "atm",
+        "ram-raid",
+        "hvm"
+      ],
+      "csmpUnitReference": "Unit 4"
+    },
+    {
+      "moduleSlug": "atm-network",
+      "slug": "atm-anti-skimming-insert",
+      "name": "Insert anti-skimming avec lecteur de carte motorisé",
+      "description": "Lecteur de carte DIP/insertion motorisé avec anti-skimming actif (jitter + bloqueur physique) et détection de superposition sur la façade.",
+      "shapeCategory": "EQUIPMENT",
+      "ppsFunctions": [
+        "DENY",
+        "DETECT"
+      ],
+      "domain": "ACCESS",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "typicalCostEstimate": 1800,
+      "typicalAnnualCost": 120,
+      "tags": [
+        "atm",
+        "skimming"
+      ],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "branch-operations",
+      "slug": "branch-access-badge-antitailgate",
+      "name": "Accès par badge avec détection anti-hayon",
+      "description": "Accès par carte/biométrique aux zones du personnel soutenu par une détection optique ou LIDAR du hayon; alarme et signet CCTV en cas de violation.",
+      "shapeCategory": "EQUIPMENT",
+      "ppsFunctions": [
+        "DETECT",
+        "DETER"
+      ],
+      "domain": "ACCESS",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "typicalCostEstimate": 6000,
+      "typicalAnnualCost": 400,
+      "tags": [
+        "branch",
+        "access-control"
+      ],
+      "csmpUnitReference": "Unit 5"
+    },
+    {
+      "moduleSlug": "branch-operations",
+      "slug": "branch-silent-panic-alarm",
+      "name": "Alarme silencieuse de contrainte/panique aux positions guichet",
+      "description": "Déclencheur d'alarme silencieux caché sous chaque station guichet et à la réception face au client, câblé à un ARC surveillé avec un SLA de réponse ≤ 15 minutes.",
+      "shapeCategory": "EQUIPMENT",
+      "ppsFunctions": [
+        "DETECT"
+      ],
+      "domain": "SURVEILLANCE",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "typicalCostEstimate": 1200,
+      "typicalAnnualCost": 600,
+      "tags": [
+        "branch",
+        "duress",
+        "robbery"
+      ],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "branch-operations",
+      "slug": "branch-ballistic-teller-screen",
+      "name": "Écran guichet résistant aux balistiques (EN 1063 BR4)",
+      "description": "Vitrage balistique EN 1063 BR4+ entre guichet et le comptoir public, avec tiroir-caisse et verrouillage homologué UL.",
+      "shapeCategory": "ARCHITECTURAL",
+      "ppsFunctions": [
+        "DELAY",
+        "DENY"
+      ],
+      "domain": "BUILDING",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "typicalCostEstimate": 22000,
+      "typicalAnnualCost": 200,
+      "tags": [
+        "branch",
+        "ballistic",
+        "robbery"
+      ],
+      "csmpUnitReference": "Unit 4"
+    },
+    {
+      "moduleSlug": "branch-operations",
+      "slug": "branch-armed-response-sla",
+      "name": "SLA de réponse armée (≤15 min)",
+      "description": "Service d'intervention armée sous contrat avec un SLA de 15 minutes pour chaque agence, vérifié par des exercices silencieux trimestriels et un audit indépendant.",
+      "shapeCategory": "SECURITY_PROGRAMME",
+      "ppsFunctions": [
+        "DEFEAT",
+        "DETER"
+      ],
+      "domain": "BUILDING",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "TRANSFER",
+      "typicalAnnualCost": 18000,
+      "tags": [
+        "branch",
+        "response",
+        "armed"
+      ],
+      "csmpUnitReference": "Unit 7"
+    },
+    {
+      "moduleSlug": "cash-at-rest",
+      "slug": "vault-ul687-class-m",
+      "name": "Classement UL 687 Classe M chambre forte",
+      "description": "Corps/porte de la chambre forte répondant à la norme UL 687 Classe M (résistance à l'outil 120 minutes + attaque au chalumeau) avec certificat du fabricant au dossier.",
+      "shapeCategory": "ARCHITECTURAL",
+      "ppsFunctions": [
+        "DELAY"
+      ],
+      "domain": "BUILDING",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "typicalCostEstimate": 85000,
+      "tags": [
+        "vault",
+        "ul687",
+        "physical-attack"
+      ],
+      "csmpUnitReference": "Unit 4"
+    },
+    {
+      "moduleSlug": "cash-at-rest",
+      "slug": "vault-mantrap-antipassback",
+      "name": "Chambre forte sas de sécurité avec anti-passback",
+      "description": "Vestibule sas de sécurité verrouillé à l'entrée chambre forte appliquant l'anti-retour via un double identifiant + un capteur de poids; Marque-page CCTV à chaque cycle.",
+      "shapeCategory": "ARCHITECTURAL",
+      "ppsFunctions": [
+        "DELAY",
+        "DETECT"
+      ],
+      "domain": "ACCESS",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "typicalCostEstimate": 35000,
+      "typicalAnnualCost": 1200,
+      "tags": [
+        "vault",
+        "mantrap",
+        "access"
+      ],
+      "csmpUnitReference": "Unit 5"
+    },
+    {
+      "moduleSlug": "cash-at-rest",
+      "slug": "vault-dual-control",
+      "name": "Procédure d'accès chambre forte à double contrôle",
+      "description": "Règle d'intégrité de deux personnes pour chaque entrée chambre forte: connaissances partagées, enveloppes clés/combo inviolables, journal d'accès examiné chaque semaine.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": [
+        "DETER",
+        "DETECT"
+      ],
+      "domain": "PERSONNEL",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "typicalAnnualCost": 3000,
+      "tags": [
+        "vault",
+        "dual-control",
+        "insider"
+      ],
+      "csmpUnitReference": "Unit 3"
+    },
+    {
+      "moduleSlug": "cash-at-rest",
+      "slug": "vault-time-delay-lock",
+      "name": "Serrure temporisée sur porte de la chambre forte",
+      "description": "Verrouillage électronique temporisé (5 à 15 min) sur la porte principale de la chambre forte, désactivable uniquement via une dérogation à double commande enregistrée dans la piste d'audit.",
+      "shapeCategory": "EQUIPMENT",
+      "ppsFunctions": [
+        "DELAY",
+        "DETER"
+      ],
+      "domain": "ACCESS",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "typicalCostEstimate": 4500,
+      "typicalAnnualCost": 150,
+      "tags": [
+        "vault",
+        "time-lock"
+      ],
+      "csmpUnitReference": "Unit 5"
+    },
+    {
+      "moduleSlug": "cash-in-transit",
+      "slug": "cit-ibns-activation",
+      "name": "Transport de fonds IBNS avec géofence + activation anti-sabotage",
+      "description": "Le sac/conteneur d'argent IBNS déclenché par une violation de barrière géographique, une ouverture non autorisée ou une clé sous contrainte rend le contenu inutilisable.",
+      "shapeCategory": "EQUIPMENT",
+      "ppsFunctions": [
+        "DENY"
+      ],
+      "domain": "INFORMATION",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "typicalCostEstimate": 3800,
+      "typicalAnnualCost": 500,
+      "tags": [
+        "cit",
+        "ibns"
+      ],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "cash-in-transit",
+      "slug": "cit-gps-tracker",
+      "name": "Traceur GPS dissimulé (véhicule + sacoche)",
+      "description": "Traceurs GPS redondants dissimulés dans le véhicule transport de fonds et le sac à billets, surveillés 24h/24 et 7j/7 par la salle de contrôle avec alertes de géolocalisation.",
+      "shapeCategory": "EQUIPMENT",
+      "ppsFunctions": [
+        "DETECT"
+      ],
+      "domain": "SURVEILLANCE",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "typicalCostEstimate": 1500,
+      "typicalAnnualCost": 600,
+      "tags": [
+        "cit",
+        "gps"
+      ],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "cash-in-transit",
+      "slug": "cit-dual-crew",
+      "name": "Fonctionnement transport de fonds en double équipage",
+      "description": "Toutes les courses transport de fonds sont composées de deux membres d'équipage formés, un restant avec le véhicule; enregistrements radio à chaque arrêt connectés à l'ARC.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": [
+        "DETER",
+        "DETECT"
+      ],
+      "domain": "PERSONNEL",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "typicalAnnualCost": 45000,
+      "tags": [
+        "cit",
+        "dual-crew"
+      ],
+      "csmpUnitReference": "Unit 3"
+    },
+    {
+      "moduleSlug": "data-center",
+      "slug": "dc-biometric-mantrap",
+      "name": "Sas de sécurité biométrique à l’entrée de la cage",
+      "description": "Double facteur (carte + biométrique) sas de sécurité à l'entrée de cage centre de données avec capteur anti-hayon; enregistre chaque entrée dans un magasin d'audit immuable.",
+      "shapeCategory": "EQUIPMENT",
+      "ppsFunctions": [
+        "DELAY",
+        "DETECT"
+      ],
+      "domain": "ACCESS",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "typicalCostEstimate": 45000,
+      "typicalAnnualCost": 2000,
+      "tags": [
+        "data-center",
+        "mantrap",
+        "biometric"
+      ],
+      "csmpUnitReference": "Unit 5"
+    },
+    {
+      "moduleSlug": "data-center",
+      "slug": "dc-tia942-tier3-perimeter",
+      "name": "Périmètre physique TIA-942 Tier III",
+      "description": "Périmètre extérieur répondant à la norme TIA-942 Tier III (clôture en couches, bornes HVM, zone de contrôle des véhicules) avec audit de conformité vérifié.",
+      "shapeCategory": "ARCHITECTURAL",
+      "ppsFunctions": [
+        "DELAY",
+        "DETER"
+      ],
+      "domain": "PERIMETER",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "typicalCostEstimate": 250000,
+      "tags": [
+        "data-center",
+        "tia942",
+        "perimeter"
+      ],
+      "csmpUnitReference": "Unit 4"
+    },
+    {
+      "moduleSlug": "data-center",
+      "slug": "dc-cage-lock-audit-trail",
+      "name": "Serrure à cage avec piste d'audit + revue trimestrielle",
+      "description": "Serrure intelligente par cage produisant un journal d'ouverture/fermeture inviolable; examen trimestriel du journal d'accès par rapport à la liste des tickets autorisés.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": [
+        "DETECT"
+      ],
+      "domain": "ACCESS",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "typicalAnnualCost": 1500,
+      "tags": [
+        "data-center",
+        "audit"
+      ],
+      "csmpUnitReference": "Unit 3"
+    },
+    {
+      "moduleSlug": "executive-protection",
+      "slug": "exec-close-protection-team",
+      "name": "Equipe de protection rapprochée (principal + résidence)",
+      "description": "Agents de protection rapprochée formés couvrant les principaux mouvements ainsi que les postes de résidence; Couverture 24h/24 et 7j/7 avec des briefings documentés sur les menaces.",
+      "shapeCategory": "HUMAN",
+      "ppsFunctions": [
+        "DEFEAT",
+        "DETER"
+      ],
+      "domain": "PERSONNEL",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "typicalAnnualCost": 240000,
+      "tags": [
+        "ep",
+        "close-protection"
+      ],
+      "csmpUnitReference": "Unit 7"
+    },
+    {
+      "moduleSlug": "executive-protection",
+      "slug": "exec-route-timing-variation",
+      "name": "Protocole d'itinéraire et de timing varié pour le directeur",
+      "description": "Variation obligatoire d'itinéraire/d'horaire pour les déplacements quotidiens du directeur et les engagements publics; publié uniquement pour ceux qui en ont besoin.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": [
+        "DETER"
+      ],
+      "domain": "PERSONNEL",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "typicalAnnualCost": 2000,
+      "tags": [
+        "ep",
+        "route-planning"
+      ],
+      "csmpUnitReference": "Unit 3"
+    },
+    {
+      "moduleSlug": "hq-corporate",
+      "slug": "hq-visitor-escort-policy",
+      "name": "Politique d’accompagnement et de badge des visiteurs",
+      "description": "Tous les visiteurs non-employés sont pré-enregistrés, munis d'un badge avec photo à la réception et escortés à tout moment dans les zones réservées au personnel.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": [
+        "DETER",
+        "DETECT"
+      ],
+      "domain": "ACCESS",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "typicalAnnualCost": 4000,
+      "tags": [
+        "hq",
+        "visitor",
+        "access"
+      ],
+      "csmpUnitReference": "Unit 3"
+    },
+    {
+      "moduleSlug": "hq-corporate",
+      "slug": "hq-intrusion-alarm-grade3",
+      "name": "Alarme intrusion surveillée (EN 50131 Grade 3)",
+      "description": "Détection d'intrusion surveillée EN 50131 Grade 3 couvrant les portes périmétriques, les fenêtres et les pièces sensibles; Signalé ARC avec réponse SLA.",
+      "shapeCategory": "EQUIPMENT",
+      "ppsFunctions": [
+        "DETECT"
+      ],
+      "domain": "BUILDING",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "typicalCostEstimate": 18000,
+      "typicalAnnualCost": 1800,
+      "tags": [
+        "hq",
+        "alarm"
+      ],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "back-office",
+      "slug": "backoffice-clean-desk-privacy",
+      "name": "Politique de bureau propre + filtre de confidentialité",
+      "description": "Politique de bureau propre appliquée, filtres de confidentialité sur chaque écran et corbeilles de déchiquetage sécurisées; audit trimestriel par un agent de sécurité.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": [
+        "DETER"
+      ],
+      "domain": "INFORMATION",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "typicalAnnualCost": 1500,
+      "tags": [
+        "back-office",
+        "clean-desk"
+      ],
+      "csmpUnitReference": "Unit 3"
+    }
+  ],
+  "threat_countermeasures": [
+    {
+      "threatSlug": "atm-jackpot-blackbox",
+      "countermeasureSlug": "atm-top-box-intrusion-sensor",
+      "relevance": "HIGH",
+      "rationale": "La détection des intrusions dans le top-box constitue la principale défense contre les attaques des distributeurs par boîte noire."
+    },
+    {
+      "threatSlug": "atm-jackpot-blackbox",
+      "countermeasureSlug": "atm-forensic-cctv",
+      "relevance": "MEDIUM",
+      "rationale": "La vidéosurveillance médico-légale facilite l'attribution post-événement"
+    },
+    {
+      "threatSlug": "atm-jackpot-malware",
+      "countermeasureSlug": "atm-top-box-intrusion-sensor",
+      "relevance": "HIGH",
+      "rationale": "Les vecteurs USB/BadUSB nécessitent un accès physique au boîtier"
+    },
+    {
+      "threatSlug": "atm-ram-raid",
+      "countermeasureSlug": "atm-bollards-anti-ramming",
+      "relevance": "HIGH",
+      "rationale": "Les bornes K12 empêchent l'extraction du véhicule du DAB encastré en façade"
+    },
+    {
+      "threatSlug": "atm-ram-raid",
+      "countermeasureSlug": "atm-ibns-cash-staining",
+      "relevance": "MEDIUM",
+      "rationale": "Risque résiduel atténué par la contamination des liquidités en cas d'extraction réussie"
+    },
+    {
+      "threatSlug": "atm-gas-explosive",
+      "countermeasureSlug": "atm-gas-detection-suppression",
+      "relevance": "HIGH",
+      "rationale": "Principale contre-mesure de l'EMEA pour les attaques à base d'explosifs gazeux DAB"
+    },
+    {
+      "threatSlug": "atm-gas-explosive",
+      "countermeasureSlug": "atm-ibns-cash-staining",
+      "relevance": "HIGH",
+      "rationale": "IBNS neutralise la valeur monétaire en cas de violation réussie"
+    },
+    {
+      "threatSlug": "atm-thermite-torch",
+      "countermeasureSlug": "atm-gas-detection-suppression",
+      "relevance": "MEDIUM",
+      "rationale": "La détection + suppression se déclenche également sur la signature thermique de la thermite"
+    },
+    {
+      "threatSlug": "atm-thermite-torch",
+      "countermeasureSlug": "atm-ibns-cash-staining",
+      "relevance": "HIGH",
+      "rationale": "Neutralisation des espèces en cas de violation de sécurité, quelle que soit la méthode"
+    },
+    {
+      "threatSlug": "atm-skimming",
+      "countermeasureSlug": "atm-anti-skimming-insert",
+      "relevance": "HIGH",
+      "rationale": "Contre-mesure directe contre les appareils skimming sur le lecteur de carte"
+    },
+    {
+      "threatSlug": "atm-skimming",
+      "countermeasureSlug": "atm-forensic-cctv",
+      "relevance": "MEDIUM",
+      "rationale": "La vidéosurveillance prend en charge les enquêtes post-incidents et l'identification des installateurs"
+    },
+    {
+      "threatSlug": "atm-overlay-camera",
+      "countermeasureSlug": "atm-forensic-cctv",
+      "relevance": "HIGH",
+      "rationale": "Une caméra médico-légale détecte les tentatives d'installation par superposition sur la façade"
+    },
+    {
+      "threatSlug": "atm-card-cash-trapping",
+      "countermeasureSlug": "atm-anti-skimming-insert",
+      "relevance": "MEDIUM",
+      "rationale": "Le lecteur motorisé bat la plupart des variantes de la boucle libanaise"
+    },
+    {
+      "threatSlug": "atm-vandalism",
+      "countermeasureSlug": "atm-forensic-cctv",
+      "relevance": "HIGH",
+      "rationale": "Valeur dissuasive et médico-légale contre le vandalisme opportuniste"
+    },
+    {
+      "threatSlug": "armed-counter-robbery",
+      "countermeasureSlug": "branch-silent-panic-alarm",
+      "relevance": "HIGH",
+      "rationale": "L’alarme silencieuse est le déclencheur canonique de la réponse au vol"
+    },
+    {
+      "threatSlug": "armed-counter-robbery",
+      "countermeasureSlug": "branch-ballistic-teller-screen",
+      "relevance": "HIGH",
+      "rationale": "L'écran balistique permet de gagner du temps pour réagir"
+    },
+    {
+      "threatSlug": "armed-counter-robbery",
+      "countermeasureSlug": "branch-armed-response-sla",
+      "relevance": "HIGH",
+      "rationale": "La réponse armée est le contrôle final"
+    },
+    {
+      "threatSlug": "counter-jump-attack",
+      "countermeasureSlug": "branch-ballistic-teller-screen",
+      "relevance": "HIGH",
+      "rationale": "Barrière physique directe contre le contre-saut"
+    },
+    {
+      "threatSlug": "hostage-barricade",
+      "countermeasureSlug": "branch-armed-response-sla",
+      "relevance": "HIGH",
+      "rationale": "Réponse armée + liaison policière pour les scénarios de prise d'otages"
+    },
+    {
+      "threatSlug": "after-hours-burglary",
+      "countermeasureSlug": "branch-access-badge-antitailgate",
+      "relevance": "MEDIUM",
+      "rationale": "Le contrôle d'accès réduit les entrées assistées par l'intérieur en dehors des heures d'ouverture"
+    },
+    {
+      "threatSlug": "after-hours-burglary",
+      "countermeasureSlug": "hq-intrusion-alarm-grade3",
+      "relevance": "HIGH",
+      "rationale": "L'alarme surveillée de niveau 3 est le principal contrôle en dehors des heures d'ouverture"
+    },
+    {
+      "threatSlug": "tiger-kidnap-of-staff",
+      "countermeasureSlug": "branch-silent-panic-alarm",
+      "relevance": "HIGH",
+      "rationale": "Le code de contrainte permet une alerte secrète lors d'un enlèvement de tigre"
+    },
+    {
+      "threatSlug": "vault-attack-tool",
+      "countermeasureSlug": "vault-ul687-class-m",
+      "relevance": "HIGH",
+      "rationale": "La norme UL 687 Classe M protège spécifiquement contre les attaques d'outils"
+    },
+    {
+      "threatSlug": "vault-attack-torch",
+      "countermeasureSlug": "vault-ul687-class-m",
+      "relevance": "HIGH",
+      "rationale": "UL 687 Classe M inclut la résistance aux attaques de torche"
+    },
+    {
+      "threatSlug": "vault-attack-explosive",
+      "countermeasureSlug": "vault-ul687-class-m",
+      "relevance": "MEDIUM",
+      "rationale": "La classe M offre une résistance partielle aux explosions; à coupler avec détection de gaz"
+    },
+    {
+      "threatSlug": "vault-dual-control-bypass",
+      "countermeasureSlug": "vault-dual-control",
+      "relevance": "HIGH",
+      "rationale": "L’intégrité à deux est la contre-mesure directe"
+    },
+    {
+      "threatSlug": "vault-dual-control-bypass",
+      "countermeasureSlug": "vault-time-delay-lock",
+      "relevance": "MEDIUM",
+      "rationale": "Le délai réduit la fenêtre d’opportunité de contournement"
+    },
+    {
+      "threatSlug": "vault-tailgate-anteroom",
+      "countermeasureSlug": "vault-mantrap-antipassback",
+      "relevance": "HIGH",
+      "rationale": "L'anti-passback sas de sécurité est la commande canonique du hayon"
+    },
+    {
+      "threatSlug": "vault-key-compromise",
+      "countermeasureSlug": "vault-dual-control",
+      "relevance": "MEDIUM",
+      "rationale": "La connaissance partagée atténue les compromissions à clé unique"
+    },
+    {
+      "threatSlug": "vault-duress",
+      "countermeasureSlug": "vault-time-delay-lock",
+      "relevance": "HIGH",
+      "rationale": "Le délai empêche l'ouverture immédiate forcée"
+    },
+    {
+      "threatSlug": "cit-highway-ambush",
+      "countermeasureSlug": "cit-ibns-activation",
+      "relevance": "HIGH",
+      "rationale": "IBNS rend l'argent volé inutilisable"
+    },
+    {
+      "threatSlug": "cit-highway-ambush",
+      "countermeasureSlug": "cit-gps-tracker",
+      "relevance": "HIGH",
+      "rationale": "Le GPS permet une récupération rapide + coordination policière"
+    },
+    {
+      "threatSlug": "cit-pavement-grab",
+      "countermeasureSlug": "cit-ibns-activation",
+      "relevance": "HIGH",
+      "rationale": "L'IBNS déclenché par la géofence bat le grab-and-run"
+    },
+    {
+      "threatSlug": "cit-pavement-grab",
+      "countermeasureSlug": "cit-dual-crew",
+      "relevance": "MEDIUM",
+      "rationale": "Le deuxième membre d'équipage fait office de dissuasion + témoin"
+    },
+    {
+      "threatSlug": "cit-ram-attack",
+      "countermeasureSlug": "cit-ibns-activation",
+      "relevance": "HIGH",
+      "rationale": "IBNS déclenché en cas de falsification, quelle que soit la méthode d'accès"
+    },
+    {
+      "threatSlug": "cit-vehicle-hijack",
+      "countermeasureSlug": "cit-gps-tracker",
+      "relevance": "HIGH",
+      "rationale": "Le tracker permet la récupération et l'interception du véhicule"
+    },
+    {
+      "threatSlug": "cit-inside-job",
+      "countermeasureSlug": "cit-dual-crew",
+      "relevance": "HIGH",
+      "rationale": "La double équipe réduit la surface d'attaque de collusion par une seule personne"
+    },
+    {
+      "threatSlug": "cit-ibns-defeat",
+      "countermeasureSlug": "cit-gps-tracker",
+      "relevance": "MEDIUM",
+      "rationale": "Le tracker redondant constitue le contrôle de dernière ligne si l'IBNS est vaincu"
+    },
+    {
+      "threatSlug": "dc-unauth-access",
+      "countermeasureSlug": "dc-biometric-mantrap",
+      "relevance": "HIGH",
+      "rationale": "Le sas de sécurité biométrique est un contrôle d'accès canonique à la cage"
+    },
+    {
+      "threatSlug": "dc-cage-tailgate",
+      "countermeasureSlug": "dc-biometric-mantrap",
+      "relevance": "HIGH",
+      "rationale": "Le capteur anti-hayon dans sas de sécurité est la contre-mesure spécifique"
+    },
+    {
+      "threatSlug": "dc-escort-bypass",
+      "countermeasureSlug": "dc-cage-lock-audit-trail",
+      "relevance": "HIGH",
+      "rationale": "La piste d'audit révèle un modèle de contournement d'escorte lors de l'examen"
+    },
+    {
+      "threatSlug": "dc-insider-sabotage",
+      "countermeasureSlug": "dc-cage-lock-audit-trail",
+      "relevance": "MEDIUM",
+      "rationale": "L’examen d’audit est le principal contrôle de détective interne"
+    },
+    {
+      "threatSlug": "dc-media-theft",
+      "countermeasureSlug": "dc-biometric-mantrap",
+      "relevance": "MEDIUM",
+      "rationale": "Les journaux d'accès sas de sécurité alimentent l'examen de la chaîne de traçabilité des médias"
+    },
+    {
+      "threatSlug": "ep-kidnap-ransom",
+      "countermeasureSlug": "exec-close-protection-team",
+      "relevance": "HIGH",
+      "rationale": "La protection rapprochée est la défense canonique contre l’enlèvement et la rançon"
+    },
+    {
+      "threatSlug": "ep-kidnap-ransom",
+      "countermeasureSlug": "exec-route-timing-variation",
+      "relevance": "HIGH",
+      "rationale": "La variation de l'itinéraire empêche toute possibilité d'embuscade prévisible"
+    },
+    {
+      "threatSlug": "ep-assassination",
+      "countermeasureSlug": "exec-close-protection-team",
+      "relevance": "HIGH",
+      "rationale": "L’équipe du CP assure une défense armée immédiate"
+    },
+    {
+      "threatSlug": "ep-vehicle-ambush",
+      "countermeasureSlug": "exec-route-timing-variation",
+      "relevance": "HIGH",
+      "rationale": "La variation d’itinéraire/horaire est le principal moyen de dissuasion contre les embuscades"
+    },
+    {
+      "threatSlug": "ep-routine-surveillance",
+      "countermeasureSlug": "exec-route-timing-variation",
+      "relevance": "HIGH",
+      "rationale": "Des modèles variés mettent à mal la surveillance des modes de vie"
+    },
+    {
+      "threatSlug": "ep-insider-schedule-leak",
+      "countermeasureSlug": "exec-route-timing-variation",
+      "relevance": "MEDIUM",
+      "rationale": "La planification du besoin de savoir réduit l’exposition aux fuites"
+    },
+    {
+      "threatSlug": "hq-tailgating",
+      "countermeasureSlug": "hq-visitor-escort-policy",
+      "relevance": "HIGH",
+      "rationale": "La politique d’escorte s’attaque directement au risque de talonnage"
+    },
+    {
+      "threatSlug": "hq-vendor-social-engineering",
+      "countermeasureSlug": "hq-visitor-escort-policy",
+      "relevance": "HIGH",
+      "rationale": "Les visiteurs escortés pré-enregistrés bloquent l’usurpation d’identité du fournisseur"
+    },
+    {
+      "threatSlug": "hq-surveillance-recon",
+      "countermeasureSlug": "hq-intrusion-alarm-grade3",
+      "relevance": "MEDIUM",
+      "rationale": "Une alarme de niveau 3 augmente le coût de la reconnaissance secrète"
+    },
+    {
+      "threatSlug": "hq-insider-exfiltration",
+      "countermeasureSlug": "backoffice-clean-desk-privacy",
+      "relevance": "MEDIUM",
+      "rationale": "Clean-desk + shred réduit l’exfiltration des ressources papier"
+    },
+    {
+      "threatSlug": "hq-corporate-espionage",
+      "countermeasureSlug": "backoffice-clean-desk-privacy",
+      "relevance": "MEDIUM",
+      "rationale": "Les filtres de confidentialité et le bureau propre réduisent le surf sur l'épaule et l'exposition nocturne"
+    },
+    {
+      "threatSlug": "document-theft",
+      "countermeasureSlug": "backoffice-clean-desk-privacy",
+      "relevance": "HIGH",
+      "rationale": "Clean-desk + secure shred est la mesure canonique contre le vol de documents"
+    },
+    {
+      "threatSlug": "dumpster-diving",
+      "countermeasureSlug": "backoffice-clean-desk-privacy",
+      "relevance": "HIGH",
+      "rationale": "Les poubelles sécurisées éliminent l'exfiltration par plongée dans les bennes à ordures"
+    },
+    {
+      "threatSlug": "backoffice-unauth-access",
+      "countermeasureSlug": "branch-access-badge-antitailgate",
+      "relevance": "MEDIUM",
+      "rationale": "Accès avec badge et limites anti-hayon pour les entrées non autorisées en dehors des heures d'ouverture"
+    },
+    {
+      "threatSlug": "afterhours-unauth-access",
+      "countermeasureSlug": "hq-intrusion-alarm-grade3",
+      "relevance": "HIGH",
+      "rationale": "L'alarme surveillée de niveau 3 est le principal contrôle en dehors des heures d'ouverture."
+    }
+  ]
+}

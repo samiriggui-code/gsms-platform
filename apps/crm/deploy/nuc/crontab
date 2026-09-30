@@ -1,0 +1,8 @@
+# Same jobs and schedules as apps/api/vercel.json — the NUC replaces Vercel Cron.
+# crond runs each line with /bin/sh, so $CRON_SECRET expands from the container env.
+
+*/5 * * * * curl -fsS -H "Authorization: Bearer $CRON_SECRET" http://api:3001/internal/sync/mailboxes
+0 6 * * * curl -fsS -H "Authorization: Bearer $CRON_SECRET" http://api:3001/internal/sync/rates
+0 7 * * * curl -fsS -H "Authorization: Bearer $CRON_SECRET" http://api:3001/internal/telemetry/rollup
+0 4 * * * curl -fsS -H "Authorization: Bearer $CRON_SECRET" http://api:3001/internal/tracking/retention
+0 5 * * * curl -fsS -H "Authorization: Bearer $CRON_SECRET" http://api:3001/internal/archive/prune

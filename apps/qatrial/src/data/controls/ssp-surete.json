@@ -1,0 +1,73 @@
+{
+  "version": "0.1.0",
+  "slug": "ssp-surete",
+  "name": "Sûreté & Sécurité Physique",
+  "description": "Volet physique de la sécurité d'un site : sûreté (intrusion, contrôle d'accès, vidéoprotection), sécurité incendie (détection, extinction, registre, commissions), exploitation (PC sécurité, agents, habilitations), et convergence avec les référentiels cyber (ISO 27001 Annexe A, SOC 2) pour les infrastructures critiques type datacenter.",
+  "provenance": "GSMS IP — extrait de apps/comp/packages/db/prisma/seed-gsms-surete.ts (2026-09-06). À consommer nativement dans GRACE (packs / Finding), plus dans Comp AI.",
+  "bridge": {
+    "identifier": "SSP-12",
+    "role": "convergence physique/cyber via control_ref partagé (finding.schema.json)"
+  },
+  "requirements": [
+    {
+      "identifier": "SSP-01",
+      "name": "Gouvernance sûreté du site",
+      "description": "Une politique sûreté est formalisée, portée par un responsable désigné, revue périodiquement, et déclinée en consignes opérationnelles connues du personnel et des prestataires."
+    },
+    {
+      "identifier": "SSP-02",
+      "name": "Contrôle d'accès physique",
+      "description": "Les accès (badges, clés, codes) sont attribués nominativement selon le besoin d'en connaître, tracés, revus périodiquement et révoqués sans délai aux départs. Les zones sensibles disposent d'un contrôle gradué."
+    },
+    {
+      "identifier": "SSP-03",
+      "name": "Détection intrusion",
+      "description": "Un système d'alarme intrusion couvre les zones à risque, est maintenu et testé périodiquement, et raccordé le cas échéant à une télésurveillance avec consigne d'intervention (réf. APSAD R81 / NF EN 50131)."
+    },
+    {
+      "identifier": "SSP-04",
+      "name": "Vidéoprotection conforme",
+      "description": "Le dispositif de vidéoprotection dispose des autorisations requises, respecte les durées de conservation, l'information des personnes et la gestion des droits d'accès aux images (CSI L. 251 et s., RGPD/CNIL)."
+    },
+    {
+      "identifier": "SSP-05",
+      "name": "Détection incendie",
+      "description": "Les locaux sont couverts par une détection incendie adaptée au risque, vérifiée périodiquement, avec traitement tracé des défauts et alarmes (réf. APSAD R7, règlement ERP le cas échéant)."
+    },
+    {
+      "identifier": "SSP-06",
+      "name": "Moyens de lutte incendie",
+      "description": "Extincteurs, RIA, extinction automatique et désenfumage sont dimensionnés au risque, vérifiés aux fréquences réglementaires par des intervenants compétents, avec rapports archivés (réf. APSAD R4/R5/R13)."
+    },
+    {
+      "identifier": "SSP-07",
+      "name": "Registre de sécurité et vérifications périodiques",
+      "description": "Un registre de sécurité consigne sans interruption les vérifications, travaux, formations et exercices ; les prescriptions de commission de sécurité sont suivies jusqu'à levée avec preuve."
+    },
+    {
+      "identifier": "SSP-08",
+      "name": "PC sécurité et supervision",
+      "description": "La supervision des alarmes (incendie, intrusion, technique) est assurée selon le régime d'exploitation du site — PC sécurité ou report — avec consignes à jour, main courante et escalade testée."
+    },
+    {
+      "identifier": "SSP-09",
+      "name": "Habilitations des agents (CNAPS / SSIAP)",
+      "description": "Les agents affectés détiennent les habilitations requises en cours de validité (carte professionnelle CNAPS, diplômes SSIAP avec recyclages), avec suivi des échéances et alerte avant expiration."
+    },
+    {
+      "identifier": "SSP-10",
+      "name": "Santé et sécurité au travail (SST)",
+      "description": "Les risques professionnels des postes de sécurité sont évalués (DUERP), les équipements et formations SST en place (sauveteurs secouristes, EPI, travail de nuit/isolé), et les exercices d'évacuation réalisés."
+    },
+    {
+      "identifier": "SSP-11",
+      "name": "Salles serveurs et infrastructures critiques",
+      "description": "Les salles serveurs et locaux techniques critiques bénéficient d'un zonage renforcé, d'une détection précoce, d'une extinction adaptée et d'une surveillance environnementale (réf. EN 50600)."
+    },
+    {
+      "identifier": "SSP-12",
+      "name": "Convergence sécurité physique / cybersécurité",
+      "description": "Chaque exigence physique portée par un référentiel cyber (ISO 27001 Annexe A, SOC 2) est rapprochée du contrôle physique réel via un identifiant de contrôle commun (control_ref, contrat finding.schema.json GSMS), pour réutiliser les preuves des deux côtés sans double audit."
+    }
+  ]
+}

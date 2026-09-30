@@ -1,0 +1,42 @@
+# GSMS Admin sondes — VPS (nginx + probe cron)
+# Smoke: http://187.77.166.124:3055 — FQDN admin.global-it-ss.com
+name: gsms-admin
+
+services:
+  web:
+    image: nginx:1.27-alpine
+    container_name: gsms-admin
+    restart: unless-stopped
+    ports:
+      - '3055:80'
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.gsms-admin.entrypoints=websecure
+      - traefik.http.routers.gsms-admin.rule=Host(`admin.global-it-ss.com`)
+      - traefik.http.routers.gsms-admin.tls.certresolver=letsencrypt
+      - traefik.http.services.gsms-admin.loadbalancer.server.port=80
+      - traefik.http.middlewares.gsms-admin-auth.basicauth.users=admin@global-it-ss.com:$$2a$$14$$cm1pc4cnd5RRmvk50ofr4uloTyUYiybvQtbVyO4N50G22tLVKfGNa
+      - traefik.http.routers.gsms-admin-status.entrypoints=websecure
+      - traefik.http.routers.gsms-admin-status.rule=Host(`admin.global-it-ss.com`) && Path(`/status.json`)
+      - traefik.http.routers.gsms-admin-status.tls.certresolver=letsencrypt
+      - traefik.http.routers.gsms-admin-status.middlewares=gsms-admin-auth
+      - traefik.http.routers.gsms-admin-status.priority=100
+      - traefik.http.routers.gsms-admin-status.service=gsms-admin
+
+  probe:
+    image: python:3.12-alpine
+    container_name: gsms-admin-probe
+    restart: unless-stopped
+    volumes:
+      - ./html:/out
+      - ./probe-vps.py:/probe.py:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        apk add --no-cache docker-cli >/dev/null
+        while true; do python /probe.py > /out/status.json.tmp && mv /out/status.json.tmp /out/status.json; sleep 60; done

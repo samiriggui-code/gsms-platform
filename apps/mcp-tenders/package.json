@@ -1,0 +1,60 @@
+{
+  "name": "@lexsocket/mcp-tenders",
+  "version": "2.0.0",
+  "description": "MCP server for European public procurement tenders (TED + 18 national sources)",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "ted",
+    "tenders",
+    "procurement",
+    "eu",
+    "national-tenders",
+    "public-contracts"
+  ],
+  "author": "LexSocket",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lexsocket/mcp-tenders"
+  },
+  "homepage": "https://lexsocket.ai",
+  "bugs": {
+    "url": "https://github.com/lexsocket/mcp-tenders/issues"
+  },
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "mcp-tenders": "./src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "start:sse": "node src/index.js --transport sse",
+    "start:stdio": "node src/index.js --transport stdio"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "mcp": {
+    "name": "LexSocket - European Public Procurement",
+    "description": "Search EU above-threshold (TED) and below-threshold tenders from 18 national sources. 23 tools for procurement intelligence across Europe.",
+    "transport": {
+      "streamable-http": {
+        "url": "https://mcp.lexsocket.ai/"
+      }
+    },
+    "tools": [
+      "search_ted", "search_ted_fts", "search_ted_semantic",
+      "get_ted_notice", "get_ted_stats", "find_similar_ted_tenders",
+      "browse_ted_by_deadline", "search_ted_by_buyer", "search_ted_by_cpv",
+      "search_ted_by_nuts", "search_ted_by_value_range", "get_ted_statistics",
+      "search_tenders", "get_tender", "get_open_opportunities", "get_stats",
+      "find_similar_tenders", "browse_by_deadline", "search_by_buyer",
+      "search_by_cpv", "search_by_nuts", "search_by_value_range",
+      "get_tender_statistics"
+    ]
+  }
+}

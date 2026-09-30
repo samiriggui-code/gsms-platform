@@ -1,0 +1,272 @@
+[
+  {
+    "slug": "mod-ent-gouv-risque",
+    "name": "Gouvernance du risque",
+    "description": "Politique, rôles, revue — alignement ISO 31000 (principes), pas un registre. Le registre vit dans SimpleRisk.",
+    "icon": "Landmark",
+    "sortOrder": 10,
+    "assets": [
+      {
+        "slug": "ent-politique-risque",
+        "name": "Politique de management du risque",
+        "assetType": "INFORMATION",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Document de politique / cadre — pas le scoring IRV Grace.",
+        "tags": ["entreprise", "gouvernance", "iso31000"],
+        "recommendedThreats": [
+          {
+            "slug": "ent-gouv-absente",
+            "relevance": "HIGH",
+            "rationale": "Sans politique ni rôles le risque n’est pas piloté"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "ent-gouv-absente",
+        "scenarioName": "Gouvernance risque absente ou non revue",
+        "adversaryType": "INSIDER",
+        "actionType": "DISRUPTION",
+        "adversaryProfile": {
+          "capability": "low",
+          "motivation": "négligence direction",
+          "resources": "n/a",
+          "insiderKnowledge": true
+        },
+        "typicalActions": ["Politique jamais revue", "Pas de propriétaire risque"],
+        "targetAssetTypes": ["INFORMATION", "PROCESS"],
+        "indicators": ["Date de revue", "RACI"],
+        "suggestedLikelihood": 3,
+        "csmpUnitReference": "Unit 1"
+      }
+    ]
+  },
+  {
+    "slug": "mod-ent-documentaire",
+    "name": "Système documentaire",
+    "description": "Procédures à jour — checklist existence, pas un GED.",
+    "icon": "FolderOpen",
+    "sortOrder": 20,
+    "assets": [
+      {
+        "slug": "ent-procedures",
+        "name": "Procédures / consignes organisationnelles",
+        "assetType": "INFORMATION",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 3,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Corpus documentaire (sûreté, crise, prestataires).",
+        "tags": ["entreprise", "documentaire"],
+        "recommendedThreats": [
+          {
+            "slug": "ent-docs-obsoletes",
+            "relevance": "MEDIUM",
+            "rationale": "Procédures périmées = consignes fausses en crise"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "ent-docs-obsoletes",
+        "scenarioName": "Procédures obsolètes ou introuvables",
+        "adversaryType": "INSIDER",
+        "actionType": "DISRUPTION",
+        "adversaryProfile": {
+          "capability": "low",
+          "motivation": "n/a",
+          "resources": "GED",
+          "insiderKnowledge": true
+        },
+        "typicalActions": ["Versions multiples", "Pas de propriétaire doc"],
+        "targetAssetTypes": ["INFORMATION"],
+        "indicators": ["Dates de revue", "Accès agents"],
+        "suggestedLikelihood": 3,
+        "csmpUnitReference": "Unit 1"
+      }
+    ]
+  },
+  {
+    "slug": "mod-ent-formation",
+    "name": "Plan de formation",
+    "description": "Compétences et sensibilisation — preuves dans GSMS School.",
+    "icon": "GraduationCap",
+    "sortOrder": 30,
+    "assets": [
+      {
+        "slug": "ent-plan-formation",
+        "name": "Plan de formation sûreté / crise",
+        "assetType": "INFORMATION",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 3,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Plan annuel ; sessions School.",
+        "tags": ["entreprise", "formation", "school"],
+        "recommendedThreats": [
+          {
+            "slug": "ent-competences-trous",
+            "relevance": "MEDIUM",
+            "rationale": "Postes clés sans formation = échec consignes"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "ent-competences-trous",
+        "scenarioName": "Trous de compétence / sensibilisation",
+        "adversaryType": "INSIDER",
+        "actionType": "DISRUPTION",
+        "adversaryProfile": {
+          "capability": "low",
+          "motivation": "n/a",
+          "resources": "RH",
+          "insiderKnowledge": true
+        },
+        "typicalActions": ["Pas de plan", "Sessions non tracées"],
+        "targetAssetTypes": ["INFORMATION", "PERSON"],
+        "indicators": ["Plan vs School"],
+        "suggestedLikelihood": 3,
+        "csmpUnitReference": "Unit 7"
+      }
+    ]
+  },
+  {
+    "slug": "mod-ent-continuite",
+    "name": "Continuité & crise",
+    "description": "PCA / exercices — inspiration ISO 22301, pas une certification.",
+    "icon": "LifeBuoy",
+    "sortOrder": 40,
+    "assets": [
+      {
+        "slug": "ent-pca",
+        "name": "Plan de continuité / crise",
+        "assetType": "CONTINUITY",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 5,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "PCA, cellules de crise, exercices.",
+        "tags": ["entreprise", "continuite", "iso22301"],
+        "recommendedThreats": [
+          {
+            "slug": "ent-pca-papier",
+            "relevance": "HIGH",
+            "rationale": "PCA jamais exercé = papier"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "ent-pca-papier",
+        "scenarioName": "PCA inexistant ou jamais exercé",
+        "adversaryType": "NATURAL",
+        "actionType": "DISRUPTION",
+        "adversaryProfile": {
+          "capability": "low",
+          "motivation": "n/a",
+          "resources": "crise",
+          "insiderKnowledge": false
+        },
+        "typicalActions": ["Pas d’exercice", "Contacts obsolètes"],
+        "targetAssetTypes": ["CONTINUITY", "INFORMATION"],
+        "indicators": ["Date dernier exercice", "Fiches alerte"],
+        "suggestedLikelihood": 3,
+        "csmpUnitReference": "Unit 6"
+      }
+    ]
+  },
+  {
+    "slug": "mod-ent-prevention",
+    "name": "Prévention employeur (DUERP)",
+    "description": "Pont Code du travail — existence DUERP / évacuation salariés. Pas l’ERP public.",
+    "icon": "Shield",
+    "sortOrder": 50,
+    "assets": [
+      {
+        "slug": "ent-duerp",
+        "name": "DUERP / prévention des risques",
+        "assetType": "INFORMATION",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Document unique et consignes évacuation salariés.",
+        "tags": ["entreprise", "ct", "duerp"],
+        "recommendedThreats": [
+          {
+            "slug": "ent-duerp-absent",
+            "relevance": "HIGH",
+            "rationale": "Sans DUERP l’employeur n’a pas de traçabilité prévention"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "ent-duerp-absent",
+        "scenarioName": "DUERP absent ou non mis à jour",
+        "adversaryType": "INSIDER",
+        "actionType": "FRAUD",
+        "adversaryProfile": {
+          "capability": "low",
+          "motivation": "éviter formalisme",
+          "resources": "n/a",
+          "insiderKnowledge": true
+        },
+        "typicalActions": ["DU jamais revu", "Évacuation non exercée"],
+        "targetAssetTypes": ["INFORMATION", "PROCESS"],
+        "indicators": ["Date DU", "PV exercice"],
+        "suggestedLikelihood": 3,
+        "csmpUnitReference": "Unit 7"
+      }
+    ]
+  },
+  {
+    "slug": "mod-ent-sous-traitance",
+    "name": "Prestataires sûreté",
+    "description": "Contrôle des prestataires de sécurité — croise pack CNAPS si société sécu.",
+    "icon": "Network",
+    "sortOrder": 60,
+    "assets": [
+      {
+        "slug": "ent-prestataire-secu",
+        "name": "Prestataire de sécurité",
+        "assetType": "PROCESS",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTED",
+        "description": "Société de sécurité privée au contrat — titres à vérifier (pack CNAPS).",
+        "tags": ["entreprise", "prestataire", "cnaps"],
+        "recommendedThreats": [
+          {
+            "slug": "ent-prestataire-non-verifie",
+            "relevance": "HIGH",
+            "rationale": "Prestataire sans titres = risque donneur d’ordre"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "ent-prestataire-non-verifie",
+        "scenarioName": "Prestataire sûreté non vérifié (titres CNAPS)",
+        "adversaryType": "INSIDER",
+        "actionType": "FRAUD",
+        "adversaryProfile": {
+          "capability": "medium",
+          "motivation": "prix",
+          "resources": "appel d’offres",
+          "insiderKnowledge": true
+        },
+        "typicalActions": ["Pas de copie agrément", "Sous-traitance opaque"],
+        "targetAssetTypes": ["PROCESS", "INFORMATION"],
+        "indicators": ["Pièces CNAPS au contrat"],
+        "suggestedLikelihood": 3,
+        "csmpUnitReference": "Unit 2"
+      }
+    ]
+  }
+]

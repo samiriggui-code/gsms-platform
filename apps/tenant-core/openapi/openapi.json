@@ -1,0 +1,459 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "GSMS Tenant Core API",
+    "version": "0.1.0",
+    "description": "Identité portail client GSMS : session JWT cookie, organisation, workspaces (établissements), membres. Les routes `/api/bff/*` sont des agrégats mock CRM/Desk en attendant les vrais branchements.\n\nAuth : cookie httpOnly `gsms_session` (JWT HS256)."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3090",
+      "description": "Dev local"
+    }
+  ],
+  "tags": [
+    { "name": "health" },
+    { "name": "session" },
+    { "name": "workspaces" },
+    { "name": "members" },
+    { "name": "bff" }
+  ],
+  "paths": {
+    "/api/health": {
+      "get": {
+        "tags": ["health"],
+        "summary": "Liveness",
+        "operationId": "getHealth",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["ok", "service"],
+                  "properties": {
+                    "ok": { "type": "boolean" },
+                    "service": { "type": "string", "const": "tenant-core" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": ["session"],
+        "summary": "Connexion",
+        "operationId": "login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoginRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Session créée (Set-Cookie gsms_session)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MeResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/Error" },
+          "401": { "$ref": "#/components/responses/Error" },
+          "403": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": ["session"],
+        "summary": "Déconnexion",
+        "operationId": "logout",
+        "responses": {
+          "200": {
+            "description": "Cookie effacé",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["ok"],
+                  "properties": { "ok": { "type": "boolean" } }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "tags": ["session"],
+        "summary": "Session courante",
+        "operationId": "getMe",
+        "security": [{ "cookieAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Profil + org + workspaces + workspace actif",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MeResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/api/workspaces": {
+      "get": {
+        "tags": ["workspaces"],
+        "summary": "Liste des établissements de l'org",
+        "operationId": "listWorkspaces",
+        "security": [{ "cookieAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Workspaces + id actif",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/WorkspaceListResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/api/workspaces/switch": {
+      "post": {
+        "tags": ["workspaces"],
+        "summary": "Changer le workspace_id actif (session)",
+        "operationId": "switchWorkspace",
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["workspaceId"],
+                "properties": {
+                  "workspaceId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "UUID opaque = workspace_id GSMS (1 site)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Session mise à jour",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["workspace"],
+                  "properties": {
+                    "workspace": { "$ref": "#/components/schemas/Workspace" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/Error" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/api/members": {
+      "get": {
+        "tags": ["members"],
+        "summary": "Membres de l'organisation courante",
+        "operationId": "listMembers",
+        "security": [{ "cookieAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Liste des memberships",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MembersResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/api/bff/dashboard": {
+      "get": {
+        "tags": ["bff"],
+        "summary": "Agrégat Accueil (mock CRM/Desk)",
+        "operationId": "bffDashboard",
+        "security": [{ "cookieAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Compteurs + prestations actives scopés workspace_id",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DashboardResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/api/bff/prestations": {
+      "get": {
+        "tags": ["bff"],
+        "summary": "Liste prestations (mock CRM)",
+        "operationId": "bffPrestations",
+        "security": [{ "cookieAuth": [] }],
+        "responses": {
+          "200": { "description": "OK" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/api/bff/prestations/{id}": {
+      "get": {
+        "tags": ["bff"],
+        "summary": "Fiche prestation agrégée (mock)",
+        "operationId": "bffPrestationDetail",
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "OK" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/api/bff/documents": {
+      "get": {
+        "tags": ["bff"],
+        "summary": "Documents (mock Desk)",
+        "operationId": "bffDocuments",
+        "security": [{ "cookieAuth": [] }],
+        "responses": {
+          "200": { "description": "OK" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/api/bff/echanges": {
+      "get": {
+        "tags": ["bff"],
+        "summary": "Échanges / demandes de pièces (mock)",
+        "operationId": "bffEchanges",
+        "security": [{ "cookieAuth": [] }],
+        "responses": {
+          "200": { "description": "OK" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/api/bff/finance": {
+      "get": {
+        "tags": ["bff"],
+        "summary": "Devis & factures (mock CRM)",
+        "operationId": "bffFinance",
+        "security": [{ "cookieAuth": [] }],
+        "responses": {
+          "200": { "description": "OK" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "gsms_session"
+      }
+    },
+    "schemas": {
+      "ErrorBody": {
+        "type": "object",
+        "required": ["error"],
+        "properties": {
+          "error": { "type": "string" },
+          "details": { "type": "object", "additionalProperties": true }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string" },
+          "workspaceId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Optionnel — workspace actif dès le login"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "required": ["id", "email", "name"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "email": { "type": "string", "format": "email" },
+          "name": { "type": "string" }
+        }
+      },
+      "Organization": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" }
+        }
+      },
+      "Workspace": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "workspace_id canonique GSMS"
+          },
+          "name": { "type": "string" },
+          "label": { "type": ["string", "null"] }
+        }
+      },
+      "MeResponse": {
+        "type": "object",
+        "required": ["user", "organization", "workspaces", "role"],
+        "properties": {
+          "user": { "$ref": "#/components/schemas/User" },
+          "organization": { "$ref": "#/components/schemas/Organization" },
+          "workspace": {
+            "oneOf": [
+              { "$ref": "#/components/schemas/Workspace" },
+              { "type": "null" }
+            ]
+          },
+          "workspaces": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Workspace" }
+          },
+          "role": {
+            "type": "string",
+            "enum": ["owner", "member", "viewer"]
+          }
+        }
+      },
+      "WorkspaceListResponse": {
+        "type": "object",
+        "required": ["activeWorkspaceId", "workspaces"],
+        "properties": {
+          "activeWorkspaceId": { "type": "string", "format": "uuid" },
+          "workspaces": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Workspace" }
+          }
+        }
+      },
+      "Member": {
+        "type": "object",
+        "required": ["id", "role", "user"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "role": {
+            "type": "string",
+            "enum": ["owner", "member", "viewer"]
+          },
+          "user": { "$ref": "#/components/schemas/User" }
+        }
+      },
+      "MembersResponse": {
+        "type": "object",
+        "required": ["organizationId", "members"],
+        "properties": {
+          "organizationId": { "type": "string", "format": "uuid" },
+          "members": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Member" }
+          }
+        }
+      },
+      "DashboardResponse": {
+        "type": "object",
+        "required": ["workspaceId", "counts", "prestations"],
+        "properties": {
+          "workspaceId": { "type": "string", "format": "uuid" },
+          "counts": {
+            "type": "object",
+            "required": [
+              "prestationsOpen",
+              "piecesPending",
+              "devisPending",
+              "livrablesUnread"
+            ],
+            "properties": {
+              "prestationsOpen": { "type": "integer" },
+              "piecesPending": { "type": "integer" },
+              "devisPending": { "type": "integer" },
+              "livrablesUnread": { "type": "integer" }
+            }
+          },
+          "prestations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "title", "kind", "status", "workspaceId"],
+              "properties": {
+                "id": { "type": "string" },
+                "title": { "type": "string" },
+                "kind": { "type": "string" },
+                "status": { "type": "string" },
+                "workspaceId": { "type": "string", "format": "uuid" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "Unauthorized": {
+        "description": "Cookie session manquant ou invalide",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorBody" }
+          }
+        }
+      },
+      "Error": {
+        "description": "Erreur métier",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorBody" }
+          }
+        }
+      }
+    }
+  }
+}

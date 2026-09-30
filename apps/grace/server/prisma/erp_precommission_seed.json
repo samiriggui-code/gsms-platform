@@ -1,0 +1,718 @@
+[
+  {
+    "slug": "mod-classement",
+    "name": "Classement ERP",
+    "description": "Type, catégorie et cohérence de classement de l’établissement (entrée d’applicabilité DP).",
+    "icon": "Layers",
+    "sortOrder": 10,
+    "assets": [
+      {
+        "slug": "erp-site",
+        "name": "Site ERP",
+        "assetType": "SITE",
+        "category": "TANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTED",
+        "description": "Établissement recevant du public — nœud racine du périmètre pré-commission.",
+        "tags": ["erp", "classement", "fr-precom"],
+        "recommendedThreats": [
+          {
+            "slug": "erp-sous-classement",
+            "relevance": "HIGH",
+            "rationale": "Un écart type/catégorie vs réalité fausse les exigences applicables"
+          }
+        ]
+      },
+      {
+        "slug": "erp-building",
+        "name": "Bâtiment ERP",
+        "assetType": "BUILDING",
+        "category": "TANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTED",
+        "parentSlug": "erp-site",
+        "description": "Bâtiment déclaré dans le classement ERP.",
+        "tags": ["erp", "classement"],
+        "recommendedThreats": [
+          {
+            "slug": "erp-sous-classement",
+            "relevance": "MEDIUM",
+            "rationale": "Usage réel du bâtiment peut diverger du type déclaré"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "erp-sous-classement",
+        "scenarioName": "Sous-classement / dérive d’usage ERP",
+        "adversaryType": "INSIDER",
+        "actionType": "FRAUD",
+        "adversaryProfile": {
+          "capability": "medium",
+          "motivation": "éviter contraintes / maximiser capacité",
+          "resources": "connaissance administrative",
+          "insiderKnowledge": true
+        },
+        "typicalActions": [
+          "Modifier l’activité sans mise à jour du classement",
+          "Augmenter l’effectif au-delà de la catégorie",
+          "Omettre une activité annexe type DP"
+        ],
+        "targetAssetTypes": ["SITE", "BUILDING"],
+        "indicators": [
+          "Effectif observé > capacité déclarée",
+          "Activité non listée dans le dossier",
+          "Écart plans vs visite"
+        ],
+        "suggestedLikelihood": 3,
+        "csmpUnitReference": "Unit 2"
+      }
+    ]
+  },
+  {
+    "slug": "mod-degagements",
+    "name": "Dégagements & issues",
+    "description": "Issues de secours, largeurs, distances et libre accès (cœur visite précom).",
+    "icon": "DoorOpen",
+    "sortOrder": 20,
+    "assets": [
+      {
+        "slug": "erp-issue-secours",
+        "name": "Issue de secours",
+        "assetType": "ZONE",
+        "category": "TANGIBLE",
+        "defaultCriticality": 5,
+        "defaultAssetRole": "DUAL",
+        "description": "Issue réglementaire — dégagement libre, signalétique, ouvrabilité.",
+        "tags": ["erp", "degagement", "issue"],
+        "recommendedThreats": [
+          {
+            "slug": "erp-issue-obstruction",
+            "relevance": "HIGH",
+            "rationale": "Issue bloquée ou réduite = non-conformité critique en commission"
+          },
+          {
+            "slug": "erp-panique-evacuation",
+            "relevance": "HIGH",
+            "rationale": "Capacité d’évacuation dépend du nombre et de la largeur des issues"
+          }
+        ]
+      },
+      {
+        "slug": "erp-degagement-horizontal",
+        "name": "Dégagement horizontal",
+        "assetType": "ZONE",
+        "category": "TANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTED",
+        "description": "Couloir / circulation horizontale participant au calcul des dégagements.",
+        "tags": ["erp", "degagement"],
+        "recommendedThreats": [
+          {
+            "slug": "erp-issue-obstruction",
+            "relevance": "HIGH",
+            "rationale": "Stockage / mobilier réduit la largeur utile"
+          }
+        ]
+      },
+      {
+        "slug": "erp-porte-secours",
+        "name": "Porte d’issue de secours",
+        "assetType": "EQUIPMENT",
+        "category": "TANGIBLE",
+        "defaultCriticality": 5,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Porte et dispositif d’ouverture (barre anti-panique, etc.).",
+        "tags": ["erp", "issue", "porte"],
+        "recommendedThreats": [
+          {
+            "slug": "erp-issue-obstruction",
+            "relevance": "HIGH",
+            "rationale": "Verrouillage illégal ou encombrement côté issue"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "erp-issue-obstruction",
+        "scenarioName": "Obstruction / inutilisabilité d’une issue",
+        "adversaryType": "OPPORTUNIST",
+        "actionType": "DISRUPTION",
+        "adversaryProfile": {
+          "capability": "low",
+          "motivation": "confort exploitation / négligence",
+          "resources": "mobilier, stock, chaînes",
+          "insiderKnowledge": true
+        },
+        "typicalActions": [
+          "Entreposer devant l’issue",
+          "Chaîner / verrouiller hors consignes",
+          "Réduire la largeur utile"
+        ],
+        "targetAssetTypes": ["ZONE", "EQUIPMENT", "ROOM"],
+        "indicators": [
+          "Photo visite",
+          "Mesure largeur < attendu",
+          "Signalétique masquée"
+        ],
+        "suggestedLikelihood": 4,
+        "csmpUnitReference": "Unit 6"
+      },
+      {
+        "slug": "erp-panique-evacuation",
+        "scenarioName": "Évacuation dégradée / panique",
+        "adversaryType": "NATURAL",
+        "actionType": "DISRUPTION",
+        "adversaryProfile": {
+          "capability": "n/a",
+          "motivation": "incendie / alarme / afflux",
+          "resources": "n/a",
+          "insiderKnowledge": false
+        },
+        "typicalActions": [
+          "Afflux vers issues insuffisantes",
+          "Balisage absent",
+          "Issues non ouvrables sous stress"
+        ],
+        "targetAssetTypes": ["SITE", "BUILDING", "ZONE"],
+        "indicators": [
+          "Calcul dégagements insuffisant",
+          "Exercice évacuation échoué",
+          "Plaintes usagers"
+        ],
+        "suggestedLikelihood": 3,
+        "csmpUnitReference": "Unit 6"
+      }
+    ]
+  },
+  {
+    "slug": "mod-evacuation",
+    "name": "Évacuation",
+    "description": "Cheminements, balisage, points de rassemblement et consignes d’évacuation.",
+    "icon": "Route",
+    "sortOrder": 30,
+    "assets": [
+      {
+        "slug": "erp-balisage-evacuation",
+        "name": "Balisage d’évacuation",
+        "assetType": "EQUIPMENT",
+        "category": "TANGIBLE",
+        "defaultCriticality": 3,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Signalétique et éclairage de balisage sur cheminements.",
+        "tags": ["erp", "evacuation", "balisage"],
+        "recommendedThreats": [
+          {
+            "slug": "erp-panique-evacuation",
+            "relevance": "HIGH",
+            "rationale": "Balisage défaillant augmente le risque de panique"
+          }
+        ]
+      },
+      {
+        "slug": "erp-point-rassemblement",
+        "name": "Point de rassemblement",
+        "assetType": "ZONE",
+        "category": "TANGIBLE",
+        "defaultCriticality": 2,
+        "defaultAssetRole": "PROTECTED",
+        "description": "Zone extérieure de regroupement après évacuation.",
+        "tags": ["erp", "evacuation"],
+        "recommendedThreats": [
+          {
+            "slug": "erp-panique-evacuation",
+            "relevance": "MEDIUM",
+            "rationale": "Absence de point clair retarde le comptage et la reprise"
+          }
+        ]
+      }
+    ],
+    "threats": []
+  },
+  {
+    "slug": "mod-moyens",
+    "name": "Moyens de secours",
+    "description": "Extincteurs, RIA et moyens de première intervention.",
+    "icon": "Flame",
+    "sortOrder": 40,
+    "assets": [
+      {
+        "slug": "erp-extincteur",
+        "name": "Extincteur",
+        "assetType": "EQUIPMENT",
+        "category": "TANGIBLE",
+        "defaultCriticality": 3,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Appareil d’extinction — présence, accessibilité, dates de vérification.",
+        "tags": ["erp", "moyens", "extincteur"],
+        "recommendedThreats": [
+          {
+            "slug": "erp-incendie-propagation",
+            "relevance": "HIGH",
+            "rationale": "Moyen absent ou périmé réduit la première intervention"
+          }
+        ]
+      },
+      {
+        "slug": "erp-ria",
+        "name": "Robinets d’incendie armés (RIA)",
+        "assetType": "EQUIPMENT",
+        "category": "TANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "RIA — signalétique, accessibilité, essais.",
+        "tags": ["erp", "moyens", "ria"],
+        "recommendedThreats": [
+          {
+            "slug": "erp-incendie-propagation",
+            "relevance": "HIGH",
+            "rationale": "RIA inaccessible ou hors service"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "erp-incendie-propagation",
+        "scenarioName": "Incendie / propagation faute de moyens",
+        "adversaryType": "NATURAL",
+        "actionType": "ARSON",
+        "adversaryProfile": {
+          "capability": "n/a",
+          "motivation": "incendie accidentel ou malveillance",
+          "resources": "source d’ignition",
+          "insiderKnowledge": false
+        },
+        "typicalActions": [
+          "Départ de feu",
+          "Propagation faute d’intervention rapide",
+          "Enfumage des circulations"
+        ],
+        "targetAssetTypes": ["BUILDING", "ROOM", "ZONE", "EQUIPMENT"],
+        "indicators": [
+          "Extincteurs périmés",
+          "RIA hors service",
+          "Absence de moyen dans une zone à risque"
+        ],
+        "suggestedLikelihood": 3,
+        "csmpUnitReference": "Unit 6"
+      }
+    ]
+  },
+  {
+    "slug": "mod-ssi",
+    "name": "SSI & alarme",
+    "description": "Systèmes de sécurité incendie, détection, alarme et désenfumage associé.",
+    "icon": "Siren",
+    "sortOrder": 50,
+    "assets": [
+      {
+        "slug": "erp-ssi-centrale",
+        "name": "Centrale SSI / alarme",
+        "assetType": "SYSTEM",
+        "category": "TANGIBLE",
+        "defaultCriticality": 5,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Centrale de détection / alarme incendie et supervision associée.",
+        "tags": ["erp", "ssi", "alarme"],
+        "recommendedThreats": [
+          {
+            "slug": "erp-ssi-defaillance",
+            "relevance": "HIGH",
+            "rationale": "Défaillance SSI = non-détection / non-alarme en situation réelle"
+          }
+        ]
+      },
+      {
+        "slug": "erp-detecteur",
+        "name": "Détecteur incendie",
+        "assetType": "EQUIPMENT",
+        "category": "TANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Point de détection (fumée, chaleur…) rattaché au SSI.",
+        "tags": ["erp", "ssi"],
+        "recommendedThreats": [
+          {
+            "slug": "erp-ssi-defaillance",
+            "relevance": "HIGH",
+            "rationale": "Détecteur isolé / masqué / en défaut"
+          }
+        ]
+      },
+      {
+        "slug": "erp-desenfumage",
+        "name": "Désenfumage",
+        "assetType": "EQUIPMENT",
+        "category": "TANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Dispositif de désenfumage (naturel ou mécanique) — essais et maintenance.",
+        "tags": ["erp", "ssi", "desenfumage"],
+        "recommendedThreats": [
+          {
+            "slug": "erp-ssi-defaillance",
+            "relevance": "MEDIUM",
+            "rationale": "Désenfumage non fonctionnel en essai"
+          },
+          {
+            "slug": "erp-incendie-propagation",
+            "relevance": "HIGH",
+            "rationale": "Enfumage des dégagements"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "erp-ssi-defaillance",
+        "scenarioName": "Défaillance SSI / alarme / désenfumage",
+        "adversaryType": "NATURAL",
+        "actionType": "DISRUPTION",
+        "adversaryProfile": {
+          "capability": "n/a",
+          "motivation": "panne / maintenance défaillante",
+          "resources": "n/a",
+          "insiderKnowledge": false
+        },
+        "typicalActions": [
+          "Alarme muette",
+          "Boucle en défaut non traitée",
+          "Commande désenfumage inopérante"
+        ],
+        "targetAssetTypes": ["SYSTEM", "EQUIPMENT"],
+        "indicators": [
+          "PV d’essai absent ou négatif",
+          "Voyants défaut permanents",
+          "Maintenance hors délai"
+        ],
+        "suggestedLikelihood": 3,
+        "csmpUnitReference": "Unit 6"
+      }
+    ]
+  },
+  {
+    "slug": "mod-registre",
+    "name": "Registre de sécurité",
+    "description": "Tenue du registre, visas, vérifications périodiques.",
+    "icon": "BookOpen",
+    "sortOrder": 60,
+    "assets": [
+      {
+        "slug": "erp-registre-securite",
+        "name": "Registre de sécurité",
+        "assetType": "INFORMATION",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTED",
+        "description": "Registre de sécurité de l’établissement — présence, complétude, visas.",
+        "tags": ["erp", "registre"],
+        "recommendedThreats": [
+          {
+            "slug": "erp-registre-lacunes",
+            "relevance": "HIGH",
+            "rationale": "Registre incomplet = constat fréquent en commission"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "erp-registre-lacunes",
+        "scenarioName": "Registre incomplet / non tenu",
+        "adversaryType": "INSIDER",
+        "actionType": "FRAUD",
+        "adversaryProfile": {
+          "capability": "low",
+          "motivation": "négligence administrative",
+          "resources": "n/a",
+          "insiderKnowledge": true
+        },
+        "typicalActions": [
+          "Omettre visas",
+          "Ne pas consigner essais",
+          "Registre introuvable le jour J"
+        ],
+        "targetAssetTypes": ["INFORMATION"],
+        "indicators": [
+          "Pages manquantes",
+          "Dates de vérif périmées",
+          "Absence de signature"
+        ],
+        "suggestedLikelihood": 4,
+        "csmpUnitReference": "Unit 7"
+      }
+    ]
+  },
+  {
+    "slug": "mod-dossier",
+    "name": "Dossier pré-commission",
+    "description": "Complétude du dossier administratif et technique avant passage en commission.",
+    "icon": "FolderOpen",
+    "sortOrder": 70,
+    "assets": [
+      {
+        "slug": "erp-dossier-commission",
+        "name": "Dossier de commission",
+        "assetType": "INFORMATION",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTED",
+        "description": "Ensemble des pièces attendues (plans, notices, attestations).",
+        "tags": ["erp", "precom", "dossier"],
+        "recommendedThreats": [
+          {
+            "slug": "erp-dossier-incomplet",
+            "relevance": "HIGH",
+            "rationale": "Dossier incomplet retarde ou compromet l’avis"
+          }
+        ]
+      },
+      {
+        "slug": "erp-jeu-plans",
+        "name": "Jeu de plans / notices",
+        "assetType": "INFORMATION",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 3,
+        "defaultAssetRole": "PROTECTED",
+        "description": "Plans et notices de sécurité à jour et cohérents avec le site.",
+        "tags": ["erp", "plans"],
+        "recommendedThreats": [
+          {
+            "slug": "erp-dossier-incomplet",
+            "relevance": "HIGH",
+            "rationale": "Plans absents ou non conformes à l’existant"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "erp-dossier-incomplet",
+        "scenarioName": "Dossier de commission incomplet",
+        "adversaryType": "INSIDER",
+        "actionType": "DISRUPTION",
+        "adversaryProfile": {
+          "capability": "low",
+          "motivation": "retard de constitution",
+          "resources": "n/a",
+          "insiderKnowledge": true
+        },
+        "typicalActions": [
+          "Omettre attestations",
+          "Fournir plans obsolètes",
+          "Notices manquantes"
+        ],
+        "targetAssetTypes": ["INFORMATION"],
+        "indicators": [
+          "Checklist dossier non remplie",
+          "Écart plans vs visite",
+          "Pièces hors délai"
+        ],
+        "suggestedLikelihood": 3,
+        "csmpUnitReference": "Unit 1"
+      }
+    ]
+  },
+  {
+    "slug": "mod-essais",
+    "name": "Essais & PV",
+    "description": "Preuves d’essais fonctionnels (SSI, désenfumage, moyens) avant / pour la commission.",
+    "icon": "ClipboardCheck",
+    "sortOrder": 80,
+    "assets": [
+      {
+        "slug": "erp-pv-essais",
+        "name": "PV d’essais",
+        "assetType": "INFORMATION",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTED",
+        "description": "Procès-verbaux d’essais SSI / désenfumage / moyens.",
+        "tags": ["erp", "essais", "pv"],
+        "recommendedThreats": [
+          {
+            "slug": "erp-ssi-defaillance",
+            "relevance": "HIGH",
+            "rationale": "Sans PV récents, la conformité fonctionnelle n’est pas démontrable"
+          },
+          {
+            "slug": "erp-dossier-incomplet",
+            "relevance": "MEDIUM",
+            "rationale": "PV manquants = pièce dossier absente"
+          }
+        ]
+      }
+    ],
+    "threats": []
+  },
+  {
+    "slug": "mod-dp-r",
+    "name": "DP type R (enseignement / formation)",
+    "description": "Dispositions particulières type R (R 1–R 33) — éveil, enseignement, formation, centres de vacances/loisirs. Croiser DG + chapitre type. Ref LEGISCTA000020334983.",
+    "icon": "GraduationCap",
+    "sortOrder": 90,
+    "assets": [
+      {
+        "slug": "erp-dp-r-chapitre",
+        "name": "Chapitre DP type R",
+        "assetType": "INFORMATION",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTED",
+        "description": "Synthèse / checklist des DP type R applicables au site (hors évaluation article-atomique).",
+        "tags": ["erp", "dp", "type-r", "fr-precom"],
+        "recommendedThreats": [
+          {
+            "slug": "erp-dp-non-croisees",
+            "relevance": "HIGH",
+            "rationale": "Omettre le chapitre type R laisse des exigences spécifiques hors radar précom"
+          }
+        ]
+      },
+      {
+        "slug": "erp-activite-formation",
+        "name": "Activité enseignement / formation",
+        "assetType": "PROCESS",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 3,
+        "defaultAssetRole": "PROTECTED",
+        "description": "Activité relevant du champ R 1 (enseignement/formation…).",
+        "tags": ["erp", "dp", "type-r"],
+        "recommendedThreats": [
+          {
+            "slug": "erp-dp-non-croisees",
+            "relevance": "MEDIUM",
+            "rationale": "Usage formation hors type déclaré ou DP non appliquées"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "erp-dp-non-croisees",
+        "scenarioName": "DP du type ERP non croisées",
+        "adversaryType": "INSIDER",
+        "actionType": "FRAUD",
+        "adversaryProfile": {
+          "capability": "medium",
+          "motivation": "négligence / focus DG seulement",
+          "resources": "connaissance partielle RS",
+          "insiderKnowledge": true
+        },
+        "typicalActions": [
+          "Se limiter aux dispositions générales",
+          "Ignorer le chapitre type sur Légifrance",
+          "Ne pas croiser activité réelle vs R 1 / N 1"
+        ],
+        "targetAssetTypes": ["INFORMATION", "PROCESS", "SITE"],
+        "indicators": [
+          "Aucun rappel chapitre DP dans le dossier",
+          "Écart activité vs type GN 1",
+          "Prescriptions type-spécifiques non anticipées"
+        ],
+        "suggestedLikelihood": 3,
+        "csmpUnitReference": "Unit 2"
+      }
+    ]
+  },
+  {
+    "slug": "mod-dp-n",
+    "name": "DP type N (restaurants / débits)",
+    "description": "Dispositions particulières type N (N 1–N 20) — restaurants et débits de boissons. Croiser DG + chapitre type. Ref LEGISCTA000020334913.",
+    "icon": "UtensilsCrossed",
+    "sortOrder": 91,
+    "assets": [
+      {
+        "slug": "erp-dp-n-chapitre",
+        "name": "Chapitre DP type N",
+        "assetType": "INFORMATION",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTED",
+        "description": "Synthèse / checklist des DP type N applicables au site.",
+        "tags": ["erp", "dp", "type-n", "fr-precom"],
+        "recommendedThreats": [
+          {
+            "slug": "erp-dp-non-croisees",
+            "relevance": "HIGH",
+            "rationale": "Type N a des exigences spécifiques (cuisines, etc.) hors DG"
+          }
+        ]
+      }
+    ],
+    "threats": []
+  },
+  {
+    "slug": "mod-ssiap",
+    "name": "Service SSIAP",
+    "description": "Service de sécurité incendie (MS 45–52) + qualification SSIAP (arrêté 2 mai 2005). Checklist opérationnelle — pas de calcul d’effectif opposable.",
+    "icon": "Shield",
+    "sortOrder": 95,
+    "assets": [
+      {
+        "slug": "erp-service-securite",
+        "name": "Service de sécurité incendie",
+        "assetType": "PROCESS",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 5,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Organisation du service de sécurité pendant présence du public (MS 45–46).",
+        "tags": ["erp", "ssiap", "fr-precom"],
+        "recommendedThreats": [
+          {
+            "slug": "erp-ssiap-deficit",
+            "relevance": "HIGH",
+            "rationale": "Absence ou sous-effectif du service = constat commission fréquent"
+          }
+        ]
+      },
+      {
+        "slug": "erp-agents-ssiap",
+        "name": "Agents SSIAP",
+        "assetType": "PERSON",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Personnel permanent qualifié SSIAP 1/2/3 selon missions (arrêté 2/05/2005).",
+        "tags": ["erp", "ssiap"],
+        "recommendedThreats": [
+          {
+            "slug": "erp-ssiap-deficit",
+            "relevance": "HIGH",
+            "rationale": "Qualification / présence non démontrées"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "erp-ssiap-deficit",
+        "scenarioName": "Service SSIAP absent / sous-dimensionné / non qualifié",
+        "adversaryType": "INSIDER",
+        "actionType": "DISRUPTION",
+        "adversaryProfile": {
+          "capability": "low",
+          "motivation": "coût / recrutement",
+          "resources": "n/a",
+          "insiderKnowledge": true
+        },
+        "typicalActions": [
+          "Pas de service pendant présence public",
+          "Agents non titulaires SSIAP",
+          "Planning incomplet"
+        ],
+        "targetAssetTypes": ["PROCESS", "PERSON"],
+        "indicators": [
+          "Aucun agent présent",
+          "Diplômes / attestations absents",
+          "Écart vs MS 46 / type-catégorie"
+        ],
+        "suggestedLikelihood": 3,
+        "csmpUnitReference": "Unit 7"
+      }
+    ]
+  }
+]

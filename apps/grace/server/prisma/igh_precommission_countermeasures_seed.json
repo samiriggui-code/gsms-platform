@@ -1,0 +1,158 @@
+{
+  "countermeasure_templates": [
+    {
+      "moduleSlug": "mod-igh-classement",
+      "slug": "cm-igh-classement-coherent",
+      "name": "Classement IGH cohérent (usage + hauteur)",
+      "description": "Mesure du plancher bas du dernier niveau et usage réel alignés sur la déclaration (R146-3 / R146-4). Mise à jour si travaux.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": ["DETECT"],
+      "domain": "PERSONNEL",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["igh", "classement", "fr-precom"],
+      "csmpUnitReference": "Unit 2"
+    },
+    {
+      "moduleSlug": "mod-igh-compartimentage",
+      "slug": "cm-igh-compartimentage-entier",
+      "name": "Compartimentage IGH entier (calfeutrements, portes CF)",
+      "description": "Percements repris, portes CF opérationnelles, isolements visés — principes R146-9 / R146-10 (pas les largeurs CO ERP).",
+      "shapeCategory": "ARCHITECTURAL",
+      "ppsFunctions": ["DELAY", "DENY"],
+      "domain": "BUILDING",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["igh", "compartimentage"],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "mod-igh-evacuation",
+      "slug": "cm-igh-refuges-cages-libres",
+      "name": "Refuges et cages IGH libres et signalés",
+      "description": "Cages d’escalier praticables, refuges non encombrés, consignes affichées.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": ["DETER", "DELAY"],
+      "domain": "ACCESS",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["igh", "evacuation", "refuge"],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "mod-igh-moyens",
+      "slug": "cm-igh-colonne-operationnelle",
+      "name": "Colonnes et accès secours IGH opérationnels",
+      "description": "Colonnes essayées, vannes accessibles, accès engins / locaux pompiers libres.",
+      "shapeCategory": "EQUIPMENT",
+      "ppsFunctions": ["DEFEAT", "RECOVER"],
+      "domain": "BUILDING",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["igh", "colonne", "moyens"],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "mod-igh-ssi",
+      "slug": "cm-igh-ssi-maintenu",
+      "name": "SSI IGH maintenu et journalisé",
+      "description": "Contrat maintenance, défauts levés, journal SSI disponible pour la commission.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": ["DETECT", "RECOVER"],
+      "domain": "BUILDING",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["igh", "ssi"],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "mod-igh-exploitation",
+      "slug": "cm-igh-registre-service",
+      "name": "Registre IGH tenu + service de sécurité unique",
+      "description": "Registre (R146-29 / R146-35) et service de sécurité unique (R146-23), SSIAP le cas échéant.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": ["DETECT", "RECOVER"],
+      "domain": "PERSONNEL",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["igh", "exploitation", "registre"],
+      "csmpUnitReference": "Unit 7"
+    },
+    {
+      "moduleSlug": "mod-igh-dossier",
+      "slug": "cm-igh-dossier-complet",
+      "name": "Dossier commission IGH complet et à jour",
+      "description": "Plans, notice technique, attestations alignés sur l’état visité (orientation R146-14).",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": ["DETECT"],
+      "domain": "PERSONNEL",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "ACCEPT",
+      "tags": ["igh", "dossier", "commission"],
+      "csmpUnitReference": "Unit 1"
+    },
+    {
+      "moduleSlug": "mod-igh-essais",
+      "slug": "cm-igh-pv-essais",
+      "name": "PV d’essais IGH dans les délais",
+      "description": "Vérifications par personne / organisme agréé (R146-20) — SSI, désenfumage, colonnes, interphonie le cas échéant.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": ["DETECT", "RECOVER"],
+      "domain": "BUILDING",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["igh", "essais"],
+      "csmpUnitReference": "Unit 6"
+    }
+  ],
+  "threat_countermeasures": [
+    {
+      "threatSlug": "igh-sous-classement",
+      "countermeasureSlug": "cm-igh-classement-coherent",
+      "relevance": "HIGH",
+      "rationale": "Revue usage + hauteur aligne déclaration et réalité"
+    },
+    {
+      "threatSlug": "igh-compartiment-perce",
+      "countermeasureSlug": "cm-igh-compartimentage-entier",
+      "relevance": "HIGH",
+      "rationale": "Calfeutrements et portes CF limitent la propagation"
+    },
+    {
+      "threatSlug": "igh-refuge-inaccessible",
+      "countermeasureSlug": "cm-igh-refuges-cages-libres",
+      "relevance": "HIGH",
+      "rationale": "Cages et refuges libres = évacuation IGH praticable"
+    },
+    {
+      "threatSlug": "igh-colonne-hs",
+      "countermeasureSlug": "cm-igh-colonne-operationnelle",
+      "relevance": "HIGH",
+      "rationale": "Colonnes et accès pompiers opérationnels"
+    },
+    {
+      "threatSlug": "igh-ssi-defaillant",
+      "countermeasureSlug": "cm-igh-ssi-maintenu",
+      "relevance": "HIGH",
+      "rationale": "Maintenance + journal = principal levier SSI IGH"
+    },
+    {
+      "threatSlug": "igh-exploitation-derive",
+      "countermeasureSlug": "cm-igh-registre-service",
+      "relevance": "HIGH",
+      "rationale": "Registre et service unique rendent l’exploitation traçable"
+    },
+    {
+      "threatSlug": "igh-dossier-incomplet",
+      "countermeasureSlug": "cm-igh-dossier-complet",
+      "relevance": "HIGH",
+      "rationale": "Checklist pièces réduit les reports de commission"
+    },
+    {
+      "threatSlug": "igh-essais-absents",
+      "countermeasureSlug": "cm-igh-pv-essais",
+      "relevance": "HIGH",
+      "rationale": "PV datés = preuve de fonctionnement pour la commission"
+    }
+  ]
+}

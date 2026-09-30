@@ -1,0 +1,324 @@
+[
+  {
+    "slug": "mod-cnaps-agrement",
+    "name": "Agrément & autorisation CNAPS",
+    "description": "Autorisation d’exercice de la personne morale et agrément des dirigeants (CSI livre VI).",
+    "icon": "BadgeCheck",
+    "sortOrder": 10,
+    "assets": [
+      {
+        "slug": "cnaps-org",
+        "name": "Entreprise de sécurité privée",
+        "assetType": "PROCESS",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 5,
+        "defaultAssetRole": "PROTECTED",
+        "description": "Personne morale exerçant une activité privée de sécurité — nœud racine du pack.",
+        "tags": ["cnaps", "agrement", "sec-privee"],
+        "recommendedThreats": [
+          {
+            "slug": "cnaps-agrement-expire",
+            "relevance": "HIGH",
+            "rationale": "Sans autorisation / agrément valides l’activité est illicite"
+          }
+        ]
+      },
+      {
+        "slug": "cnaps-agrement-doc",
+        "name": "Dossier agrément / autorisation CNAPS",
+        "assetType": "INFORMATION",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 5,
+        "defaultAssetRole": "PROTECTIVE",
+        "parentSlug": "cnaps-org",
+        "description": "Extraits, arrêtés, dates de validité CNAPS.",
+        "tags": ["cnaps", "agrement"],
+        "recommendedThreats": [
+          {
+            "slug": "cnaps-agrement-expire",
+            "relevance": "HIGH",
+            "rationale": "Pièces périmées ou incomplètes"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "cnaps-agrement-expire",
+        "scenarioName": "Autorisation / agrément CNAPS absent, périmé ou hors activité",
+        "adversaryType": "INSIDER",
+        "actionType": "FRAUD",
+        "adversaryProfile": {
+          "capability": "low",
+          "motivation": "continuer d’exploiter",
+          "resources": "dossier administratif",
+          "insiderKnowledge": true
+        },
+        "typicalActions": ["Omettre un renouvellement", "Exercer hors activités autorisées"],
+        "targetAssetTypes": ["PROCESS", "INFORMATION"],
+        "indicators": ["Date d’échéance", "Activités L611 vs contrat"],
+        "suggestedLikelihood": 2,
+        "csmpUnitReference": "Unit 2"
+      }
+    ]
+  },
+  {
+    "slug": "mod-cnaps-cartes-pro",
+    "name": "Cartes professionnelles",
+    "description": "Agents munis d’une carte pro valide, registre, port apparent.",
+    "icon": "IdCard",
+    "sortOrder": 20,
+    "assets": [
+      {
+        "slug": "cnaps-carte-pro",
+        "name": "Carte professionnelle agent",
+        "assetType": "INFORMATION",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 5,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Titre individuel d’exercice (carte pro CNAPS).",
+        "tags": ["cnaps", "carte-pro"],
+        "recommendedThreats": [
+          {
+            "slug": "cnaps-agent-sans-carte",
+            "relevance": "HIGH",
+            "rationale": "Agent sans carte = exercice illicite"
+          }
+        ]
+      },
+      {
+        "slug": "cnaps-registre-agents",
+        "name": "Registre des agents / cartes",
+        "assetType": "INFORMATION",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Suivi nominatif des cartes, échéances, affectations.",
+        "tags": ["cnaps", "registre"],
+        "recommendedThreats": [
+          {
+            "slug": "cnaps-agent-sans-carte",
+            "relevance": "HIGH",
+            "rationale": "Sans registre, les échéances passent inaperçues"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "cnaps-agent-sans-carte",
+        "scenarioName": "Agent en poste sans carte professionnelle valide",
+        "adversaryType": "INSIDER",
+        "actionType": "FRAUD",
+        "adversaryProfile": {
+          "capability": "low",
+          "motivation": "couvrir un poste",
+          "resources": "planning",
+          "insiderKnowledge": true
+        },
+        "typicalActions": ["Affecter un stagiaire non titulaire", "Carte expirée non retirée"],
+        "targetAssetTypes": ["PERSON", "INFORMATION", "PROCESS"],
+        "indicators": ["Planning vs registre cartes", "Contrôle terrain"],
+        "suggestedLikelihood": 3,
+        "csmpUnitReference": "Unit 7"
+      }
+    ]
+  },
+  {
+    "slug": "mod-cnaps-contrats",
+    "name": "Contrats & consignes client",
+    "description": "Périmètre de mission, consignes de poste, donneur d’ordre.",
+    "icon": "FileText",
+    "sortOrder": 30,
+    "assets": [
+      {
+        "slug": "cnaps-contrat",
+        "name": "Contrat de prestation de sécurité",
+        "assetType": "INFORMATION",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Contrat client : sites, horaires, missions, limites.",
+        "tags": ["cnaps", "contrat"],
+        "recommendedThreats": [
+          {
+            "slug": "cnaps-mission-floue",
+            "relevance": "HIGH",
+            "rationale": "Mission floue = hors périmètre ou sous-effectif caché"
+          }
+        ]
+      },
+      {
+        "slug": "cnaps-consignes",
+        "name": "Consignes de poste",
+        "assetType": "INFORMATION",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Fiches de poste / consignes site remises à l’agent.",
+        "tags": ["cnaps", "consignes"],
+        "recommendedThreats": [
+          {
+            "slug": "cnaps-mission-floue",
+            "relevance": "MEDIUM",
+            "rationale": "Sans consignes l’agent improvise"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "cnaps-mission-floue",
+        "scenarioName": "Périmètre de mission flou ou hors activités autorisées",
+        "adversaryType": "INSIDER",
+        "actionType": "FRAUD",
+        "adversaryProfile": {
+          "capability": "medium",
+          "motivation": "étendre la mission",
+          "resources": "contrat",
+          "insiderKnowledge": true
+        },
+        "typicalActions": ["Gardiennage + missions non autorisées", "Consignes orales seulement"],
+        "targetAssetTypes": ["INFORMATION", "PROCESS"],
+        "indicators": ["Écart contrat vs L611", "Consignes absentes"],
+        "suggestedLikelihood": 3,
+        "csmpUnitReference": "Unit 2"
+      }
+    ]
+  },
+  {
+    "slug": "mod-cnaps-formation",
+    "name": "Formation & recyclage",
+    "description": "Formation initiale / continue liée au renouvellement de carte — preuves dans GSMS School, pas un LMS Grace.",
+    "icon": "GraduationCap",
+    "sortOrder": 40,
+    "assets": [
+      {
+        "slug": "cnaps-attestations-formation",
+        "name": "Attestations de formation CNAPS",
+        "assetType": "INFORMATION",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Preuves de formation continue (CSI L612-20-1). Cible School, pas le risk engine.",
+        "tags": ["cnaps", "formation", "school"],
+        "recommendedThreats": [
+          {
+            "slug": "cnaps-formation-lapse",
+            "relevance": "HIGH",
+            "rationale": "Sans formation continue le renouvellement de carte est bloqué"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "cnaps-formation-lapse",
+        "scenarioName": "Formation continue CNAPS non suivie / non tracée",
+        "adversaryType": "INSIDER",
+        "actionType": "DISRUPTION",
+        "adversaryProfile": {
+          "capability": "low",
+          "motivation": "négligence RH",
+          "resources": "planning formation",
+          "insiderKnowledge": true
+        },
+        "typicalActions": ["Recyclage oublié", "Attestations hors School"],
+        "targetAssetTypes": ["INFORMATION", "PERSON"],
+        "indicators": ["Échéance carte vs session School"],
+        "suggestedLikelihood": 3,
+        "csmpUnitReference": "Unit 7"
+      }
+    ]
+  },
+  {
+    "slug": "mod-cnaps-materiel",
+    "name": "Dotation & tenue",
+    "description": "Tenue, signes distinctifs, matériel de mission — conformité d’usage, pas Physsec portes/CCTV.",
+    "icon": "Shirt",
+    "sortOrder": 50,
+    "assets": [
+      {
+        "slug": "cnaps-tenue",
+        "name": "Tenue / signes distinctifs",
+        "assetType": "EQUIPMENT",
+        "category": "TANGIBLE",
+        "defaultCriticality": 3,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Tenue d’agent et signes ne prêtant pas à confusion avec un service public.",
+        "tags": ["cnaps", "tenue"],
+        "recommendedThreats": [
+          {
+            "slug": "cnaps-tenue-non-conforme",
+            "relevance": "MEDIUM",
+            "rationale": "Confusion avec force publique / image illicite"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "cnaps-tenue-non-conforme",
+        "scenarioName": "Tenue ou matériel prêtant à confusion / hors mission",
+        "adversaryType": "INSIDER",
+        "actionType": "FRAUD",
+        "adversaryProfile": {
+          "capability": "low",
+          "motivation": "apparence d’autorité",
+          "resources": "dotation",
+          "insiderKnowledge": true
+        },
+        "typicalActions": ["Insignes type police", "Matériel non inventorié"],
+        "targetAssetTypes": ["EQUIPMENT", "PERSON"],
+        "indicators": ["Photos tenue", "Inventaire"],
+        "suggestedLikelihood": 2,
+        "csmpUnitReference": "Unit 6"
+      }
+    ]
+  },
+  {
+    "slug": "mod-cnaps-sous-traitance",
+    "name": "Sous-traitance",
+    "description": "Prestataires eux-mêmes agréés ; chaîne de sous-traitance traçable.",
+    "icon": "Network",
+    "sortOrder": 60,
+    "assets": [
+      {
+        "slug": "cnaps-sous-traitant",
+        "name": "Sous-traitant sécurité privée",
+        "assetType": "PROCESS",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTED",
+        "description": "Entreprise sous-traitante sur le même périmètre de mission.",
+        "tags": ["cnaps", "sous-traitance"],
+        "recommendedThreats": [
+          {
+            "slug": "cnaps-sous-traitance-opaque",
+            "relevance": "HIGH",
+            "rationale": "Sous-traitant non agréé = même risque d’exercice illicite"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "cnaps-sous-traitance-opaque",
+        "scenarioName": "Sous-traitance non agréée ou non tracée",
+        "adversaryType": "INSIDER",
+        "actionType": "FRAUD",
+        "adversaryProfile": {
+          "capability": "medium",
+          "motivation": "coût / couverture",
+          "resources": "réseau prestataires",
+          "insiderKnowledge": true
+        },
+        "typicalActions": ["Prêter-nom", "Agents d’un tiers sans contrat"],
+        "targetAssetTypes": ["PROCESS", "INFORMATION"],
+        "indicators": ["Liste sous-traitants vs CNAPS"],
+        "suggestedLikelihood": 3,
+        "csmpUnitReference": "Unit 2"
+      }
+    ]
+  }
+]

@@ -1,0 +1,38 @@
+# TenderAI MCP — VPS Hostinger + Traefik
+# Smoke: http://187.77.166.124:8090/mcp — DNS A mcp après GO
+name: gsms-mcp
+
+services:
+  mcp:
+    build:
+      context: ../..
+      dockerfile: deploy/vps/Dockerfile
+    container_name: gsms-tenderai-mcp
+    restart: unless-stopped
+    env_file:
+      - ../../.env
+    environment:
+      TRANSPORT: http
+      HOST: 0.0.0.0
+      PORT: '8090'
+    ports:
+      - '8090:8090'
+    volumes:
+      - gsms_mcp_db:/opt/tenderai/db
+      - gsms_mcp_data:/opt/tenderai/data
+    networks:
+      - mcp
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.mcp.entrypoints=websecure
+      - traefik.http.routers.mcp.rule=Host(`mcp.global-it-ss.com`)
+      - traefik.http.routers.mcp.tls.certresolver=letsencrypt
+      - traefik.http.services.mcp.loadbalancer.server.port=8090
+
+volumes:
+  gsms_mcp_db:
+  gsms_mcp_data:
+
+networks:
+  mcp:
+    name: gsms-mcp

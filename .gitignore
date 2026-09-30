@@ -1,0 +1,28 @@
+# Dépendances et builds
+node_modules/
+.next/
+dist/
+build/
+.turbo/
+coverage/
+.cache/
+target/
+.venv/
+venv/
+__pycache__/
+*.log
+
+# Secrets : seuls les modèles .env.example sont publiés
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+
+# Archives et fichiers temporaires
+*.tgz
+*.zip
+tmp-*
+.claude/
+*.log.err
+NUL

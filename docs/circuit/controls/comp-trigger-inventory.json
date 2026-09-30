@@ -1,0 +1,438 @@
+{
+  "version": "0.1.0",
+  "count": 54,
+  "tasks": [
+    {
+      "exportName": "remediateBatch",
+      "scheduled": false,
+      "id": "remediate-batch",
+      "cron": null,
+      "file": "apps/app/src/trigger/tasks/cloud-security/remediate-batch.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "remediatePreview",
+      "scheduled": false,
+      "id": "remediate-preview",
+      "cron": null,
+      "file": "apps/app/src/trigger/tasks/cloud-security/remediate-preview.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "remediateSingle",
+      "scheduled": false,
+      "id": "remediate-single",
+      "cron": null,
+      "file": "apps/app/src/trigger/tasks/cloud-security/remediate-single.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "createFleetLabelForAllOrgs",
+      "scheduled": false,
+      "id": "create-fleet-label-for-all-orgs",
+      "cron": null,
+      "file": "apps/app/src/trigger/tasks/device/create-fleet-label-for-all-orgs.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "createFleetLabelForOrg",
+      "scheduled": false,
+      "id": "create-fleet-label-for-org",
+      "cron": null,
+      "file": "apps/app/src/trigger/tasks/device/create-fleet-label-for-org.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "flagStaleDevices",
+      "scheduled": true,
+      "id": "flag-stale-devices",
+      "cron": "0 6 * * *",
+      "file": "apps/app/src/trigger/tasks/device/flag-stale-devices.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "sendNewPolicyEmail",
+      "scheduled": false,
+      "id": "send-new-policy-email",
+      "cron": null,
+      "file": "apps/app/src/trigger/tasks/email/new-policy-email.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "sendPublishAllPoliciesEmail",
+      "scheduled": false,
+      "id": "send-publish-all-policies-email",
+      "cron": null,
+      "file": "apps/app/src/trigger/tasks/email/publish-all-policies-email.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "sendWeeklyTaskDigestEmailTask",
+      "scheduled": false,
+      "id": "send-weekly-task-digest-email",
+      "cron": null,
+      "file": "apps/app/src/trigger/tasks/email/weekly-task-digest-email.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "sendIntegrationSchedule",
+      "scheduled": true,
+      "id": "integration-schedule",
+      "cron": "0 5 * * *",
+      "file": "apps/app/src/trigger/tasks/integration/integration-schedule.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "runIntegrationTests",
+      "scheduled": false,
+      "id": "run-integration-tests",
+      "cron": null,
+      "file": "apps/app/src/trigger/tasks/integration/run-integration-tests.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "backfillExecutiveContextAllOrgs",
+      "scheduled": false,
+      "id": "backfill-executive-context-all-orgs",
+      "cron": null,
+      "file": "apps/app/src/trigger/tasks/onboarding/backfill-executive-context-all-orgs.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "backfillTrainingVideosForAllOrgs",
+      "scheduled": false,
+      "id": "backfill-training-videos-for-all-orgs",
+      "cron": null,
+      "file": "apps/app/src/trigger/tasks/onboarding/backfill-training-videos-for-all-orgs.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "backfillTrainingVideosForOrg",
+      "scheduled": false,
+      "id": "backfill-training-videos-for-org",
+      "cron": null,
+      "file": "apps/app/src/trigger/tasks/onboarding/backfill-training-videos-for-org.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "generateFullPolicies",
+      "scheduled": false,
+      "id": "generate-full-policies",
+      "cron": null,
+      "file": "apps/app/src/trigger/tasks/onboarding/generate-full-policies.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "generateRiskMitigation",
+      "scheduled": false,
+      "id": "generate-risk-mitigation",
+      "cron": null,
+      "file": "apps/app/src/trigger/tasks/onboarding/generate-risk-mitigation.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "generateRiskMitigationsForOrg",
+      "scheduled": false,
+      "id": "generate-risk-mitigations-for-org",
+      "cron": null,
+      "file": "apps/app/src/trigger/tasks/onboarding/generate-risk-mitigation.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "generateVendorMitigation",
+      "scheduled": false,
+      "id": "generate-vendor-mitigation",
+      "cron": null,
+      "file": "apps/app/src/trigger/tasks/onboarding/generate-vendor-mitigation.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "generateVendorMitigationsForOrg",
+      "scheduled": false,
+      "id": "generate-vendor-mitigations-for-org",
+      "cron": null,
+      "file": "apps/app/src/trigger/tasks/onboarding/generate-vendor-mitigation.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "initializeOrganizationTask",
+      "scheduled": false,
+      "id": "initialize-organization",
+      "cron": null,
+      "file": "apps/app/src/trigger/tasks/onboarding/initialize-organization.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "linkRisksAndVendorsToWork",
+      "scheduled": false,
+      "id": "link-risks-and-vendors-to-work",
+      "cron": null,
+      "file": "apps/app/src/trigger/tasks/onboarding/link-risks-and-vendors-to-work.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "onboardOrganization",
+      "scheduled": false,
+      "id": "onboard-organization",
+      "cron": null,
+      "file": "apps/app/src/trigger/tasks/onboarding/onboard-organization.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "policyAcknowledgmentDigest",
+      "scheduled": true,
+      "id": "policy-acknowledgment-digest",
+      "cron": "0 14 * * 2",
+      "file": "apps/app/src/trigger/tasks/task/policy-acknowledgment-digest.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "policySchedule",
+      "scheduled": true,
+      "id": "policy-schedule",
+      "cron": "0 */12 * * *",
+      "file": "apps/app/src/trigger/tasks/task/policy-schedule.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "taskSchedule",
+      "scheduled": true,
+      "id": "task-schedule",
+      "cron": "0 */12 * * *",
+      "file": "apps/app/src/trigger/tasks/task/task-schedule.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "weeklyTaskReminder",
+      "scheduled": true,
+      "id": "weekly-task-reminder",
+      "cron": "0 9 * * 1",
+      "file": "apps/app/src/trigger/tasks/task/weekly-task-reminder.ts",
+      "side": "app"
+    },
+    {
+      "exportName": "reconcileBackgroundChecksSchedule",
+      "scheduled": true,
+      "id": "reconcile-background-checks-schedule",
+      "cron": "0 * * * *",
+      "file": "apps/api/src/trigger/background-checks/reconcile-background-checks-schedule.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "analyzeVendorLogin",
+      "scheduled": false,
+      "id": "analyze-vendor-login",
+      "cron": null,
+      "file": "apps/api/src/trigger/browser-automation/analyze-vendor-login.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "executeAutomationLive",
+      "scheduled": false,
+      "id": "execute-automation-live",
+      "cron": null,
+      "file": "apps/api/src/trigger/browser-automation/execute-automation-live.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "runBrowserAutomation",
+      "scheduled": false,
+      "id": "run-browser-automation",
+      "cron": null,
+      "file": "apps/api/src/trigger/browser-automation/run-browser-automation.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "browserAutomationsSchedule",
+      "scheduled": true,
+      "id": "browser-automations-schedule",
+      "cron": "0 5 * * *",
+      "file": "apps/api/src/trigger/browser-automation/run-browser-automations-schedule.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "runOrgBrowserAutomations",
+      "scheduled": false,
+      "id": "run-org-browser-automations",
+      "cron": null,
+      "file": "apps/api/src/trigger/browser-automation/run-org-browser-automations.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "signInVendorProfile",
+      "scheduled": false,
+      "id": "sign-in-vendor-profile",
+      "cron": null,
+      "file": "apps/api/src/trigger/browser-automation/sign-in-vendor-profile.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "testVendorInstruction",
+      "scheduled": false,
+      "id": "test-vendor-instruction",
+      "cron": null,
+      "file": "apps/api/src/trigger/browser-automation/test-vendor-instruction.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "cloudSecuritySchedule",
+      "scheduled": true,
+      "id": "cloud-security-schedule",
+      "cron": "0 5 * * *",
+      "file": "apps/api/src/trigger/cloud-security/cloud-security-schedule.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "runCloudSecurityScan",
+      "scheduled": false,
+      "id": "run-cloud-security-scan",
+      "cron": null,
+      "file": "apps/api/src/trigger/cloud-security/run-cloud-security-scan.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "refreshExpiringTokensSchedule",
+      "scheduled": true,
+      "id": "refresh-expiring-tokens-schedule",
+      "cron": "0 5 * * *",
+      "file": "apps/api/src/trigger/integration-platform/refresh-expiring-tokens-schedule.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "runConnectionChecks",
+      "scheduled": false,
+      "id": "run-connection-checks",
+      "cron": null,
+      "file": "apps/api/src/trigger/integration-platform/run-connection-checks.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "runDeviceSync",
+      "scheduled": false,
+      "id": "run-device-sync",
+      "cron": null,
+      "file": "apps/api/src/trigger/integration-platform/run-device-sync.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "integrationChecksSchedule",
+      "scheduled": true,
+      "id": "integration-checks-schedule",
+      "cron": "0 6 * * *",
+      "file": "apps/api/src/trigger/integration-platform/run-integration-checks-schedule.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "runOrgIntegrationChecks",
+      "scheduled": false,
+      "id": "run-org-integration-checks",
+      "cron": null,
+      "file": "apps/api/src/trigger/integration-platform/run-org-integration-checks.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "runTaskIntegrationChecks",
+      "scheduled": false,
+      "id": "run-task-integration-checks",
+      "cron": null,
+      "file": "apps/api/src/trigger/integration-platform/run-task-integration-checks.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "syncEmployeesSchedule",
+      "scheduled": true,
+      "id": "sync-employees-schedule",
+      "cron": "0 7 * * *",
+      "file": "apps/api/src/trigger/integration-platform/sync-employees-schedule.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "answerQuestionTask",
+      "scheduled": false,
+      "id": "answer-question",
+      "cron": null,
+      "file": "apps/api/src/trigger/questionnaire/answer-question.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "autoAnswerQuestionnaireTask",
+      "scheduled": false,
+      "id": "auto-answer-questionnaire",
+      "cron": null,
+      "file": "apps/api/src/trigger/questionnaire/auto-answer-questionnaire.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "parseQuestionnaireTask",
+      "scheduled": false,
+      "id": "parse-questionnaire",
+      "cron": null,
+      "file": "apps/api/src/trigger/questionnaire/parse-questionnaire.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "migratePoliciesForAllOrgs",
+      "scheduled": false,
+      "id": "migrate-policies-for-all-orgs",
+      "cron": null,
+      "file": "apps/api/src/trigger/tasks/onboarding/migrate-policies-for-all-orgs.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "checkDomainHealthSchedule",
+      "scheduled": true,
+      "id": "trust-portal-check-domain-health",
+      "cron": "0 6 * * *",
+      "file": "apps/api/src/trigger/trust-portal/check-domain-health-schedule.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "deleteAllManualAnswersOrchestratorTask",
+      "scheduled": false,
+      "id": "delete-all-manual-answers-orchestrator",
+      "cron": null,
+      "file": "apps/api/src/trigger/vector-store/delete-all-manual-answers-orchestrator.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "deleteKnowledgeBaseDocumentTask",
+      "scheduled": false,
+      "id": "delete-knowledge-base-document-from-vector",
+      "cron": null,
+      "file": "apps/api/src/trigger/vector-store/delete-knowledge-base-document.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "deleteManualAnswerTask",
+      "scheduled": false,
+      "id": "delete-manual-answer-from-vector",
+      "cron": null,
+      "file": "apps/api/src/trigger/vector-store/delete-manual-answer.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "processKnowledgeBaseDocumentTask",
+      "scheduled": false,
+      "id": "process-knowledge-base-document",
+      "cron": null,
+      "file": "apps/api/src/trigger/vector-store/process-knowledge-base-document.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "processKnowledgeBaseDocumentsOrchestratorTask",
+      "scheduled": false,
+      "id": "process-knowledge-base-documents-orchestrator",
+      "cron": null,
+      "file": "apps/api/src/trigger/vector-store/process-knowledge-base-documents-orchestrator.ts",
+      "side": "api"
+    },
+    {
+      "exportName": "vendorRiskAssessmentMonthlySchedule",
+      "scheduled": true,
+      "id": "vendor-risk-assessment-monthly-schedule",
+      "cron": "0 2 1 * *",
+      "file": "apps/api/src/trigger/vendor/vendor-risk-assessment-monthly-schedule.ts",
+      "side": "api"
+    }
+  ]
+}

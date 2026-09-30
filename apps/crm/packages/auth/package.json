@@ -1,0 +1,33 @@
+{
+	"name": "@crm/auth",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts",
+		"./cookies": "./src/cookies.ts",
+		"./scopes": "./src/scopes.ts",
+		"./workspace": "./src/workspace.ts"
+	},
+	"scripts": {
+		"create-user": "bun scripts/create-user.ts",
+		"check-types": "tsc --noEmit",
+		"lint": "biome check .",
+		"test": "bun test",
+		"clean": "rm -rf .turbo node_modules"
+	},
+	"dependencies": {
+		"@crm/db": "workspace:*",
+		"@crm/env": "workspace:*",
+		"@crm/validation": "workspace:*",
+		"bcrypt": "^6.0.0",
+		"next-auth": "^4.24.11",
+		"zod": "^4.4.3"
+	},
+	"devDependencies": {
+		"@crm/typescript-config": "workspace:*",
+		"@types/bcrypt": "^6.0.0",
+		"@types/node": "^24.10.1",
+		"typescript": "5.9.2"
+	}
+}

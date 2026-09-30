@@ -1,0 +1,39 @@
+FROM oven/bun:1.2-debian
+
+# docker.io gives this container the `docker` CLI, pointed at the host daemon
+# via the socket mounted in docker-compose.yml — eve's sandbox backend needs
+# it to run the research agent's bash/file tools with real network isolation.
+# Without it, eve falls through to its no-isolation just-bash backend.
+#
+# Debian 12's `nodejs` apt package is v18 — too old for prisma's CLI (needs
+# >=20 for require(esm)) and for eve's own CLI, which requires Node >=24.
+# NodeSource's setup script swaps the apt source for a current version first.
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends ca-certificates curl gnupg openssl docker.io \
+	&& curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
+	&& apt-get install -y --no-install-recommends nodejs \
+	&& rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY . .
+
+# @crm/db's postinstall runs `prisma generate`, which only needs DATABASE_URL
+# to resolve (never connects) — a placeholder is enough at build time, the
+# real one comes from the container's env at runtime.
+ENV DATABASE_URL="postgresql://postgres:postgres@localhost:5432/crm?schema=public"
+
+RUN bun install
+
+WORKDIR /app/apps/agent
+
+# `eve start` (invoked by scripts/start.ts) refuses to run without this —
+# it needs the bundled server output, not the source tree.
+RUN bun run build
+
+EXPOSE 2000
+
+# `bun run start`, not `bun scripts/start.ts` directly — only the package-script
+# form adds node_modules/.bin (where eve's CLI shim lives) to PATH, which
+# scripts/start.ts needs since it spawns `eve` as a plain child process.
+CMD ["bun", "run", "start"]

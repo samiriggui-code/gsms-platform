@@ -1,0 +1,4 @@
+# Smithery configuration for LexSocket MCP Server
+startCommand:
+  type: streamable-http
+  url: https://mcp.lexsocket.ai/

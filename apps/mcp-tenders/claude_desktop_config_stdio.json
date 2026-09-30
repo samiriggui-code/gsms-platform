@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "lexsocket": {
+      "command": "npx",
+      "args": ["-y", "@lexsocket/mcp-tenders", "--transport", "stdio"]
+    }
+  }
+}

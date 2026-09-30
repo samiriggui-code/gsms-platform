@@ -1,0 +1,84 @@
+{
+  "version": "0.1.0",
+  "provenance": "category+title only from Comp FindingTemplate — QAtrial taxonomy inspo",
+  "items": [
+    {
+      "id": "fnd_t_69cd108ab21a08f93e582cba",
+      "category": "evidence_issue",
+      "title": "Pull Requests Samples",
+      "order": 0
+    },
+    {
+      "id": "fnd_t_69d4f4c983e48b8f30dd2287",
+      "category": "evidence_issue",
+      "title": "Missing evidence – general",
+      "order": 0
+    },
+    {
+      "id": "fnd_t_69d4f4dab76e1864fa09c55a",
+      "category": "evidence_issue",
+      "title": "Evidence referenced but not included",
+      "order": 0
+    },
+    {
+      "id": "fnd_t_69d4f512d67eb0ae06f32d58",
+      "category": "evidence_issue",
+      "title": "Insufficient detail",
+      "order": 0
+    },
+    {
+      "id": "fnd_t_69d4fb57f1f2214c213701fd",
+      "category": "evidence_issue",
+      "title": "Further evidence samples required",
+      "order": 0
+    },
+    {
+      "id": "fnd_t_69d4fb8390ce6bd186c87492",
+      "category": "evidence_issue",
+      "title": "One or more devices are failing",
+      "order": 0
+    },
+    {
+      "id": "fnd_t_69d4fbae4fb6a512f01c618d",
+      "category": "evidence_issue",
+      "title": "One or more employees show incomplete training",
+      "order": 0
+    },
+    {
+      "id": "fnd_t_69d4fc1c1113cd6a2cac9f49",
+      "category": "evidence_issue",
+      "title": "Evidence unclear or illegible",
+      "order": 0
+    },
+    {
+      "id": "fnd_t_69d4fc31b0b632da4020f804",
+      "category": "evidence_issue",
+      "title": "Evidence not current",
+      "order": 0
+    },
+    {
+      "id": "fnd_t_69d4fd25ff4d03074ecaa0ee",
+      "category": "evidence_issue",
+      "title": "Backup restoration evidence required",
+      "order": 0
+    },
+    {
+      "id": "fnd_t_69df9438c85454008e652d2b",
+      "category": "evidence_issue",
+      "title": "Logging evidence missing",
+      "order": 0
+    },
+    {
+      "id": "fnd_t_69df94702fc4ed39f0d07bf2",
+      "category": "evidence_issue",
+      "title": "No evidence provided",
+      "order": 1
+    },
+    {
+      "id": "fnd_t_69df940c52b31c4abed9a9e0",
+      "category": "evidence_issue",
+      "title": "Alerts evidence missing",
+      "order": 0
+    }
+  ]
+}

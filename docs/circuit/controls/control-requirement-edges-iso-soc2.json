@@ -1,0 +1,3409 @@
+{
+  "version": "0.1.0",
+  "provenance": "id mapping only ISO27001+SOC2 visible frameworks — for Grace cyber checklist wiring",
+  "count": 567,
+  "edges": [
+    {
+      "controlTemplateId": "frk_ct_683f4b7614d209f8b6ffd477",
+      "requirementId": "frk_rq_681ed71f9deddd61109308dd",
+      "requirementIdentifier": "A.8.14",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_68407c9513000617776104c7",
+      "requirementId": "frk_rq_683f81d974beae08683f7c65",
+      "requirementIdentifier": "C1.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4c30e2d3f1117fa58e13",
+      "requirementId": "frk_rq_681ed799ca7b40e2d8ed55ba",
+      "requirementIdentifier": "A.8.25",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4d7360a876b972aba39a",
+      "requirementId": "frk_rq_681ed799ca7b40e2d8ed55ba",
+      "requirementIdentifier": "A.8.25",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4dd564057a97ae323c9f",
+      "requirementId": "frk_rq_681ed71f9deddd61109308dd",
+      "requirementIdentifier": "A.8.14",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_684071e280c4e0f777b957f7",
+      "requirementId": "frk_rq_681ed70245119fe4e1943d4a",
+      "requirementIdentifier": "A.8.11",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4036b541126388e2989a",
+      "requirementId": "frk_rq_683f598fc18a528adfcdd561",
+      "requirementIdentifier": "CC1.3",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4036b541126388e2989a",
+      "requirementId": "frk_rq_683f6118bf597bc269ad5d22",
+      "requirementIdentifier": "CC4.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f41e775f4ca03d8f6bae2",
+      "requirementId": "frk_rq_683f56e9693dbfc43020b888",
+      "requirementIdentifier": "CC1.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f41e775f4ca03d8f6bae2",
+      "requirementId": "frk_rq_683f62e98eedc19fdd008d99",
+      "requirementIdentifier": "CC4.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f42c71eea99f22f9df060",
+      "requirementId": "frk_rq_683f6118bf597bc269ad5d22",
+      "requirementIdentifier": "CC4.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f43a65de3b6044e63220f",
+      "requirementId": "frk_rq_683f5b8241dbd32ac2c6ad2b",
+      "requirementIdentifier": "CC1.5",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4457b14856e700c8c25b",
+      "requirementId": "frk_rq_683f5b8241dbd32ac2c6ad2b",
+      "requirementIdentifier": "CC1.5",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f464bec8bea67de7b9c31",
+      "requirementId": "frk_rq_683f81d974beae08683f7c65",
+      "requirementIdentifier": "C1.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f46f3f181af3f93773c1d",
+      "requirementId": "frk_rq_683f6118bf597bc269ad5d22",
+      "requirementIdentifier": "CC4.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f47cc2faa426603d6bee8",
+      "requirementId": "frk_rq_683f5daecd5e3f57e3f2733c",
+      "requirementIdentifier": "CC2.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f47cc2faa426603d6bee8",
+      "requirementId": "frk_rq_683f78ea0fa2580304e11a1e",
+      "requirementIdentifier": "CC7.3",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f47cc2faa426603d6bee8",
+      "requirementId": "frk_rq_683f7a455a617028f7cd888f",
+      "requirementIdentifier": "CC7.4",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f484fc7b5506ab97c26af",
+      "requirementId": "frk_rq_683f5f4d18de5fee7df6f15a",
+      "requirementIdentifier": "CC3.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f484fc7b5506ab97c26af",
+      "requirementId": "frk_rq_683f5fbd7ac16777b257da6b",
+      "requirementIdentifier": "CC3.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f484fc7b5506ab97c26af",
+      "requirementId": "frk_rq_683f80e6ec8d4803595647a9",
+      "requirementIdentifier": "CC9.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_68407c9513000617776104c7",
+      "requirementId": "frk_rq_683f5daecd5e3f57e3f2733c",
+      "requirementIdentifier": "CC2.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684070f0b4f6c2036306e23c",
+      "requirementId": "frk_rq_681ed7794b363009725bab5b",
+      "requirementIdentifier": "A.8.21",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f50aae46f5e4e096e6bb3",
+      "requirementId": "frk_rq_681ed799ca7b40e2d8ed55ba",
+      "requirementIdentifier": "A.8.25",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_68406fc94e08f884cc085ded",
+      "requirementId": "frk_rq_681ed7794b363009725bab5b",
+      "requirementIdentifier": "A.8.21",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f3ecd42e62fde624c59c1",
+      "requirementId": "frk_rq_683f5c2de17c4c845303afa7",
+      "requirementIdentifier": "CC2.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f3ecd42e62fde624c59c1",
+      "requirementId": "frk_rq_683f5fbd7ac16777b257da6b",
+      "requirementIdentifier": "CC3.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f3ecd42e62fde624c59c1",
+      "requirementId": "frk_rq_683f65a946002d573103c9de",
+      "requirementIdentifier": "CC5.3",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f3ecd42e62fde624c59c1",
+      "requirementId": "frk_rq_683f81d974beae08683f7c65",
+      "requirementIdentifier": "C1.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f41e775f4ca03d8f6bae2",
+      "requirementId": "frk_rq_683f598fc18a528adfcdd561",
+      "requirementIdentifier": "CC1.3",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f42c71eea99f22f9df060",
+      "requirementId": "frk_rq_683f598fc18a528adfcdd561",
+      "requirementIdentifier": "CC1.3",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f44c8074680be528353c1",
+      "requirementId": "frk_rq_683f5c2de17c4c845303afa7",
+      "requirementIdentifier": "CC2.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f44c8074680be528353c1",
+      "requirementId": "frk_rq_683f56e9693dbfc43020b888",
+      "requirementIdentifier": "CC1.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f45c5058c486f3fa5b7bc",
+      "requirementId": "frk_rq_683f5c2de17c4c845303afa7",
+      "requirementIdentifier": "CC2.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f45c5058c486f3fa5b7bc",
+      "requirementId": "frk_rq_683f5ed1fb039b11269212c8",
+      "requirementIdentifier": "CC2.3",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f464bec8bea67de7b9c31",
+      "requirementId": "frk_rq_683f5c2de17c4c845303afa7",
+      "requirementIdentifier": "CC2.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f464bec8bea67de7b9c31",
+      "requirementId": "frk_rq_683f8206ed8b866232b554dd",
+      "requirementIdentifier": "PI1.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f46f3f181af3f93773c1d",
+      "requirementId": "frk_rq_683f5c2de17c4c845303afa7",
+      "requirementIdentifier": "CC2.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f46f3f181af3f93773c1d",
+      "requirementId": "frk_rq_683f7a455a617028f7cd888f",
+      "requirementIdentifier": "CC7.4",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_68407c9513000617776104c7",
+      "requirementId": "frk_rq_681ed4019aa553be924ee291",
+      "requirementIdentifier": "A.6.2",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_68407c9513000617776104c7",
+      "requirementId": "frk_rq_683f63eb915fb5c5e9666793",
+      "requirementIdentifier": "CC5.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684070f0b4f6c2036306e23c",
+      "requirementId": "frk_rq_681ed781b79f824466be5394",
+      "requirementIdentifier": "A.8.22",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4ef6c6a5481a377be413",
+      "requirementId": "frk_rq_681ed80ab572359972e06ace",
+      "requirementIdentifier": "A.8.32",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f3ecd42e62fde624c59c1",
+      "requirementId": "frk_rq_683f5b8241dbd32ac2c6ad2b",
+      "requirementIdentifier": "CC1.5",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684071e280c4e0f777b957f7",
+      "requirementId": "frk_rq_681ed70cd5e3fc570dd75770",
+      "requirementIdentifier": "A.8.12",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_6849ba93636ff0155eb89158",
+      "requirementId": "frk_rq_681ed739dc6d14f4ad5d95d2",
+      "requirementIdentifier": "A.8.16 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f3ecd42e62fde624c59c1",
+      "requirementId": "frk_rq_683f5daecd5e3f57e3f2733c",
+      "requirementIdentifier": "CC2.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f41e775f4ca03d8f6bae2",
+      "requirementId": "frk_rq_683f6118bf597bc269ad5d22",
+      "requirementIdentifier": "CC4.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f42c71eea99f22f9df060",
+      "requirementId": "frk_rq_683f76a572050393764a447d",
+      "requirementIdentifier": "CC6.7",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f42c71eea99f22f9df060",
+      "requirementId": "frk_rq_683f7d89ddcefa3b73fb2a0c",
+      "requirementIdentifier": "CC8.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f43a65de3b6044e63220f",
+      "requirementId": "frk_rq_683f5a7da5c95341a76298e5",
+      "requirementIdentifier": "CC1.4",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f43a65de3b6044e63220f",
+      "requirementId": "frk_rq_683f5daecd5e3f57e3f2733c",
+      "requirementIdentifier": "CC2.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f44c8074680be528353c1",
+      "requirementId": "frk_rq_683f72b90ef35d871333a776",
+      "requirementIdentifier": "CC6.5",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f464bec8bea67de7b9c31",
+      "requirementId": "frk_rq_683f821f87cfa79d2b494f7c",
+      "requirementIdentifier": "PI1.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f46f3f181af3f93773c1d",
+      "requirementId": "frk_rq_683f62e98eedc19fdd008d99",
+      "requirementIdentifier": "CC4.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f46f3f181af3f93773c1d",
+      "requirementId": "frk_rq_683f78ea0fa2580304e11a1e",
+      "requirementIdentifier": "CC7.3",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f47cc2faa426603d6bee8",
+      "requirementId": "frk_rq_683f62e98eedc19fdd008d99",
+      "requirementIdentifier": "CC4.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f484fc7b5506ab97c26af",
+      "requirementId": "frk_rq_683f6001b56cab9a3247d87b",
+      "requirementIdentifier": "CC3.3",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f484fc7b5506ab97c26af",
+      "requirementId": "frk_rq_683f60819f8e5af7b509af44",
+      "requirementIdentifier": "CC3.4",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f48ee9534e1e0a088e922",
+      "requirementId": "frk_rq_683f5fbd7ac16777b257da6b",
+      "requirementIdentifier": "CC3.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f48ee9534e1e0a088e922",
+      "requirementId": "frk_rq_683f60819f8e5af7b509af44",
+      "requirementIdentifier": "CC3.4",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684070f0b4f6c2036306e23c",
+      "requirementId": "frk_rq_681ed789b359f075b12e20c0",
+      "requirementIdentifier": "A.8.23",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_684070f0b4f6c2036306e23c",
+      "requirementId": "frk_rq_681ed7c75e421b346480e046",
+      "requirementIdentifier": "A.8.27",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f48ee9534e1e0a088e922",
+      "requirementId": "frk_rq_683f6118bf597bc269ad5d22",
+      "requirementIdentifier": "CC4.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f48ee9534e1e0a088e922",
+      "requirementId": "frk_rq_683f80f8a30b8d35d65617d3",
+      "requirementIdentifier": "CC9.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4a410cf5bf6d40bf3583",
+      "requirementId": "frk_rq_683f66cebc1688607d297b48",
+      "requirementIdentifier": "CC6.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4a410cf5bf6d40bf3583",
+      "requirementId": "frk_rq_683f679780b75c3b865095c9",
+      "requirementIdentifier": "CC6.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4a410cf5bf6d40bf3583",
+      "requirementId": "frk_rq_683f6827c11ca1796928001c",
+      "requirementIdentifier": "CC6.3",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4a410cf5bf6d40bf3583",
+      "requirementId": "frk_rq_683f826c9b47fcf6bf49538c",
+      "requirementIdentifier": "PI1.4",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4a410cf5bf6d40bf3583",
+      "requirementId": "frk_rq_683f82884d08489da196f990",
+      "requirementIdentifier": "PI1.5",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4ae4acbd63d0e558a6f5",
+      "requirementId": "frk_rq_683f66cebc1688607d297b48",
+      "requirementIdentifier": "CC6.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4ae4acbd63d0e558a6f5",
+      "requirementId": "frk_rq_683f759f885e5b093b3c36d6",
+      "requirementIdentifier": "CC6.6",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4b7614d209f8b6ffd477",
+      "requirementId": "frk_rq_683f778c138349f90d26fee2",
+      "requirementIdentifier": "CC7.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4b7614d209f8b6ffd477",
+      "requirementId": "frk_rq_683f781a00e52dcf0143af5d",
+      "requirementIdentifier": "CC7.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4b7614d209f8b6ffd477",
+      "requirementId": "frk_rq_683f78ea0fa2580304e11a1e",
+      "requirementIdentifier": "CC7.3",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f42c71eea99f22f9df060",
+      "requirementId": "frk_rq_681ed69ce5f84cf315240f7a",
+      "requirementIdentifier": "A.8.1",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4c30e2d3f1117fa58e13",
+      "requirementId": "frk_rq_683f82394fcb1c573b1fdc2a",
+      "requirementIdentifier": "PI1.3",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684070f0b4f6c2036306e23c",
+      "requirementId": "frk_rq_683f5c2de17c4c845303afa7",
+      "requirementIdentifier": "CC2.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f46f3f181af3f93773c1d",
+      "requirementId": "frk_rq_681ed7326db82252ea6faa67",
+      "requirementIdentifier": "A.8.15",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f46f3f181af3f93773c1d",
+      "requirementId": "frk_rq_681ed739dc6d14f4ad5d95d2",
+      "requirementIdentifier": "A.8.16 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4b7614d209f8b6ffd477",
+      "requirementId": "frk_rq_683f810113cc5e7ecf329428",
+      "requirementIdentifier": "A1.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684070f0b4f6c2036306e23c",
+      "requirementId": "frk_rq_683f5daecd5e3f57e3f2733c",
+      "requirementIdentifier": "CC2.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4d7360a876b972aba39a",
+      "requirementId": "frk_rq_683f778c138349f90d26fee2",
+      "requirementIdentifier": "CC7.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4a410cf5bf6d40bf3583",
+      "requirementId": "frk_rq_681ed6a5d1683d54c08f7084",
+      "requirementIdentifier": "A.8.2 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4c30e2d3f1117fa58e13",
+      "requirementId": "frk_rq_681ed7e50f718eb161dd5605",
+      "requirementIdentifier": "A.8.31 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4a410cf5bf6d40bf3583",
+      "requirementId": "frk_rq_681ed6afecd253fe6c3c060a",
+      "requirementIdentifier": "A.8.3 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_6849c343d7fbe4e71446ce78",
+      "requirementId": "frk_rq_681ed6fbb7447647d630bfac",
+      "requirementIdentifier": "A.8.10",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_6849c343d7fbe4e71446ce78",
+      "requirementId": "frk_rq_681ed70cd5e3fc570dd75770",
+      "requirementIdentifier": "A.8.12",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4c30e2d3f1117fa58e13",
+      "requirementId": "frk_rq_683f7d89ddcefa3b73fb2a0c",
+      "requirementIdentifier": "CC8.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4c30e2d3f1117fa58e13",
+      "requirementId": "frk_rq_683f826c9b47fcf6bf49538c",
+      "requirementIdentifier": "PI1.4",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4d7360a876b972aba39a",
+      "requirementId": "frk_rq_683f781a00e52dcf0143af5d",
+      "requirementIdentifier": "CC7.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4d7360a876b972aba39a",
+      "requirementId": "frk_rq_683f78ea0fa2580304e11a1e",
+      "requirementIdentifier": "CC7.3",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4dd564057a97ae323c9f",
+      "requirementId": "frk_rq_683f804dde7ce3212d036b3e",
+      "requirementIdentifier": "CC7.5",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4dd564057a97ae323c9f",
+      "requirementId": "frk_rq_683f8141c8854481f15006a2",
+      "requirementIdentifier": "A1.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4dd564057a97ae323c9f",
+      "requirementId": "frk_rq_683f81a18cfc6660bdb1acea",
+      "requirementIdentifier": "A1.3",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4ef6c6a5481a377be413",
+      "requirementId": "frk_rq_683f63eb915fb5c5e9666793",
+      "requirementIdentifier": "CC5.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4ef6c6a5481a377be413",
+      "requirementId": "frk_rq_683f65a946002d573103c9de",
+      "requirementIdentifier": "CC5.3",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f50aae46f5e4e096e6bb3",
+      "requirementId": "frk_rq_683f8206ed8b866232b554dd",
+      "requirementIdentifier": "PI1.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f50aae46f5e4e096e6bb3",
+      "requirementId": "frk_rq_683f821f87cfa79d2b494f7c",
+      "requirementIdentifier": "PI1.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_68406fc94e08f884cc085ded",
+      "requirementId": "frk_rq_683f76a572050393764a447d",
+      "requirementIdentifier": "CC6.7",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_68406fc94e08f884cc085ded",
+      "requirementId": "frk_rq_683f81d974beae08683f7c65",
+      "requirementIdentifier": "C1.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4ae4acbd63d0e558a6f5",
+      "requirementId": "frk_rq_681ed6c7eee985561d1f4d9b",
+      "requirementIdentifier": "A.8.5 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4b7614d209f8b6ffd477",
+      "requirementId": "frk_rq_681ed6d277a609269207598d",
+      "requirementIdentifier": "A.8.6",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_6849c343d7fbe4e71446ce78",
+      "requirementId": "frk_rq_681ed70245119fe4e1943d4a",
+      "requirementIdentifier": "A.8.11",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_68406fc94e08f884cc085ded",
+      "requirementId": "frk_rq_683f82884d08489da196f990",
+      "requirementIdentifier": "PI1.5",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4c30e2d3f1117fa58e13",
+      "requirementId": "frk_rq_681ed80ab572359972e06ace",
+      "requirementIdentifier": "A.8.32",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_6849ba93636ff0155eb89158",
+      "requirementId": "frk_rq_681ed748dab9fd6d58f20964",
+      "requirementIdentifier": "A.8.18",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_684070831cc83c4ab4c2c4d8",
+      "requirementId": "frk_rq_683f778c138349f90d26fee2",
+      "requirementIdentifier": "CC7.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4c30e2d3f1117fa58e13",
+      "requirementId": "frk_rq_681ed7d719388daff946a68d",
+      "requirementIdentifier": "A.8.29",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4d7360a876b972aba39a",
+      "requirementId": "frk_rq_681ed7ce83ab2029a9dc414c",
+      "requirementIdentifier": "A.8.28",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_68406fc94e08f884cc085ded",
+      "requirementId": "frk_rq_681ed7901ab04aa5a1d27890",
+      "requirementIdentifier": "A.8.24 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_684072e06f4a49ee669076cc",
+      "requirementId": "frk_rq_681ed6dc2a941d8ed887fa01",
+      "requirementIdentifier": "A.8.7",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_68407429371f33886d8ab80d",
+      "requirementId": "frk_rq_681ed7901ab04aa5a1d27890",
+      "requirementIdentifier": "A.8.24 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_684070831cc83c4ab4c2c4d8",
+      "requirementId": "frk_rq_683f781a00e52dcf0143af5d",
+      "requirementIdentifier": "CC7.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_6849ba93636ff0155eb89158",
+      "requirementId": "frk_rq_681ed74124bbe51a72d0c154",
+      "requirementIdentifier": "A.8.17",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_684070831cc83c4ab4c2c4d8",
+      "requirementId": "frk_rq_683f78ea0fa2580304e11a1e",
+      "requirementIdentifier": "CC7.3",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684070f0b4f6c2036306e23c",
+      "requirementId": "frk_rq_683f66cebc1688607d297b48",
+      "requirementIdentifier": "CC6.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684070f0b4f6c2036306e23c",
+      "requirementId": "frk_rq_683f76c4fcd357257a5e58cb",
+      "requirementIdentifier": "CC6.8",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_68407122565b1968676d93db",
+      "requirementId": "frk_rq_683f66cebc1688607d297b48",
+      "requirementIdentifier": "CC6.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_68407122565b1968676d93db",
+      "requirementId": "frk_rq_683f728e5b99238031db8c10",
+      "requirementIdentifier": "CC6.4",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684071e280c4e0f777b957f7",
+      "requirementId": "frk_rq_683f82b7e3624d113096e13c",
+      "requirementIdentifier": "P1.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684071e280c4e0f777b957f7",
+      "requirementId": "frk_rq_683f82c47ddda8414a018a93",
+      "requirementIdentifier": "P2.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684071e280c4e0f777b957f7",
+      "requirementId": "frk_rq_683f82f1c18e04fda2404acd",
+      "requirementIdentifier": "P3.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684071e280c4e0f777b957f7",
+      "requirementId": "frk_rq_683f8345a76125f5c3a71d5c",
+      "requirementIdentifier": "P3.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684071e280c4e0f777b957f7",
+      "requirementId": "frk_rq_683f83098dfd2e4ed385afd4",
+      "requirementIdentifier": "P3.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684071e280c4e0f777b957f7",
+      "requirementId": "frk_rq_683f833cb9cd7f024ff9535f",
+      "requirementIdentifier": "P3.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684071e280c4e0f777b957f7",
+      "requirementId": "frk_rq_683f834daeb15e457c90c0ee",
+      "requirementIdentifier": "P3.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684071e280c4e0f777b957f7",
+      "requirementId": "frk_rq_683f8371847f5409c2e72347",
+      "requirementIdentifier": "P4.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684071e280c4e0f777b957f7",
+      "requirementId": "frk_rq_683f83834e536ba24d2f3bf1",
+      "requirementIdentifier": "P4.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684071e280c4e0f777b957f7",
+      "requirementId": "frk_rq_683f83a86dd03eded4fbc480",
+      "requirementIdentifier": "P4.3",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684071e280c4e0f777b957f7",
+      "requirementId": "frk_rq_683f83dea64e10cea3af908c",
+      "requirementIdentifier": "P5.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684071e280c4e0f777b957f7",
+      "requirementId": "frk_rq_683f8435fe070a53cd9784dd",
+      "requirementIdentifier": "P5.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684071e280c4e0f777b957f7",
+      "requirementId": "frk_rq_683f845ba4f5e3210df1a723",
+      "requirementIdentifier": "P6.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684071e280c4e0f777b957f7",
+      "requirementId": "frk_rq_683f847a3a8a886dc17fb349",
+      "requirementIdentifier": "P6.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684071e280c4e0f777b957f7",
+      "requirementId": "frk_rq_683f84c464d2ea4f6e977429",
+      "requirementIdentifier": "P6.3",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f3ecd42e62fde624c59c1",
+      "requirementId": "frk_rq_681eccf8ea16a6a8c71b2043",
+      "requirementIdentifier": "4.3 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f3ecd42e62fde624c59c1",
+      "requirementId": "frk_rq_681ed16583aa68b76c80917a",
+      "requirementIdentifier": "A.5.1 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4d7360a876b972aba39a",
+      "requirementId": "frk_rq_681ed6eab8348ae42e9622d2",
+      "requirementIdentifier": "A.8.8",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4dd564057a97ae323c9f",
+      "requirementId": "frk_rq_681ed713c378baffc34d25f5",
+      "requirementIdentifier": "A.8.13",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f50aae46f5e4e096e6bb3",
+      "requirementId": "frk_rq_681ed7b407395dfc68ff955d",
+      "requirementIdentifier": "A.8.26 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_684072e06f4a49ee669076cc",
+      "requirementId": "frk_rq_681ed69ce5f84cf315240f7a",
+      "requirementIdentifier": "A.8.1",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_68407429371f33886d8ab80d",
+      "requirementId": "frk_rq_681ed6afecd253fe6c3c060a",
+      "requirementIdentifier": "A.8.3 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4d7360a876b972aba39a",
+      "requirementId": "frk_rq_681ed7c75e421b346480e046",
+      "requirementIdentifier": "A.8.27",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_68407429371f33886d8ab80d",
+      "requirementId": "frk_rq_681ed7c75e421b346480e046",
+      "requirementIdentifier": "A.8.27",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_684071e280c4e0f777b957f7",
+      "requirementId": "frk_rq_683f85a54f4d8eb689efb5a3",
+      "requirementIdentifier": "P7.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684071e280c4e0f777b957f7",
+      "requirementId": "frk_rq_683f85dea375f4073836d53c",
+      "requirementIdentifier": "P8.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684072e06f4a49ee669076cc",
+      "requirementId": "frk_rq_683f759f885e5b093b3c36d6",
+      "requirementIdentifier": "CC6.6",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f3ecd42e62fde624c59c1",
+      "requirementId": "frk_rq_681ecea78867657c2a877498",
+      "requirementIdentifier": "4.4 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f50aae46f5e4e096e6bb3",
+      "requirementId": "frk_rq_681ed7ce83ab2029a9dc414c",
+      "requirementIdentifier": "A.8.28",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_68406fc94e08f884cc085ded",
+      "requirementId": "frk_rq_681ed76e19cca49a6ac49bf8",
+      "requirementIdentifier": "A.8.20",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f50aae46f5e4e096e6bb3",
+      "requirementId": "frk_rq_681ed7c75e421b346480e046",
+      "requirementIdentifier": "A.8.27",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_684071e280c4e0f777b957f7",
+      "requirementId": "frk_rq_683f84cffe92068d1ed9c723",
+      "requirementIdentifier": "P6.4",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f3ecd42e62fde624c59c1",
+      "requirementId": "frk_rq_681eced25693b9ef01953cda",
+      "requirementIdentifier": "5.2 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f3ecd42e62fde624c59c1",
+      "requirementId": "frk_rq_681ed3dc1663fa62052ef548",
+      "requirementIdentifier": "A.5.36",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4c30e2d3f1117fa58e13",
+      "requirementId": "frk_rq_681ed6ba79910ff5b9c7d76f",
+      "requirementIdentifier": "A.8.4 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_684072e06f4a49ee669076cc",
+      "requirementId": "frk_rq_681ed6f360678a6cf25345b2",
+      "requirementIdentifier": "\t A.8.9",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_684072e06f4a49ee669076cc",
+      "requirementId": "frk_rq_681ed7c75e421b346480e046",
+      "requirementIdentifier": "A.8.27",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_684071e280c4e0f777b957f7",
+      "requirementId": "frk_rq_683f850f11a550572b3bd0bf",
+      "requirementIdentifier": "P6.5",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684071e280c4e0f777b957f7",
+      "requirementId": "frk_rq_683f8546f29167cd7f16a8ed",
+      "requirementIdentifier": "P6.6",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684071e280c4e0f777b957f7",
+      "requirementId": "frk_rq_683f857249f025f86fcfcbcf",
+      "requirementIdentifier": "P6.7",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684071e280c4e0f777b957f7",
+      "requirementId": "frk_rq_681ed6fbb7447647d630bfac",
+      "requirementIdentifier": "A.8.10",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_684072e06f4a49ee669076cc",
+      "requirementId": "frk_rq_681ed7532959ec62c8ae815c",
+      "requirementIdentifier": "\t A.8.19",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f47cc2faa426603d6bee8",
+      "requirementId": "frk_rq_681ed7326db82252ea6faa67",
+      "requirementIdentifier": "A.8.15",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f47cc2faa426603d6bee8",
+      "requirementId": "frk_rq_681ed739dc6d14f4ad5d95d2",
+      "requirementIdentifier": "A.8.16 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_6840731ae0b857152b35ca8f",
+      "requirementId": "frk_rq_683f759f885e5b093b3c36d6",
+      "requirementIdentifier": "CC6.6",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_6840731ae0b857152b35ca8f",
+      "requirementId": "frk_rq_683f78ea0fa2580304e11a1e",
+      "requirementIdentifier": "CC7.3",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_6840738800f98fa3c0f3a3ae",
+      "requirementId": "frk_rq_683f76c4fcd357257a5e58cb",
+      "requirementIdentifier": "CC6.8",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_6840738800f98fa3c0f3a3ae",
+      "requirementId": "frk_rq_683f78ea0fa2580304e11a1e",
+      "requirementIdentifier": "CC7.3",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_684073ba24475a83ba048022",
+      "requirementId": "frk_rq_683f63eb915fb5c5e9666793",
+      "requirementIdentifier": "CC5.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_68407406644c56d42eac3295",
+      "requirementId": "frk_rq_683f759f885e5b093b3c36d6",
+      "requirementIdentifier": "CC6.6",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_68407406644c56d42eac3295",
+      "requirementId": "frk_rq_683f76a572050393764a447d",
+      "requirementIdentifier": "CC6.7",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_68407406644c56d42eac3295",
+      "requirementId": "frk_rq_683f81d974beae08683f7c65",
+      "requirementIdentifier": "C1.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_68407429371f33886d8ab80d",
+      "requirementId": "frk_rq_683f76a572050393764a447d",
+      "requirementIdentifier": "CC6.7",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e65ef9c20933590d85cc31",
+      "requirementId": "frk_rq_681ed663b850258024b0b236",
+      "requirementIdentifier": "A.7.11 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e65ef9c20933590d85cc31",
+      "requirementId": "frk_rq_681ed686b626f985dac54c52",
+      "requirementIdentifier": "A.7.14 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e65ef9c20933590d85cc31",
+      "requirementId": "frk_rq_681ed47bac3dee3588290b04",
+      "requirementIdentifier": "A.7.3",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e65ef9c20933590d85cc31",
+      "requirementId": "frk_rq_681ed6347b1e6eea717482ca",
+      "requirementIdentifier": "A.7.7",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e65ef9c20933590d85cc31",
+      "requirementId": "frk_rq_681ed6497c1e390fe89f0dfa",
+      "requirementIdentifier": "A.7.8",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e65ef9c20933590d85cc31",
+      "requirementId": "frk_rq_681ed651d81e6c51934134bc",
+      "requirementIdentifier": "A.7.9 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e65ef9c20933590d85cc31",
+      "requirementId": "frk_rq_681ed65bb490440ea4f3b552",
+      "requirementIdentifier": "A.7.10",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_68e8079750107bcc63fc79d9",
+      "requirementId": "frk_rq_683f81d974beae08683f7c65",
+      "requirementIdentifier": "C1.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_68e80a11f225cb2253e31fa0",
+      "requirementId": "frk_rq_683f598fc18a528adfcdd561",
+      "requirementIdentifier": "CC1.3",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e65ef9c20933590d85cc31",
+      "requirementId": "frk_rq_681ed66d77af963d9763adeb",
+      "requirementIdentifier": "A.7.12",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e65ef9c20933590d85cc31",
+      "requirementId": "frk_rq_681ed6761e8f45c900e60be3",
+      "requirementIdentifier": "A.7.13",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e65ef9c20933590d85cc31",
+      "requirementId": "frk_rq_681ed46ff23ef8614d7f3042",
+      "requirementIdentifier": "A.7.2",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e65ef9c20933590d85cc31",
+      "requirementId": "frk_rq_681ed48f152068a490f317ac",
+      "requirementIdentifier": "A.7.4 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e65ef9c20933590d85cc31",
+      "requirementId": "frk_rq_681ed62a1ad145f4554d4068",
+      "requirementIdentifier": "A.7.6 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e65ef9c20933590d85cc31",
+      "requirementId": "frk_rq_681ed61f357c7bf776300aa7",
+      "requirementIdentifier": "A.7.5 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f4457b14856e700c8c25b",
+      "requirementId": "frk_rq_6840a68d409f43b4d0efd3c1",
+      "requirementIdentifier": "CC5.2",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9bf66b5a6ffb17d27",
+      "requirementId": "frk_rq_681ed29613b703c7f368ffdc",
+      "requirementIdentifier": "A.5.19",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9bf66b5a6ffb17d27",
+      "requirementId": "frk_rq_681ed2a8bda2e236fbc46492",
+      "requirementIdentifier": "A.5.20",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9bf66b5a6ffb17d27",
+      "requirementId": "frk_rq_681ed2be08112d94334bd319",
+      "requirementIdentifier": "A.5.21 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9bf66b5a6ffb17d27",
+      "requirementId": "frk_rq_681ed2c844494f7d1b01fa45",
+      "requirementIdentifier": "A.5.22",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed417c678d6e4a72ecc21",
+      "requirementIdentifier": "A.6.4",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed173c4617d8242804d37",
+      "requirementIdentifier": "A.5.2",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ecca11f8e93d33110f582",
+      "requirementIdentifier": "4.1 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681eccda0b0048baacc8384f",
+      "requirementIdentifier": "4.2 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681eccf8ea16a6a8c71b2043",
+      "requirementIdentifier": "4.3 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ecea78867657c2a877498",
+      "requirementIdentifier": "4.4 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ecec3bacaf5ec71310399",
+      "requirementIdentifier": "5.1 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681eced25693b9ef01953cda",
+      "requirementIdentifier": "5.2 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ecee267499cb4e89dd597",
+      "requirementIdentifier": "5.3 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ecf02da21ed278b8719a3",
+      "requirementIdentifier": "6.1.2 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ecef18eb5fc1de4b36922",
+      "requirementIdentifier": "6.1.1 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ecf0edd81451c5d7f942e",
+      "requirementIdentifier": "6.1.3 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed058cb46f0ca43f4ac04",
+      "requirementIdentifier": "7.1 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed06702eb40f21d9c3280",
+      "requirementIdentifier": "7.2 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed079b20c266ed3bcae4e",
+      "requirementIdentifier": "7.3 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed083826218fefed135f7",
+      "requirementIdentifier": "7.4",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed09f0d780a205029c6f8",
+      "requirementIdentifier": "7.5.1 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed0aa105e90005119af94",
+      "requirementIdentifier": "7.5.2 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed0bfb77656558d34e07c",
+      "requirementIdentifier": "7.5.3 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed0d7a55af6c0b644188b",
+      "requirementIdentifier": "8.1",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed0e87f1d7e373d990d48",
+      "requirementIdentifier": "8.2",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed0f93b445441d7092481",
+      "requirementIdentifier": "8.3",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed1090eab65d82db8ba3e",
+      "requirementIdentifier": "9.1.1",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed11ec29b25b1192e96f6",
+      "requirementIdentifier": "9.1.2",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed1295a639db1210e9237",
+      "requirementIdentifier": "9.2",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed13272f6276ce54c2e23",
+      "requirementIdentifier": "9.3",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed1433a712ae09dc7633b",
+      "requirementIdentifier": "\t 10.1 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed1525f18dab66c1a2203",
+      "requirementIdentifier": "10.2",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed16583aa68b76c80917a",
+      "requirementIdentifier": "A.5.1 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed1946de8b1beb5d5b987",
+      "requirementIdentifier": "A.5.4",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed17f36423e887ec130f6",
+      "requirementIdentifier": "A.5.3",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed1ac19e3e7e1aef48517",
+      "requirementIdentifier": "A.5.5 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed1d5f29a33fa8735d51c",
+      "requirementIdentifier": "\t A.5.6 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed1e1ad96b7f5e1659cab",
+      "requirementIdentifier": "A.5.7",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed1f09741eeebee147fcb",
+      "requirementIdentifier": "A.5.8",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed1fe624cd14c34876ee8",
+      "requirementIdentifier": "A.5.9 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed20a3f7335dd1ec64b6c",
+      "requirementIdentifier": "A.5.10",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed2170cb1b15f842b6f6d",
+      "requirementIdentifier": "A.5.11",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed2229fa221e338501d51",
+      "requirementIdentifier": "A.5.12 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed2314f568a3e5c3f1fbf",
+      "requirementIdentifier": "A.5.13 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed23c61c97af7967b50c2",
+      "requirementIdentifier": "A.5.14",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed24aa0809f09c4d22256",
+      "requirementIdentifier": "A.5.15 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed261918bb47df6590dac",
+      "requirementIdentifier": "A.5.16",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed277348377c5b5f81649",
+      "requirementIdentifier": "A.5.17",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed2893326942f0ac88d81",
+      "requirementIdentifier": "A.5.18",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed29613b703c7f368ffdc",
+      "requirementIdentifier": "A.5.19",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed2a8bda2e236fbc46492",
+      "requirementIdentifier": "A.5.20",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed2be08112d94334bd319",
+      "requirementIdentifier": "A.5.21 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed2c844494f7d1b01fa45",
+      "requirementIdentifier": "A.5.22",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed2e32d00654588c5103f",
+      "requirementIdentifier": "A.5.23",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed2f378d4fbe2e39f5f76",
+      "requirementIdentifier": "A.5.24 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed30003a95e3808397d6d",
+      "requirementIdentifier": "A.5.25",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed3455f6b6695283a7c72",
+      "requirementIdentifier": "A.5.26 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed35d6330398a089100c1",
+      "requirementIdentifier": "A.5.27",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed36f9d1446b067a4990d",
+      "requirementIdentifier": "A.5.28",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed37df872af70c5430e7f",
+      "requirementIdentifier": "A.5.29",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed38c0abdd2731880fa6e",
+      "requirementIdentifier": "A.5.30",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed39e1c2f759d433992a7",
+      "requirementIdentifier": "A.5.31 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed3ad17d5f7844774977a",
+      "requirementIdentifier": "A.5.32",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed3b87e88e0a249c2098a",
+      "requirementIdentifier": "A.5.33 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed3c23adb2d4461dc09da",
+      "requirementIdentifier": "A.5.34",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed3d0342b5d531935cd62",
+      "requirementIdentifier": "A.5.35 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed3dc1663fa62052ef548",
+      "requirementIdentifier": "A.5.36",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed3e78e9b73cb6b279906",
+      "requirementIdentifier": "A.5.37",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed3f78f28fba67dedc302",
+      "requirementIdentifier": "A.6.1 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed40ec3b505552b76ce5f",
+      "requirementIdentifier": "A.6.3 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed423b43ec990bbd5f3b5",
+      "requirementIdentifier": "A.6.5",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed4316c72a80ff5d1fdc6",
+      "requirementIdentifier": "A.6.6 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed43f84399c54accb82b9",
+      "requirementIdentifier": "A.6.7 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b958a20954c4afa186",
+      "requirementId": "frk_rq_681ed417c678d6e4a72ecc21",
+      "requirementIdentifier": "A.6.4",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b958a20954c4afa186",
+      "requirementId": "frk_rq_681ed3f78f28fba67dedc302",
+      "requirementIdentifier": "A.6.1 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b958a20954c4afa186",
+      "requirementId": "frk_rq_681ed40ec3b505552b76ce5f",
+      "requirementIdentifier": "A.6.3 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b958a20954c4afa186",
+      "requirementId": "frk_rq_681ed423b43ec990bbd5f3b5",
+      "requirementIdentifier": "A.6.5",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b958a20954c4afa186",
+      "requirementId": "frk_rq_681ed4316c72a80ff5d1fdc6",
+      "requirementIdentifier": "A.6.6 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b958a20954c4afa186",
+      "requirementId": "frk_rq_681ed43f84399c54accb82b9",
+      "requirementIdentifier": "A.6.7 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b958a20954c4afa186",
+      "requirementId": "frk_rq_681ed448a7cfe00afd2b0a19",
+      "requirementIdentifier": "A.6.8",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b958a20954c4afa186",
+      "requirementId": "frk_rq_681ed4019aa553be924ee291",
+      "requirementIdentifier": "A.6.2",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed448a7cfe00afd2b0a19",
+      "requirementIdentifier": "A.6.8",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed45b92c3b3f329d3858f",
+      "requirementIdentifier": "A.7.1",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed46ff23ef8614d7f3042",
+      "requirementIdentifier": "A.7.2",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed47bac3dee3588290b04",
+      "requirementIdentifier": "A.7.3",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed48f152068a490f317ac",
+      "requirementIdentifier": "A.7.4 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed61f357c7bf776300aa7",
+      "requirementIdentifier": "A.7.5 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed62a1ad145f4554d4068",
+      "requirementIdentifier": "A.7.6 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed6347b1e6eea717482ca",
+      "requirementIdentifier": "A.7.7",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed6497c1e390fe89f0dfa",
+      "requirementIdentifier": "A.7.8",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed651d81e6c51934134bc",
+      "requirementIdentifier": "A.7.9 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed65bb490440ea4f3b552",
+      "requirementIdentifier": "A.7.10",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed663b850258024b0b236",
+      "requirementIdentifier": "A.7.11 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed66d77af963d9763adeb",
+      "requirementIdentifier": "A.7.12",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed6761e8f45c900e60be3",
+      "requirementIdentifier": "A.7.13",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed686b626f985dac54c52",
+      "requirementIdentifier": "A.7.14 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed69ce5f84cf315240f7a",
+      "requirementIdentifier": "A.8.1",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed6a5d1683d54c08f7084",
+      "requirementIdentifier": "A.8.2 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed6afecd253fe6c3c060a",
+      "requirementIdentifier": "A.8.3 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed6ba79910ff5b9c7d76f",
+      "requirementIdentifier": "A.8.4 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed6c7eee985561d1f4d9b",
+      "requirementIdentifier": "A.8.5 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed6d277a609269207598d",
+      "requirementIdentifier": "A.8.6",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed6dc2a941d8ed887fa01",
+      "requirementIdentifier": "A.8.7",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed6eab8348ae42e9622d2",
+      "requirementIdentifier": "A.8.8",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed6f360678a6cf25345b2",
+      "requirementIdentifier": "\t A.8.9",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed6fbb7447647d630bfac",
+      "requirementIdentifier": "A.8.10",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed70245119fe4e1943d4a",
+      "requirementIdentifier": "A.8.11",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed70cd5e3fc570dd75770",
+      "requirementIdentifier": "A.8.12",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed713c378baffc34d25f5",
+      "requirementIdentifier": "A.8.13",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed71f9deddd61109308dd",
+      "requirementIdentifier": "A.8.14",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed7326db82252ea6faa67",
+      "requirementIdentifier": "A.8.15",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed739dc6d14f4ad5d95d2",
+      "requirementIdentifier": "A.8.16 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed74124bbe51a72d0c154",
+      "requirementIdentifier": "A.8.17",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed748dab9fd6d58f20964",
+      "requirementIdentifier": "A.8.18",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed7532959ec62c8ae815c",
+      "requirementIdentifier": "\t A.8.19",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed76e19cca49a6ac49bf8",
+      "requirementIdentifier": "A.8.20",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed7794b363009725bab5b",
+      "requirementIdentifier": "A.8.21",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed781b79f824466be5394",
+      "requirementIdentifier": "A.8.22",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed789b359f075b12e20c0",
+      "requirementIdentifier": "A.8.23",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed7901ab04aa5a1d27890",
+      "requirementIdentifier": "A.8.24 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed799ca7b40e2d8ed55ba",
+      "requirementIdentifier": "A.8.25",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed7b407395dfc68ff955d",
+      "requirementIdentifier": "A.8.26 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed7c75e421b346480e046",
+      "requirementIdentifier": "A.8.27",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed7ce83ab2029a9dc414c",
+      "requirementIdentifier": "A.8.28",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed7d719388daff946a68d",
+      "requirementIdentifier": "A.8.29",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed7de305465fe226fc39d",
+      "requirementIdentifier": "A.8.30",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed4019aa553be924ee291",
+      "requirementIdentifier": "A.6.2",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed7e50f718eb161dd5605",
+      "requirementIdentifier": "A.8.31 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed80ab572359972e06ace",
+      "requirementIdentifier": "A.8.32",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed813388d3297b3ed3e73",
+      "requirementIdentifier": "A.8.33",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "requirementId": "frk_rq_681ed81d5e01d43ada52ffae",
+      "requirementIdentifier": "A.8.34 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ecec3bacaf5ec71310399",
+      "requirementIdentifier": "5.1 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681eced25693b9ef01953cda",
+      "requirementIdentifier": "5.2 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ecee267499cb4e89dd597",
+      "requirementIdentifier": "5.3 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ecf02da21ed278b8719a3",
+      "requirementIdentifier": "6.1.2 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ecef18eb5fc1de4b36922",
+      "requirementIdentifier": "6.1.1 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ecf0edd81451c5d7f942e",
+      "requirementIdentifier": "6.1.3 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed058cb46f0ca43f4ac04",
+      "requirementIdentifier": "7.1 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed06702eb40f21d9c3280",
+      "requirementIdentifier": "7.2 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed079b20c266ed3bcae4e",
+      "requirementIdentifier": "7.3 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed083826218fefed135f7",
+      "requirementIdentifier": "7.4",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed09f0d780a205029c6f8",
+      "requirementIdentifier": "7.5.1 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed0aa105e90005119af94",
+      "requirementIdentifier": "7.5.2 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed0bfb77656558d34e07c",
+      "requirementIdentifier": "7.5.3 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed0d7a55af6c0b644188b",
+      "requirementIdentifier": "8.1",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed0e87f1d7e373d990d48",
+      "requirementIdentifier": "8.2",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed0f93b445441d7092481",
+      "requirementIdentifier": "8.3",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed1090eab65d82db8ba3e",
+      "requirementIdentifier": "9.1.1",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed11ec29b25b1192e96f6",
+      "requirementIdentifier": "9.1.2",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed1295a639db1210e9237",
+      "requirementIdentifier": "9.2",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed13272f6276ce54c2e23",
+      "requirementIdentifier": "9.3",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed1433a712ae09dc7633b",
+      "requirementIdentifier": "\t 10.1 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed1525f18dab66c1a2203",
+      "requirementIdentifier": "10.2",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed16583aa68b76c80917a",
+      "requirementIdentifier": "A.5.1 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed1946de8b1beb5d5b987",
+      "requirementIdentifier": "A.5.4",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed17f36423e887ec130f6",
+      "requirementIdentifier": "A.5.3",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed1ac19e3e7e1aef48517",
+      "requirementIdentifier": "A.5.5 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed1d5f29a33fa8735d51c",
+      "requirementIdentifier": "\t A.5.6 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed1e1ad96b7f5e1659cab",
+      "requirementIdentifier": "A.5.7",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed1f09741eeebee147fcb",
+      "requirementIdentifier": "A.5.8",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed1fe624cd14c34876ee8",
+      "requirementIdentifier": "A.5.9 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed20a3f7335dd1ec64b6c",
+      "requirementIdentifier": "A.5.10",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9d5ced482c12ae932",
+      "requirementId": "frk_rq_681ed781b79f824466be5394",
+      "requirementIdentifier": "A.8.22",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9d5ced482c12ae932",
+      "requirementId": "frk_rq_681ed789b359f075b12e20c0",
+      "requirementIdentifier": "A.8.23",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9d5ced482c12ae932",
+      "requirementId": "frk_rq_681ed7901ab04aa5a1d27890",
+      "requirementIdentifier": "A.8.24 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9d5ced482c12ae932",
+      "requirementId": "frk_rq_681ed799ca7b40e2d8ed55ba",
+      "requirementIdentifier": "A.8.25",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9d5ced482c12ae932",
+      "requirementId": "frk_rq_681ed7b407395dfc68ff955d",
+      "requirementIdentifier": "A.8.26 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9d5ced482c12ae932",
+      "requirementId": "frk_rq_681ed7c75e421b346480e046",
+      "requirementIdentifier": "A.8.27",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9d5ced482c12ae932",
+      "requirementId": "frk_rq_681ed7ce83ab2029a9dc414c",
+      "requirementIdentifier": "A.8.28",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9d5ced482c12ae932",
+      "requirementId": "frk_rq_681ed7d719388daff946a68d",
+      "requirementIdentifier": "A.8.29",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9d5ced482c12ae932",
+      "requirementId": "frk_rq_681ed7de305465fe226fc39d",
+      "requirementIdentifier": "A.8.30",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9d5ced482c12ae932",
+      "requirementId": "frk_rq_681ed4019aa553be924ee291",
+      "requirementIdentifier": "A.6.2",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9d5ced482c12ae932",
+      "requirementId": "frk_rq_681ed7e50f718eb161dd5605",
+      "requirementIdentifier": "A.8.31 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9d5ced482c12ae932",
+      "requirementId": "frk_rq_681ed80ab572359972e06ace",
+      "requirementIdentifier": "A.8.32",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9d5ced482c12ae932",
+      "requirementId": "frk_rq_681ed813388d3297b3ed3e73",
+      "requirementIdentifier": "A.8.33",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9d5ced482c12ae932",
+      "requirementId": "frk_rq_681ed81d5e01d43ada52ffae",
+      "requirementIdentifier": "A.8.34 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed417c678d6e4a72ecc21",
+      "requirementIdentifier": "A.6.4",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed173c4617d8242804d37",
+      "requirementIdentifier": "A.5.2",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ecca11f8e93d33110f582",
+      "requirementIdentifier": "4.1 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681eccda0b0048baacc8384f",
+      "requirementIdentifier": "4.2 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681eccf8ea16a6a8c71b2043",
+      "requirementIdentifier": "4.3 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ecea78867657c2a877498",
+      "requirementIdentifier": "4.4 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ecec3bacaf5ec71310399",
+      "requirementIdentifier": "5.1 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681eced25693b9ef01953cda",
+      "requirementIdentifier": "5.2 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ecee267499cb4e89dd597",
+      "requirementIdentifier": "5.3 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ecf02da21ed278b8719a3",
+      "requirementIdentifier": "6.1.2 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ecef18eb5fc1de4b36922",
+      "requirementIdentifier": "6.1.1 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ecf0edd81451c5d7f942e",
+      "requirementIdentifier": "6.1.3 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed058cb46f0ca43f4ac04",
+      "requirementIdentifier": "7.1 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed06702eb40f21d9c3280",
+      "requirementIdentifier": "7.2 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed079b20c266ed3bcae4e",
+      "requirementIdentifier": "7.3 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed083826218fefed135f7",
+      "requirementIdentifier": "7.4",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed09f0d780a205029c6f8",
+      "requirementIdentifier": "7.5.1 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed0aa105e90005119af94",
+      "requirementIdentifier": "7.5.2 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed0bfb77656558d34e07c",
+      "requirementIdentifier": "7.5.3 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed0d7a55af6c0b644188b",
+      "requirementIdentifier": "8.1",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed0e87f1d7e373d990d48",
+      "requirementIdentifier": "8.2",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed0f93b445441d7092481",
+      "requirementIdentifier": "8.3",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed1090eab65d82db8ba3e",
+      "requirementIdentifier": "9.1.1",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed11ec29b25b1192e96f6",
+      "requirementIdentifier": "9.1.2",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed2170cb1b15f842b6f6d",
+      "requirementIdentifier": "A.5.11",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed2229fa221e338501d51",
+      "requirementIdentifier": "A.5.12 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed2314f568a3e5c3f1fbf",
+      "requirementIdentifier": "A.5.13 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed23c61c97af7967b50c2",
+      "requirementIdentifier": "A.5.14",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed24aa0809f09c4d22256",
+      "requirementIdentifier": "A.5.15 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed261918bb47df6590dac",
+      "requirementIdentifier": "A.5.16",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed277348377c5b5f81649",
+      "requirementIdentifier": "A.5.17",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed2893326942f0ac88d81",
+      "requirementIdentifier": "A.5.18",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed29613b703c7f368ffdc",
+      "requirementIdentifier": "A.5.19",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed2a8bda2e236fbc46492",
+      "requirementIdentifier": "A.5.20",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed2be08112d94334bd319",
+      "requirementIdentifier": "A.5.21 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed2c844494f7d1b01fa45",
+      "requirementIdentifier": "A.5.22",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed2e32d00654588c5103f",
+      "requirementIdentifier": "A.5.23",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed2f378d4fbe2e39f5f76",
+      "requirementIdentifier": "A.5.24 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed30003a95e3808397d6d",
+      "requirementIdentifier": "A.5.25",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed3455f6b6695283a7c72",
+      "requirementIdentifier": "A.5.26 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed35d6330398a089100c1",
+      "requirementIdentifier": "A.5.27",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed36f9d1446b067a4990d",
+      "requirementIdentifier": "A.5.28",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed37df872af70c5430e7f",
+      "requirementIdentifier": "A.5.29",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed38c0abdd2731880fa6e",
+      "requirementIdentifier": "A.5.30",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed39e1c2f759d433992a7",
+      "requirementIdentifier": "A.5.31 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed3ad17d5f7844774977a",
+      "requirementIdentifier": "A.5.32",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed3b87e88e0a249c2098a",
+      "requirementIdentifier": "A.5.33 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed3c23adb2d4461dc09da",
+      "requirementIdentifier": "A.5.34",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed3d0342b5d531935cd62",
+      "requirementIdentifier": "A.5.35 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed3dc1663fa62052ef548",
+      "requirementIdentifier": "A.5.36",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed3e78e9b73cb6b279906",
+      "requirementIdentifier": "A.5.37",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed3f78f28fba67dedc302",
+      "requirementIdentifier": "A.6.1 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed40ec3b505552b76ce5f",
+      "requirementIdentifier": "A.6.3 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed423b43ec990bbd5f3b5",
+      "requirementIdentifier": "A.6.5",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed4316c72a80ff5d1fdc6",
+      "requirementIdentifier": "A.6.6 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed43f84399c54accb82b9",
+      "requirementIdentifier": "A.6.7 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed448a7cfe00afd2b0a19",
+      "requirementIdentifier": "A.6.8",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed45b92c3b3f329d3858f",
+      "requirementIdentifier": "A.7.1",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed46ff23ef8614d7f3042",
+      "requirementIdentifier": "A.7.2",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed47bac3dee3588290b04",
+      "requirementIdentifier": "A.7.3",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed48f152068a490f317ac",
+      "requirementIdentifier": "A.7.4 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed61f357c7bf776300aa7",
+      "requirementIdentifier": "A.7.5 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed62a1ad145f4554d4068",
+      "requirementIdentifier": "A.7.6 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed6347b1e6eea717482ca",
+      "requirementIdentifier": "A.7.7",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed6497c1e390fe89f0dfa",
+      "requirementIdentifier": "A.7.8",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed651d81e6c51934134bc",
+      "requirementIdentifier": "A.7.9 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed65bb490440ea4f3b552",
+      "requirementIdentifier": "A.7.10",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed663b850258024b0b236",
+      "requirementIdentifier": "A.7.11 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed66d77af963d9763adeb",
+      "requirementIdentifier": "A.7.12",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed6761e8f45c900e60be3",
+      "requirementIdentifier": "A.7.13",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed686b626f985dac54c52",
+      "requirementIdentifier": "A.7.14 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed69ce5f84cf315240f7a",
+      "requirementIdentifier": "A.8.1",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed6a5d1683d54c08f7084",
+      "requirementIdentifier": "A.8.2 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed6afecd253fe6c3c060a",
+      "requirementIdentifier": "A.8.3 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed6ba79910ff5b9c7d76f",
+      "requirementIdentifier": "A.8.4 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed6c7eee985561d1f4d9b",
+      "requirementIdentifier": "A.8.5 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed6d277a609269207598d",
+      "requirementIdentifier": "A.8.6",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed6dc2a941d8ed887fa01",
+      "requirementIdentifier": "A.8.7",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed6eab8348ae42e9622d2",
+      "requirementIdentifier": "A.8.8",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed6f360678a6cf25345b2",
+      "requirementIdentifier": "\t A.8.9",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed6fbb7447647d630bfac",
+      "requirementIdentifier": "A.8.10",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed70245119fe4e1943d4a",
+      "requirementIdentifier": "A.8.11",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed70cd5e3fc570dd75770",
+      "requirementIdentifier": "A.8.12",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed713c378baffc34d25f5",
+      "requirementIdentifier": "A.8.13",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed71f9deddd61109308dd",
+      "requirementIdentifier": "A.8.14",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed7326db82252ea6faa67",
+      "requirementIdentifier": "A.8.15",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed739dc6d14f4ad5d95d2",
+      "requirementIdentifier": "A.8.16 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed74124bbe51a72d0c154",
+      "requirementIdentifier": "A.8.17",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed748dab9fd6d58f20964",
+      "requirementIdentifier": "A.8.18",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed7532959ec62c8ae815c",
+      "requirementIdentifier": "\t A.8.19",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed76e19cca49a6ac49bf8",
+      "requirementIdentifier": "A.8.20",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed7794b363009725bab5b",
+      "requirementIdentifier": "A.8.21",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed781b79f824466be5394",
+      "requirementIdentifier": "A.8.22",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed789b359f075b12e20c0",
+      "requirementIdentifier": "A.8.23",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed7901ab04aa5a1d27890",
+      "requirementIdentifier": "A.8.24 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed799ca7b40e2d8ed55ba",
+      "requirementIdentifier": "A.8.25",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed7b407395dfc68ff955d",
+      "requirementIdentifier": "A.8.26 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed7c75e421b346480e046",
+      "requirementIdentifier": "A.8.27",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed7ce83ab2029a9dc414c",
+      "requirementIdentifier": "A.8.28",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed7d719388daff946a68d",
+      "requirementIdentifier": "A.8.29",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed7de305465fe226fc39d",
+      "requirementIdentifier": "A.8.30",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed4019aa553be924ee291",
+      "requirementIdentifier": "A.6.2",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed7e50f718eb161dd5605",
+      "requirementIdentifier": "A.8.31 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed80ab572359972e06ace",
+      "requirementIdentifier": "A.8.32",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed813388d3297b3ed3e73",
+      "requirementIdentifier": "A.8.33",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b96ad6c5e729676acb",
+      "requirementId": "frk_rq_681ed81d5e01d43ada52ffae",
+      "requirementIdentifier": "A.8.34 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed1295a639db1210e9237",
+      "requirementIdentifier": "9.2",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed13272f6276ce54c2e23",
+      "requirementIdentifier": "9.3",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed1433a712ae09dc7633b",
+      "requirementIdentifier": "\t 10.1 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed1525f18dab66c1a2203",
+      "requirementIdentifier": "10.2",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed16583aa68b76c80917a",
+      "requirementIdentifier": "A.5.1 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed1946de8b1beb5d5b987",
+      "requirementIdentifier": "A.5.4",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed17f36423e887ec130f6",
+      "requirementIdentifier": "A.5.3",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed1ac19e3e7e1aef48517",
+      "requirementIdentifier": "A.5.5 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed1d5f29a33fa8735d51c",
+      "requirementIdentifier": "\t A.5.6 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed1e1ad96b7f5e1659cab",
+      "requirementIdentifier": "A.5.7",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed1f09741eeebee147fcb",
+      "requirementIdentifier": "A.5.8",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed1fe624cd14c34876ee8",
+      "requirementIdentifier": "A.5.9 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed20a3f7335dd1ec64b6c",
+      "requirementIdentifier": "A.5.10",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed2170cb1b15f842b6f6d",
+      "requirementIdentifier": "A.5.11",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed2229fa221e338501d51",
+      "requirementIdentifier": "A.5.12 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed2314f568a3e5c3f1fbf",
+      "requirementIdentifier": "A.5.13 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed23c61c97af7967b50c2",
+      "requirementIdentifier": "A.5.14",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed24aa0809f09c4d22256",
+      "requirementIdentifier": "A.5.15 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed261918bb47df6590dac",
+      "requirementIdentifier": "A.5.16",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed277348377c5b5f81649",
+      "requirementIdentifier": "A.5.17",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed2893326942f0ac88d81",
+      "requirementIdentifier": "A.5.18",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed29613b703c7f368ffdc",
+      "requirementIdentifier": "A.5.19",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed2a8bda2e236fbc46492",
+      "requirementIdentifier": "A.5.20",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed2be08112d94334bd319",
+      "requirementIdentifier": "A.5.21 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed2c844494f7d1b01fa45",
+      "requirementIdentifier": "A.5.22",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed2e32d00654588c5103f",
+      "requirementIdentifier": "A.5.23",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed2f378d4fbe2e39f5f76",
+      "requirementIdentifier": "A.5.24 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed30003a95e3808397d6d",
+      "requirementIdentifier": "A.5.25",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed3455f6b6695283a7c72",
+      "requirementIdentifier": "A.5.26 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed35d6330398a089100c1",
+      "requirementIdentifier": "A.5.27",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed36f9d1446b067a4990d",
+      "requirementIdentifier": "A.5.28",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed37df872af70c5430e7f",
+      "requirementIdentifier": "A.5.29",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed38c0abdd2731880fa6e",
+      "requirementIdentifier": "A.5.30",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed39e1c2f759d433992a7",
+      "requirementIdentifier": "A.5.31 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed3ad17d5f7844774977a",
+      "requirementIdentifier": "A.5.32",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed3b87e88e0a249c2098a",
+      "requirementIdentifier": "A.5.33 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed3c23adb2d4461dc09da",
+      "requirementIdentifier": "A.5.34",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed3d0342b5d531935cd62",
+      "requirementIdentifier": "A.5.35 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed3dc1663fa62052ef548",
+      "requirementIdentifier": "A.5.36",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed3e78e9b73cb6b279906",
+      "requirementIdentifier": "A.5.37",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed3f78f28fba67dedc302",
+      "requirementIdentifier": "A.6.1 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed40ec3b505552b76ce5f",
+      "requirementIdentifier": "A.6.3 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed423b43ec990bbd5f3b5",
+      "requirementIdentifier": "A.6.5",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed4316c72a80ff5d1fdc6",
+      "requirementIdentifier": "A.6.6 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed43f84399c54accb82b9",
+      "requirementIdentifier": "A.6.7 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed448a7cfe00afd2b0a19",
+      "requirementIdentifier": "A.6.8",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed45b92c3b3f329d3858f",
+      "requirementIdentifier": "A.7.1",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed46ff23ef8614d7f3042",
+      "requirementIdentifier": "A.7.2",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed47bac3dee3588290b04",
+      "requirementIdentifier": "A.7.3",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed48f152068a490f317ac",
+      "requirementIdentifier": "A.7.4 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed61f357c7bf776300aa7",
+      "requirementIdentifier": "A.7.5 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed62a1ad145f4554d4068",
+      "requirementIdentifier": "A.7.6 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed6347b1e6eea717482ca",
+      "requirementIdentifier": "A.7.7",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed6497c1e390fe89f0dfa",
+      "requirementIdentifier": "A.7.8",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed651d81e6c51934134bc",
+      "requirementIdentifier": "A.7.9 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed65bb490440ea4f3b552",
+      "requirementIdentifier": "A.7.10",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed663b850258024b0b236",
+      "requirementIdentifier": "A.7.11 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed66d77af963d9763adeb",
+      "requirementIdentifier": "A.7.12",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed6761e8f45c900e60be3",
+      "requirementIdentifier": "A.7.13",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed686b626f985dac54c52",
+      "requirementIdentifier": "A.7.14 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed69ce5f84cf315240f7a",
+      "requirementIdentifier": "A.8.1",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed6a5d1683d54c08f7084",
+      "requirementIdentifier": "A.8.2 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed6afecd253fe6c3c060a",
+      "requirementIdentifier": "A.8.3 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed6ba79910ff5b9c7d76f",
+      "requirementIdentifier": "A.8.4 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed6c7eee985561d1f4d9b",
+      "requirementIdentifier": "A.8.5 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed6d277a609269207598d",
+      "requirementIdentifier": "A.8.6",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed6dc2a941d8ed887fa01",
+      "requirementIdentifier": "A.8.7",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed6eab8348ae42e9622d2",
+      "requirementIdentifier": "A.8.8",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed6f360678a6cf25345b2",
+      "requirementIdentifier": "\t A.8.9",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed6fbb7447647d630bfac",
+      "requirementIdentifier": "A.8.10",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed70245119fe4e1943d4a",
+      "requirementIdentifier": "A.8.11",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed70cd5e3fc570dd75770",
+      "requirementIdentifier": "A.8.12",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed713c378baffc34d25f5",
+      "requirementIdentifier": "A.8.13",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed71f9deddd61109308dd",
+      "requirementIdentifier": "A.8.14",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed7326db82252ea6faa67",
+      "requirementIdentifier": "A.8.15",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed739dc6d14f4ad5d95d2",
+      "requirementIdentifier": "A.8.16 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed74124bbe51a72d0c154",
+      "requirementIdentifier": "A.8.17",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed748dab9fd6d58f20964",
+      "requirementIdentifier": "A.8.18",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed7532959ec62c8ae815c",
+      "requirementIdentifier": "\t A.8.19",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed76e19cca49a6ac49bf8",
+      "requirementIdentifier": "A.8.20",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed7794b363009725bab5b",
+      "requirementIdentifier": "A.8.21",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed781b79f824466be5394",
+      "requirementIdentifier": "A.8.22",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed789b359f075b12e20c0",
+      "requirementIdentifier": "A.8.23",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed7901ab04aa5a1d27890",
+      "requirementIdentifier": "A.8.24 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed799ca7b40e2d8ed55ba",
+      "requirementIdentifier": "A.8.25",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed7b407395dfc68ff955d",
+      "requirementIdentifier": "A.8.26 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed7c75e421b346480e046",
+      "requirementIdentifier": "A.8.27",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed7ce83ab2029a9dc414c",
+      "requirementIdentifier": "A.8.28",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed7d719388daff946a68d",
+      "requirementIdentifier": "A.8.29",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed7de305465fe226fc39d",
+      "requirementIdentifier": "A.8.30",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed4019aa553be924ee291",
+      "requirementIdentifier": "A.6.2",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed7e50f718eb161dd5605",
+      "requirementIdentifier": "A.8.31 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed80ab572359972e06ace",
+      "requirementIdentifier": "A.8.32",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed813388d3297b3ed3e73",
+      "requirementIdentifier": "A.8.33",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_69e639b9148c96a37c8936fc",
+      "requirementId": "frk_rq_681ed81d5e01d43ada52ffae",
+      "requirementIdentifier": "A.8.34 ",
+      "frameworkId": "frk_681ecc34e85064efdbb76993"
+    },
+    {
+      "controlTemplateId": "frk_ct_683f43a65de3b6044e63220f",
+      "requirementId": "frk_rq_69efa5b70d056f596dc2a7ae",
+      "requirementIdentifier": "CC1.1",
+      "frameworkId": "frk_683f377429b8408d1c85f9bd"
+    }
+  ]
+}

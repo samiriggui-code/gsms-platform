@@ -1,0 +1,120 @@
+{
+  "countermeasure_templates": [
+    {
+      "moduleSlug": "mod-cnaps-agrement",
+      "slug": "cm-cnaps-veille-titres",
+      "name": "Veille échéances autorisation / agrément",
+      "description": "Calendrier de renouvellement CNAPS, pièces à jour, activités alignées CSI L611.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": ["DETECT"],
+      "domain": "PERSONNEL",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["cnaps", "agrement"],
+      "csmpUnitReference": "Unit 2"
+    },
+    {
+      "moduleSlug": "mod-cnaps-cartes-pro",
+      "slug": "cm-cnaps-registre-cartes",
+      "name": "Registre cartes pro + contrôle d’affectation",
+      "description": "Registre nominatif, échéances, interdiction d’affecter un agent sans carte valide.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": ["DETECT", "DENY"],
+      "domain": "PERSONNEL",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["cnaps", "carte-pro"],
+      "csmpUnitReference": "Unit 7"
+    },
+    {
+      "moduleSlug": "mod-cnaps-contrats",
+      "slug": "cm-cnaps-contrat-consignes",
+      "name": "Contrat + consignes de poste écrits",
+      "description": "Périmètre L611, sites, horaires, limites de mission ; consignes remises et visées.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": ["DETER", "DETECT"],
+      "domain": "PERSONNEL",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["cnaps", "contrat"],
+      "csmpUnitReference": "Unit 2"
+    },
+    {
+      "moduleSlug": "mod-cnaps-formation",
+      "slug": "cm-cnaps-school-recyclage",
+      "name": "Recyclage tracé dans GSMS School",
+      "description": "Sessions formation continue liées aux renouvellements de carte — pas un LMS Grace.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": ["DETECT", "RECOVER"],
+      "domain": "PERSONNEL",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["cnaps", "formation", "school"],
+      "csmpUnitReference": "Unit 7"
+    },
+    {
+      "moduleSlug": "mod-cnaps-materiel",
+      "slug": "cm-cnaps-dotation-inventaire",
+      "name": "Inventaire tenue / matériel de mission",
+      "description": "Dotation contrôlée, signes distinctifs conformes, pas de confusion service public.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": ["DETER"],
+      "domain": "PERSONNEL",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["cnaps", "tenue"],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "mod-cnaps-sous-traitance",
+      "slug": "cm-cnaps-due-diligence-st",
+      "name": "Due diligence sous-traitants agréés",
+      "description": "Vérifier autorisation / agrément du sous-traitant avant mission.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": ["DETECT", "DENY"],
+      "domain": "PERSONNEL",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["cnaps", "sous-traitance"],
+      "csmpUnitReference": "Unit 2"
+    }
+  ],
+  "threat_countermeasures": [
+    {
+      "threatSlug": "cnaps-agrement-expire",
+      "countermeasureSlug": "cm-cnaps-veille-titres",
+      "relevance": "HIGH",
+      "rationale": "Veille échéances évite l’exercice sans titre"
+    },
+    {
+      "threatSlug": "cnaps-agent-sans-carte",
+      "countermeasureSlug": "cm-cnaps-registre-cartes",
+      "relevance": "HIGH",
+      "rationale": "Registre + contrôle d’affectation"
+    },
+    {
+      "threatSlug": "cnaps-mission-floue",
+      "countermeasureSlug": "cm-cnaps-contrat-consignes",
+      "relevance": "HIGH",
+      "rationale": "Contrat et consignes bornent la mission"
+    },
+    {
+      "threatSlug": "cnaps-formation-lapse",
+      "countermeasureSlug": "cm-cnaps-school-recyclage",
+      "relevance": "HIGH",
+      "rationale": "School porte la preuve de formation continue"
+    },
+    {
+      "threatSlug": "cnaps-tenue-non-conforme",
+      "countermeasureSlug": "cm-cnaps-dotation-inventaire",
+      "relevance": "HIGH",
+      "rationale": "Inventaire et contrôle tenue"
+    },
+    {
+      "threatSlug": "cnaps-sous-traitance-opaque",
+      "countermeasureSlug": "cm-cnaps-due-diligence-st",
+      "relevance": "HIGH",
+      "rationale": "Vérifier les titres du sous-traitant"
+    }
+  ]
+}

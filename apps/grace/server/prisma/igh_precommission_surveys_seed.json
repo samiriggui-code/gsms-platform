@@ -1,0 +1,407 @@
+{
+  "templates": [
+    {
+      "key": "survey-igh-precom",
+      "name": "Pré-commission IGH",
+      "description": "Checklist agrégée pré-commission / commission de sécurité IGH (P0). Classement, compartimentage, évacuation, moyens, SSI, registre, dossier, essais. Pack igh-precommission. Pas les largeurs CO ERP.",
+      "surveyType": "HYBRID",
+      "applicableClusterTypes": ["SPATIAL"],
+      "applicableAssetTypes": ["SITE", "BUILDING", "ZONE", "ROOM", "EQUIPMENT", "INFORMATION", "SYSTEM"],
+      "requiresPhysical": true,
+      "questionIds": [
+        "igh-classement-usage",
+        "igh-classement-hauteur",
+        "igh-compart-percements",
+        "igh-compart-portes-cf",
+        "igh-evac-cages",
+        "igh-evac-refuge",
+        "igh-evac-consignes",
+        "igh-moyens-colonne",
+        "igh-moyens-acces",
+        "igh-ssi-service",
+        "igh-ssi-journal",
+        "igh-exploitation-registre",
+        "igh-exploitation-service",
+        "igh-dossier-pieces",
+        "igh-dossier-plans",
+        "igh-essais-pv"
+      ]
+    },
+    {
+      "key": "survey-igh-precom-classement",
+      "name": "Pré-commission IGH — Classement",
+      "description": "Cohérence usage / hauteur vs CCH R146-3 et R146-4 (pas le type/catégorie ERP).",
+      "surveyType": "DOC_REVIEW",
+      "applicableClusterTypes": ["SPATIAL", "LOGICAL"],
+      "applicableAssetTypes": ["SITE", "BUILDING", "INFORMATION"],
+      "requiresPhysical": false,
+      "questionIds": ["igh-classement-usage", "igh-classement-hauteur"]
+    },
+    {
+      "key": "survey-igh-precom-compartimentage",
+      "name": "Pré-commission IGH — Compartimentage",
+      "description": "Isolements, percements, portes coupe-feu — principes IGH (R146-9 / R146-10), pas CO 34.",
+      "surveyType": "PHYSICAL",
+      "applicableClusterTypes": ["SPATIAL"],
+      "applicableAssetTypes": ["BUILDING", "ZONE", "ROOM"],
+      "requiresPhysical": true,
+      "questionIds": ["igh-compart-percements", "igh-compart-portes-cf"]
+    },
+    {
+      "key": "survey-igh-precom-evacuation",
+      "name": "Pré-commission IGH — Évacuation & refuges",
+      "description": "Cages d’escalier, refuges, consignes — règles IGH, pas largeurs ERP.",
+      "surveyType": "PHYSICAL",
+      "applicableClusterTypes": ["SPATIAL"],
+      "applicableAssetTypes": ["BUILDING", "ZONE", "ROOM"],
+      "requiresPhysical": true,
+      "questionIds": ["igh-evac-cages", "igh-evac-refuge", "igh-evac-consignes"]
+    },
+    {
+      "key": "survey-igh-precom-moyens",
+      "name": "Pré-commission IGH — Moyens de secours",
+      "description": "Colonnes et accès engins / locaux pompiers.",
+      "surveyType": "PHYSICAL",
+      "applicableClusterTypes": ["SPATIAL"],
+      "applicableAssetTypes": ["EQUIPMENT", "ZONE", "BUILDING"],
+      "requiresPhysical": true,
+      "questionIds": ["igh-moyens-colonne", "igh-moyens-acces"]
+    },
+    {
+      "key": "survey-igh-precom-ssi",
+      "name": "Pré-commission IGH — SSI",
+      "description": "État du SSI IGH et journal — exigences IGH, pas les seuls MS ERP.",
+      "surveyType": "HYBRID",
+      "applicableClusterTypes": ["SPATIAL"],
+      "applicableAssetTypes": ["SYSTEM", "INFORMATION", "EQUIPMENT"],
+      "requiresPhysical": true,
+      "questionIds": ["igh-ssi-service", "igh-ssi-journal"]
+    },
+    {
+      "key": "survey-igh-precom-exploitation",
+      "name": "Pré-commission IGH — Exploitation",
+      "description": "Registre de sécurité IGH et service de sécurité unique.",
+      "surveyType": "DOC_REVIEW",
+      "applicableClusterTypes": ["SPATIAL", "LOGICAL"],
+      "applicableAssetTypes": ["INFORMATION", "PROCESS", "SITE"],
+      "requiresPhysical": false,
+      "questionIds": ["igh-exploitation-registre", "igh-exploitation-service"]
+    },
+    {
+      "key": "survey-igh-precom-dossier",
+      "name": "Pré-commission IGH — Dossier",
+      "description": "Pièces du dossier soumis à la commission IGH (orientation R146-14).",
+      "surveyType": "DOC_REVIEW",
+      "applicableClusterTypes": ["SPATIAL", "LOGICAL"],
+      "applicableAssetTypes": ["INFORMATION", "SITE", "BUILDING"],
+      "requiresPhysical": false,
+      "questionIds": ["igh-dossier-pieces", "igh-dossier-plans"]
+    },
+    {
+      "key": "survey-igh-precom-essais",
+      "name": "Pré-commission IGH — Essais",
+      "description": "PV de vérifications agréées avant / pour la commission.",
+      "surveyType": "DOC_REVIEW",
+      "applicableClusterTypes": ["SPATIAL", "LOGICAL"],
+      "applicableAssetTypes": ["INFORMATION", "SYSTEM", "EQUIPMENT"],
+      "requiresPhysical": false,
+      "questionIds": ["igh-essais-pv"]
+    }
+  ],
+  "questions": [
+    {
+      "id": "igh-classement-usage",
+      "category": "IGH · Classement",
+      "prompt": "La classe / l’usage IGH déclaré (GHA, GHO, GHW…) est-il cohérent avec l’occupation constatée ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Checklist opérationnelle — pas un jugement article-atomique. Classes CCH R146-4 (GHA habitation, GHO hôtel, GHR enseignement, GHS archives, GHTC, GHU sanitaire, GHW 1/2 bureaux, GHZ, ITGH). Ne pas appliquer le type/catégorie ERP.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CCH R146-4 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043819083"
+      ],
+      "attach": {
+        "assetSlugs": ["igh-site", "igh-building"],
+        "threatSlugs": ["igh-sous-classement"],
+        "cmSlugs": ["cm-igh-classement-coherent"]
+      }
+    },
+    {
+      "id": "igh-classement-hauteur",
+      "category": "IGH · Classement",
+      "prompt": "La hauteur du plancher bas du dernier niveau (vs sol engins) est-elle cohérente avec le classement IGH déclaré ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "PHYSICAL",
+      "hint": "CCH R146-3 : IGH si > 50 m pour l’habitation, > 28 m pour les autres usages. Ne pas inverser. Habitation 28–50 m isolée n’est pas IGH ; mixte non isolé = GHZ. Mesure / dossier vs visite.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CCH R146-3 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043819081"
+      ],
+      "attach": {
+        "assetSlugs": ["igh-site", "igh-building"],
+        "threatSlugs": ["igh-sous-classement"],
+        "cmSlugs": ["cm-igh-classement-coherent"]
+      }
+    },
+    {
+      "id": "igh-compart-percements",
+      "category": "IGH · Compartimentage",
+      "prompt": "Les percements de parois de compartiment (gaines, fluides) sont-ils calfeutrés / repris ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "PHYSICAL",
+      "hint": "Orientation R146-9 / R146-10 (parois CF 2 h / EI 120). Détail d’exécution = arrêté IGH 30/12/2011 selon classe — pas une cote article-atomique. Ne pas juger avec CO 34 ERP.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CCH R146-9 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043819095",
+        "CCH R146-10 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043819097",
+        "Arrêté IGH 30/12/2011 — https://www.legifrance.gouv.fr/loda/id/JORFTEXT000025167121"
+      ],
+      "attach": {
+        "assetSlugs": ["igh-compartiment"],
+        "threatSlugs": ["igh-compartiment-perce"],
+        "cmSlugs": ["cm-igh-compartimentage-entier"]
+      }
+    },
+    {
+      "id": "igh-compart-portes-cf",
+      "category": "IGH · Compartimentage",
+      "prompt": "Les portes / sas coupe-feu des compartiments ferment-ils et sont-ils opérationnels (non calés) ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "PHYSICAL",
+      "hint": "R146-10 : accès escaliers / compartiments CF 2 h. Photo + manœuvre. Checklist terrain, pas un PV laboratoire.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CCH R146-10 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043819097"
+      ],
+      "attach": {
+        "assetSlugs": ["igh-compartiment"],
+        "threatSlugs": ["igh-compartiment-perce"],
+        "cmSlugs": ["cm-igh-compartimentage-entier"]
+      }
+    },
+    {
+      "id": "igh-evac-cages",
+      "category": "IGH · Évacuation",
+      "prompt": "Les cages d’escalier / dégagements IGH sont-ils libres, praticables et non encombrés ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "PHYSICAL",
+      "hint": "R146-9 2° : deux escaliers au moins par compartiment (dérogation possible GHW 1). Visite cages — ne pas mesurer les largeurs CO 34 ERP.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CCH R146-9 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043819095"
+      ],
+      "attach": {
+        "assetSlugs": ["igh-cage-escalier"],
+        "threatSlugs": ["igh-refuge-inaccessible"],
+        "cmSlugs": ["cm-igh-refuges-cages-libres"]
+      }
+    },
+    {
+      "id": "igh-evac-refuge",
+      "category": "IGH · Évacuation",
+      "prompt": "Les refuges / espaces d’attente (s’ils existent pour cette classe) sont-ils accessibles et non encombrés ?",
+      "type": "yes_no_partial",
+      "weight": 4,
+      "evidenceType": "PHYSICAL",
+      "hint": "Si has_refuge = non / N/A : PARTIAL avec commentaire. Détail classe = arrêté 30/12/2011. Pas une exigence ERP type.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "Arrêté IGH 30/12/2011 — https://www.legifrance.gouv.fr/loda/id/JORFTEXT000025167121"
+      ],
+      "attach": {
+        "assetSlugs": ["igh-refuge", "igh-cage-escalier"],
+        "threatSlugs": ["igh-refuge-inaccessible"],
+        "cmSlugs": ["cm-igh-refuges-cages-libres"]
+      }
+    },
+    {
+      "id": "igh-evac-consignes",
+      "category": "IGH · Évacuation",
+      "prompt": "Les consignes d’évacuation IGH (y compris handicap) sont-elles affichées et cohérentes avec le registre ?",
+      "type": "yes_no_partial",
+      "weight": 3,
+      "evidenceType": "HYBRID",
+      "hint": "R146-35 3° (registre) : consignes générales / particulières / évacuation handicap. Checklist présence, pas audit accessibilité complet.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CCH R146-35 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000052645057"
+      ],
+      "attach": {
+        "assetSlugs": ["igh-refuge", "igh-registre"],
+        "threatSlugs": ["igh-refuge-inaccessible"]
+      }
+    },
+    {
+      "id": "igh-moyens-colonne",
+      "category": "IGH · Moyens",
+      "prompt": "Les colonnes (sèches / humides) et prises par niveau sont-elles accessibles et en service apparent ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "PHYSICAL",
+      "hint": "Si has_colonne = non : commenter N/A. Détail dimensionnement = arrêté IGH. Croiser PV d’essais. Pas un calcul OpenFire.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "Arrêté IGH 30/12/2011 — https://www.legifrance.gouv.fr/loda/id/JORFTEXT000025167121",
+        "CCH R146-9 3° b — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043819095"
+      ],
+      "attach": {
+        "assetSlugs": ["igh-colonne"],
+        "threatSlugs": ["igh-colonne-hs"],
+        "cmSlugs": ["cm-igh-colonne-operationnelle"]
+      }
+    },
+    {
+      "id": "igh-moyens-acces",
+      "category": "IGH · Moyens",
+      "prompt": "Les accès engins / locaux pompiers sont-ils libres et identifiables ?",
+      "type": "yes_no_partial",
+      "weight": 4,
+      "evidenceType": "PHYSICAL",
+      "hint": "Pratique commission + R146-9 moyens de lutte. Photo accès, stationnement, locaux. Pas une distance 3 km (R146-6) à rejouer sur le terrain.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CCH R146-9 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043819095"
+      ],
+      "attach": {
+        "assetSlugs": ["igh-colonne", "igh-building"],
+        "threatSlugs": ["igh-colonne-hs"],
+        "cmSlugs": ["cm-igh-colonne-operationnelle"]
+      }
+    },
+    {
+      "id": "igh-ssi-service",
+      "category": "IGH · SSI",
+      "prompt": "Le SSI / PCA IGH est-il en service (pas hors service prolongé, défauts majeurs levés) ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "HYBRID",
+      "hint": "R146-9 3° : alarme efficace + moyens de lutte. Détail SSI = arrêté 30/12/2011. Ne pas réutiliser les seules questions MS ERP.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CCH R146-9 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043819095",
+        "Arrêté IGH 30/12/2011 — https://www.legifrance.gouv.fr/loda/id/JORFTEXT000025167121"
+      ],
+      "attach": {
+        "assetSlugs": ["igh-ssi"],
+        "threatSlugs": ["igh-ssi-defaillant"],
+        "cmSlugs": ["cm-igh-ssi-maintenu"]
+      }
+    },
+    {
+      "id": "igh-ssi-journal",
+      "category": "IGH · SSI",
+      "prompt": "Le journal / les rapports SSI sont-ils disponibles et à jour pour la commission ?",
+      "type": "yes_no_partial",
+      "weight": 4,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "R146-29 : la commission se fait présenter registre + rapports de vérification. Croiser contrat maintenance.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CCH R146-29 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043819141"
+      ],
+      "attach": {
+        "assetSlugs": ["igh-ssi", "igh-registre"],
+        "threatSlugs": ["igh-ssi-defaillant"],
+        "cmSlugs": ["cm-igh-ssi-maintenu"]
+      }
+    },
+    {
+      "id": "igh-exploitation-registre",
+      "category": "IGH · Exploitation",
+      "prompt": "Le registre de sécurité IGH est-il tenu (travaux, service, consignes, contrôles, exercices) ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "R146-35 (en vigueur 01/07/2026) : contenu du registre. R146-29 : présenté à la commission. Checklist présence des rubriques, pas un audit juridique du registre.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CCH R146-35 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000052645057",
+        "CCH R146-29 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043819141"
+      ],
+      "attach": {
+        "assetSlugs": ["igh-registre"],
+        "threatSlugs": ["igh-exploitation-derive"],
+        "cmSlugs": ["cm-igh-registre-service"]
+      }
+    },
+    {
+      "id": "igh-exploitation-service",
+      "category": "IGH · Exploitation",
+      "prompt": "Un service de sécurité unique est-il organisé pour l’ensemble de l’IGH (effectif / planning visibles) ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "HYBRID",
+      "hint": "R146-23 : service unique + exercices. Classes / effectifs = arrêté IGH, pas MS 45–52 ERP. SSIAP si ssiap_required.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CCH R146-23 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043819127"
+      ],
+      "attach": {
+        "assetSlugs": ["igh-registre"],
+        "threatSlugs": ["igh-exploitation-derive"],
+        "cmSlugs": ["cm-igh-registre-service"]
+      }
+    },
+    {
+      "id": "igh-dossier-pieces",
+      "category": "IGH · Dossier",
+      "prompt": "Le dossier de sécurité IGH comporte-t-il les pièces attendues pour la commission (notice, plans, attestations) ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Orientation R146-14 (notice, plans, états descriptifs, dérogations). Pratique commission préf. ERP et IGH. Pas une liste unique nationale exhaustive.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CCH R146-14 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043819107",
+        "Guide commission 94 — https://www.val-de-marne.gouv.fr/Actions-de-l-Etat/Securite/Securite-civile-et-defense/La-commission-de-securite-les-ERP-et-les-IGH"
+      ],
+      "attach": {
+        "assetSlugs": ["igh-dossier-commission"],
+        "threatSlugs": ["igh-dossier-incomplet"],
+        "cmSlugs": ["cm-igh-dossier-complet"]
+      }
+    },
+    {
+      "id": "igh-dossier-plans",
+      "category": "IGH · Dossier",
+      "prompt": "Le jeu de plans IGH est-il lisible et conforme à l’existant constaté en visite ?",
+      "type": "yes_no_partial",
+      "weight": 4,
+      "evidenceType": "HYBRID",
+      "hint": "R146-14 2° : plans + états descriptifs. Croiser plans vs visite (compartiments, cages, colonnes).",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CCH R146-14 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043819107"
+      ],
+      "attach": {
+        "assetSlugs": ["igh-dossier-commission", "igh-building"],
+        "threatSlugs": ["igh-dossier-incomplet"],
+        "cmSlugs": ["cm-igh-dossier-complet"]
+      }
+    },
+    {
+      "id": "igh-essais-pv",
+      "category": "IGH · Essais",
+      "prompt": "Les PV de vérifications (personne / organisme agréé) sont-ils présents et dans une date utile pour la commission ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "R146-20 : vérifications imposées par le règlement de sécurité, avant et pendant l’occupation. R146-28 : occupation subordonnée au respect des prescriptions. Périmètre SSI / colonnes / désenfumage selon classe.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CCH R146-20 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000052645060",
+        "CCH R146-28 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043819137"
+      ],
+      "attach": {
+        "assetSlugs": ["igh-pv-essais", "igh-ssi", "igh-colonne"],
+        "threatSlugs": ["igh-essais-absents"],
+        "cmSlugs": ["cm-igh-pv-essais"]
+      }
+    }
+  ]
+}

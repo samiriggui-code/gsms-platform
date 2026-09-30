@@ -1,0 +1,115 @@
+{
+  "$schema": "https://raw.githubusercontent.com/modelcontextprotocol/registry/main/schema/server.json",
+  "name": "LexSocket - European Public Procurement",
+  "description": "Search and explore European public procurement tenders — both EU above-threshold (TED) and below-threshold from 18 national sources. Find construction projects, IT services contracts, and procurement opportunities across Europe with hybrid search, CPV/NUTS filtering, and buyer lookup.",
+  "vendor": "LexSocket",
+  "sourceUrl": "https://github.com/lexsocket/mcp-tenders",
+  "homepage": "https://lexsocket.ai",
+  "license": "MIT",
+  "runtime": "node",
+  "transport": [
+    {
+      "type": "streamable-http",
+      "url": "https://mcp.lexsocket.ai/"
+    }
+  ],
+  "tools": [
+    {
+      "name": "search_ted",
+      "description": "Hybrid search across EU above-threshold procurement tenders with filtering by country, CPV, NUTS, value range, and dates."
+    },
+    {
+      "name": "search_ted_fts",
+      "description": "Full-text keyword search (BM25) for exact term matching in TED notices."
+    },
+    {
+      "name": "search_ted_semantic",
+      "description": "Semantic vector search to find TED tenders by meaning and context."
+    },
+    {
+      "name": "get_ted_notice",
+      "description": "Retrieve a complete TED notice by its ID, including full XML content."
+    },
+    {
+      "name": "get_ted_stats",
+      "description": "Get TED database statistics: row count, storage size, embedding coverage."
+    },
+    {
+      "name": "find_similar_ted_tenders",
+      "description": "Find TED tenders similar to a given notice using stored embedding vectors."
+    },
+    {
+      "name": "browse_ted_by_deadline",
+      "description": "Browse TED tenders sorted by submission deadline with optional filters."
+    },
+    {
+      "name": "search_ted_by_buyer",
+      "description": "Search TED notices by contracting authority / buyer name."
+    },
+    {
+      "name": "search_ted_by_cpv",
+      "description": "Search TED notices by CPV code with prefix matching."
+    },
+    {
+      "name": "search_ted_by_nuts",
+      "description": "Search TED notices by NUTS region code with prefix matching."
+    },
+    {
+      "name": "search_ted_by_value_range",
+      "description": "Search TED notices within an estimated contract value range."
+    },
+    {
+      "name": "get_ted_statistics",
+      "description": "Get aggregated TED statistics grouped by procurement type, country, currency, or NUTS region."
+    },
+    {
+      "name": "search_tenders",
+      "description": "Hybrid search across below-threshold national tenders from 11 countries (FR, GB, DE, ES, IT, NL, IE, PT, DK, PL, AT)."
+    },
+    {
+      "name": "get_tender",
+      "description": "Retrieve a specific national tender by its ID, including raw JSON."
+    },
+    {
+      "name": "get_open_opportunities",
+      "description": "Get currently active/open tenders for bid/no-bid analysis."
+    },
+    {
+      "name": "get_stats",
+      "description": "Get national tenders database statistics."
+    },
+    {
+      "name": "find_similar_tenders",
+      "description": "Find national tenders similar to a given tender using stored embeddings."
+    },
+    {
+      "name": "browse_by_deadline",
+      "description": "Browse national tenders sorted by submission deadline."
+    },
+    {
+      "name": "search_by_buyer",
+      "description": "Search national tenders by contracting authority / buyer name."
+    },
+    {
+      "name": "search_by_cpv",
+      "description": "Search national tenders by CPV code."
+    },
+    {
+      "name": "search_by_nuts",
+      "description": "Search national tenders by NUTS region code."
+    },
+    {
+      "name": "search_by_value_range",
+      "description": "Search national tenders by estimated contract value range."
+    },
+    {
+      "name": "get_tender_statistics",
+      "description": "Get aggregated national tender statistics by country, status, source, etc."
+    }
+  ],
+  "categories": [
+    "Government",
+    "Data Science & ML",
+    "Analytics & Monitoring"
+  ]
+}

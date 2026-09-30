@@ -1,0 +1,215 @@
+{
+  "version": "0.1.0",
+  "provenance": "titles only — policy bodies TipTap Comp discarded (AGPL). Use as QAtrial policy-gen outline checklist.",
+  "count": 52,
+  "titles": [
+    {
+      "id": "frk_pt_685e453cad89de25e5aebf4a",
+      "name": "Acceptable Use & Workstation Security"
+    },
+    {
+      "id": "frk_pt_685e42188e2df1c285cca159",
+      "name": "Access Control & Least Privilege"
+    },
+    {
+      "id": "frk_pt_68cc576eab0b1748940253fa",
+      "name": "AI Policy Control Framework"
+    },
+    {
+      "id": "frk_pt_685e42445c99797321ef051a",
+      "name": "Authentication & Password"
+    },
+    {
+      "id": "frk_pt_685e45c938ad29ad775a2344",
+      "name": "Background Screening & On/Off-boarding"
+    },
+    {
+      "id": "frk_pt_685e44939f827e6a9f736fd4",
+      "name": "Backup, Business Continuity & Disaster Recovery"
+    },
+    {
+      "id": "frk_pt_685e42c38c3267d391674ce3",
+      "name": "Change & Release Management"
+    },
+    {
+      "id": "frk_pt_683d2cbc12b93dc5c8fe3a7d",
+      "name": "Change Management Policy "
+    },
+    {
+      "id": "frk_pt_69efd9cfa8d70d31297f025e",
+      "name": "Children's and Minors' Data Policy"
+    },
+    {
+      "id": "frk_pt_68e3f39e77b0a823add09bf5",
+      "name": "Code of Business Conduct"
+    },
+    {
+      "id": "frk_pt_685e4010bde64520b9abaf1d",
+      "name": "Compliance & Regulatory Monitoring"
+    },
+    {
+      "id": "frk_pt_69efd9b6276adc8d2eb7844c",
+      "name": "Consumer Rights Request Policy"
+    },
+    {
+      "id": "frk_pt_685e40d46e7b1123022bf3e8",
+      "name": "Data Classification & Handling"
+    },
+    {
+      "id": "frk_pt_69efd9cd0541d8cdb4cae9d1",
+      "name": "Data Classification and Inventory Policy"
+    },
+    {
+      "id": "frk_pt_69efd9bf92ab808ec559b766",
+      "name": "Data Retention and Disposal Policy"
+    },
+    {
+      "id": "frk_pt_691e4bbbdf8825258102dae6",
+      "name": "Document Control Procedure"
+    },
+    {
+      "id": "frk_pt_685e4177d5da489e7c5e1b1b",
+      "name": "Encryption & Crypto Controls"
+    },
+    {
+      "id": "frk_pt_685e43e23b78127274355980",
+      "name": "Incident Response & Breach Notification"
+    },
+    {
+      "id": "frk_pt_69efd9c800ed19d26d6175f4",
+      "name": "Incident Response and Breach Notification Policy"
+    },
+    {
+      "id": "frk_pt_685e3f7b4ebcb27b60c51434",
+      "name": "Information Security & Privacy Governance"
+    },
+    {
+      "id": "frk_pt_69efd9c4a9d86fd3bdc08de1",
+      "name": "Information Security Policy"
+    },
+    {
+      "id": "frk_pt_685e46557bc14fbddea6468a",
+      "name": "Information Sharing & Transfer"
+    },
+    {
+      "id": "frk_pt_691e4bd04aac53e783cb7c14",
+      "name": "Internal Audit Procedure"
+    },
+    {
+      "id": "frk_pt_685e43997555c7ab39983c21",
+      "name": "Logging, Monitoring & Audit"
+    },
+    {
+      "id": "frk_pt_6944570c25631cd097be8119",
+      "name": "Network Security"
+    },
+    {
+      "id": "frk_pt_685e4508d8c0d14ae873e644",
+      "name": "Physical Security & Environmental"
+    },
+    {
+      "id": "frk_pt_69f3dea2fcbd4cc5934aacfa",
+      "name": "PIPEDA Access Request Policy"
+    },
+    {
+      "id": "frk_pt_69f3dea01f1406bc00bc3d92",
+      "name": "PIPEDA Consent Management Policy"
+    },
+    {
+      "id": "frk_pt_69f3dea1ba102e2350be4f9b",
+      "name": "PIPEDA Data Accuracy Policy"
+    },
+    {
+      "id": "frk_pt_69f3de9fefdbd94ed82d7fb0",
+      "name": "PIPEDA Personal Information Inventory & Purpose Register Policy"
+    },
+    {
+      "id": "frk_pt_69f3dea3d44e30408069e513",
+      "name": "PIPEDA Privacy Complaint Policy"
+    },
+    {
+      "id": "frk_pt_69f3de9f7e48fbcc7752a946",
+      "name": "PIPEDA Privacy Notice Policy"
+    },
+    {
+      "id": "frk_pt_685e405054f7c35d89ccccf2",
+      "name": "Policy Management & Exception Handling"
+    },
+    {
+      "id": "frk_pt_685e410082a807a0274b4531",
+      "name": "Privacy & Data-Subject Rights"
+    },
+    {
+      "id": "frk_pt_69efd9cb30f8a9ef5e517812",
+      "name": "Privacy Awareness and Training Policy"
+    },
+    {
+      "id": "frk_pt_69efd9ae049ec9c862a64982",
+      "name": "Privacy Policy"
+    },
+    {
+      "id": "frk_pt_691e4b8047eb8ed3d47a6c8d",
+      "name": "QMS Scope"
+    },
+    {
+      "id": "frk_pt_691e4b93beca9362759c4cbe",
+      "name": "Quality Objectives"
+    },
+    {
+      "id": "frk_pt_691e4b525d5bce4f533e06cf",
+      "name": "Quality Policy"
+    },
+    {
+      "id": "frk_pt_685e426ccbb0de15a90cf446",
+      "name": "Remote Access & BYOD"
+    },
+    {
+      "id": "frk_pt_685e414029124c24387beff0",
+      "name": "Retention & Secure Disposal"
+    },
+    {
+      "id": "frk_pt_685e3fc75bd72cd0745dc5d1",
+      "name": "Risk Management"
+    },
+    {
+      "id": "frk_pt_685e45f736049f188c3439b4",
+      "name": "Sanctions & Disciplinary"
+    },
+    {
+      "id": "frk_pt_685e42a3bbd08ad14de297f0",
+      "name": "Secure Configuration & Hardening"
+    },
+    {
+      "id": "frk_pt_685e4319a5bb1d2d411975e6",
+      "name": "Secure Software Development Lifecycle "
+    },
+    {
+      "id": "frk_pt_685e458a49e1eff0af54e3d2",
+      "name": "Security & Privacy Awareness Training"
+    },
+    {
+      "id": "frk_pt_6944560ec419232763bbac2c",
+      "name": "Service Provider Acknowledgement"
+    },
+    {
+      "id": "frk_pt_691e4baaef306f1e73d8596b",
+      "name": "Supplier / Vendor Evaluation Policy"
+    },
+    {
+      "id": "frk_pt_68bb155d6b8eaafd14904188",
+      "name": "Third-Party Processors (Vendors)"
+    },
+    {
+      "id": "frk_pt_685e462046667f75a50a2c3e",
+      "name": "Vendor & Third-Party Risk"
+    },
+    {
+      "id": "frk_pt_69efd9ca0c5691e9ec1b1241",
+      "name": "Vendor and Third-Party Management Policy"
+    },
+    {
+      "id": "frk_pt_685e43555493efd5f79c15be",
+      "name": "Vulnerability & Patch Management"
+    }
+  ]
+}

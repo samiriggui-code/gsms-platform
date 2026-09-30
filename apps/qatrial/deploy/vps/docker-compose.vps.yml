@@ -1,0 +1,59 @@
+# QAtrial — VPS Hostinger + Traefik
+# Smoke: http://187.77.166.124:3051 — DNS A qatrial après smoke OK
+name: gsms-qatrial
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: gsms-qatrial-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: qatrial
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: qatrial
+    volumes:
+      - gsms_qatrial_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U qatrial -d qatrial']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - qatrial
+
+  app:
+    build:
+      context: ../..
+      dockerfile: deploy/vps/Dockerfile
+    container_name: gsms-qatrial-app
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://qatrial:${POSTGRES_PASSWORD}@db:5432/qatrial
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env (>=32 chars)}
+      AI_PROVIDER_TYPE: ${AI_PROVIDER_TYPE:-}
+      AI_PROVIDER_URL: ${AI_PROVIDER_URL:-}
+      AI_PROVIDER_KEY: ${AI_PROVIDER_KEY:-}
+      AI_PROVIDER_MODEL: ${AI_PROVIDER_MODEL:-}
+    ports:
+      - '3051:3001'
+    volumes:
+      - gsms_qatrial_uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - qatrial
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.qatrial.entrypoints=websecure
+      - traefik.http.routers.qatrial.rule=Host(`qatrial.global-it-ss.com`)
+      - traefik.http.routers.qatrial.tls.certresolver=letsencrypt
+      - traefik.http.services.qatrial.loadbalancer.server.port=3001
+
+volumes:
+  gsms_qatrial_pg:
+  gsms_qatrial_uploads:
+
+networks:
+  qatrial:
+    name: gsms-qatrial

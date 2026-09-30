@@ -1,0 +1,316 @@
+{
+  "countermeasure_templates": [
+    {
+      "moduleSlug": "mod-alarmes",
+      "slug": "cm-surete-supervision-evenements",
+      "name": "Supervision des événements d’alarme",
+      "description": "Contacts, EOL, journaux, anti-masque et report d’événements testés et consignés.",
+      "shapeCategory": "EQUIPMENT",
+      "ppsFunctions": [
+        "DETECT"
+      ],
+      "domain": "SURVEILLANCE",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": [
+        "surete",
+        "physsec",
+        "fr-site"
+      ],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "mod-sauvegarde",
+      "slug": "cm-surete-ups-backup",
+      "name": "UPS + sauvegardes vérifiées",
+      "description": "Alimentation secourue et sauvegardes testées des configs ACS/GTB/VMS.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": [
+        "RECOVER",
+        "DETECT"
+      ],
+      "domain": "INFORMATION",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": [
+        "surete",
+        "physsec",
+        "fr-site"
+      ],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "mod-bms",
+      "slug": "cm-surete-horaires-acs",
+      "name": "Horaires ACS / GTB revus",
+      "description": "Verrouillage hors horaires, REX PIR inhibé la nuit, modes dégradés documentés.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": [
+        "DENY",
+        "DETECT"
+      ],
+      "domain": "ACCESS",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": [
+        "surete",
+        "physsec",
+        "fr-site"
+      ],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "mod-conception",
+      "slug": "cm-surete-rex-protege",
+      "name": "REX / zonage non contournables depuis l’extérieur",
+      "description": "Boutons et capteurs REX hors portée externe, mantrap/tourniquet si besoin, câbles protégés.",
+      "shapeCategory": "ARCHITECTURAL",
+      "ppsFunctions": [
+        "DENY",
+        "DELAY"
+      ],
+      "domain": "BUILDING",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": [
+        "surete",
+        "physsec",
+        "fr-site"
+      ],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "mod-cctv",
+      "slug": "cm-surete-couverture-cctv",
+      "name": "Couverture + conservation des images",
+      "description": "Entrées, issues, zones sensibles filmées ; enregistrement et durée conformes à la politique / autorisation.",
+      "shapeCategory": "EQUIPMENT",
+      "ppsFunctions": [
+        "DETECT",
+        "DETER"
+      ],
+      "domain": "SURVEILLANCE",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": [
+        "surete",
+        "physsec",
+        "fr-site"
+      ],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "mod-docs",
+      "slug": "cm-surete-docs-a-jour",
+      "name": "Documentation à jour vs terrain",
+      "description": "Plans VMS/ACS/clés alignés sur l’existant, revue périodique.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": [
+        "DETECT"
+      ],
+      "domain": "INFORMATION",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": [
+        "surete",
+        "physsec",
+        "fr-site"
+      ],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "mod-portes",
+      "slug": "cm-surete-porte-ajustee",
+      "name": "Ajustement / quincaillerie anti-contournement",
+      "description": "Jeu, plaque, gâche, protection crash-bar/béquille côté attaque.",
+      "shapeCategory": "EQUIPMENT",
+      "ppsFunctions": [
+        "DELAY",
+        "DENY"
+      ],
+      "domain": "ACCESS",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": [
+        "surete",
+        "physsec",
+        "fr-site"
+      ],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "mod-cles",
+      "slug": "cm-surete-gestion-cles",
+      "name": "Gestion des clés (inventaire + restricted)",
+      "description": "Pas de clé générique sur zones sensibles ; inventaire ; keyway restreint si exigé.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": [
+        "DENY",
+        "DETECT"
+      ],
+      "domain": "ACCESS",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": [
+        "surete",
+        "physsec",
+        "fr-site"
+      ],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "mod-serrures",
+      "slug": "cm-surete-coffre-protege",
+      "name": "Coffres à clés protégés et cylindres adaptés",
+      "description": "Emplacement hors public, anti-arrachement, codes uniques, pas de cadenas amovible en périphérie.",
+      "shapeCategory": "EQUIPMENT",
+      "ppsFunctions": [
+        "DELAY",
+        "DENY"
+      ],
+      "domain": "ACCESS",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": [
+        "surete",
+        "physsec",
+        "fr-site"
+      ],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "mod-acs",
+      "slug": "cm-surete-acs-chiffre",
+      "name": "Badges chiffrés + anti-passback",
+      "description": "Pas de clé par défaut, pas de badges séquentiels, tamper lecteur, anti-passback zones sensibles.",
+      "shapeCategory": "EQUIPMENT",
+      "ppsFunctions": [
+        "DENY",
+        "DETECT"
+      ],
+      "domain": "ACCESS",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": [
+        "surete",
+        "physsec",
+        "fr-site"
+      ],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "mod-hygiene",
+      "slug": "cm-surete-consignes-personnel",
+      "name": "Consignes + sensibilisation",
+      "description": "Destruction sécurisée, badges stockés, portes refermées, alerte comportement suspect.",
+      "shapeCategory": "HUMAN",
+      "ppsFunctions": [
+        "DETER",
+        "DETECT"
+      ],
+      "domain": "PERSONNEL",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": [
+        "surete",
+        "physsec",
+        "fr-site"
+      ],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "mod-reponse",
+      "slug": "cm-surete-playbook-alerte",
+      "name": "Playbooks + supervision 24/7",
+      "description": "Alertes suivies, délais, vérification d’identité, effectif adapté.",
+      "shapeCategory": "HUMAN",
+      "ppsFunctions": [
+        "DETECT",
+        "DEFEAT"
+      ],
+      "domain": "PERSONNEL",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": [
+        "surete",
+        "physsec",
+        "fr-site"
+      ],
+      "csmpUnitReference": "Unit 6"
+    }
+  ],
+  "threat_countermeasures": [
+    {
+      "threatSlug": "surete-alarme-contournee",
+      "countermeasureSlug": "cm-surete-supervision-evenements",
+      "relevance": "HIGH",
+      "rationale": "Traitement type pour Alarmes & supervision"
+    },
+    {
+      "threatSlug": "surete-perte-traces",
+      "countermeasureSlug": "cm-surete-ups-backup",
+      "relevance": "HIGH",
+      "rationale": "Traitement type pour Sauvegarde & redondance"
+    },
+    {
+      "threatSlug": "surete-gtb-fail-open",
+      "countermeasureSlug": "cm-surete-horaires-acs",
+      "relevance": "HIGH",
+      "rationale": "Traitement type pour GTB / SMS"
+    },
+    {
+      "threatSlug": "surete-contourne-conception",
+      "countermeasureSlug": "cm-surete-rex-protege",
+      "relevance": "HIGH",
+      "rationale": "Traitement type pour Conception & implantation"
+    },
+    {
+      "threatSlug": "surete-cctv-aveugle",
+      "countermeasureSlug": "cm-surete-couverture-cctv",
+      "relevance": "HIGH",
+      "rationale": "Traitement type pour Vidéoprotection"
+    },
+    {
+      "threatSlug": "surete-docs-fausses",
+      "countermeasureSlug": "cm-surete-docs-a-jour",
+      "relevance": "HIGH",
+      "rationale": "Traitement type pour Documentation sûreté"
+    },
+    {
+      "threatSlug": "surete-porte-bypassee",
+      "countermeasureSlug": "cm-surete-porte-ajustee",
+      "relevance": "HIGH",
+      "rationale": "Traitement type pour Portes (sûreté)"
+    },
+    {
+      "threatSlug": "surete-cle-clonee",
+      "countermeasureSlug": "cm-surete-gestion-cles",
+      "relevance": "HIGH",
+      "rationale": "Traitement type pour Clés & organigramme"
+    },
+    {
+      "threatSlug": "surete-serrure-faible",
+      "countermeasureSlug": "cm-surete-coffre-protege",
+      "relevance": "HIGH",
+      "rationale": "Traitement type pour Serrures & coffres à clés"
+    },
+    {
+      "threatSlug": "surete-badge-clone",
+      "countermeasureSlug": "cm-surete-acs-chiffre",
+      "relevance": "HIGH",
+      "rationale": "Traitement type pour Contrôle d’accès RFID"
+    },
+    {
+      "threatSlug": "surete-hygiene-defaillante",
+      "countermeasureSlug": "cm-surete-consignes-personnel",
+      "relevance": "HIGH",
+      "rationale": "Traitement type pour Hygiène & formation sûreté"
+    },
+    {
+      "threatSlug": "surete-reponse-absente",
+      "countermeasureSlug": "cm-surete-playbook-alerte",
+      "relevance": "HIGH",
+      "rationale": "Traitement type pour Détection & réaction"
+    }
+  ]
+}

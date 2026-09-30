@@ -1,0 +1,729 @@
+[
+  {
+    "slug": "mod-alarmes",
+    "name": "Alarmes & supervision",
+    "description": "Détection intrusion, report d’alarme, journaux, anti-masque, supervision des événements.",
+    "icon": "Bell",
+    "sortOrder": 10,
+    "assets": [
+      {
+        "slug": "surete-alarme-ids",
+        "name": "Système d’alarme / IDS",
+        "assetType": "SYSTEM",
+        "category": "TANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Centrale, contacts, capteurs, report vers SMS/GTB.",
+        "tags": [
+          "surete",
+          "alarme",
+          "ids"
+        ],
+        "recommendedThreats": [
+          {
+            "slug": "surete-alarme-contournee",
+            "relevance": "HIGH",
+            "rationale": "Famille Physsec « Alarms and Monitoring » → DOM.SURETE.FAM.DETECTION"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "surete-alarme-contournee",
+        "scenarioName": "Alarme / supervision contournée ou muette",
+        "adversaryType": "CRIMINAL",
+        "actionType": "INTRUSION",
+        "adversaryProfile": {
+          "capability": "medium",
+          "motivation": "intrusion / vol / malveillance",
+          "resources": "selon SL Physsec (SL1 opportuniste → SL4 outils spécialisés)",
+          "insiderKnowledge": false
+        },
+        "typicalActions": [
+          "Tampering of cabling for monitoring system does not trigger alert",
+          "Durress Button does not send alert",
+          "Bypass of Magnetic Reed Switch due to - Poor Installation",
+          "Bypass of Magnetic Reed Switch due to - Poorly configured sensors",
+          "Bypass of Magnetic Reed Switch due to - Improperly installed sensors"
+        ],
+        "targetAssetTypes": [
+          "SYSTEM"
+        ],
+        "indicators": [
+          "constat visite",
+          "essai non destructif",
+          "config / logs"
+        ],
+        "suggestedLikelihood": 2,
+        "csmpUnitReference": "Unit 3"
+      }
+    ]
+  },
+  {
+    "slug": "mod-sauvegarde",
+    "name": "Sauvegarde & redondance",
+    "description": "UPS, sauvegardes config/vidéo, localisation et rétention.",
+    "icon": "Database",
+    "sortOrder": 20,
+    "assets": [
+      {
+        "slug": "surete-sauvegardes",
+        "name": "Sauvegardes sûreté (GTB / SMS / ACS / VMS)",
+        "assetType": "INFORMATION",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 3,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Copies de configuration et d’enregistrements, hors site si possible.",
+        "tags": [
+          "surete",
+          "backup"
+        ],
+        "recommendedThreats": [
+          {
+            "slug": "surete-perte-traces",
+            "relevance": "HIGH",
+            "rationale": "Famille Physsec « Backup and Redundency » → DOM.SURETE.FAM.PROCEDURES"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "surete-perte-traces",
+        "scenarioName": "Perte de traces / indisponibilité des systèmes de sûreté",
+        "adversaryType": "INSIDER",
+        "actionType": "DISRUPTION",
+        "adversaryProfile": {
+          "capability": "medium",
+          "motivation": "intrusion / vol / malveillance",
+          "resources": "selon SL Physsec (SL1 opportuniste → SL4 outils spécialisés)",
+          "insiderKnowledge": true
+        },
+        "typicalActions": [
+          "Data backups not located in a secure location",
+          "Data backups not verified reguarly",
+          "Uninteruptable Power Supply (UPS) missing from - Building Management System",
+          "Uninteruptable Power Supply (UPS) missing from - Security Management System",
+          "Uninteruptable Power Supply (UPS) missing from - Sensitive Equipment"
+        ],
+        "targetAssetTypes": [
+          "INFORMATION"
+        ],
+        "indicators": [
+          "constat visite",
+          "essai non destructif",
+          "config / logs"
+        ],
+        "suggestedLikelihood": 2,
+        "csmpUnitReference": "Unit 3"
+      }
+    ]
+  },
+  {
+    "slug": "mod-bms",
+    "name": "GTB / SMS",
+    "description": "Horaires, fail-secure/fail-open, consignation incendie vs sûreté, ACS hors horaires.",
+    "icon": "Cpu",
+    "sortOrder": 30,
+    "assets": [
+      {
+        "slug": "surete-gtb-sms",
+        "name": "GTB / Security Management System",
+        "assetType": "SYSTEM",
+        "category": "TANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Supervision bâtiment / sûreté, horaires, modes dégradés.",
+        "tags": [
+          "surete",
+          "bms",
+          "sms"
+        ],
+        "recommendedThreats": [
+          {
+            "slug": "surete-gtb-fail-open",
+            "relevance": "HIGH",
+            "rationale": "Famille Physsec « BMS/SMS Configuration and Implementation » → DOM.SURETE.FAM.DETECTION"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "surete-gtb-fail-open",
+        "scenarioName": "GTB/SMS laisse le site ouvert ou désarme l’alarme",
+        "adversaryType": "INSIDER",
+        "actionType": "SABOTAGE",
+        "adversaryProfile": {
+          "capability": "medium",
+          "motivation": "intrusion / vol / malveillance",
+          "resources": "selon SL Physsec (SL1 opportuniste → SL4 outils spécialisés)",
+          "insiderKnowledge": true
+        },
+        "typicalActions": [
+          "Perimiter Door not locking during out of hours period",
+          "Electronic Access Control does not lock out users from accessing during out of hours period",
+          "Request to Exit via PIR/Microwave Sensor not disabled during Out of Hours period",
+          "Electronic Access Control System does not prevent access to sensitive area via elevator",
+          "Fail Secure events do not allow for external movement from internal access"
+        ],
+        "targetAssetTypes": [
+          "SYSTEM"
+        ],
+        "indicators": [
+          "constat visite",
+          "essai non destructif",
+          "config / logs"
+        ],
+        "suggestedLikelihood": 2,
+        "csmpUnitReference": "Unit 3"
+      }
+    ]
+  },
+  {
+    "slug": "mod-conception",
+    "name": "Conception & implantation",
+    "description": "Zonage, REX accessibles de l’extérieur, plafonds, câblage, tailgating.",
+    "icon": "Building",
+    "sortOrder": 40,
+    "assets": [
+      {
+        "slug": "surete-zone-sensible",
+        "name": "Zone sensible",
+        "assetType": "ZONE",
+        "category": "TANGIBLE",
+        "defaultCriticality": 5,
+        "defaultAssetRole": "PROTECTED",
+        "description": "Local ou périmètre à protéger (serveurs, stocks, direction).",
+        "tags": [
+          "surete",
+          "zonage"
+        ],
+        "recommendedThreats": [
+          {
+            "slug": "surete-contourne-conception",
+            "relevance": "HIGH",
+            "rationale": "Famille Physsec « Building or Facility Design and Implementation » → DOM.SURETE.FAM.ZONES"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "surete-contourne-conception",
+        "scenarioName": "Contournement par conception (REX, faux-plafond, tailgating)",
+        "adversaryType": "OPPORTUNIST",
+        "actionType": "INTRUSION",
+        "adversaryProfile": {
+          "capability": "low",
+          "motivation": "intrusion / vol / malveillance",
+          "resources": "selon SL Physsec (SL1 opportuniste → SL4 outils spécialisés)",
+          "insiderKnowledge": false
+        },
+        "typicalActions": [
+          "Sensitive Equipment or Enclosure contains bypass for access control mechaism",
+          "PIR/Motion based REX sensor can be triggered from externally accessable location",
+          "Capacitive Touch based REX button installed near externally accessable location (High Power output attack - See OzLockCon)",
+          "Physical REX button installed in external/insecure side of door",
+          "Physical REX button accessable from external/insecure side of door"
+        ],
+        "targetAssetTypes": [
+          "ZONE"
+        ],
+        "indicators": [
+          "constat visite",
+          "essai non destructif",
+          "config / logs"
+        ],
+        "suggestedLikelihood": 2,
+        "csmpUnitReference": "Unit 3"
+      }
+    ]
+  },
+  {
+    "slug": "mod-cctv",
+    "name": "Vidéoprotection",
+    "description": "Couverture, enregistrement, rétention, accès aux images — croiser droit FR vidéoprotection.",
+    "icon": "Camera",
+    "sortOrder": 50,
+    "assets": [
+      {
+        "slug": "surete-vms-cctv",
+        "name": "Système de vidéoprotection (VMS)",
+        "assetType": "SYSTEM",
+        "category": "TANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Caméras, enregistrement, accès opérateurs.",
+        "tags": [
+          "surete",
+          "cctv",
+          "videoprotection"
+        ],
+        "recommendedThreats": [
+          {
+            "slug": "surete-cctv-aveugle",
+            "relevance": "HIGH",
+            "rationale": "Famille Physsec « CCTV Monitoring/Recording » → DOM.SEC_PHYSIQUE.FAM.CCTV"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "surete-cctv-aveugle",
+        "scenarioName": "Vidéoprotection aveugle ou sans traces exploitables",
+        "adversaryType": "CRIMINAL",
+        "actionType": "INTRUSION",
+        "adversaryProfile": {
+          "capability": "low",
+          "motivation": "intrusion / vol / malveillance",
+          "resources": "selon SL Physsec (SL1 opportuniste → SL4 outils spécialisés)",
+          "insiderKnowledge": false
+        },
+        "typicalActions": [
+          "CCTV System does not monitor",
+          "CCTV System does not monitor - Ingress/egress of primary entry points",
+          "CCTV System does not monitor - Ingress/egress of fire doors",
+          "CCTV System does not monitor - Ingress/egress of sensitive areas",
+          "CCTV System does not monitor - Sensitive Equipment"
+        ],
+        "targetAssetTypes": [
+          "SYSTEM"
+        ],
+        "indicators": [
+          "constat visite",
+          "essai non destructif",
+          "config / logs"
+        ],
+        "suggestedLikelihood": 2,
+        "csmpUnitReference": "Unit 3"
+      }
+    ]
+  },
+  {
+    "slug": "mod-docs",
+    "name": "Documentation sûreté",
+    "description": "Plans caméras, organigramme clés, inventaire équipements, schémas SMS.",
+    "icon": "FileText",
+    "sortOrder": 60,
+    "assets": [
+      {
+        "slug": "surete-dossier-docs",
+        "name": "Dossier documentaire sûreté",
+        "assetType": "INFORMATION",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 3,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Plans, inventaires, procédures versionnées.",
+        "tags": [
+          "surete",
+          "docs"
+        ],
+        "recommendedThreats": [
+          {
+            "slug": "surete-docs-fausses",
+            "relevance": "HIGH",
+            "rationale": "Famille Physsec « Documentation » → DOM.SURETE.FAM.PROCEDURES"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "surete-docs-fausses",
+        "scenarioName": "Documentation absente ou non conforme au terrain",
+        "adversaryType": "INSIDER",
+        "actionType": "FRAUD",
+        "adversaryProfile": {
+          "capability": "low",
+          "motivation": "intrusion / vol / malveillance",
+          "resources": "selon SL Physsec (SL1 opportuniste → SL4 outils spécialisés)",
+          "insiderKnowledge": true
+        },
+        "typicalActions": [
+          "Lack of Documentation for - Security Management System",
+          "Lack of Documentation for - Equipment in use",
+          "Lack of Documentation for - Equipment location",
+          "Lack of Documentation for - CCTV Camera Locations",
+          "Lack of Documentation for - Key Control/Ownership/Management"
+        ],
+        "targetAssetTypes": [
+          "INFORMATION"
+        ],
+        "indicators": [
+          "constat visite",
+          "essai non destructif",
+          "config / logs"
+        ],
+        "suggestedLikelihood": 2,
+        "csmpUnitReference": "Unit 3"
+      }
+    ]
+  },
+  {
+    "slug": "mod-portes",
+    "name": "Portes (sûreté)",
+    "description": "Attaques sous/sur porte, béquille, crash-bar, jeu de vantail — hors checklist incendie ERP.",
+    "icon": "DoorOpen",
+    "sortOrder": 70,
+    "assets": [
+      {
+        "slug": "surete-porte-acces",
+        "name": "Porte d’accès contrôlé",
+        "assetType": "EQUIPMENT",
+        "category": "TANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Vantail, gâche, béquille, crash-bar côté sûreté (pas issue de secours ERP).",
+        "tags": [
+          "surete",
+          "porte",
+          "acs"
+        ],
+        "recommendedThreats": [
+          {
+            "slug": "surete-porte-bypassee",
+            "relevance": "HIGH",
+            "rationale": "Famille Physsec « Doors » → DOM.SEC_PHYSIQUE.FAM.PORTES"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "surete-porte-bypassee",
+        "scenarioName": "Porte forcée ou contournée (outil, jeu, crash-bar)",
+        "adversaryType": "CRIMINAL",
+        "actionType": "INTRUSION",
+        "adversaryProfile": {
+          "capability": "medium",
+          "motivation": "intrusion / vol / malveillance",
+          "resources": "selon SL Physsec (SL1 opportuniste → SL4 outils spécialisés)",
+          "insiderKnowledge": false
+        },
+        "typicalActions": [
+          "Door handle suseptable to Under Door Attack",
+          "Door handle suseptable to Over door attack",
+          "Thumb Turn operable from external area due to poor physical barrier or fitment (Thumb Turner Tool/J-Tool)",
+          "Crash Bar operable from external area due to poor physical barrier or fitment",
+          "Bolts operable from external area due to poor physical barrier or fitment"
+        ],
+        "targetAssetTypes": [
+          "EQUIPMENT"
+        ],
+        "indicators": [
+          "constat visite",
+          "essai non destructif",
+          "config / logs"
+        ],
+        "suggestedLikelihood": 2,
+        "csmpUnitReference": "Unit 3"
+      }
+    ]
+  },
+  {
+    "slug": "mod-cles",
+    "name": "Clés & organigramme",
+    "description": "Clés communes, clonage, master, gestion des clés.",
+    "icon": "Key",
+    "sortOrder": 80,
+    "assets": [
+      {
+        "slug": "surete-organigramme-cles",
+        "name": "Organigramme / parc de clés",
+        "assetType": "INFORMATION",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Inventaire, brevets, masters, copies.",
+        "tags": [
+          "surete",
+          "cles"
+        ],
+        "recommendedThreats": [
+          {
+            "slug": "surete-cle-clonee",
+            "relevance": "HIGH",
+            "rationale": "Famille Physsec « Keys and Key Systems » → DOM.SEC_PHYSIQUE.FAM.SERRURES_CLES"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "surete-cle-clonee",
+        "scenarioName": "Clé commune, clonée ou mal gérée",
+        "adversaryType": "INSIDER",
+        "actionType": "THEFT",
+        "adversaryProfile": {
+          "capability": "medium",
+          "motivation": "intrusion / vol / malveillance",
+          "resources": "selon SL Physsec (SL1 opportuniste → SL4 outils spécialisés)",
+          "insiderKnowledge": true
+        },
+        "typicalActions": [
+          "Common key used in access control",
+          "Common key used in access control - Elevator (Fire/Service)",
+          "Common key used in access control - Door",
+          "Common key used in access control - Rapid access system",
+          "Common key used in access control - Server Rack"
+        ],
+        "targetAssetTypes": [
+          "INFORMATION"
+        ],
+        "indicators": [
+          "constat visite",
+          "essai non destructif",
+          "config / logs"
+        ],
+        "suggestedLikelihood": 2,
+        "csmpUnitReference": "Unit 3"
+      }
+    ]
+  },
+  {
+    "slug": "mod-serrures",
+    "name": "Serrures & coffres à clés",
+    "description": "Coffres à clés, cadenas, codes PIN, Knox/rapid access.",
+    "icon": "Lock",
+    "sortOrder": 90,
+    "assets": [
+      {
+        "slug": "surete-serrure-coffre",
+        "name": "Serrure / coffre à clés",
+        "assetType": "EQUIPMENT",
+        "category": "TANGIBLE",
+        "defaultCriticality": 3,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Cylindres, coffres, cadenas, boîtiers pompiers.",
+        "tags": [
+          "surete",
+          "serrure"
+        ],
+        "recommendedThreats": [
+          {
+            "slug": "surete-serrure-faible",
+            "relevance": "HIGH",
+            "rationale": "Famille Physsec « Locks » → DOM.SEC_PHYSIQUE.FAM.SERRURES_CLES"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "surete-serrure-faible",
+        "scenarioName": "Serrure ou coffre à clés attaquable",
+        "adversaryType": "CRIMINAL",
+        "actionType": "INTRUSION",
+        "adversaryProfile": {
+          "capability": "medium",
+          "motivation": "intrusion / vol / malveillance",
+          "resources": "selon SL Physsec (SL1 opportuniste → SL4 outils spécialisés)",
+          "insiderKnowledge": false
+        },
+        "typicalActions": [
+          "Key box in use at insecure location",
+          "Key box in use at insecure location - External to building Location",
+          "Key box in use at insecure location - Publicly accessable location",
+          "Key box in use can be removed from fixed location",
+          "Key box in use suseptable to decoding attacks"
+        ],
+        "targetAssetTypes": [
+          "EQUIPMENT"
+        ],
+        "indicators": [
+          "constat visite",
+          "essai non destructif",
+          "config / logs"
+        ],
+        "suggestedLikelihood": 2,
+        "csmpUnitReference": "Unit 3"
+      }
+    ]
+  },
+  {
+    "slug": "mod-acs",
+    "name": "Contrôle d’accès RFID",
+    "description": "Badges, lecteurs, OSDP, anti-passback, clonage.",
+    "icon": "CreditCard",
+    "sortOrder": 100,
+    "assets": [
+      {
+        "slug": "surete-acs-rfid",
+        "name": "Contrôle d’accès RFID / PACS",
+        "assetType": "SYSTEM",
+        "category": "TANGIBLE",
+        "defaultCriticality": 5,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Lecteurs, contrôleurs, badges, protocoles.",
+        "tags": [
+          "surete",
+          "acs",
+          "rfid"
+        ],
+        "recommendedThreats": [
+          {
+            "slug": "surete-badge-clone",
+            "relevance": "HIGH",
+            "rationale": "Famille Physsec « RFID Access Control Systems » → DOM.SEC_PHYSIQUE.FAM.ACS"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "surete-badge-clone",
+        "scenarioName": "Badge cloné / protocole ACS dégradé",
+        "adversaryType": "CRIMINAL",
+        "actionType": "INTRUSION",
+        "adversaryProfile": {
+          "capability": "high",
+          "motivation": "intrusion / vol / malveillance",
+          "resources": "selon SL Physsec (SL1 opportuniste → SL4 outils spécialisés)",
+          "insiderKnowledge": false
+        },
+        "typicalActions": [
+          "RFID Reader downgrade attack via in-field programming",
+          "RFID Access Controller allows for unauthenticated reader adoption",
+          "RFID Access Controller setup with Auto-Enrollment for OSDP",
+          "RFID Access Controller does not prevent downgrade attacks of secure to insecure communication protocol",
+          "RFID Reader not setup with Tamper Monitoring/does not trigger alert or alarm"
+        ],
+        "targetAssetTypes": [
+          "SYSTEM"
+        ],
+        "indicators": [
+          "constat visite",
+          "essai non destructif",
+          "config / logs"
+        ],
+        "suggestedLikelihood": 3,
+        "csmpUnitReference": "Unit 3"
+      }
+    ]
+  },
+  {
+    "slug": "mod-hygiene",
+    "name": "Hygiène & formation sûreté",
+    "description": "Destruction documents, badges vierges, portes non refermées, clés oubliées.",
+    "icon": "Users",
+    "sortOrder": 110,
+    "assets": [
+      {
+        "slug": "surete-process-hygiene",
+        "name": "Processus hygiène sûreté",
+        "assetType": "PROCESS",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 3,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Consignes personnel, destruction, ronde.",
+        "tags": [
+          "surete",
+          "hygiene",
+          "formation"
+        ],
+        "recommendedThreats": [
+          {
+            "slug": "surete-hygiene-defaillante",
+            "relevance": "HIGH",
+            "rationale": "Famille Physsec « Security Training and Hygene » → DOM.SURETE.FAM.PERSONNEL"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "surete-hygiene-defaillante",
+        "scenarioName": "Faille d’hygiène (clé, badge, document, porte ouverte)",
+        "adversaryType": "OPPORTUNIST",
+        "actionType": "THEFT",
+        "adversaryProfile": {
+          "capability": "low",
+          "motivation": "intrusion / vol / malveillance",
+          "resources": "selon SL Physsec (SL1 opportuniste → SL4 outils spécialisés)",
+          "insiderKnowledge": false
+        },
+        "typicalActions": [
+          "Equipment or data housing device stored in an unsafe manner",
+          "Equipment or data housing device incorrectly managed in non-secure container",
+          "Equipment or data housing device incorrectly disposed in garbage/e-waste",
+          "Sensitive Documents or Data disposed of in general waste",
+          "Sensitive Documents or Data not shreaded or destroyed during disposal process"
+        ],
+        "targetAssetTypes": [
+          "PROCESS"
+        ],
+        "indicators": [
+          "constat visite",
+          "essai non destructif",
+          "config / logs"
+        ],
+        "suggestedLikelihood": 2,
+        "csmpUnitReference": "Unit 3"
+      }
+    ]
+  },
+  {
+    "slug": "mod-reponse",
+    "name": "Détection & réaction",
+    "description": "Présence agents, délais, playbooks, supervision des alertes.",
+    "icon": "Shield",
+    "sortOrder": 120,
+    "assets": [
+      {
+        "slug": "surete-dispositif-reponse",
+        "name": "Dispositif de réponse (agents / PC sécurité)",
+        "assetType": "PROCESS",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Chaîne d’alerte, effectifs, consignes d’intervention.",
+        "tags": [
+          "surete",
+          "reponse",
+          "agents"
+        ],
+        "recommendedThreats": [
+          {
+            "slug": "surete-reponse-absente",
+            "relevance": "HIGH",
+            "rationale": "Famille Physsec « Surveillance Detection and Response » → DOM.SURETE.FAM.REACTION"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "surete-reponse-absente",
+        "scenarioName": "Alerte non traitée ou réaction hors délai",
+        "adversaryType": "CRIMINAL",
+        "actionType": "INTRUSION",
+        "adversaryProfile": {
+          "capability": "low",
+          "motivation": "intrusion / vol / malveillance",
+          "resources": "selon SL Physsec (SL1 opportuniste → SL4 outils spécialisés)",
+          "insiderKnowledge": false
+        },
+        "typicalActions": [
+          "Lack of attendance by Security Personnel during a security event",
+          "Out of Recommended Time response by Security Personnel during a security event",
+          "Lack of prioritisation for security events",
+          "Lack of documentation by Security Personnel during security event",
+          "Security Personnel do not verify credentials of personel during security event"
+        ],
+        "targetAssetTypes": [
+          "PROCESS"
+        ],
+        "indicators": [
+          "constat visite",
+          "essai non destructif",
+          "config / logs"
+        ],
+        "suggestedLikelihood": 2,
+        "csmpUnitReference": "Unit 3"
+      }
+    ]
+  }
+]

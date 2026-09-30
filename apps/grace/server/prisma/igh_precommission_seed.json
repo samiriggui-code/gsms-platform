@@ -1,0 +1,401 @@
+[
+  {
+    "slug": "mod-igh-classement",
+    "name": "Classement IGH",
+    "description": "Usage, hauteur du dernier niveau, cohérence déclaration vs bâtiment (entrée d’applicabilité IGH).",
+    "icon": "Layers",
+    "sortOrder": 10,
+    "assets": [
+      {
+        "slug": "igh-site",
+        "name": "Site IGH",
+        "assetType": "SITE",
+        "category": "TANGIBLE",
+        "defaultCriticality": 5,
+        "defaultAssetRole": "PROTECTED",
+        "description": "Immeuble de grande hauteur — nœud racine du périmètre pré-commission.",
+        "tags": ["igh", "classement", "fr-precom"],
+        "recommendedThreats": [
+          {
+            "slug": "igh-sous-classement",
+            "relevance": "HIGH",
+            "rationale": "Un écart usage/hauteur vs réalité fausse les exigences IGH applicables"
+          }
+        ]
+      },
+      {
+        "slug": "igh-building",
+        "name": "Bâtiment IGH",
+        "assetType": "BUILDING",
+        "category": "TANGIBLE",
+        "defaultCriticality": 5,
+        "defaultAssetRole": "PROTECTED",
+        "parentSlug": "igh-site",
+        "description": "Tour / bâtiment déclaré IGH.",
+        "tags": ["igh", "classement"],
+        "recommendedThreats": [
+          {
+            "slug": "igh-sous-classement",
+            "relevance": "HIGH",
+            "rationale": "Surélévation ou changement d’usage non déclaré"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "igh-sous-classement",
+        "scenarioName": "Sous-classement / dérive d’usage IGH",
+        "adversaryType": "INSIDER",
+        "actionType": "FRAUD",
+        "adversaryProfile": {
+          "capability": "medium",
+          "motivation": "éviter contraintes IGH",
+          "resources": "connaissance administrative",
+          "insiderKnowledge": true
+        },
+        "typicalActions": [
+          "Omettre une surélévation",
+          "Changer l’usage (bureaux → habitation) sans mise à jour",
+          "Mesurer la hauteur hors points réglementaires"
+        ],
+        "targetAssetTypes": ["SITE", "BUILDING"],
+        "indicators": ["Hauteur constatée vs dossier", "Usage réel vs arrêté"],
+        "suggestedLikelihood": 2,
+        "csmpUnitReference": "Unit 2"
+      }
+    ]
+  },
+  {
+    "slug": "mod-igh-compartimentage",
+    "name": "Compartimentage IGH",
+    "description": "Isolements, cloisons, percements, portes coupe-feu spécifiques IGH.",
+    "icon": "Box",
+    "sortOrder": 20,
+    "assets": [
+      {
+        "slug": "igh-compartiment",
+        "name": "Compartiment / isolement IGH",
+        "assetType": "ZONE",
+        "category": "TANGIBLE",
+        "defaultCriticality": 5,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Volume compartimenté (étages, locaux à risques).",
+        "tags": ["igh", "compartimentage"],
+        "recommendedThreats": [
+          {
+            "slug": "igh-compartiment-perce",
+            "relevance": "HIGH",
+            "rationale": "Percement non repris = propagation verticale/horizontale"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "igh-compartiment-perce",
+        "scenarioName": "Compartimentage IGH percé ou dégradé",
+        "adversaryType": "NATURAL",
+        "actionType": "ARSON",
+        "adversaryProfile": {
+          "capability": "low",
+          "motivation": "n/a — scénario incendie",
+          "resources": "défaut d’exploitation",
+          "insiderKnowledge": false
+        },
+        "typicalActions": ["Percements gaine non calfeutrés", "Porte CF calée ouverte"],
+        "targetAssetTypes": ["ZONE", "BUILDING"],
+        "indicators": ["Photos gaines", "PV portes CF"],
+        "suggestedLikelihood": 3,
+        "csmpUnitReference": "Unit 6"
+      }
+    ]
+  },
+  {
+    "slug": "mod-igh-evacuation",
+    "name": "Évacuation & refuges IGH",
+    "description": "Cheminements, refuges, consignes — règles IGH, pas les largeurs CO ERP.",
+    "icon": "Route",
+    "sortOrder": 30,
+    "assets": [
+      {
+        "slug": "igh-refuge",
+        "name": "Zone / local refuge IGH",
+        "assetType": "ZONE",
+        "category": "TANGIBLE",
+        "defaultCriticality": 5,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Refuge ou espace d’attente sécurisé selon l’usage IGH.",
+        "tags": ["igh", "evacuation", "refuge"],
+        "recommendedThreats": [
+          {
+            "slug": "igh-refuge-inaccessible",
+            "relevance": "HIGH",
+            "rationale": "Refuge encombré ou inaccessible = échec stratégie IGH"
+          }
+        ]
+      },
+      {
+        "slug": "igh-cage-escalier",
+        "name": "Cage d’escalier / dégagement IGH",
+        "assetType": "ZONE",
+        "category": "TANGIBLE",
+        "defaultCriticality": 5,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Escaliers encloisonnés, accès pompiers.",
+        "tags": ["igh", "evacuation"],
+        "recommendedThreats": [
+          {
+            "slug": "igh-refuge-inaccessible",
+            "relevance": "MEDIUM",
+            "rationale": "Cage encombrée ou portes bloquées"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "igh-refuge-inaccessible",
+        "scenarioName": "Évacuation IGH compromise (refuge / cages)",
+        "adversaryType": "NATURAL",
+        "actionType": "ARSON",
+        "adversaryProfile": {
+          "capability": "low",
+          "motivation": "n/a",
+          "resources": "encombrement",
+          "insiderKnowledge": false
+        },
+        "typicalActions": ["Stockage en refuge", "Verrouillage non conforme"],
+        "targetAssetTypes": ["ZONE"],
+        "indicators": ["Visite cages", "Signalétique"],
+        "suggestedLikelihood": 3,
+        "csmpUnitReference": "Unit 6"
+      }
+    ]
+  },
+  {
+    "slug": "mod-igh-moyens",
+    "name": "Moyens de secours IGH",
+    "description": "Colonnes, accès engins, locaux pompiers — exigences IGH.",
+    "icon": "Flame",
+    "sortOrder": 40,
+    "assets": [
+      {
+        "slug": "igh-colonne",
+        "name": "Colonne sèche / humide IGH",
+        "assetType": "EQUIPMENT",
+        "category": "TANGIBLE",
+        "defaultCriticality": 5,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Colonne incendie et prises par niveau.",
+        "tags": ["igh", "colonne", "moyens"],
+        "recommendedThreats": [
+          {
+            "slug": "igh-colonne-hs",
+            "relevance": "HIGH",
+            "rationale": "Colonne HS = incapacité d’attaque pompiers en hauteur"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "igh-colonne-hs",
+        "scenarioName": "Colonne / accès secours IGH hors service",
+        "adversaryType": "NATURAL",
+        "actionType": "DISRUPTION",
+        "adversaryProfile": {
+          "capability": "low",
+          "motivation": "n/a",
+          "resources": "défaut maintenance",
+          "insiderKnowledge": false
+        },
+        "typicalActions": ["Vannes fermées", "Prises condamnées", "Accès pompiers encombré"],
+        "targetAssetTypes": ["EQUIPMENT", "ZONE"],
+        "indicators": ["PV essai colonne", "Photo accès"],
+        "suggestedLikelihood": 2,
+        "csmpUnitReference": "Unit 6"
+      }
+    ]
+  },
+  {
+    "slug": "mod-igh-ssi",
+    "name": "SSI IGH",
+    "description": "Détection, alarme, centralisation — exigences IGH (pas les seuls MS ERP).",
+    "icon": "Siren",
+    "sortOrder": 50,
+    "assets": [
+      {
+        "slug": "igh-ssi",
+        "name": "SSI / PCA IGH",
+        "assetType": "SYSTEM",
+        "category": "TANGIBLE",
+        "defaultCriticality": 5,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Système de sécurité incendie de l’IGH.",
+        "tags": ["igh", "ssi"],
+        "recommendedThreats": [
+          {
+            "slug": "igh-ssi-defaillant",
+            "relevance": "HIGH",
+            "rationale": "SSI IGH défaillant = alerte et compartimentage commandé inopérants"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "igh-ssi-defaillant",
+        "scenarioName": "SSI IGH défaillant ou non maintenu",
+        "adversaryType": "NATURAL",
+        "actionType": "DISRUPTION",
+        "adversaryProfile": {
+          "capability": "low",
+          "motivation": "n/a",
+          "resources": "maintenance",
+          "insiderKnowledge": false
+        },
+        "typicalActions": ["Défauts non levés", "Hors service prolongé"],
+        "targetAssetTypes": ["SYSTEM"],
+        "indicators": ["Journal SSI", "Contrat maintenance"],
+        "suggestedLikelihood": 2,
+        "csmpUnitReference": "Unit 6"
+      }
+    ]
+  },
+  {
+    "slug": "mod-igh-exploitation",
+    "name": "Exploitation IGH",
+    "description": "Registre, contrats, service de sécurité incendie.",
+    "icon": "BookOpen",
+    "sortOrder": 60,
+    "assets": [
+      {
+        "slug": "igh-registre",
+        "name": "Registre de sécurité IGH",
+        "assetType": "INFORMATION",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Registre et visas d’exploitation IGH.",
+        "tags": ["igh", "registre", "exploitation"],
+        "recommendedThreats": [
+          {
+            "slug": "igh-exploitation-derive",
+            "relevance": "HIGH",
+            "rationale": "Registre / service absent = commission et exploitation non traçables"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "igh-exploitation-derive",
+        "scenarioName": "Exploitation IGH non tenue (registre / service)",
+        "adversaryType": "INSIDER",
+        "actionType": "FRAUD",
+        "adversaryProfile": {
+          "capability": "low",
+          "motivation": "négligence",
+          "resources": "n/a",
+          "insiderKnowledge": true
+        },
+        "typicalActions": ["Registre incomplet", "Service sécurité absent"],
+        "targetAssetTypes": ["INFORMATION", "PROCESS"],
+        "indicators": ["Visas", "Plannings SSIAP"],
+        "suggestedLikelihood": 3,
+        "csmpUnitReference": "Unit 7"
+      }
+    ]
+  },
+  {
+    "slug": "mod-igh-dossier",
+    "name": "Dossier commission IGH",
+    "description": "Pièces du dossier soumis à la commission (IGH, pas le dossier type ERP seul).",
+    "icon": "FolderOpen",
+    "sortOrder": 70,
+    "assets": [
+      {
+        "slug": "igh-dossier-commission",
+        "name": "Dossier de sécurité IGH",
+        "assetType": "INFORMATION",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Plans, notices, attestations pour commission IGH.",
+        "tags": ["igh", "dossier", "commission"],
+        "recommendedThreats": [
+          {
+            "slug": "igh-dossier-incomplet",
+            "relevance": "HIGH",
+            "rationale": "Dossier incomplet = commission reportée ou avis défavorable"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "igh-dossier-incomplet",
+        "scenarioName": "Dossier commission IGH incomplet",
+        "adversaryType": "INSIDER",
+        "actionType": "FRAUD",
+        "adversaryProfile": {
+          "capability": "low",
+          "motivation": "délai",
+          "resources": "n/a",
+          "insiderKnowledge": true
+        },
+        "typicalActions": ["Plans non à jour", "Notices manquantes"],
+        "targetAssetTypes": ["INFORMATION"],
+        "indicators": ["Checklist pièces", "Écart plans vs visite"],
+        "suggestedLikelihood": 3,
+        "csmpUnitReference": "Unit 1"
+      }
+    ]
+  },
+  {
+    "slug": "mod-igh-essais",
+    "name": "Essais IGH",
+    "description": "PV d’essais SSI, désenfumage, colonnes, interphonie le cas échéant.",
+    "icon": "ClipboardCheck",
+    "sortOrder": 80,
+    "assets": [
+      {
+        "slug": "igh-pv-essais",
+        "name": "PV d’essais IGH",
+        "assetType": "INFORMATION",
+        "category": "INTANGIBLE",
+        "defaultCriticality": 4,
+        "defaultAssetRole": "PROTECTIVE",
+        "description": "Preuves d’essais fonctionnels avant / pour la commission.",
+        "tags": ["igh", "essais"],
+        "recommendedThreats": [
+          {
+            "slug": "igh-essais-absents",
+            "relevance": "HIGH",
+            "rationale": "Sans PV la commission ne peut pas constater le fonctionnement"
+          }
+        ]
+      }
+    ],
+    "threats": [
+      {
+        "slug": "igh-essais-absents",
+        "scenarioName": "Essais IGH absents ou hors délai",
+        "adversaryType": "INSIDER",
+        "actionType": "DISRUPTION",
+        "adversaryProfile": {
+          "capability": "low",
+          "motivation": "planning",
+          "resources": "n/a",
+          "insiderKnowledge": true
+        },
+        "typicalActions": ["PV périmés", "Essais partiels"],
+        "targetAssetTypes": ["INFORMATION", "SYSTEM", "EQUIPMENT"],
+        "indicators": ["Dates PV", "Périmètre essais"],
+        "suggestedLikelihood": 3,
+        "csmpUnitReference": "Unit 6"
+      }
+    ]
+  }
+]

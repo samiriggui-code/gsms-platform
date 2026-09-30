@@ -1,0 +1,163 @@
+{
+  "id": "AUD.PRECOMMISSION.ERP.applicability",
+  "version": "0.3.0",
+  "auditType": "AUD.PRECOMMISSION.ERP",
+  "packageSlug": "erp-precommission",
+  "maturity": "scoped",
+  "disclaimer": "Composition scoped (2026-09-03) : F1–F8 rattachées à des cotes Légifrance/CCH/guides. DP R/N + SSIAP inclus. Pas encore évaluation article-atomique PASS/FAIL. Voir docs/rulesets/OFFICIAL-REFS.md.",
+  "requiredContext": ["country", "site_kind", "erp_type", "erp_category", "commission_phase"],
+  "gates": {
+    "country": "FR",
+    "site_kind": "ERP"
+  },
+  "always": {
+    "moduleSlugs": [
+      "mod-classement",
+      "mod-degagements",
+      "mod-evacuation",
+      "mod-moyens",
+      "mod-ssi",
+      "mod-registre",
+      "mod-dossier",
+      "mod-essais"
+    ],
+    "surveyKeys": [
+      "survey-erp-precom",
+      "survey-erp-precom-dossier",
+      "survey-erp-precom-degagements",
+      "survey-erp-precom-ssi-essais",
+      "survey-erp-precom-registre"
+    ],
+    "familyIds": [
+      "DOM.PRECOMMISSION.FAM.DOSSIER",
+      "DOM.PRECOMMISSION.FAM.REGISTRE",
+      "DOM.ERP.FAM.CLASSEMENT",
+      "DOM.ERP.FAM.DEGAGEMENTS",
+      "DOM.ERP.FAM.REGISTRE",
+      "DOM.INCENDIE.FAM.EVACUATION",
+      "DOM.INCENDIE.FAM.MOYENS_SECOURS",
+      "DOM.INCENDIE.FAM.SSI_ALARME"
+    ],
+    "sourceHints": ["SRC.FR.ERP.RS", "SRC.FR.ERP.DG", "SRC.FR.COMMISSION", "SRC.FR.CCH"],
+    "officialArticleRefs": [
+      "GN 1 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000045143487",
+      "CCH R143-19 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043818977",
+      "CO 34–60 — https://www.legifrance.gouv.fr/codes/section_lc/JORFTEXT000000290033/LEGISCTA000020303939/",
+      "MS 53–69 — https://www.legifrance.gouv.fr/codes/section_lc/JORFTEXT000000290033/LEGISCTA000020317625/",
+      "CCH R.123-51 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000039040918/",
+      "RS consolidé — https://www.legifrance.gouv.fr/codes/section_lc/JORFTEXT000000290033/LEGISCTA000020303815/",
+      "Titre II DP — https://www.legifrance.gouv.fr/codes/section_lc/JORFTEXT000000290033/LEGISCTA000020334570/"
+    ]
+  },
+  "conditionals": [
+    {
+      "id": "RULE.PRECOM.SSI.FOCUS",
+      "when": { "has_ssi": true },
+      "boostSurveyKeys": ["survey-erp-precom-ssi-essais"],
+      "boostModuleSlugs": ["mod-ssi", "mod-essais"],
+      "notes": ["SSI déclaré présent — prioriser surveys SSI & essais / PV (MS 53–69)."],
+      "sourceHints": ["SRC.FR.SSI", "SRC.FR.ERP.RS"],
+      "officialArticleRefs": [
+        "MS 53 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000020317726",
+        "MS 68 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000020317749"
+      ],
+      "maturity": "scoped"
+    },
+    {
+      "id": "RULE.PRECOM.PHASE.PRECOM",
+      "when": { "commission_phase_in": ["pre_commission", "ouverture"] },
+      "boostSurveyKeys": ["survey-erp-precom-dossier"],
+      "boostModuleSlugs": ["mod-dossier"],
+      "notes": ["Phase pré-commission / ouverture — dossier commission prioritaire (guides préf. + R.123-51)."],
+      "sourceHints": ["SRC.FR.COMMISSION", "SRC.FR.CCH"],
+      "officialArticleRefs": [
+        "CCH R.123-51 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000039040918/"
+      ],
+      "maturity": "scoped"
+    },
+    {
+      "id": "RULE.PRECOM.PHASE.PERIODIQUE",
+      "when": { "commission_phase_in": ["periodique", "apres_prescription"] },
+      "boostSurveyKeys": ["survey-erp-precom-registre"],
+      "boostModuleSlugs": ["mod-registre"],
+      "notes": ["Phase périodique / suite prescriptions — registre & visas prioritaires (R.123-51)."],
+      "sourceHints": ["SRC.FR.COMMISSION", "SRC.FR.CCH"],
+      "officialArticleRefs": [
+        "CCH R.123-51 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000039040918/"
+      ],
+      "maturity": "scoped"
+    },
+    {
+      "id": "RULE.PRECOM.DP.R",
+      "when": { "erp_type_in": ["R"] },
+      "boostSurveyKeys": ["survey-erp-precom-dp-r"],
+      "boostModuleSlugs": ["mod-dp-r"],
+      "notes": [
+        "Type R — charger DP enseignement/formation (chapitre R 1–R 33). Croiser DG + DP."
+      ],
+      "sourceHints": ["SRC.FR.ERP.DP", "SRC.FR.ERP.RS"],
+      "officialArticleRefs": [
+        "R 1 — https://www.legifrance.gouv.fr/loda/article_lc/LEGIARTI000025000982",
+        "Chapitre type R — https://www.legifrance.gouv.fr/codes/section_lc/JORFTEXT000000290033/LEGISCTA000020334983/"
+      ],
+      "maturity": "scoped"
+    },
+    {
+      "id": "RULE.PRECOM.DP.N",
+      "when": { "erp_type_in": ["N"] },
+      "boostSurveyKeys": ["survey-erp-precom-dp-n"],
+      "boostModuleSlugs": ["mod-dp-n"],
+      "notes": [
+        "Type N — charger DP restaurants/débits (chapitre N 1–N 20). Croiser DG + DP."
+      ],
+      "sourceHints": ["SRC.FR.ERP.DP", "SRC.FR.ERP.RS"],
+      "officialArticleRefs": [
+        "N 1 — https://www.legifrance.gouv.fr/loda/article_lc/LEGIARTI000020334914",
+        "Chapitre type N — https://www.legifrance.gouv.fr/codes/section_lc/JORFTEXT000000290033/LEGISCTA000020334913/"
+      ],
+      "maturity": "scoped"
+    },
+    {
+      "id": "RULE.PRECOM.DP.OTHER",
+      "when": { "erp_type_set": true, "erp_type_not_in": ["R", "N"] },
+      "boostSurveyKeys": [],
+      "boostModuleSlugs": [],
+      "notes": [
+        "erp_type hors R/N — chapitre DP du type non seedé (ouvrir Titre II Légifrance avant mod-dp-*). R et N = scoped."
+      ],
+      "sourceHints": ["SRC.FR.ERP.DP"],
+      "officialArticleRefs": [
+        "Titre II DP — https://www.legifrance.gouv.fr/codes/section_lc/JORFTEXT000000290033/LEGISCTA000020334570/",
+        "GN 1 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000045143487"
+      ],
+      "maturity": "listed"
+    },
+    {
+      "id": "RULE.PRECOM.SSIAP",
+      "when": { "ssiap_required": true },
+      "boostSurveyKeys": ["survey-erp-precom-ssiap"],
+      "boostModuleSlugs": ["mod-ssiap"],
+      "notes": [
+        "SSIAP requis — module mod-ssiap + survey service (MS 45–52 · arrêté 2/05/2005). Pas de calcul d’effectif opposable."
+      ],
+      "sourceHints": ["SRC.FR.SSIAP", "SRC.FR.ERP.RS"],
+      "officialArticleRefs": [
+        "MS 45 — https://www.legifrance.gouv.fr/loda/article_lc/LEGIARTI000021838333",
+        "MS 46 — https://www.legifrance.gouv.fr/loda/article_lc/LEGIARTI000021838331",
+        "MS 45–52 — https://www.legifrance.gouv.fr/codes/section_lc/JORFTEXT000000290033/LEGISCTA000020317627/",
+        "Arrêté SSIAP 2/05/2005 — https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000448223"
+      ],
+      "maturity": "scoped"
+    }
+  ],
+  "surveyCatalog": {
+    "survey-erp-precom": "Pré-commission ERP",
+    "survey-erp-precom-dossier": "Pré-commission ERP — Dossier",
+    "survey-erp-precom-degagements": "Pré-commission ERP — Dégagements",
+    "survey-erp-precom-ssi-essais": "Pré-commission ERP — SSI & essais",
+    "survey-erp-precom-registre": "Pré-commission ERP — Registre",
+    "survey-erp-precom-dp-r": "Pré-commission ERP — DP type R",
+    "survey-erp-precom-dp-n": "Pré-commission ERP — DP type N",
+    "survey-erp-precom-ssiap": "Pré-commission ERP — Service SSIAP"
+  }
+}

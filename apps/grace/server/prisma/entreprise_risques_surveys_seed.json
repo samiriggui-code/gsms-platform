@@ -1,0 +1,303 @@
+{
+  "templates": [
+    {
+      "key": "survey-entreprise-risques",
+      "name": "Audit entreprise — risques & continuité",
+      "description": "Checklist agrégée gouvernance (P0). ISO 31000 / 22301 = principes, pas certification. Registre = SimpleRisk. Formations = School. Pack entreprise-risques.",
+      "surveyType": "DOC_REVIEW",
+      "applicableClusterTypes": ["LOGICAL"],
+      "applicableAssetTypes": ["INFORMATION", "PROCESS", "CONTINUITY", "PERSON"],
+      "requiresPhysical": false,
+      "questionIds": [
+        "ent-politique",
+        "ent-roles",
+        "ent-revue",
+        "ent-registre-aval",
+        "ent-procedures",
+        "ent-formation",
+        "ent-pca",
+        "ent-exercice",
+        "ent-duerp",
+        "ent-evac-salaries",
+        "ent-prestataire",
+        "ent-cer-nis2"
+      ]
+    },
+    {
+      "key": "survey-entreprise-risques-gouv",
+      "name": "Audit entreprise — Gouvernance",
+      "description": "Politique, rôles, revue. Pas le scoring IRV Grace ni le registre SimpleRisk.",
+      "surveyType": "DOC_REVIEW",
+      "applicableClusterTypes": ["LOGICAL"],
+      "applicableAssetTypes": ["INFORMATION", "PROCESS"],
+      "requiresPhysical": false,
+      "questionIds": ["ent-politique", "ent-roles", "ent-revue", "ent-registre-aval"]
+    },
+    {
+      "key": "survey-entreprise-risques-docs",
+      "name": "Audit entreprise — Documentaire",
+      "description": "Procédures à jour.",
+      "surveyType": "DOC_REVIEW",
+      "applicableClusterTypes": ["LOGICAL"],
+      "applicableAssetTypes": ["INFORMATION"],
+      "requiresPhysical": false,
+      "questionIds": ["ent-procedures"]
+    },
+    {
+      "key": "survey-entreprise-risques-formation",
+      "name": "Audit entreprise — Formation",
+      "description": "Plan de formation — preuves GSMS School.",
+      "surveyType": "DOC_REVIEW",
+      "applicableClusterTypes": ["LOGICAL"],
+      "applicableAssetTypes": ["INFORMATION", "PERSON"],
+      "requiresPhysical": false,
+      "questionIds": ["ent-formation"]
+    },
+    {
+      "key": "survey-entreprise-risques-continuite",
+      "name": "Audit entreprise — Continuité",
+      "description": "PCA et exercices — inspiration ISO 22301, pas une certif.",
+      "surveyType": "DOC_REVIEW",
+      "applicableClusterTypes": ["LOGICAL"],
+      "applicableAssetTypes": ["CONTINUITY", "INFORMATION"],
+      "requiresPhysical": false,
+      "questionIds": ["ent-pca", "ent-exercice"]
+    },
+    {
+      "key": "survey-entreprise-risques-prevention",
+      "name": "Audit entreprise — Prévention CT",
+      "description": "DUERP et évacuation salariés — pas le pack ERP public.",
+      "surveyType": "DOC_REVIEW",
+      "applicableClusterTypes": ["LOGICAL"],
+      "applicableAssetTypes": ["INFORMATION", "PROCESS"],
+      "requiresPhysical": false,
+      "questionIds": ["ent-duerp", "ent-evac-salaries"]
+    },
+    {
+      "key": "survey-entreprise-risques-prestataires",
+      "name": "Audit entreprise — Prestataires",
+      "description": "Vérification titres CNAPS du prestataire sûreté.",
+      "surveyType": "DOC_REVIEW",
+      "applicableClusterTypes": ["LOGICAL"],
+      "applicableAssetTypes": ["PROCESS", "INFORMATION"],
+      "requiresPhysical": false,
+      "questionIds": ["ent-prestataire", "ent-cer-nis2"]
+    }
+  ],
+  "questions": [
+    {
+      "id": "ent-politique",
+      "category": "Entreprise · Gouvernance",
+      "prompt": "Une politique / un cadre de management du risque est-il documenté et en vigueur ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Alignement ISO 31000 (principes) — pas une évaluation clause-à-clause. Ce n’est pas le risk-engine Grace.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "ISO 31000 — principes (standard, pas du droit FR)"
+      ],
+      "attach": {
+        "assetSlugs": ["ent-politique-risque"],
+        "threatSlugs": ["ent-gouv-absente"],
+        "cmSlugs": ["cm-ent-politique-revue"]
+      }
+    },
+    {
+      "id": "ent-roles",
+      "category": "Entreprise · Gouvernance",
+      "prompt": "Les rôles (propriétaire du risque, relais sites) sont-ils nommés ?",
+      "type": "yes_no_partial",
+      "weight": 4,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "RACI / délégations. Le détail des owners de risques individuels → SimpleRisk.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "ISO 31000 — leadership & commitment (standard)"
+      ],
+      "attach": {
+        "assetSlugs": ["ent-politique-risque"],
+        "threatSlugs": ["ent-gouv-absente"],
+        "cmSlugs": ["cm-ent-politique-revue"]
+      }
+    },
+    {
+      "id": "ent-revue",
+      "category": "Entreprise · Gouvernance",
+      "prompt": "Une revue direction du dispositif risque a-t-elle eu lieu dans les 12 derniers mois ?",
+      "type": "yes_no_partial",
+      "weight": 4,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "PV / compte-rendu. Fréquence = pratique, pas une cote ISO obligatoire dans ce pack.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "ISO 31000 — improvement (standard)"
+      ],
+      "attach": {
+        "assetSlugs": ["ent-politique-risque"],
+        "threatSlugs": ["ent-gouv-absente"],
+        "cmSlugs": ["cm-ent-politique-revue"]
+      }
+    },
+    {
+      "id": "ent-registre-aval",
+      "category": "Entreprise · Gouvernance",
+      "prompt": "Un registre de risques (SimpleRisk ou équivalent) est-il alimenté en aval des findings terrain ?",
+      "type": "yes_no_partial",
+      "weight": 3,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Ne pas recréer le registre dans Grace. YES = pont circuit existant / export. NO = trou de pilotage direction.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "Circuit GSMS — SimpleRisk (registre), pas ISO comme droit"
+      ],
+      "attach": {
+        "assetSlugs": ["ent-politique-risque"],
+        "threatSlugs": ["ent-gouv-absente"]
+      }
+    },
+    {
+      "id": "ent-procedures",
+      "category": "Entreprise · Documentaire",
+      "prompt": "Les procédures clés (sûreté, crise, prestataires) ont-elles un propriétaire et une date de revue ?",
+      "type": "yes_no_partial",
+      "weight": 3,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Échantillon 5 docs. Pas un audit GED complet.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "ISO 31000 — documented information (pratique)"
+      ],
+      "attach": {
+        "assetSlugs": ["ent-procedures"],
+        "threatSlugs": ["ent-docs-obsoletes"],
+        "cmSlugs": ["cm-ent-revue-docs"]
+      }
+    },
+    {
+      "id": "ent-formation",
+      "category": "Entreprise · Formation",
+      "prompt": "Un plan de formation sûreté / crise est-il tracé avec preuves (GSMS School) ?",
+      "type": "yes_no_partial",
+      "weight": 4,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "School porte les sessions. Grace = checklist existence du plan.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "GSMS School — pas un LMS dans Grace"
+      ],
+      "attach": {
+        "assetSlugs": ["ent-plan-formation"],
+        "threatSlugs": ["ent-competences-trous"],
+        "cmSlugs": ["cm-ent-plan-school"]
+      }
+    },
+    {
+      "id": "ent-pca",
+      "category": "Entreprise · Continuité",
+      "prompt": "Un plan de continuité / crise existe-t-il (périmètre, contacts, déclenchement) ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Inspiration ISO 22301 — pas une certification. Checklist existence.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "ISO 22301 — inspiration (standard)"
+      ],
+      "attach": {
+        "assetSlugs": ["ent-pca"],
+        "threatSlugs": ["ent-pca-papier"],
+        "cmSlugs": ["cm-ent-exercice-pca"]
+      }
+    },
+    {
+      "id": "ent-exercice",
+      "category": "Entreprise · Continuité",
+      "prompt": "Un exercice de crise / continuité a-t-il été réalisé et tracé dans les 24 derniers mois ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "PV d’exercice. Sans exercice le PCA reste du papier.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "ISO 22301 — exercises (inspiration)"
+      ],
+      "attach": {
+        "assetSlugs": ["ent-pca"],
+        "threatSlugs": ["ent-pca-papier"],
+        "cmSlugs": ["cm-ent-exercice-pca"]
+      }
+    },
+    {
+      "id": "ent-duerp",
+      "category": "Entreprise · Prévention CT",
+      "prompt": "Le DUERP est-il présent et mis à jour ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Code du travail — document unique. Distinct du pack ERP (public). Checklist existence / date, pas un audit exhaustif des unités de travail.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CT — DUERP (L4121-1 s. à piner en relecture) — https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006072050/"
+      ],
+      "attach": {
+        "assetSlugs": ["ent-duerp"],
+        "threatSlugs": ["ent-duerp-absent"],
+        "cmSlugs": ["cm-ent-duerp-a-jour"]
+      }
+    },
+    {
+      "id": "ent-evac-salaries",
+      "category": "Entreprise · Prévention CT",
+      "prompt": "Un exercice d’évacuation des salariés a-t-il été réalisé et consigné ?",
+      "type": "yes_no_partial",
+      "weight": 4,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Obligation employeur (CT) — pas les largeurs CO ERP. Croiser consignes incendie.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CT évacuation — https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006072050/"
+      ],
+      "attach": {
+        "assetSlugs": ["ent-duerp"],
+        "threatSlugs": ["ent-duerp-absent"],
+        "cmSlugs": ["cm-ent-duerp-a-jour"]
+      }
+    },
+    {
+      "id": "ent-prestataire",
+      "category": "Entreprise · Prestataires",
+      "prompt": "Les prestataires de sécurité privée ont-ils des titres CNAPS vérifiés au contrat ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Si pas de prestataire sécu : YES + N/A. Détail organisation prestataire = pack sec-privee-cnaps.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CSI livre VI — https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000025503132/LEGISCTA000025506179/"
+      ],
+      "attach": {
+        "assetSlugs": ["ent-prestataire-secu"],
+        "threatSlugs": ["ent-prestataire-non-verifie"],
+        "cmSlugs": ["cm-ent-verif-prestataire"]
+      }
+    },
+    {
+      "id": "ent-cer-nis2",
+      "category": "Entreprise · Prestataires",
+      "prompt": "CER / NIS2 : le statut d’entité essentielle ou importante a-t-il été tranché (applicable / non) ?",
+      "type": "yes_no_partial",
+      "weight": 2,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "YES = décision documentée (même si « non applicable »). NO = trou. Ce pack n’évalue pas les obligations CER/NIS2 — cadre EU seulement.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "Directive CER / NIS2 — cadre EU, pas un RuleSet FR dans ce pack"
+      ],
+      "attach": {
+        "assetSlugs": ["ent-politique-risque"],
+        "threatSlugs": ["ent-gouv-absente"]
+      }
+    }
+  ]
+}

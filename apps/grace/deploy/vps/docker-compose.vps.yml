@@ -1,0 +1,71 @@
+# Grace (CSMP) — VPS Hostinger + Traefik
+# Smoke: http://187.77.166.124:3052 — DNS A grace après smoke OK
+name: gsms-grace
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: gsms-grace-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-csmp}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-csmp_v2}
+    volumes:
+      - gsms_grace_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - grace
+
+  api:
+    build:
+      context: ../..
+      dockerfile: server/Dockerfile
+    container_name: gsms-grace-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-csmp}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-csmp_v2}?schema=public
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      PORT: '3001'
+      HOST: '0.0.0.0'
+      CORS_ORIGIN: ${CORS_ORIGIN:-https://grace.global-it-ss.com}
+    networks:
+      - grace
+
+  web:
+    build:
+      context: ../..
+      dockerfile: client/Dockerfile
+      args:
+        VITE_APP_VERSION: ${VITE_APP_VERSION:-vps}
+        VITE_GIT_SHA: ${VITE_GIT_SHA:-unknown}
+    container_name: gsms-grace-web
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - '3052:80'
+    networks:
+      - grace
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.grace.entrypoints=websecure
+      - traefik.http.routers.grace.rule=Host(`grace.global-it-ss.com`)
+      - traefik.http.routers.grace.tls.certresolver=letsencrypt
+      - traefik.http.services.grace.loadbalancer.server.port=80
+
+volumes:
+  gsms_grace_pg:
+
+networks:
+  grace:
+    name: gsms-grace

@@ -1,0 +1,28 @@
+# Stage 1: Build frontend
+FROM node:22-alpine AS frontend
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci || npm install
+COPY . .
+RUN npm run build
+
+# Stage 2: Generate Prisma + prepare app
+FROM node:22-alpine AS server
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci || npm install
+COPY . .
+RUN npx prisma generate --schema=server/prisma/schema.prisma
+RUN npm run build
+
+# Stage 3: Runtime
+FROM node:22-alpine
+WORKDIR /app
+COPY --from=server /app ./
+RUN npm ci --omit=dev || npm install --omit=dev
+RUN npx prisma generate --schema=server/prisma/schema.prisma
+EXPOSE 3001
+ENV NODE_ENV=production
+ENV DATABASE_URL=postgresql://qatrial:qatrial@db:5432/qatrial
+RUN printf '%s\n' '#!/bin/sh' 'set -e' 'npx prisma db push --schema=server/prisma/schema.prisma --accept-data-loss' 'exec npx tsx server/index.ts' > /app/docker-entrypoint.sh && chmod +x /app/docker-entrypoint.sh
+CMD ["/app/docker-entrypoint.sh"]

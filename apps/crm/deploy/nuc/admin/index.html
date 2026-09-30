@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GSMS Admin · NUC</title>
+  <meta name="color-scheme" content="dark" />
+  <style>
+    :root {
+      --bg: #05070a;
+      --surface: #10141c;
+      --surface-2: #161c27;
+      --line: #212836;
+      --line-soft: #1a212c;
+      --text: #eef2f8;
+      --muted: #8b93a4;
+      --muted-2: #5c6577;
+      --ok: #34d399;
+      --ok-dim: #16332a;
+      --bad: #fb7185;
+      --bad-dim: #3a1a22;
+      --warn: #fbbf24;
+      --accent: #60a5fa;
+      --accent-2: #a78bfa;
+      --radius: 14px;
+      --radius-sm: 9px;
+    }
+    * { box-sizing: border-box; }
+    ::selection { background: color-mix(in srgb, var(--accent) 35%, transparent); }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      background:
+        radial-gradient(900px 480px at 12% -8%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 60%),
+        radial-gradient(700px 420px at 92% 0%, color-mix(in srgb, var(--accent-2) 10%, transparent), transparent 55%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem 1.5rem;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 1.75rem;
+      border-bottom: 1px solid var(--line-soft);
+      background: color-mix(in srgb, var(--bg) 78%, transparent);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+    }
+    .brand { display: flex; align-items: center; gap: 0.7rem; }
+    .brand .mark {
+      width: 2.15rem; height: 2.15rem;
+      border-radius: 8px;
+      display: grid; place-items: center;
+      font-weight: 800; font-size: 0.75rem; letter-spacing: 0.02em;
+      background: linear-gradient(155deg, var(--accent), var(--accent-2));
+      color: #05070a;
+      box-shadow: 0 6px 18px -6px color-mix(in srgb, var(--accent) 60%, transparent);
+    }
+    header h1 { margin: 0; font-size: 1.05rem; font-weight: 650; letter-spacing: 0.01em; }
+    header .sub { margin: 0.1rem 0 0; color: var(--muted); font-size: 0.78rem; }
+
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.42rem 0.85rem 0.42rem 0.65rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      font-size: 0.8rem; font-weight: 600;
+      white-space: nowrap;
+    }
+    .status-pill .pulse-dot { width: 0.55rem; height: 0.55rem; border-radius: 50%; position: relative; flex: none; }
+    .status-pill .pulse-dot::after {
+      content: ""; position: absolute; inset: -4px; border-radius: 50%;
+      border: 1.5px solid currentColor; opacity: 0.55;
+      animation: ring 2.2s ease-out infinite;
+    }
+    .status-pill.ok { color: var(--ok); }
+    .status-pill.bad { color: var(--bad); }
+    .status-pill.mixed { color: var(--warn); }
+    .status-pill .pulse-dot { background: currentColor; }
+    @keyframes ring { 0% { transform: scale(0.7); opacity: 0.6; } 100% { transform: scale(1.9); opacity: 0; } }
+
+    .meta-line { color: var(--muted-2); font-size: 0.74rem; margin-top: 0.3rem; }
+
+    main { padding: 1.6rem 1.75rem 3.5rem; max-width: 1180px; margin: 0 auto; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 0.95rem 1.05rem;
+    }
+    .stat .label {
+      display: flex; justify-content: space-between; align-items: baseline;
+      color: var(--muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em;
+      margin-bottom: 0.4rem;
+    }
+    .stat .label b { color: var(--text); font-size: 0.95rem; letter-spacing: 0; text-transform: none; font-weight: 650; }
+    .bar {
+      height: 5px; border-radius: 999px; background: var(--line-soft); overflow: hidden;
+    }
+    .bar > span { display: block; height: 100%; border-radius: 999px; transition: width 0.5s ease; }
+
+    h2 {
+      display: flex; align-items: center; gap: 0.6rem;
+      margin: 2.1rem 0 0.85rem;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    h2 .count {
+      font-size: 0.68rem; font-weight: 700; color: var(--muted-2);
+      background: var(--surface-2); border: 1px solid var(--line);
+      padding: 0.1rem 0.5rem; border-radius: 999px; text-transform: none; letter-spacing: 0;
+    }
+    h2::after { content: ""; flex: 1; height: 1px; background: var(--line-soft); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 0.85rem;
+    }
+
+    .card {
+      position: relative;
+      display: block;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1rem 1.05rem;
+      transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .card:hover {
+      border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px -14px rgba(0,0,0,0.55);
+    }
+    .card .top { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.6rem; }
+    .identity { display: flex; align-items: center; gap: 0.65rem; min-width: 0; }
+    .avatar {
+      flex: none; width: 2rem; height: 2rem; border-radius: 8px;
+      display: grid; place-items: center; font-size: 0.72rem; font-weight: 700;
+      background: var(--surface-2); border: 1px solid var(--line); color: var(--muted);
+    }
+    .avatar.ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 35%, var(--line)); }
+    .avatar.bad { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 35%, var(--line)); }
+    .name-wrap { min-width: 0; }
+    .name { font-weight: 650; font-size: 0.94rem; display: block; }
+    .link-out {
+      color: var(--muted-2); font-size: 0.76rem; text-decoration: none;
+      display: flex; align-items: center; gap: 0.3rem; margin-top: 0.1rem;
+      font-family: ui-monospace, Consolas, monospace;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .link-out svg { flex: none; opacity: 0.7; }
+    .link-out:hover { color: var(--accent); }
+
+    .badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.24rem 0.55rem;
+      border-radius: 999px;
+      white-space: nowrap;
+      flex: none;
+      letter-spacing: 0.02em;
+    }
+    .badge.ok { background: var(--ok-dim); color: var(--ok); }
+    .badge.bad { background: var(--bad-dim); color: var(--bad); }
+
+    .card-foot {
+      margin-top: 0.75rem;
+      padding-top: 0.65rem;
+      border-top: 1px solid var(--line-soft);
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 0.78rem; color: var(--muted);
+    }
+    .latency { font-family: ui-monospace, Consolas, monospace; }
+    .latency.fast { color: var(--ok); }
+    .latency.mid { color: var(--warn); }
+    .latency.slow { color: var(--bad); }
+
+    .creds { margin-top: 0.6rem; }
+    .creds summary {
+      cursor: pointer; list-style: none; user-select: none;
+      font-size: 0.74rem; color: var(--muted-2); font-weight: 600;
+      display: flex; align-items: center; gap: 0.3rem;
+    }
+    .creds summary::-webkit-details-marker { display: none; }
+    .creds summary::before { content: "▸"; font-size: 0.65rem; transition: transform 0.15s; }
+    .creds[open] summary::before { transform: rotate(90deg); }
+    .creds summary:hover { color: var(--accent); }
+    .creds-body {
+      margin-top: 0.4rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 0.45rem 0.5rem 0.45rem 0.65rem;
+    }
+    .creds-body code {
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 0.76rem; color: var(--text);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .copy-btn {
+      flex: none; border: none; background: var(--surface); color: var(--muted);
+      border: 1px solid var(--line); border-radius: 7px; padding: 0.25rem 0.5rem;
+      font-size: 0.68rem; font-weight: 600; cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .copy-btn:hover { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+    .copy-btn.done { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 40%, var(--line)); }
+
+    .containers-wrap {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .containers-summary {
+      display: flex; gap: 1.25rem; align-items: center;
+      padding: 0.8rem 1.05rem;
+      border-bottom: 1px solid var(--line-soft);
+      font-size: 0.78rem; color: var(--muted);
+    }
+    .containers-summary b { color: var(--text); }
+    .containers-summary .sep { color: var(--line); }
+    .containers {
+      max-height: 320px; overflow-y: auto;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    }
+    .container-row {
+      display: flex; align-items: center; gap: 0.55rem;
+      padding: 0.55rem 1.05rem;
+      font-size: 0.82rem;
+      border-bottom: 1px solid var(--line-soft);
+      min-width: 0;
+    }
+    .container-row .cname { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .container-row .cstatus { color: var(--muted-2); font-size: 0.74rem; margin-left: auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-shrink: 1; }
+    .dot { display: inline-block; width: 0.5rem; height: 0.5rem; border-radius: 50%; flex: none; }
+    .dot.on { background: var(--ok); box-shadow: 0 0 0 3px var(--ok-dim); }
+    .dot.off { background: var(--bad); box-shadow: 0 0 0 3px var(--bad-dim); }
+
+    .empty { padding: 1.5rem; text-align: center; color: var(--muted-2); font-size: 0.85rem; }
+
+    footer { padding: 2rem 1.75rem 2.5rem; color: var(--muted-2); font-size: 0.78rem; text-align: center; }
+
+    .status-wrap { display: flex; align-items: center; gap: 0.6rem; }
+    .logout-btn {
+      border: 1px solid var(--line); background: var(--surface); color: var(--muted);
+      border-radius: 999px; padding: 0.4rem 0.8rem; font-size: 0.75rem; font-weight: 600;
+      cursor: pointer; font-family: inherit;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .logout-btn:hover { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 40%, var(--line)); }
+
+    .locked { padding: 3.5rem 1rem; text-align: center; color: var(--muted); }
+    .locked .lock-icon {
+      width: 2.75rem; height: 2.75rem; margin: 0 auto 1rem;
+      border-radius: 10px; display: grid; place-items: center;
+      background: var(--surface); border: 1px solid var(--line); color: var(--muted-2);
+    }
+    .locked p { margin: 0.3rem 0 0; font-size: 0.85rem; }
+
+    /* Palette copiée telle quelle de crm/packages/ui/src/styles/globals.css (.dark)
+       + sign-in-form.tsx / auth-shell.tsx — même form panel, même vert, même logo. */
+    dialog#loginDialog {
+      --a-bg: #0f0f0f;
+      --a-fg: #f5f5f5;
+      --a-muted: #1f1f1f;
+      --a-muted-fg: #a0a0a0;
+      --a-border: #2a2a2a;
+      --a-primary: #006b4f;
+      --a-primary-fg: #ffffff;
+      --a-ring: #40be96;
+
+      border: 1px solid var(--a-border);
+      border-radius: 8px;
+      background: var(--a-bg);
+      color: var(--a-fg);
+      padding: 1.75rem 1.75rem 1.6rem;
+      width: min(360px, 92vw);
+      box-shadow: 0 28px 70px -24px rgba(0,0,0,0.75);
+    }
+    dialog#loginDialog::backdrop {
+      background: color-mix(in srgb, #0f0f0f 75%, transparent);
+      backdrop-filter: blur(6px);
+    }
+    .login-logo { color: var(--a-fg); margin-bottom: 0.75rem; }
+    .login-logo svg { width: 1.5rem; height: 1.5rem; display: block; }
+    .login-head { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.4rem; }
+    .login-head h2 { margin: 0; font-size: 1.3rem; font-weight: 650; letter-spacing: -0.01em; }
+    .login-head p { margin: 0.2rem 0 0; font-size: 0.8rem; line-height: 1.25rem; color: var(--a-muted-fg); }
+    .field { display: flex; flex-direction: column; gap: 0.375rem; margin-bottom: 0.95rem; }
+    .field label { font-size: 0.875rem; line-height: 1.25rem; font-weight: 500; color: var(--a-fg); }
+    .field input {
+      background: var(--a-muted); border: 1px solid var(--a-border); border-radius: 5px;
+      padding: 0 0.625rem; height: 2rem; color: var(--a-fg); font-size: 0.75rem; font-family: inherit;
+    }
+    .field input::placeholder { color: var(--a-muted-fg); }
+    .field input:hover { border-color: color-mix(in srgb, var(--a-ring) 40%, var(--a-border)); }
+    .field input:focus {
+      outline: none; border-color: var(--a-ring);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--a-ring) 40%, transparent);
+    }
+    .login-error {
+      color: var(--a-fg); background: var(--a-muted); border: 1px solid var(--a-border);
+      border-radius: 5px; padding: 0.5rem 0.65rem; font-size: 0.75rem; font-weight: 500;
+      margin: 0 0 0.95rem;
+    }
+    .login-submit {
+      width: 100%; border: none; border-radius: 5px; height: 2rem;
+      font-weight: 500; font-size: 0.75rem; cursor: pointer; font-family: inherit;
+      background: var(--a-primary); color: var(--a-primary-fg);
+      transition: background-color 0.15s;
+    }
+    .login-submit:hover:not(:disabled) { background: color-mix(in srgb, var(--a-primary), black 12%); }
+    .login-submit:active:not(:disabled) { background: color-mix(in srgb, var(--a-primary), black 22%); }
+    .login-submit:disabled { opacity: 0.5; cursor: default; }
+
+    @media (max-width: 560px) {
+      header { padding: 1rem; }
+      main { padding: 1.25rem 1rem 3rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="mark">GS</div>
+      <div>
+        <h1>Admin NUC</h1>
+        <p class="sub">Supervision interne · GSMS platform</p>
+      </div>
+    </div>
+    <div id="statusArea" hidden>
+      <div class="status-wrap">
+        <div class="status-pill mixed" id="statusPill">
+          <span class="pulse-dot"></span>
+          <span id="statusText">Chargement…</span>
+        </div>
+        <button class="logout-btn" id="logoutBtn" type="button">Déconnexion</button>
+      </div>
+      <div class="meta-line" id="updated">en attente des sondes</div>
+    </div>
+  </header>
+
+  <main id="dashboard" hidden>
+    <div class="stats" id="metrics"></div>
+
+    <h2>Plateforme <span class="count" id="countPlateforme"></span></h2>
+    <div class="grid" id="plateforme"></div>
+
+    <h2>Données <span class="count" id="countDonnees"></span></h2>
+    <div class="grid" id="donnees"></div>
+
+    <h2>Conteneurs Docker <span class="count" id="countContainers"></span></h2>
+    <div class="containers-wrap">
+      <div class="containers-summary" id="containersSummary"></div>
+      <div class="containers" id="containers"></div>
+    </div>
+  </main>
+
+  <div class="locked" id="locked">
+    <div class="lock-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+    </div>
+    <p>Connexion requise pour voir le tableau de bord.</p>
+  </div>
+
+  <footer>admin.global-it-ss.com · sondes locales NUC · rafraîchi toutes les 30s</footer>
+
+  <dialog id="loginDialog">
+    <form id="loginForm">
+      <div class="login-head">
+        <div class="login-logo">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" aria-hidden="true">
+            <path fill="currentColor" d="m384 99.548 -16.066 -12.508L256.021 0 0 199.096v113.782L256.021 512 512 312.879V199.096zm-127.98 -49.419 79.695 61.975 -40.944 31.803 -3.661 2.837 -35.091 -27.287 -102.399 79.638 35.09 27.287 32.218 25.088 35.09 27.288L358.4 199.074l-35.047 -27.288 3.659 -2.837 40.943 -31.803 79.651 61.952 -40.943 31.852 -150.62 117.163 -79.695 -61.974 -32.218 -25.041 -38.752 -30.125 -40.922 -31.849z" />
+          </svg>
+        </div>
+        <div>
+          <h2>Bon retour</h2>
+          <p>Connecte-toi pour continuer.</p>
+        </div>
+      </div>
+      <div class="field">
+        <label for="loginUser">Identifiant</label>
+        <input id="loginUser" type="text" autocomplete="username" required autofocus />
+      </div>
+      <div class="field">
+        <label for="loginPass">Mot de passe</label>
+        <input id="loginPass" type="password" autocomplete="current-password" required />
+      </div>
+      <p class="login-error" id="loginError" hidden></p>
+      <button class="login-submit" id="loginSubmit" type="submit">Se connecter</button>
+    </form>
+  </dialog>
+
+  <script>
+    const AUTH_KEY = 'gsms_admin_authz';
+    let authHeader = sessionStorage.getItem(AUTH_KEY);
+    let pollTimer = null;
+    let currentCreds = {};
+
+    const ICON_LINK =
+      '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>';
+
+    function fmtBytes(n) {
+      if (!n && n !== 0) return '—';
+      const u = ['B','KB','MB','GB','TB'];
+      let i = 0, x = n;
+      while (x >= 1024 && i < u.length - 1) { x /= 1024; i++; }
+      return x.toFixed(i ? 1 : 0) + ' ' + u[i];
+    }
+    function fmtUptime(s) {
+      if (!s) return '—';
+      const d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600);
+      return d + 'j ' + h + 'h';
+    }
+    function pctColor(pct) {
+      if (pct < 70) return 'var(--ok)';
+      if (pct < 90) return 'var(--warn)';
+      return 'var(--bad)';
+    }
+    function loadColor(v) {
+      if (v < 1) return 'var(--ok)';
+      if (v < 2) return 'var(--warn)';
+      return 'var(--bad)';
+    }
+    function latencyClass(ms) {
+      if (ms < 200) return 'fast';
+      if (ms < 800) return 'mid';
+      return 'slow';
+    }
+
+    function statCard(label, valueHtml, pct, color) {
+      const barHtml = pct == null ? '' :
+        '<div class="bar"><span style="width:' + Math.max(0, Math.min(100, pct)) + '%; background:' + color + '"></span></div>';
+      return '<div class="stat"><div class="label">' + label + '<b>' + valueHtml + '</b></div>' + barHtml + '</div>';
+    }
+
+    function initials(name) {
+      return name.replace(/[^A-Za-z0-9]/g, '').slice(0, 2).toUpperCase() || '·';
+    }
+
+    async function copyCred(btn, text) {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (e) {
+        const ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); ta.remove();
+      }
+      btn.textContent = 'Copié';
+      btn.classList.add('done');
+      setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('done'); }, 1400);
+    }
+
+    function card(s) {
+      const a = document.createElement('div');
+      a.className = 'card';
+      const cred = currentCreds[s.id];
+      const host = (s.href || s.url).replace(/^https?:\/\//, '');
+      const lat = latencyClass(s.ms);
+      a.innerHTML =
+        '<div class="top">' +
+          '<div class="identity">' +
+            '<div class="avatar ' + (s.ok ? 'ok' : 'bad') + '">' + initials(s.name) + '</div>' +
+            '<div class="name-wrap">' +
+              '<span class="name">' + s.name + '</span>' +
+              '<a class="link-out" href="' + (s.href || s.url) + '" target="_blank" rel="noopener">' + ICON_LINK + '<span>' + host + '</span></a>' +
+            '</div>' +
+          '</div>' +
+          '<span class="badge ' + (s.ok ? 'ok' : 'bad') + '">' + (s.ok ? 'UP' : 'DOWN') + '</span>' +
+        '</div>' +
+        '<div class="card-foot"><span>HTTP ' + (s.code || '—') + '</span><span class="latency ' + lat + '">' + s.ms + ' ms</span></div>' +
+        (cred ? (
+          '<details class="creds"><summary>Identifiants</summary>' +
+          '<div class="creds-body"><code>' + cred + '</code><button class="copy-btn" type="button">Copier</button></div>' +
+          '</details>'
+        ) : '');
+      if (cred) {
+        const btn = a.querySelector('.copy-btn');
+        btn.addEventListener('click', (e) => { e.preventDefault(); copyCred(btn, cred); });
+      }
+      return a;
+    }
+
+    function setStatus(services) {
+      const total = services.length;
+      const down = services.filter(s => !s.ok).length;
+      const pill = document.getElementById('statusPill');
+      const text = document.getElementById('statusText');
+      pill.classList.remove('ok', 'bad', 'mixed');
+      if (total === 0) {
+        pill.classList.add('mixed');
+        text.textContent = 'En attente';
+      } else if (down === 0) {
+        pill.classList.add('ok');
+        text.textContent = 'Tous les services sont opérationnels';
+      } else if (down === total) {
+        pill.classList.add('bad');
+        text.textContent = 'Tous les services sont hors ligne';
+      } else {
+        pill.classList.add('bad');
+        text.textContent = down + ' service' + (down > 1 ? 's' : '') + ' hors ligne sur ' + total;
+      }
+    }
+
+    function render(data) {
+      currentCreds = data.creds || {};
+      document.getElementById('updated').textContent =
+        'Mis à jour ' + new Date(data.updatedAt).toLocaleString('fr-FR') + ' · host ' + (data.host || 'nuc');
+
+      const m = data.metrics || {};
+      const memPct = m.memTotal ? Math.round((1 - m.memAvail / m.memTotal) * 100) : null;
+      const diskPct = m.diskTotal ? Math.round((1 - m.diskFree / m.diskTotal) * 100) : null;
+      document.getElementById('metrics').innerHTML =
+        statCard('Charge', m.load1 != null ? String(m.load1) : '—', null, null) +
+        statCard('RAM utilisée', memPct != null ? memPct + '%' : '—', memPct, pctColor(memPct ?? 0)) +
+        statCard('RAM libre', fmtBytes(m.memAvail), null, null) +
+        statCard('Disque utilisé', diskPct != null ? diskPct + '%' : '—', diskPct, pctColor(diskPct ?? 0)) +
+        statCard('Disque libre', fmtBytes(m.diskFree), null, null) +
+        statCard('Uptime', fmtUptime(m.uptimeSec), null, null);
+      const loadStat = document.getElementById('metrics').firstElementChild;
+      if (loadStat && m.load1 != null) loadStat.querySelector('b').style.color = loadColor(m.load1);
+
+      const services = data.services || [];
+      setStatus(services);
+
+      const plat = document.getElementById('plateforme');
+      const don = document.getElementById('donnees');
+      plat.innerHTML = ''; don.innerHTML = '';
+      let platCount = 0, donCount = 0;
+      services.forEach(s => {
+        if (s.group === 'donnees') { don.appendChild(card(s)); donCount++; }
+        else { plat.appendChild(card(s)); platCount++; }
+      });
+      document.getElementById('countPlateforme').textContent = platCount;
+      document.getElementById('countDonnees').textContent = donCount;
+      if (!platCount) plat.innerHTML = '<div class="empty">Aucun service</div>';
+      if (!donCount) don.innerHTML = '<div class="empty">Aucun service</div>';
+
+      const containers = data.containers || [];
+      const running = containers.filter(c => c.running).length;
+      document.getElementById('countContainers').textContent = containers.length;
+      document.getElementById('containersSummary').innerHTML = containers.length
+        ? '<span><b>' + running + '</b> en cours</span><span class="sep">·</span><span><b>' + (containers.length - running) + '</b> arrêté(s)</span>'
+        : '<span>Aucun conteneur</span>';
+      const sorted = containers.slice().sort((a, b) => (b.running - a.running));
+      document.getElementById('containers').innerHTML = sorted.map(c =>
+        '<div class="container-row"><span class="dot ' + (c.running ? 'on' : 'off') + '"></span>' +
+        '<span class="cname">' + c.name + '</span>' +
+        '<span class="cstatus">' + c.status + '</span></div>'
+      ).join('') || '<div class="empty">Aucun conteneur</div>';
+    }
+
+    async function fetchStatus(header) {
+      const res = await fetch('/status.json?t=' + Date.now(), {
+        headers: { Authorization: header },
+        cache: 'no-store',
+      });
+      if (res.status === 401) return { ok: false, unauthorized: true };
+      if (!res.ok) return { ok: false, unauthorized: false };
+      return { ok: true, data: await res.json() };
+    }
+
+    function showApp() {
+      document.body.classList.add('authed');
+      document.getElementById('statusArea').hidden = false;
+      document.getElementById('dashboard').hidden = false;
+      document.getElementById('locked').hidden = true;
+      const dlg = document.getElementById('loginDialog');
+      if (dlg.open) dlg.close();
+    }
+
+    function showLogin(message) {
+      document.body.classList.remove('authed');
+      document.getElementById('statusArea').hidden = true;
+      document.getElementById('dashboard').hidden = true;
+      document.getElementById('locked').hidden = false;
+      if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+      const err = document.getElementById('loginError');
+      if (message) { err.textContent = message; err.hidden = false; } else { err.hidden = true; }
+      const dlg = document.getElementById('loginDialog');
+      if (!dlg.open) dlg.showModal();
+    }
+
+    async function poll() {
+      const result = await fetchStatus(authHeader);
+      if (result.unauthorized) {
+        authHeader = null;
+        sessionStorage.removeItem(AUTH_KEY);
+        showLogin('Session expirée. Reconnecte-toi.');
+        return;
+      }
+      if (!result.ok) {
+        document.getElementById('updated').textContent = 'Sonde indisponible — lance probe.sh sur le NUC';
+        const pill = document.getElementById('statusPill');
+        pill.classList.remove('ok', 'mixed'); pill.classList.add('bad');
+        document.getElementById('statusText').textContent = 'Sonde indisponible';
+        return;
+      }
+      render(result.data);
+    }
+
+    function startSession(header) {
+      authHeader = header;
+      sessionStorage.setItem(AUTH_KEY, header);
+      showApp();
+      poll();
+      if (pollTimer) clearInterval(pollTimer);
+      pollTimer = setInterval(poll, 30000);
+    }
+
+    document.getElementById('loginDialog').addEventListener('cancel', (e) => {
+      if (!document.body.classList.contains('authed')) e.preventDefault();
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const user = document.getElementById('loginUser').value.trim();
+      const pass = document.getElementById('loginPass').value;
+      const submitBtn = document.getElementById('loginSubmit');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Connexion…';
+      const header = 'Basic ' + btoa(user + ':' + pass);
+      let result;
+      try {
+        result = await fetchStatus(header);
+      } catch (err) {
+        result = { ok: false, unauthorized: false };
+      }
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Se connecter';
+      if (result.unauthorized) {
+        document.getElementById('loginError').textContent = 'Identifiant ou mot de passe incorrect.';
+        document.getElementById('loginError').hidden = false;
+        return;
+      }
+      if (!result.ok) {
+        document.getElementById('loginError').textContent = 'Sonde indisponible sur le NUC.';
+        document.getElementById('loginError').hidden = false;
+        return;
+      }
+      startSession(header);
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      authHeader = null;
+      sessionStorage.removeItem(AUTH_KEY);
+      document.getElementById('loginPass').value = '';
+      showLogin();
+    });
+
+    (async function init() {
+      if (authHeader) {
+        const result = await fetchStatus(authHeader).catch(() => ({ ok: false, unauthorized: false }));
+        if (result.unauthorized) {
+          authHeader = null;
+          sessionStorage.removeItem(AUTH_KEY);
+          showLogin();
+        } else if (result.ok) {
+          showApp();
+          render(result.data);
+          pollTimer = setInterval(poll, 30000);
+        } else {
+          showLogin('Sonde indisponible sur le NUC.');
+        }
+      } else {
+        showLogin();
+      }
+    })();
+  </script>
+</body>
+</html>

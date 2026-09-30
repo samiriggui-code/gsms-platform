@@ -1,0 +1,208 @@
+{
+  "countermeasure_templates": [
+    {
+      "moduleSlug": "mod-degagements",
+      "slug": "cm-issue-libre-consigne",
+      "name": "Consigne issue libre + contrôle quotidien",
+      "description": "Procédure d’interdiction d’encombrement des issues et contrôle quotidien consigné.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": ["DETER", "DETECT"],
+      "domain": "ACCESS",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["erp", "degagement", "fr-precom"],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "mod-degagements",
+      "slug": "cm-barre-antipanique",
+      "name": "Barre anti-panique / ouverture réglementaire",
+      "description": "Dispositif d’ouverture d’issue conforme, maintenu opérationnel et contrôlé.",
+      "shapeCategory": "EQUIPMENT",
+      "ppsFunctions": ["DENY", "DELAY"],
+      "domain": "ACCESS",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["erp", "issue"],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "mod-evacuation",
+      "slug": "cm-balisage-photolum",
+      "name": "Balisage d’évacuation conforme",
+      "description": "Signalétique et balisage (dont photoluminescent / éclairage de sécurité) sur cheminements.",
+      "shapeCategory": "EQUIPMENT",
+      "ppsFunctions": ["DETER", "DETECT"],
+      "domain": "BUILDING",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["erp", "evacuation"],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "mod-moyens",
+      "slug": "cm-extincteurs-verifies",
+      "name": "Parc extincteurs vérifié",
+      "description": "Inventaire, accessibilité et vérifications périodiques des extincteurs.",
+      "shapeCategory": "EQUIPMENT",
+      "ppsFunctions": ["DEFEAT", "RECOVER"],
+      "domain": "BUILDING",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["erp", "moyens"],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "mod-ssi",
+      "slug": "cm-maintenance-ssi",
+      "name": "Contrat de maintenance SSI + essais",
+      "description": "Maintenance périodique SSI, essais documentés et levée des défauts.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": ["DETECT", "RECOVER"],
+      "domain": "BUILDING",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["erp", "ssi"],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "mod-registre",
+      "slug": "cm-tenue-registre",
+      "name": "Tenue rigoureuse du registre de sécurité",
+      "description": "Processus de visas, consignations d’essais et contrôles du registre.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": ["DETECT", "RECOVER"],
+      "domain": "PERSONNEL",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["erp", "registre"],
+      "csmpUnitReference": "Unit 7"
+    },
+    {
+      "moduleSlug": "mod-dossier",
+      "slug": "cm-checklist-dossier",
+      "name": "Checklist dossier commission",
+      "description": "Liste de pièces et responsable de constitution du dossier pré-commission.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": ["DETECT"],
+      "domain": "PERSONNEL",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "ACCEPT",
+      "tags": ["erp", "precom", "dossier"],
+      "csmpUnitReference": "Unit 1"
+    },
+    {
+      "moduleSlug": "mod-classement",
+      "slug": "cm-revue-classement",
+      "name": "Revue périodique type / catégorie / effectif",
+      "description": "Contrôle que le classement déclaré reste aligné avec l’activité et l’effectif réels.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": ["DETECT"],
+      "domain": "PERSONNEL",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["erp", "classement"],
+      "csmpUnitReference": "Unit 2"
+    },
+    {
+      "moduleSlug": "mod-dp-r",
+      "slug": "cm-croisement-dp",
+      "name": "Croisement DG + chapitre DP du type",
+      "description": "Procédure de revue Légifrance : dispositions générales puis dispositions particulières du type (R/N/…). ",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": ["DETECT"],
+      "domain": "PERSONNEL",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["erp", "dp", "fr-precom"],
+      "csmpUnitReference": "Unit 2"
+    },
+    {
+      "moduleSlug": "mod-ssiap",
+      "slug": "cm-effectif-ssiap",
+      "name": "Effectif & qualifications SSIAP documentés",
+      "description": "Planning de présence, diplômes SSIAP et missions alignés MS 45–52 / arrêté 2 mai 2005.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": ["DETECT", "RECOVER"],
+      "domain": "PERSONNEL",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["erp", "ssiap"],
+      "csmpUnitReference": "Unit 7"
+    }
+  ],
+  "threat_countermeasures": [
+    {
+      "threatSlug": "erp-issue-obstruction",
+      "countermeasureSlug": "cm-issue-libre-consigne",
+      "relevance": "HIGH",
+      "rationale": "Contrôle quotidien réduit l’encombrement des issues"
+    },
+    {
+      "threatSlug": "erp-issue-obstruction",
+      "countermeasureSlug": "cm-barre-antipanique",
+      "relevance": "HIGH",
+      "rationale": "Ouverture réglementaire maintenue opérationnelle"
+    },
+    {
+      "threatSlug": "erp-panique-evacuation",
+      "countermeasureSlug": "cm-balisage-photolum",
+      "relevance": "HIGH",
+      "rationale": "Balisage guide l’évacuation sous stress"
+    },
+    {
+      "threatSlug": "erp-panique-evacuation",
+      "countermeasureSlug": "cm-issue-libre-consigne",
+      "relevance": "MEDIUM",
+      "rationale": "Issues libres = capacité d’évacuation préservée"
+    },
+    {
+      "threatSlug": "erp-incendie-propagation",
+      "countermeasureSlug": "cm-extincteurs-verifies",
+      "relevance": "HIGH",
+      "rationale": "Première intervention possible"
+    },
+    {
+      "threatSlug": "erp-incendie-propagation",
+      "countermeasureSlug": "cm-maintenance-ssi",
+      "relevance": "MEDIUM",
+      "rationale": "Détection précoce limite la propagation"
+    },
+    {
+      "threatSlug": "erp-ssi-defaillance",
+      "countermeasureSlug": "cm-maintenance-ssi",
+      "relevance": "HIGH",
+      "rationale": "Maintenance + essais = principal levier SSI"
+    },
+    {
+      "threatSlug": "erp-registre-lacunes",
+      "countermeasureSlug": "cm-tenue-registre",
+      "relevance": "HIGH",
+      "rationale": "Processus de tenue du registre"
+    },
+    {
+      "threatSlug": "erp-dossier-incomplet",
+      "countermeasureSlug": "cm-checklist-dossier",
+      "relevance": "HIGH",
+      "rationale": "Checklist réduit les oublis de pièces"
+    },
+    {
+      "threatSlug": "erp-sous-classement",
+      "countermeasureSlug": "cm-revue-classement",
+      "relevance": "HIGH",
+      "rationale": "Revue périodique aligne déclaration et réalité"
+    },
+    {
+      "threatSlug": "erp-dp-non-croisees",
+      "countermeasureSlug": "cm-croisement-dp",
+      "relevance": "HIGH",
+      "rationale": "Revue systématique chapitre DP du type"
+    },
+    {
+      "threatSlug": "erp-ssiap-deficit",
+      "countermeasureSlug": "cm-effectif-ssiap",
+      "relevance": "HIGH",
+      "rationale": "Documenter présence et qualifications SSIAP"
+    }
+  ]
+}

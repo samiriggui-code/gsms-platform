@@ -1,0 +1,39 @@
+services:
+  app:
+    image: qatrial-app
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_URL=postgresql://qatrial:qatrial@db:5432/qatrial
+      - JWT_SECRET=qatrial-lab-secret-change-me-32chars-minimum-ok
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - uploads:/app/uploads
+      - ./server/prisma/prisma.config.ts:/app/server/prisma/prisma.config.ts:ro
+      - ./prisma.config.ts:/app/prisma.config.ts:ro
+    command:
+      - sh
+      - -c
+      - npx prisma db push --schema=server/prisma/schema.prisma --accept-data-loss && npx tsx server/index.ts
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=qatrial
+      - POSTGRES_PASSWORD=qatrial
+      - POSTGRES_DB=qatrial
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U qatrial"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  uploads:

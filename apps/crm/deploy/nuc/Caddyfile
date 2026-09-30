@@ -1,0 +1,129 @@
+# Global ACME — Caddy obtient Let's Encrypt pour chaque site
+{
+	email samir@global-it-ss.com
+}
+
+# ── CRM (prod) ──────────────────────────────────────────────────────────────
+crm.global-it-ss.com {
+	encode gzip zstd
+
+	@internal path /internal/*
+	respond @internal 403
+
+	handle /api/trpc/* {
+		reverse_proxy api:3001
+	}
+
+	handle /api/t/* {
+		reverse_proxy api:3001
+	}
+
+	handle /api/conversations/* {
+		reverse_proxy api:3001
+	}
+
+	handle /auth/* {
+		reverse_proxy api:3001
+	}
+
+	handle /health {
+		reverse_proxy api:3001
+	}
+
+	handle /blob/* {
+		uri strip_prefix /blob
+		reverse_proxy minio:9000
+	}
+
+	handle {
+		reverse_proxy app:3000
+	}
+}
+
+# Host gateway from crm docker network (published ports on NUC)
+# 172.18.0.1 = bridge gateway of crm_* network
+
+# ── Comp AI (lab) — Nest API + Next UI ──────────────────────────────────────
+comp.global-it-ss.com {
+	encode gzip zstd
+
+	# NextAuth (credentials) lives on Next — must NOT go to Nest
+	@nextAuth path /api/auth/session* /api/auth/csrf* /api/auth/providers* /api/auth/signin* /api/auth/signout* /api/auth/callback* /api/auth/_log* /api/auth/error* /api/auth/test-*
+	handle @nextAuth {
+		reverse_proxy 172.18.0.1:3030
+	}
+
+	# Nest: better-auth + versioned API + docs
+	@nest path /api/auth* /v1/* /api/docs*
+	handle @nest {
+		reverse_proxy 172.18.0.1:3333
+	}
+
+	# Next dev HMR websocket
+	handle /_next/webpack-hmr* {
+		reverse_proxy 172.18.0.1:3030 {
+			flush_interval -1
+		}
+	}
+
+	handle {
+		reverse_proxy 172.18.0.1:3030
+	}
+}
+
+# ── QAtrial ─────────────────────────────────────────────────────────────────
+qatrial.global-it-ss.com {
+	encode gzip zstd
+	reverse_proxy 172.18.0.1:3001
+}
+
+# ── Grace ───────────────────────────────────────────────────────────────────
+grace.global-it-ss.com {
+	encode gzip zstd
+	reverse_proxy 172.18.0.1:3020
+}
+
+# ── TenderAI MCP ────────────────────────────────────────────────────────────
+mcp.global-it-ss.com {
+	encode gzip zstd
+	reverse_proxy 172.18.0.1:8090
+}
+
+# ── TencentDB Agent Memory (proxy) ──────────────────────────────────────────
+memory.global-it-ss.com {
+	encode gzip zstd
+	reverse_proxy 172.18.0.1:8096
+}
+
+# ── Memory Hub ──────────────────────────────────────────────────────────────
+hub.global-it-ss.com {
+	encode gzip zstd
+	reverse_proxy 172.18.0.1:8125
+}
+
+# ── MinIO — console UI (S3 API reste minio:9000 pour le CRM) ────────────────
+minio.global-it-ss.com {
+	encode gzip zstd
+	handle /minio/health/live {
+		reverse_proxy minio:9000
+	}
+	handle {
+		reverse_proxy minio:9001
+	}
+}
+
+# ── Admin / monitoring homepage ─────────────────────────────────────────────
+# index.html is a public static shell with no secrets; only status.json (the
+# real data + creds) sits behind basic_auth. The page's own login dialog
+# supplies the Authorization header — see admin/index.html.
+admin.global-it-ss.com {
+	encode gzip zstd
+
+	@data path /status.json
+	basic_auth @data {
+		admin@global-it-ss.com $2a$14$cm1pc4cnd5RRmvk50ofr4uloTyUYiybvQtbVyO4N50G22tLVKfGNa
+	}
+
+	root * /srv/admin
+	file_server
+}

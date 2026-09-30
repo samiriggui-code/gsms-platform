@@ -1,0 +1,486 @@
+{
+  "version": "0.1.0",
+  "slug": "iso27001-2022",
+  "name": "ISO 27001",
+  "provenance": "ids+short names only, extracted from Comp AI lab seed for coverage gap-check; authoritative text = OSCAL/NIST or official standards — do not treat Comp prose as GSMS canon",
+  "source_framework_id": "frk_681ecc34e85064efdbb76993",
+  "count": 119,
+  "controls": [
+    {
+      "identifier": "\t 10.1 ",
+      "name": "10.1 Improvement "
+    },
+    {
+      "identifier": "\t A.5.6 ",
+      "name": "A.5.6 Organizational Controls"
+    },
+    {
+      "identifier": "\t A.8.9",
+      "name": "A.8.9 Technological Controls"
+    },
+    {
+      "identifier": "\t A.8.19",
+      "name": "A.8.19 Technological Controls "
+    },
+    {
+      "identifier": "4.1 ",
+      "name": "4.1 Context of the organization"
+    },
+    {
+      "identifier": "4.2 ",
+      "name": "4.2 Context of the organization"
+    },
+    {
+      "identifier": "4.3 ",
+      "name": "4.3 Context of the organization"
+    },
+    {
+      "identifier": "4.4 ",
+      "name": "4.4 Context of the Organization"
+    },
+    {
+      "identifier": "5.1 ",
+      "name": "5.1 Leadership"
+    },
+    {
+      "identifier": "5.2 ",
+      "name": "5.2 Leadership"
+    },
+    {
+      "identifier": "5.3 ",
+      "name": "5.3 Leadership"
+    },
+    {
+      "identifier": "6.1.1 ",
+      "name": "6.1.1 Planning"
+    },
+    {
+      "identifier": "6.1.2 ",
+      "name": "6.1.2 Planning"
+    },
+    {
+      "identifier": "6.1.3 ",
+      "name": "6.1.3 Planning"
+    },
+    {
+      "identifier": "7.1 ",
+      "name": "7.1 Support"
+    },
+    {
+      "identifier": "7.2 ",
+      "name": "7.2 Support "
+    },
+    {
+      "identifier": "7.3 ",
+      "name": "7.3 Support"
+    },
+    {
+      "identifier": "7.4",
+      "name": "7.4 Support"
+    },
+    {
+      "identifier": "7.5.1 ",
+      "name": "7.5.1 Support"
+    },
+    {
+      "identifier": "7.5.2 ",
+      "name": "7.5.2 Support"
+    },
+    {
+      "identifier": "7.5.3 ",
+      "name": "7.5.3 Support"
+    },
+    {
+      "identifier": "8.1",
+      "name": "8.1 Operation"
+    },
+    {
+      "identifier": "8.2",
+      "name": "8.2 Operation"
+    },
+    {
+      "identifier": "8.3",
+      "name": "8.3 Operation"
+    },
+    {
+      "identifier": "9.1.1",
+      "name": "9.1.1 Performance"
+    },
+    {
+      "identifier": "9.1.2",
+      "name": "9.1.2 Performance"
+    },
+    {
+      "identifier": "9.2",
+      "name": "9.2 Performance"
+    },
+    {
+      "identifier": "9.3",
+      "name": "9.3 Performance"
+    },
+    {
+      "identifier": "10.2",
+      "name": " 10.2 Improvement "
+    },
+    {
+      "identifier": "A.5.1 ",
+      "name": "A.5.1 Organizational Controls "
+    },
+    {
+      "identifier": "A.5.2",
+      "name": "A.5.2 Organizational Controls"
+    },
+    {
+      "identifier": "A.5.3",
+      "name": "A.5.3 Organizational Controls"
+    },
+    {
+      "identifier": "A.5.4",
+      "name": "A.5.4 Organizational Controls"
+    },
+    {
+      "identifier": "A.5.5 ",
+      "name": "A.5.5 Organizational Controls "
+    },
+    {
+      "identifier": "A.5.7",
+      "name": "A.5.7 Organizational Controls"
+    },
+    {
+      "identifier": "A.5.8",
+      "name": "A.5.8 Organizational Controls"
+    },
+    {
+      "identifier": "A.5.9 ",
+      "name": "A.5.9 Organizational Controls "
+    },
+    {
+      "identifier": "A.5.10",
+      "name": "A.5.10 Organizational Controls"
+    },
+    {
+      "identifier": "A.5.11",
+      "name": "A.5.11 Organizational Controls "
+    },
+    {
+      "identifier": "A.5.12 ",
+      "name": "A.5.12 Organizational Controls"
+    },
+    {
+      "identifier": "A.5.13 ",
+      "name": "A.5.13 Organizational Controls"
+    },
+    {
+      "identifier": "A.5.14",
+      "name": "A.5.14 Organizational Controls"
+    },
+    {
+      "identifier": "A.5.15 ",
+      "name": "A.5.15 Organizational Controls"
+    },
+    {
+      "identifier": "A.5.16",
+      "name": "A.5.16 Organizational Controls"
+    },
+    {
+      "identifier": "A.5.17",
+      "name": "A.5.17 Organizational Controls"
+    },
+    {
+      "identifier": "A.5.18",
+      "name": "A.5.18 Organizational Controls"
+    },
+    {
+      "identifier": "A.5.19",
+      "name": "A.5.19 Organizational Controls "
+    },
+    {
+      "identifier": "A.5.20",
+      "name": "A.5.20 Organizational Controls "
+    },
+    {
+      "identifier": "A.5.21 ",
+      "name": "A.5.21 Organizational Controls"
+    },
+    {
+      "identifier": "A.5.22",
+      "name": "A.5.22 Organizational Controls"
+    },
+    {
+      "identifier": "A.5.23",
+      "name": "A.5.23 Organizational Controls"
+    },
+    {
+      "identifier": "A.5.24 ",
+      "name": "A.5.24 Organizational Controls"
+    },
+    {
+      "identifier": "A.5.25",
+      "name": "A.5.25 Organizational Controls"
+    },
+    {
+      "identifier": "A.5.26 ",
+      "name": "A.5.26 Organizational Controls "
+    },
+    {
+      "identifier": "A.5.27",
+      "name": "A.5.27 Organizational Controls"
+    },
+    {
+      "identifier": "A.5.28",
+      "name": "A.5.28 Organizational Controls "
+    },
+    {
+      "identifier": "A.5.29",
+      "name": "A.5.29 Organizational Controls "
+    },
+    {
+      "identifier": "A.5.30",
+      "name": "A.5.30 Organizational Controls"
+    },
+    {
+      "identifier": "A.5.31 ",
+      "name": "A.5.31 Organizational Controls "
+    },
+    {
+      "identifier": "A.5.32",
+      "name": "A.5.32 Organizational Controls"
+    },
+    {
+      "identifier": "A.5.33 ",
+      "name": "A.5.33 Organizational Controls"
+    },
+    {
+      "identifier": "A.5.34",
+      "name": "A.5.34 Organizational Controls"
+    },
+    {
+      "identifier": "A.5.35 ",
+      "name": "A.5.35 Organizational Controls "
+    },
+    {
+      "identifier": "A.5.36",
+      "name": "A.5.36 Organizational Controls"
+    },
+    {
+      "identifier": "A.5.37",
+      "name": "A.5.37 Organizational Controls "
+    },
+    {
+      "identifier": "A.6.1 ",
+      "name": "A.6.1 People Controls"
+    },
+    {
+      "identifier": "A.6.2",
+      "name": "A.6.2 People Controls"
+    },
+    {
+      "identifier": "A.6.3 ",
+      "name": "A.6.3 People Controls"
+    },
+    {
+      "identifier": "A.6.4",
+      "name": "A.6.4 People Controls "
+    },
+    {
+      "identifier": "A.6.5",
+      "name": "A.6.5 People Controls "
+    },
+    {
+      "identifier": "A.6.6 ",
+      "name": "A.6.6 People Controls "
+    },
+    {
+      "identifier": "A.6.7 ",
+      "name": "A.6.7 People Controls"
+    },
+    {
+      "identifier": "A.6.8",
+      "name": "A.6.8 People Controls"
+    },
+    {
+      "identifier": "A.7.1",
+      "name": "A.7.1 Physical Controls"
+    },
+    {
+      "identifier": "A.7.2",
+      "name": "A.7.2 Physical Controls"
+    },
+    {
+      "identifier": "A.7.3",
+      "name": "A.7.3 Physical Controls"
+    },
+    {
+      "identifier": "A.7.4 ",
+      "name": "A.7.4 Physical Controls"
+    },
+    {
+      "identifier": "A.7.5 ",
+      "name": "A.7.5 Physical Controls"
+    },
+    {
+      "identifier": "A.7.6 ",
+      "name": "A.7.6 Physical Controls"
+    },
+    {
+      "identifier": "A.7.7",
+      "name": "A.7.7 Physical Controls"
+    },
+    {
+      "identifier": "A.7.8",
+      "name": "A.7.8 Physical Controls"
+    },
+    {
+      "identifier": "A.7.9 ",
+      "name": "A.7.9 Physical Controls"
+    },
+    {
+      "identifier": "A.7.10",
+      "name": "A.7.10 Physical Controls"
+    },
+    {
+      "identifier": "A.7.11 ",
+      "name": "A.7.11 Physical Controls"
+    },
+    {
+      "identifier": "A.7.12",
+      "name": "A.7.12 Physical Controls"
+    },
+    {
+      "identifier": "A.7.13",
+      "name": "A.7.13 Physical Controls"
+    },
+    {
+      "identifier": "A.7.14 ",
+      "name": "A.7.14 Physical Controls "
+    },
+    {
+      "identifier": "A.8.1",
+      "name": "A.8.1 Technological Controls"
+    },
+    {
+      "identifier": "A.8.2 ",
+      "name": "A.8.2 Technological Controls"
+    },
+    {
+      "identifier": "A.8.3 ",
+      "name": "A.8.3 Technological Controls"
+    },
+    {
+      "identifier": "A.8.4 ",
+      "name": "A.8.4 Technological Controls"
+    },
+    {
+      "identifier": "A.8.5 ",
+      "name": "A.8.5 Technological Controls "
+    },
+    {
+      "identifier": "A.8.6",
+      "name": "A.8.6 Technological Controls "
+    },
+    {
+      "identifier": "A.8.7",
+      "name": "A.8.7 Technological Controls "
+    },
+    {
+      "identifier": "A.8.8",
+      "name": "A.8.8 Technological Controls"
+    },
+    {
+      "identifier": "A.8.10",
+      "name": "A.8.10 Technological Controls"
+    },
+    {
+      "identifier": "A.8.11",
+      "name": "A.8.11 Technological Controls"
+    },
+    {
+      "identifier": "A.8.12",
+      "name": "A.8.12 Technological Controls"
+    },
+    {
+      "identifier": "A.8.13",
+      "name": "A.8.13 Technological Controls"
+    },
+    {
+      "identifier": "A.8.14",
+      "name": "A.8.14 Technological Controls"
+    },
+    {
+      "identifier": "A.8.15",
+      "name": "A.8.15 Technological Controls "
+    },
+    {
+      "identifier": "A.8.16 ",
+      "name": "A.8.16 Technological Controls"
+    },
+    {
+      "identifier": "A.8.17",
+      "name": "A.8.17 Technological Controls"
+    },
+    {
+      "identifier": "A.8.18",
+      "name": "A.8.18 Technological Controls"
+    },
+    {
+      "identifier": "A.8.20",
+      "name": "A.8.20 Technological Controls"
+    },
+    {
+      "identifier": "A.8.21",
+      "name": "A.8.21 Technological Controls"
+    },
+    {
+      "identifier": "A.8.22",
+      "name": "A.8.22 Technological Controls"
+    },
+    {
+      "identifier": "A.8.23",
+      "name": "A.8.23 Technological Controls"
+    },
+    {
+      "identifier": "A.8.24 ",
+      "name": "A.8.24 Technological Controls"
+    },
+    {
+      "identifier": "A.8.25",
+      "name": "A.8.25 Technological Controls"
+    },
+    {
+      "identifier": "A.8.26 ",
+      "name": "A.8.26 Technological Controls"
+    },
+    {
+      "identifier": "A.8.27",
+      "name": "A.8.27 Technological Controls"
+    },
+    {
+      "identifier": "A.8.28",
+      "name": "A.8.28 Technological Controls"
+    },
+    {
+      "identifier": "A.8.29",
+      "name": "A.8.29 Technological Controls"
+    },
+    {
+      "identifier": "A.8.30",
+      "name": "A.8.30 Technological Controls"
+    },
+    {
+      "identifier": "A.8.31 ",
+      "name": "A.8.31 Technological Controls"
+    },
+    {
+      "identifier": "A.8.32",
+      "name": "A.8.32 Technological Controls"
+    },
+    {
+      "identifier": "A.8.33",
+      "name": "A.8.33 Technological Controls"
+    },
+    {
+      "identifier": "A.8.34 ",
+      "name": "A.8.34 Technological Controls "
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+---
+description: Relais de messages Claude -> Cursor
+alwaysApply: true
+---
+
+# Handoff Claude ↔ Cursor
+
+## Fichiers
+
+- `docs/HANDOFF-CLAUDE.md` — Claude → Cursor (demandes de vérification, corrections à intégrer, questions).
+- `docs/HANDOFF-CURSOR.md` — Cursor → Claude (fin de chantier, blocage, décision). Nouvelle entrée datée **en haut**, ne pas écraser.
+
+## Quand lire `HANDOFF-CLAUDE.md`
+
+La règle `alwaysApply` est réinjectée dans le contexte à chaque tour agent — en pratique : à chaque message utilisateur qui relance l'agent (et au début d'une session Agent).
+
+### Ce qu'il faut faire à chaque tour
+
+1. Lire `docs/HANDOFF-CLAUDE.md`.
+2. Si une entrée n'a pas encore `✅ traité` en dessous → la traiter, puis ajouter `✅ traité — <une ligne>` juste sous l'entrée.
+3. En fin de chantier / blocage / décision → entrée datée en haut de `docs/HANDOFF-CURSOR.md`.
+
+## Règles de ce lab (rappel)
+
+Voir `docs/README.md` / `docs/ARCHITECTURE.md` / `docs/DOCTRINE.md` : observer/cartographier/documenter est autorisé, fusionner les apps ou modifier le GSMS de production ne l'est pas sans validation explicite.

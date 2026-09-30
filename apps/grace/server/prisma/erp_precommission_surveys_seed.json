@@ -1,0 +1,678 @@
+{
+  "templates": [
+    {
+      "key": "survey-erp-precom",
+      "name": "Pré-commission ERP",
+      "description": "Checklist agrégée pré-commission / commission de sécurité ERP (P0). Couvre dossier, dégagements, SSI/essais et registre. Pack erp-precommission.",
+      "surveyType": "HYBRID",
+      "applicableClusterTypes": ["SPATIAL"],
+      "applicableAssetTypes": ["SITE", "BUILDING", "ZONE", "ROOM", "EQUIPMENT", "INFORMATION", "SYSTEM"],
+      "requiresPhysical": true,
+      "questionIds": [
+        "dossier-pieces",
+        "dossier-plans",
+        "dossier-notices",
+        "deg-issues-libres",
+        "deg-largeur",
+        "deg-antipanique",
+        "ssi-service",
+        "ssi-pv",
+        "essais-desenfumage",
+        "registre-tenu",
+        "registre-visas",
+        "classement-coherence"
+      ]
+    },
+    {
+      "key": "survey-erp-precom-dossier",
+      "name": "Pré-commission ERP — Dossier",
+      "description": "Complétude du dossier de sécurité transmis en commission (plans, notices, attestations).",
+      "surveyType": "DOC_REVIEW",
+      "applicableClusterTypes": ["SPATIAL", "LOGICAL"],
+      "applicableAssetTypes": ["INFORMATION", "SITE", "BUILDING"],
+      "requiresPhysical": false,
+      "questionIds": [
+        "dossier-pieces",
+        "dossier-plans",
+        "dossier-notices",
+        "dossier-attestations",
+        "classement-coherence"
+      ]
+    },
+    {
+      "key": "survey-erp-precom-degagements",
+      "name": "Pré-commission ERP — Dégagements",
+      "description": "Contrôle terrain des issues, largeurs, antipanique et signalétique d’évacuation.",
+      "surveyType": "PHYSICAL",
+      "applicableClusterTypes": ["SPATIAL"],
+      "applicableAssetTypes": ["BUILDING", "FLOOR", "ZONE", "ROOM", "EQUIPMENT"],
+      "requiresPhysical": true,
+      "questionIds": [
+        "deg-issues-libres",
+        "deg-largeur",
+        "deg-antipanique",
+        "deg-signaletique",
+        "evac-balisage",
+        "evac-point-rassemblement"
+      ]
+    },
+    {
+      "key": "survey-erp-precom-ssi-essais",
+      "name": "Pré-commission ERP — SSI & essais",
+      "description": "État du SSI, PV d’essais périodiques et essais de désenfumage.",
+      "surveyType": "HYBRID",
+      "applicableClusterTypes": ["SPATIAL"],
+      "applicableAssetTypes": ["SYSTEM", "EQUIPMENT", "INFORMATION"],
+      "requiresPhysical": true,
+      "questionIds": [
+        "ssi-service",
+        "ssi-pv",
+        "ssi-centrale",
+        "essais-desenfumage",
+        "moyens-extincteurs"
+      ]
+    },
+    {
+      "key": "survey-erp-precom-registre",
+      "name": "Pré-commission ERP — Registre",
+      "description": "Tenue du registre de sécurité, visas et consignations d’essais / contrôles.",
+      "surveyType": "DOC_REVIEW",
+      "applicableClusterTypes": ["SPATIAL", "LOGICAL"],
+      "applicableAssetTypes": ["INFORMATION", "SITE", "BUILDING"],
+      "requiresPhysical": false,
+      "questionIds": [
+        "registre-tenu",
+        "registre-visas",
+        "registre-essais",
+        "registre-consignes"
+      ]
+    },
+    {
+      "key": "survey-erp-precom-dp-r",
+      "name": "Pré-commission ERP — DP type R",
+      "description": "Croisement dispositions particulières type R (enseignement / formation). Chapitre R 1–R 33.",
+      "surveyType": "DOC_REVIEW",
+      "applicableClusterTypes": ["SPATIAL", "LOGICAL"],
+      "applicableAssetTypes": ["INFORMATION", "PROCESS", "SITE", "BUILDING"],
+      "requiresPhysical": false,
+      "questionIds": [
+        "dp-r-champ",
+        "dp-r-chapitre",
+        "dp-r-vs-dg"
+      ]
+    },
+    {
+      "key": "survey-erp-precom-dp-n",
+      "name": "Pré-commission ERP — DP type N",
+      "description": "Croisement dispositions particulières type N (restaurants / débits). Chapitre N 1–N 20.",
+      "surveyType": "DOC_REVIEW",
+      "applicableClusterTypes": ["SPATIAL", "LOGICAL"],
+      "applicableAssetTypes": ["INFORMATION", "SITE", "BUILDING"],
+      "requiresPhysical": false,
+      "questionIds": [
+        "dp-n-champ",
+        "dp-n-chapitre",
+        "dp-n-vs-dg"
+      ]
+    },
+    {
+      "key": "survey-erp-precom-ssiap",
+      "name": "Pré-commission ERP — Service SSIAP",
+      "description": "Service de sécurité incendie (MS 45–52) et qualifications SSIAP (arrêté 2 mai 2005).",
+      "surveyType": "HYBRID",
+      "applicableClusterTypes": ["SPATIAL", "LOGICAL"],
+      "applicableAssetTypes": ["PROCESS", "PERSON", "INFORMATION", "SITE"],
+      "requiresPhysical": true,
+      "questionIds": [
+        "ssiap-service",
+        "ssiap-ms46",
+        "ssiap-qualifications",
+        "ssiap-planning"
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "dossier-pieces",
+      "category": "Précom · Dossier",
+      "prompt": "Le dossier de sécurité comporte-t-il l’ensemble des pièces attendues pour la commission ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Pratique commission (guides préf.) + RS/CCH. Pièces typiques : plans, notices, attestations, PV, registre (R.123-51). Pas une liste légale unique nationale.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CCH R.123-51 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000039040918/",
+        "Guide commission 94 — https://www.val-de-marne.gouv.fr/Actions-de-l-Etat/Securite/Securite-civile-et-defense/La-commission-de-securite-les-ERP-et-les-IGH"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-dossier-commission"],
+        "threatSlugs": ["erp-dossier-incomplet"],
+        "cmSlugs": ["cm-checklist-dossier"]
+      }
+    },
+    {
+      "id": "dossier-plans",
+      "category": "Précom · Dossier",
+      "prompt": "Le jeu de plans est-il complet, lisible et conforme à l’existant constaté ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Exigence pratique commission / dossier technique (GE) — croiser plans vs visite.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "Guide commission 13 — https://www.bouches-du-rhone.gouv.fr/Actions-de-l-Etat/Securite/Securite-civile/Securite-dans-les-etablissements-recevant-du-public-ERP2/ERP-LES-COMMISSIONS-DE-SECURITE"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-jeu-plans", "erp-dossier-commission"],
+        "threatSlugs": ["erp-dossier-incomplet"]
+      }
+    },
+    {
+      "id": "dossier-notices",
+      "category": "Précom · Dossier",
+      "prompt": "La notice de sécurité / notice descriptive est-elle présente et à jour ?",
+      "type": "yes_no_partial",
+      "weight": 4,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Pièce classique du dossier soumis à la commission (pratique préf. + GE).",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "Guide commission 94 — https://www.val-de-marne.gouv.fr/Actions-de-l-Etat/Securite/Securite-civile-et-defense/La-commission-de-securite-les-ERP-et-les-IGH"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-dossier-commission"],
+        "threatSlugs": ["erp-dossier-incomplet"]
+      }
+    },
+    {
+      "id": "dossier-attestations",
+      "category": "Précom · Dossier",
+      "prompt": "Les attestations (matériaux, coupe-feu, installations) sont-elles présentes et valides ?",
+      "type": "yes_no_partial",
+      "weight": 4,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Attestations / PV installateurs — pièce usuelle du dossier ; croiser GE / DP type.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "RS consolidé — https://www.legifrance.gouv.fr/codes/section_lc/JORFTEXT000000290033/LEGISCTA000020303815/"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-dossier-commission"],
+        "threatSlugs": ["erp-dossier-incomplet"]
+      }
+    },
+    {
+      "id": "classement-coherence",
+      "category": "Précom · Classement",
+      "prompt": "Le type et la catégorie ERP déclarés sont-ils cohérents avec l’effectif et l’usage constatés ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Réf. GN 1 (types/groupes/effectif) LEGIARTI000045143487 · catégories CCH R143-19 LEGIARTI000043818977. Vérifier déclaration vs réalité visite.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "GN 1 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000045143487",
+        "CCH R143-19 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043818977"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-site", "erp-building"],
+        "threatSlugs": ["erp-sous-classement"]
+      }
+    },
+    {
+      "id": "deg-issues-libres",
+      "category": "Précom · Dégagements",
+      "prompt": "Toutes les issues de secours sont-elles libres, praticables et non encombrées ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "PHYSICAL",
+      "hint": "Réf. section CO 34–CO 60 (dégagements) LEGISCTA000020303939 — libre accès / praticabilité.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CO 34–60 — https://www.legifrance.gouv.fr/codes/section_lc/JORFTEXT000000290033/LEGISCTA000020303939/"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-issue-secours", "erp-porte-secours", "erp-degagement-horizontal"],
+        "threatSlugs": ["erp-issue-obstruction", "erp-panique-evacuation"],
+        "cmSlugs": ["cm-issue-libre-consigne"]
+      }
+    },
+    {
+      "id": "deg-largeur",
+      "category": "Précom · Dégagements",
+      "prompt": "Les largeurs utiles des dégagements / issues sont-elles conformes au calcul d’effectif ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "PHYSICAL",
+      "hint": "Réf. CO 34 s. (UP / largeurs) LEGISCTA000020303940 — mesure terrain + photo si écart.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CO 34–42 — https://www.legifrance.gouv.fr/codes/section_lc/JORFTEXT000000290033/LEGISCTA000020303940/"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-issue-secours", "erp-degagement-horizontal"],
+        "threatSlugs": ["erp-panique-evacuation"]
+      }
+    },
+    {
+      "id": "deg-antipanique",
+      "category": "Précom · Dégagements",
+      "prompt": "Les dispositifs d’ouverture (barre anti-panique / serrures) sont-ils opérationnels et conformes ?",
+      "type": "yes_no_partial",
+      "weight": 4,
+      "evidenceType": "PHYSICAL",
+      "hint": "Réf. CO 45 (barre anti-panique) LEGIARTI000020304276 — normes FR ; opérabilité terrain.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CO 45 — https://www.legifrance.gouv.fr/loda/article_lc/LEGIARTI000020304276"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-porte-secours", "erp-issue-secours"],
+        "threatSlugs": ["erp-issue-obstruction"],
+        "cmSlugs": ["cm-barre-antipanique"]
+      }
+    },
+    {
+      "id": "deg-signaletique",
+      "category": "Précom · Dégagements",
+      "prompt": "La signalétique des issues est-elle visible, correcte et non contradictoire ?",
+      "type": "yes_no_partial",
+      "weight": 3,
+      "evidenceType": "PHYSICAL",
+      "hint": "Réf. balisage CO 34 s. / NF X 08-003 citée au RS — panneaux issus / issues.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CO 34–42 balisage — https://www.legifrance.gouv.fr/codes/section_lc/JORFTEXT000000290033/LEGISCTA000020303940/"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-issue-secours", "erp-balisage-evacuation"],
+        "cmSlugs": ["cm-balisage-photolum"]
+      }
+    },
+    {
+      "id": "evac-balisage",
+      "category": "Précom · Évacuation",
+      "prompt": "Le balisage d’évacuation (dont éclairage de sécurité) est-il en place et fonctionnel ?",
+      "type": "yes_no_partial",
+      "weight": 4,
+      "evidenceType": "PHYSICAL",
+      "hint": "Réf. CO 34 s. balisage · EC 8 éclairage d’évacuation LEGIARTI000020317467.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CO 34–42 balisage — https://www.legifrance.gouv.fr/codes/section_lc/JORFTEXT000000290033/LEGISCTA000020303940/",
+        "EC 8 — https://www.legifrance.gouv.fr/loda/article_lc/LEGIARTI000020317467"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-balisage-evacuation"],
+        "threatSlugs": ["erp-panique-evacuation"],
+        "cmSlugs": ["cm-balisage-photolum"]
+      }
+    },
+    {
+      "id": "evac-point-rassemblement",
+      "category": "Précom · Évacuation",
+      "prompt": "Le point de rassemblement est-il défini, signalé et connu du personnel ?",
+      "type": "yes_no_partial",
+      "weight": 3,
+      "evidenceType": "PHYSICAL",
+      "hint": "Pratique commission / consignes personnel (MS 67/69) — pas d’article « point de rassemblement » unique national.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "MS 67/69 (info personnel / consignes) — section MS 53–69 https://www.legifrance.gouv.fr/codes/section_lc/JORFTEXT000000290033/LEGISCTA000020317625/"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-point-rassemblement"],
+        "threatSlugs": ["erp-panique-evacuation"]
+      }
+    },
+    {
+      "id": "ssi-service",
+      "category": "Précom · SSI",
+      "prompt": "Le SSI est-il en service, sans défaut bloquant non traité ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "PHYSICAL",
+      "hint": "Réf. MS 53 (objet SSI, cat. A–E) LEGIARTI000020317726 · entretien MS 68.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "MS 53 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000020317726",
+        "MS 68 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000020317749"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-ssi-centrale", "erp-detecteur"],
+        "threatSlugs": ["erp-ssi-defaillance"],
+        "cmSlugs": ["cm-maintenance-ssi"]
+      }
+    },
+    {
+      "id": "ssi-pv",
+      "category": "Précom · SSI",
+      "prompt": "Les PV d’essais / maintenance SSI périodiques sont-ils disponibles et dans les délais ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Réf. MS 58 (contrat entretien annexé registre) LEGIARTI000020317731 · MS 68 transcription registre.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "MS 58 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000020317731",
+        "MS 68 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000020317749"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-pv-essais", "erp-ssi-centrale"],
+        "threatSlugs": ["erp-ssi-defaillance"],
+        "cmSlugs": ["cm-maintenance-ssi"]
+      }
+    },
+    {
+      "id": "ssi-centrale",
+      "category": "Précom · SSI",
+      "prompt": "La centrale SSI est-elle accessible, avec consignes d’exploitation affichées ?",
+      "type": "yes_no_partial",
+      "weight": 3,
+      "evidenceType": "PHYSICAL",
+      "hint": "Réf. MS 53 (SSI) LEGIARTI000020317726 · consignes / accessibilité pratique visite.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "MS 53 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000020317726"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-ssi-centrale"],
+        "threatSlugs": ["erp-ssi-defaillance"]
+      }
+    },
+    {
+      "id": "essais-desenfumage",
+      "category": "Précom · Essais",
+      "prompt": "Les essais de désenfumage (si exigés) sont-ils réalisés et documentés ?",
+      "type": "yes_no_partial",
+      "weight": 4,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Réf. DF 3 (commande désenfumage / SSI cat. A) LEGIARTI000020304554 · DF 4 LEGIARTI000020304555 — si exigé par type/effectif.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "DF 3 — https://www.legifrance.gouv.fr/loda/article_lc/LEGIARTI000020304554",
+        "DF 4 — https://www.legifrance.gouv.fr/loda/article_lc/LEGIARTI000020304555"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-desenfumage", "erp-pv-essais"],
+        "threatSlugs": ["erp-incendie-propagation", "erp-ssi-defaillance"],
+        "cmSlugs": ["cm-maintenance-ssi"]
+      }
+    },
+    {
+      "id": "moyens-extincteurs",
+      "category": "Précom · Moyens",
+      "prompt": "Le parc extincteurs / RIA est-il inventorié, accessible et vérifié à jour ?",
+      "type": "yes_no_partial",
+      "weight": 4,
+      "evidenceType": "PHYSICAL",
+      "hint": "Réf. MS 1–MS 75 (moyens de secours) LEGISCTA000020317500 — inventaire / vérifications au registre.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "MS 1–75 — https://www.legifrance.gouv.fr/codes/id/LEGISCTA000020317500"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-extincteur", "erp-ria"],
+        "threatSlugs": ["erp-incendie-propagation"],
+        "cmSlugs": ["cm-extincteurs-verifies"]
+      }
+    },
+    {
+      "id": "registre-tenu",
+      "category": "Précom · Registre",
+      "prompt": "Le registre de sécurité est-il tenu, à jour et disponible sur site ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Réf. CCH R. 123-51 LEGIARTI000039040918 — obligation de tenir un registre de sécurité.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CCH R.123-51 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000039040918/"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-registre-securite"],
+        "threatSlugs": ["erp-registre-lacunes"],
+        "cmSlugs": ["cm-tenue-registre"]
+      }
+    },
+    {
+      "id": "registre-visas",
+      "category": "Précom · Registre",
+      "prompt": "Les visas de commission / contrôle sont-ils présents et lisibles dans le registre ?",
+      "type": "yes_no_partial",
+      "weight": 4,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Réf. R.123-51 + pratique commission (guides préf.). Visas / avis reportés au registre.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CCH R.123-51 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000039040918/"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-registre-securite"],
+        "threatSlugs": ["erp-registre-lacunes"],
+        "cmSlugs": ["cm-tenue-registre"]
+      }
+    },
+    {
+      "id": "registre-essais",
+      "category": "Précom · Registre",
+      "prompt": "Les essais et vérifications périodiques sont-ils consignés dans le registre ?",
+      "type": "yes_no_partial",
+      "weight": 4,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Réf. MS 58 §4 / MS 68 — contrats et preuves d’entretien annexés / transcrits au registre.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "MS 58 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000020317731",
+        "MS 68 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000020317749"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-registre-securite", "erp-pv-essais"],
+        "threatSlugs": ["erp-registre-lacunes"],
+        "cmSlugs": ["cm-tenue-registre"]
+      }
+    },
+    {
+      "id": "registre-consignes",
+      "category": "Précom · Registre",
+      "prompt": "Les consignes / formations du personnel liées à la sécurité incendie sont-elles consignées ?",
+      "type": "yes_no_partial",
+      "weight": 3,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Réf. R.123-51 (renseignements au registre) + MS 67/69 (information personnel / consignes alarme).",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CCH R.123-51 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000039040918/"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-registre-securite"],
+        "threatSlugs": ["erp-registre-lacunes"]
+      }
+    },
+    {
+      "id": "dp-r-champ",
+      "category": "Précom · DP type R",
+      "prompt": "L’activité constatée relève-t-elle bien du champ type R (éveil / enseignement / formation / centres…) ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Réf. R 1 LEGIARTI000025000982 — champ d’application du chapitre type R. Croiser vs GN 1.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "R 1 — https://www.legifrance.gouv.fr/loda/article_lc/LEGIARTI000025000982",
+        "Chapitre type R — https://www.legifrance.gouv.fr/codes/section_lc/JORFTEXT000000290033/LEGISCTA000020334983/"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-activite-formation", "erp-site"],
+        "threatSlugs": ["erp-dp-non-croisees", "erp-sous-classement"],
+        "cmSlugs": ["cm-croisement-dp", "cm-revue-classement"]
+      }
+    },
+    {
+      "id": "dp-r-chapitre",
+      "category": "Précom · DP type R",
+      "prompt": "Les dispositions particulières type R (R 1–R 33) ont-elles été identifiées et croisées pour ce site ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Réf. chapitre type R LEGISCTA000020334983 — checklist opérationnelle, pas lecture article-par-article PASS/FAIL.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "Chapitre type R — https://www.legifrance.gouv.fr/codes/section_lc/JORFTEXT000000290033/LEGISCTA000020334983/"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-dp-r-chapitre", "erp-dossier-commission"],
+        "threatSlugs": ["erp-dp-non-croisees"],
+        "cmSlugs": ["cm-croisement-dp"]
+      }
+    },
+    {
+      "id": "dp-r-vs-dg",
+      "category": "Précom · DP type R",
+      "prompt": "Le dossier distingue-t-il clairement DG (livre II titre I) et DP type R (titre II) ?",
+      "type": "yes_no_partial",
+      "weight": 3,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Titre II DP — LEGISCTA000020334570. Les DG seules ne suffisent pas si le type est R.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "Titre II DP — https://www.legifrance.gouv.fr/codes/section_lc/JORFTEXT000000290033/LEGISCTA000020334570/"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-dp-r-chapitre", "erp-dossier-commission"],
+        "threatSlugs": ["erp-dp-non-croisees"],
+        "cmSlugs": ["cm-croisement-dp"]
+      }
+    },
+    {
+      "id": "dp-n-champ",
+      "category": "Précom · DP type N",
+      "prompt": "L’activité constatée relève-t-elle bien du champ type N (restaurants / débits de boissons) ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Réf. N 1 LEGIARTI000020334914 — champ d’application du chapitre type N. Croiser vs GN 1.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "N 1 — https://www.legifrance.gouv.fr/loda/article_lc/LEGIARTI000020334914",
+        "Chapitre type N — https://www.legifrance.gouv.fr/codes/section_lc/JORFTEXT000000290033/LEGISCTA000020334913/"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-site", "erp-dp-n-chapitre"],
+        "threatSlugs": ["erp-dp-non-croisees", "erp-sous-classement"],
+        "cmSlugs": ["cm-croisement-dp", "cm-revue-classement"]
+      }
+    },
+    {
+      "id": "dp-n-chapitre",
+      "category": "Précom · DP type N",
+      "prompt": "Les dispositions particulières type N (N 1–N 20) ont-elles été identifiées et croisées pour ce site ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Réf. chapitre type N LEGISCTA000020334913 — checklist opérationnelle scoped.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "Chapitre type N — https://www.legifrance.gouv.fr/codes/section_lc/JORFTEXT000000290033/LEGISCTA000020334913/"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-dp-n-chapitre", "erp-dossier-commission"],
+        "threatSlugs": ["erp-dp-non-croisees"],
+        "cmSlugs": ["cm-croisement-dp"]
+      }
+    },
+    {
+      "id": "dp-n-vs-dg",
+      "category": "Précom · DP type N",
+      "prompt": "Le dossier distingue-t-il clairement DG et DP type N ?",
+      "type": "yes_no_partial",
+      "weight": 3,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Titre II DP — LEGISCTA000020334570.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "Titre II DP — https://www.legifrance.gouv.fr/codes/section_lc/JORFTEXT000000290033/LEGISCTA000020334570/"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-dp-n-chapitre", "erp-dossier-commission"],
+        "threatSlugs": ["erp-dp-non-croisees"],
+        "cmSlugs": ["cm-croisement-dp"]
+      }
+    },
+    {
+      "id": "ssiap-service",
+      "category": "Précom · SSIAP",
+      "prompt": "Un service de sécurité incendie est-il organisé pendant la présence du public ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "PHYSICAL",
+      "hint": "Réf. MS 45 (surveillance / service) LEGIARTI000021838333 · section MS 45–52. Lien CCH R.123-11.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "MS 45 — https://www.legifrance.gouv.fr/loda/article_lc/LEGIARTI000021838333",
+        "MS 45–52 — https://www.legifrance.gouv.fr/codes/section_lc/JORFTEXT000000290033/LEGISCTA000020317627/"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-service-securite"],
+        "threatSlugs": ["erp-ssiap-deficit"],
+        "cmSlugs": ["cm-effectif-ssiap"]
+      }
+    },
+    {
+      "id": "ssiap-ms46",
+      "category": "Précom · SSIAP",
+      "prompt": "Le dimensionnement du service est-il cohérent avec le type, la catégorie et les caractéristiques du site (MS 46) ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Réf. MS 46 LEGIARTI000021838331 — service selon type/catégorie/caractéristiques. Checklist, pas calcul opposable.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "MS 46 — https://www.legifrance.gouv.fr/loda/article_lc/LEGIARTI000021838331"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-service-securite", "erp-agents-ssiap"],
+        "threatSlugs": ["erp-ssiap-deficit"],
+        "cmSlugs": ["cm-effectif-ssiap"]
+      }
+    },
+    {
+      "id": "ssiap-qualifications",
+      "category": "Précom · SSIAP",
+      "prompt": "Les agents disposent-ils des qualifications SSIAP 1/2/3 adaptées à leurs missions ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Réf. arrêté 2 mai 2005 (missions, emploi, qualification) JORFTEXT000000448223.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "Arrêté SSIAP 2/05/2005 — https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000448223"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-agents-ssiap"],
+        "threatSlugs": ["erp-ssiap-deficit"],
+        "cmSlugs": ["cm-effectif-ssiap"]
+      }
+    },
+    {
+      "id": "ssiap-planning",
+      "category": "Précom · SSIAP",
+      "prompt": "Le planning de présence / consignes du service est-il disponible et cohérent avec les horaires d’ouverture au public ?",
+      "type": "yes_no_partial",
+      "weight": 4,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Preuve opérationnelle liée à MS 45–46 + pratique commission ; consignes annexables au registre (R.123-51).",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "MS 45–52 — https://www.legifrance.gouv.fr/codes/section_lc/JORFTEXT000000290033/LEGISCTA000020317627/",
+        "CCH R.123-51 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000039040918/"
+      ],
+      "attach": {
+        "assetSlugs": ["erp-service-securite", "erp-registre-securite"],
+        "threatSlugs": ["erp-ssiap-deficit"],
+        "cmSlugs": ["cm-effectif-ssiap"]
+      }
+    }
+  ]
+}

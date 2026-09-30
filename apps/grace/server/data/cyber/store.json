@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "responses": [
+    {
+      "id": "93670a02-4763-44cb-bed7-6ac89ccbb699",
+      "catalogSlug": "iso27001-2022",
+      "controlIdentifier": "A.5.1",
+      "controlName": "Policies for information security",
+      "status": "non_conforme",
+      "notes": "smoke http laragon",
+      "evidence": [],
+      "updatedAt": "2026-09-06T21:47:26.161Z",
+      "updatedBy": "baec8811-8588-4e35-aa2f-412f87e7b1f5"
+    }
+  ]
+}

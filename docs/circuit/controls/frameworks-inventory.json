@@ -1,0 +1,144 @@
+{
+  "version": "0.1.0",
+  "provenance": "inventory of Comp seed frameworks — GSMS keeps ISO27001+SOC2 coverage lists only",
+  "frameworks": [
+    {
+      "id": "frk_6820c8b318a6d88bf2c4586d",
+      "name": "NIS 2",
+      "version": "2022/2555",
+      "visible": false
+    },
+    {
+      "id": "frk_6820090a1653380dd386c5eb",
+      "name": "NIST CSF",
+      "version": "2.0",
+      "visible": false
+    },
+    {
+      "id": "frk_682734f304cbbfdb3a9d4f44",
+      "name": "SOC 2 v.1",
+      "version": "2025",
+      "visible": false
+    },
+    {
+      "id": "frk_681ebae2f29f0ab08eb802ec",
+      "name": "SOC 2",
+      "version": "1.0.0",
+      "visible": false
+    },
+    {
+      "id": "frk_681ecc34e85064efdbb76993",
+      "name": "ISO 27001",
+      "version": "2022",
+      "visible": true
+    },
+    {
+      "id": "frk_681fdd150f59a1560a66c89a",
+      "name": "HIPAA",
+      "version": "2025",
+      "visible": true
+    },
+    {
+      "id": "frk_681ef1952907deb7cb85896d",
+      "name": "GDPR",
+      "version": "1.0.0",
+      "visible": true
+    },
+    {
+      "id": "frk_69d7e513446cc6e0376edf60",
+      "name": "SOC 2 Type 1",
+      "version": "1.0.0",
+      "visible": false
+    },
+    {
+      "id": "frk_683f377429b8408d1c85f9bd",
+      "name": "SOC 2",
+      "version": "1",
+      "visible": true
+    },
+    {
+      "id": "frk_681ef4bb8eeb2b60d2d9d187",
+      "name": "PCI v0",
+      "version": "4.0.1",
+      "visible": false
+    },
+    {
+      "id": "frk_68c1ead24950f84849db81bb",
+      "name": "PCI DSS",
+      "version": "1.0.0",
+      "visible": true
+    },
+    {
+      "id": "frk_68cc0e2a21184ed168ab2eea",
+      "name": "ISO 42001",
+      "version": "1.0.0",
+      "visible": true
+    },
+    {
+      "id": "frk_68d12ec2791043b5a1555950",
+      "name": "Example PCI",
+      "version": "1.0.0",
+      "visible": false
+    },
+    {
+      "id": "frk_69dcfb280b550e7ee231f312",
+      "name": "PCI DSS Level 1",
+      "version": "1.0.0",
+      "visible": true
+    },
+    {
+      "id": "frk_68e135d0212b3b6cd39ceb94",
+      "name": "NEN 7510",
+      "version": "1.0.0",
+      "visible": true
+    },
+    {
+      "id": "frk_69efd433584ba436ae00d413",
+      "name": "CCPA",
+      "version": "1.0.0",
+      "visible": true
+    },
+    {
+      "id": "frk_69e9187a649152cdc715f1ad",
+      "name": "GDPR (Test)",
+      "version": "1.0.0",
+      "visible": false
+    },
+    {
+      "id": "frk_69eb9ca15a99e0ad3107b033",
+      "name": "Cloud Cybersecurity Controls",
+      "version": "1.0.0",
+      "visible": false
+    },
+    {
+      "id": "frk_6924c5bf34ae90945076508e",
+      "name": "NIST 800-53",
+      "version": "1.0.0",
+      "visible": false
+    },
+    {
+      "id": "frk_691e28f5474c5319f1cc70d7",
+      "name": "ISO 9001",
+      "version": "1.0.0",
+      "visible": true
+    },
+    {
+      "id": "frk_69bd4011a22723c759ca8e46",
+      "name": "PCI Level 1",
+      "version": "1.0.0",
+      "visible": false
+    },
+    {
+      "id": "frk_69bd93a9a68c82ba0998008d",
+      "name": "SOC 2 v2",
+      "version": "1.0.0",
+      "visible": false
+    },
+    {
+      "id": "frk_69f3d7821751ec330608f200",
+      "name": "PIPEDA",
+      "version": "1.0.0",
+      "visible": false
+    }
+  ]
+}

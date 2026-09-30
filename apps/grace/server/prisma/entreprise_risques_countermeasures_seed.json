@@ -1,0 +1,120 @@
+{
+  "countermeasure_templates": [
+    {
+      "moduleSlug": "mod-ent-gouv-risque",
+      "slug": "cm-ent-politique-revue",
+      "name": "Politique risque + revue direction",
+      "description": "Politique datée, rôles nommés, revue périodique. Le détail des risques reste dans SimpleRisk.",
+      "shapeCategory": "SECURITY_PROGRAMME",
+      "ppsFunctions": ["DETECT"],
+      "domain": "PERSONNEL",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["entreprise", "gouvernance"],
+      "csmpUnitReference": "Unit 1"
+    },
+    {
+      "moduleSlug": "mod-ent-documentaire",
+      "slug": "cm-ent-revue-docs",
+      "name": "Revue périodique des procédures",
+      "description": "Propriétaire, version, date de revue sur les procédures clés.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": ["DETECT"],
+      "domain": "INFORMATION",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["entreprise", "documentaire"],
+      "csmpUnitReference": "Unit 1"
+    },
+    {
+      "moduleSlug": "mod-ent-formation",
+      "slug": "cm-ent-plan-school",
+      "name": "Plan de formation branché School",
+      "description": "Plan annuel et preuves de sessions dans GSMS School.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": ["DETECT", "RECOVER"],
+      "domain": "PERSONNEL",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["entreprise", "formation", "school"],
+      "csmpUnitReference": "Unit 7"
+    },
+    {
+      "moduleSlug": "mod-ent-continuite",
+      "slug": "cm-ent-exercice-pca",
+      "name": "Exercice PCA / crise daté",
+      "description": "Au moins un exercice tracé ; contacts à jour. Pas une certif ISO 22301.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": ["RECOVER", "DETECT"],
+      "domain": "PERSONNEL",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["entreprise", "continuite"],
+      "csmpUnitReference": "Unit 6"
+    },
+    {
+      "moduleSlug": "mod-ent-prevention",
+      "slug": "cm-ent-duerp-a-jour",
+      "name": "DUERP tenu + exercice évacuation salariés",
+      "description": "Existence et mise à jour DUERP (CT) — distinct du pack ERP public.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": ["DETECT"],
+      "domain": "PERSONNEL",
+      "defaultEffectiveness": "BASELINE",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["entreprise", "ct", "duerp"],
+      "csmpUnitReference": "Unit 7"
+    },
+    {
+      "moduleSlug": "mod-ent-sous-traitance",
+      "slug": "cm-ent-verif-prestataire",
+      "name": "Vérification titres prestataire (CNAPS)",
+      "description": "Pièces d’autorisation / agrément au contrat. Détail = pack sec-privee-cnaps.",
+      "shapeCategory": "PROCEDURAL",
+      "ppsFunctions": ["DETECT", "DENY"],
+      "domain": "PERSONNEL",
+      "defaultEffectiveness": "STRONG",
+      "defaultTearStrategy": "REDUCE",
+      "tags": ["entreprise", "prestataire", "cnaps"],
+      "csmpUnitReference": "Unit 2"
+    }
+  ],
+  "threat_countermeasures": [
+    {
+      "threatSlug": "ent-gouv-absente",
+      "countermeasureSlug": "cm-ent-politique-revue",
+      "relevance": "HIGH",
+      "rationale": "Politique et revue direction"
+    },
+    {
+      "threatSlug": "ent-docs-obsoletes",
+      "countermeasureSlug": "cm-ent-revue-docs",
+      "relevance": "HIGH",
+      "rationale": "Revue documentaire"
+    },
+    {
+      "threatSlug": "ent-competences-trous",
+      "countermeasureSlug": "cm-ent-plan-school",
+      "relevance": "HIGH",
+      "rationale": "Plan + School"
+    },
+    {
+      "threatSlug": "ent-pca-papier",
+      "countermeasureSlug": "cm-ent-exercice-pca",
+      "relevance": "HIGH",
+      "rationale": "Exercice rend le PCA vivant"
+    },
+    {
+      "threatSlug": "ent-duerp-absent",
+      "countermeasureSlug": "cm-ent-duerp-a-jour",
+      "relevance": "HIGH",
+      "rationale": "Tenue DUERP"
+    },
+    {
+      "threatSlug": "ent-prestataire-non-verifie",
+      "countermeasureSlug": "cm-ent-verif-prestataire",
+      "relevance": "HIGH",
+      "rationale": "Titres CNAPS au contrat"
+    }
+  ]
+}

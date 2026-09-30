@@ -1,0 +1,232 @@
+@import './tokens.css';
+@import 'tailwindcss';
+
+/* Match previous darkMode: ['class'] — class on <html> */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Theme bridge: utilities resolve to CSS vars from tokens.css.
+ * When .dark swaps :root vars, utilities track without bake-in RGB.
+ */
+@theme {
+  --font-sans:
+    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono:
+    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+
+  --color-n-50: var(--n-50);
+  --color-n-75: var(--n-75);
+  --color-n-100: var(--n-100);
+  --color-n-150: var(--n-150);
+  --color-n-200: var(--n-200);
+  --color-n-300: var(--n-300);
+  --color-n-400: var(--n-400);
+  --color-n-500: var(--n-500);
+  --color-n-600: var(--n-600);
+  --color-n-700: var(--n-700);
+  --color-n-800: var(--n-800);
+  --color-n-900: var(--n-900);
+  --color-n-950: var(--n-950);
+
+  --color-a-50: var(--a-50);
+  --color-a-100: var(--a-100);
+  --color-a-200: var(--a-200);
+  --color-a-300: var(--a-300);
+  --color-a-400: var(--a-400);
+  --color-a-500: var(--a-500);
+  --color-a-600: var(--a-600);
+  --color-a-700: var(--a-700);
+  --color-a-800: var(--a-800);
+  --color-a-900: var(--a-900);
+
+  --color-r-neg: var(--r-neg);
+  --color-r-negInk: var(--r-neg-ink);
+  --color-r-low: var(--r-low);
+  --color-r-lowInk: var(--r-low-ink);
+  --color-r-mod: var(--r-mod);
+  --color-r-modInk: var(--r-mod-ink);
+  --color-r-high: var(--r-high);
+  --color-r-highInk: var(--r-high-ink);
+  --color-r-ext: var(--r-ext);
+  --color-r-extInk: var(--r-ext-ink);
+
+  --color-ok: var(--ok);
+  --color-ok-bg: var(--ok-bg);
+  --color-warn: var(--warn);
+  --color-warn-bg: var(--warn-bg);
+  --color-bad: var(--bad);
+  --color-bad-bg: var(--bad-bg);
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
+
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+
+  --radius-r1: 4px;
+  --radius-r2: 6px;
+  --radius-r3: 8px;
+  --radius-r4: 12px;
+
+  --shadow-sh1: var(--sh1);
+  --shadow-sh2: var(--sh2);
+  --shadow-sh3: var(--sh3);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+/* next-themes / Metronic: avoid flash when toggling */
+.disable-theme-transitions,
+.disable-theme-transitions *,
+.disable-theme-transitions *::before,
+.disable-theme-transitions *::after {
+  transition: none !important;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-sans);
+  font-feature-settings: 'cv11', 'ss01', 'ss03';
+}
+
+code,
+.font-mono,
+kbd {
+  font-family: inherit;
+}
+
+/* Alias used in dashboard chrome (no --n-25 token) */
+@utility bg-n-25 {
+  background-color: var(--n-75);
+}
+
+/*
+ * bg-white → surface (dark-safe). Do NOT remap --color-white:
+ * text-white must stay literal white on accent buttons.
+ */
+@layer utilities {
+  .bg-white {
+    background-color: var(--surface);
+  }
+  .bg-white\/95 {
+    background-color: color-mix(in srgb, var(--surface) 95%, transparent);
+  }
+  .bg-white\/20 {
+    background-color: color-mix(in srgb, var(--surface) 20%, transparent);
+  }
+  .hover\:bg-white:hover {
+    background-color: var(--surface);
+  }
+  .disabled\:bg-white:disabled {
+    background-color: var(--surface);
+  }
+  .disabled\:hover\:bg-white:disabled:hover {
+    background-color: var(--surface);
+  }
+}
+
+/* Form controls inherit theme (browser defaults stay white otherwise). */
+input:not([type='checkbox']):not([type='radio']):not([type='range']),
+textarea,
+select {
+  background-color: var(--surface);
+  color: var(--n-900);
+  color-scheme: inherit;
+}
+
+/* React Flow — override vendor stylesheet whites */
+.react-flow,
+.react-flow__renderer,
+.react-flow__pane,
+.react-flow__viewport,
+.react-flow__background {
+  background-color: var(--background) !important;
+}
+.react-flow__controls {
+  box-shadow: var(--sh1);
+}
+.react-flow__controls-button {
+  background: var(--card) !important;
+  border-bottom-color: var(--border) !important;
+  fill: var(--foreground) !important;
+  color: var(--foreground) !important;
+}
+.react-flow__controls-button:hover {
+  background: var(--muted) !important;
+}
+.react-flow__minimap {
+  background-color: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  width: 128px !important;
+  height: 86px !important;
+  box-shadow: var(--sh1);
+}
+.react-flow__minimap-svg {
+  width: 100% !important;
+  height: 100% !important;
+}
+.react-flow__edge-path {
+  filter: drop-shadow(0 0 1.5px color-mix(in srgb, currentColor 35%, transparent));
+}
+.react-flow__edge-text {
+  font-weight: 600 !important;
+  letter-spacing: 0.01em;
+}
+.react-flow__edge-textbg {
+  fill: var(--card) !important;
+}
+.react-flow__attribution a {
+  color: var(--muted-foreground) !important;
+}
+.react-flow__attribution {
+  background: transparent !important;
+  color: var(--muted-foreground) !important;
+}
+
+.react-flow__node:not(.react-flow__node-dragging) {
+  transition: transform 160ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Scrollbars (Chromium / Firefox) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--n-300) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--n-300);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}

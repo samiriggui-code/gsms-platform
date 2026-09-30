@@ -1,0 +1,125 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gsms.local/circuit/finding.schema.json",
+  "title": "Finding",
+  "description": "Format commun d'un constat, quelle que soit sa source (audit physique, CAPA/QA, conformité cyber, dossier d'appel d'offres). Chaque producteur (GRACE, module cyber Grace, QAtrial, TenderAI) expose ses constats via /findings pour agrégation Eve. Comp AI GRC est hors stack — plus de source 'comp'. Atome unitaire par constat — à distinguer de precom-handoff.schema.json (export agrégé Grace-only précommission ERP). mcp-tenders (LexSocket) n'est pas une source de constat (cf. STACK-GSMS-FINALE : LexSocket = trouver, TenderAI = répondre).",
+  "type": "object",
+  "required": [
+    "version",
+    "id",
+    "source",
+    "category",
+    "status",
+    "client_id",
+    "control_ref",
+    "title",
+    "created_at"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "0.1.0",
+      "description": "Version du contrat Finding. À incrémenter (et documenter) à tout changement de forme — permet à Eve de détecter une dérive de schéma entre apps consommées."
+    },
+    "id": {
+      "type": "string",
+      "description": "Identifiant unique du finding, préfixé par la source pour éviter les collisions (ex: grace-4f2a, qatrial-118, module-cyber-soc2-021, tenderai-ao-77)."
+    },
+    "source": {
+      "type": "string",
+      "enum": ["grace", "qatrial", "module-cyber", "tenderai"],
+      "description": "Origine du constat. grace=audit sécurité physique CSMP, qatrial=CAPA/qualité, module-cyber=checklist ISO/SOC2 native (dans Grace, remplace Comp AI), tenderai=réponse à AO (TenderAI MCP Max)."
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "acces_physique",
+        "incendie_prevention",
+        "habilitation_agent",
+        "materiel_securite",
+        "cyber",
+        "piece_ao",
+        "qualite_capa",
+        "administratif"
+      ],
+      "description": "Domaine métier du constat. acces_physique / incendie / materiel / habilitation_agent → GRACE ; cyber → module-cyber (Grace) ; piece_ao/administratif → tenderai ; qualite_capa → QAtrial."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["conforme", "non_conforme", "en_cours", "non_applicable", "a_verifier"],
+      "description": "État actuel du constat par rapport au contrôle visé."
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["critique", "majeure", "mineure", "information"],
+      "description": "Niveau de gravité si non_conforme ou en_cours. Optionnel pour les statuts conforme/non_applicable."
+    },
+    "client_id": {
+      "type": "string",
+      "description": "Identifiant du client final (entreprise de sécurité privée ou entreprise cliente accompagnée pour un AO), commun à toutes les apps."
+    },
+    "site_id": {
+      "type": "string",
+      "description": "Identifiant du site physique concerné, quand applicable (audit GRACE, habilitation agent). Absent pour un finding purement administratif ou cyber."
+    },
+    "tender_id": {
+      "type": "string",
+      "description": "Identifiant du dossier d'appel d'offres concerné, quand applicable (findings tenderai, ou finding GRACE/module-cyber réutilisé dans un AO)."
+    },
+    "agent_id": {
+      "type": "string",
+      "description": "Identifiant de l'agent de sécurité concerné, si le finding porte sur une habilitation, une formation ou une affectation individuelle (catégorie habilitation_agent)."
+    },
+    "control_ref": {
+      "type": "string",
+      "description": "Identifiant du contrôle commun, tel que défini dans le crosswalk référentiel (controls/securite-privee.json). Permet de savoir qu'un même contrôle a été validé une fois et réutilisé dans plusieurs contextes (ex: un contrôle incendie validé côté audit peut couvrir une exigence identique d'un cahier des charges d'AO)."
+    },
+    "referentiel": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Liste des référentiels auxquels ce contrôle est rattaché (ex: [\"commission_securite\", \"cahier_charges_ao_client_x\", \"reglementation_erp\", \"soc2\"]). Un même control_ref peut couvrir plusieurs référentiels à la fois."
+    },
+    "title": {
+      "type": "string",
+      "description": "Résumé court et lisible du constat, destiné à apparaître tel quel dans un rapport de gap-assessment."
+    },
+    "description": {
+      "type": "string",
+      "description": "Détail du constat : ce qui a été observé, pourquoi c'est conforme ou non."
+    },
+    "remediation": {
+      "type": "string",
+      "description": "Action corrective recommandée ou en cours, si status != conforme."
+    },
+    "evidence_ref": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Références ou URLs vers les preuves associées (photo terrain, document, extrait de checklist, capture d'écran d'un test cyber, pièce jointe de dossier AO)."
+    },
+    "owner": {
+      "type": "string",
+      "description": "Personne ou équipe responsable de la remédiation, si applicable."
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date d'échéance de la remédiation, si applicable."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Horodatage de création du finding, tel que remonté par l'app source."
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Horodatage de dernière mise à jour du statut."
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Champ libre pour des données propres à la source (ex: score CSMP GRACE, ID CAPA QAtrial, ID contrôle SOC2 module-cyber).",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

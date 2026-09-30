@@ -1,0 +1,141 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+
+/* Tokens calqués sur compliance-desk (notre DocuLens), pas doculens.xyz */
+:root {
+  --background: 42 33% 98%;
+  --foreground: 222 24% 9%;
+  --muted: 40 15% 93%;
+  --muted-foreground: 220 6% 43%;
+  --primary: 218 91% 52%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 40 18% 94%;
+  --secondary-foreground: 222 24% 9%;
+  --card: 42 40% 99.5%;
+  --card-foreground: 222 24% 9%;
+  --border: 40 10% 85%;
+  --input: 40 11% 85%;
+  --ring: 218 91% 52%;
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 100%;
+  --accent: 218 91% 52%;
+  --accent-foreground: 0 0% 100%;
+  --popover: 42 40% 99.5%;
+  --popover-foreground: 222 24% 9%;
+  --surface-subtle: 40 24% 96%;
+  --radius: 18px;
+  --font-sans: "Manrope", system-ui, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, monospace;
+}
+
+.dark {
+  --background: 222 18% 9%;
+  --foreground: 42 20% 94%;
+  --muted: 220 13% 17%;
+  --muted-foreground: 218 8% 67%;
+  --primary: 216 90% 62%;
+  --primary-foreground: 222 30% 8%;
+  --secondary: 220 13% 18%;
+  --secondary-foreground: 42 20% 94%;
+  --card: 222 16% 12%;
+  --card-foreground: 45 22% 94%;
+  --border: 220 10% 23%;
+  --input: 220 10% 26%;
+  --ring: 216 90% 62%;
+  --destructive: 0 62% 50%;
+  --destructive-foreground: 0 0% 100%;
+  --accent: 216 90% 62%;
+  --accent-foreground: 222 30% 8%;
+  --popover: 222 16% 12%;
+  --popover-foreground: 45 22% 94%;
+  --surface-subtle: 220 15% 14%;
+}
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-surface-subtle: hsl(var(--surface-subtle));
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.6;
+  color: hsl(var(--foreground));
+  background: hsl(var(--background));
+  -webkit-font-smoothing: antialiased;
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted-foreground) / 0.28) transparent;
+}
+
+::selection {
+  background: hsl(var(--primary) / 0.18);
+}
+
+/* Scrollbars discrètes (DocuLens-like) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted-foreground) / 0.22) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.22);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.38);
+}
+
+.surface-card {
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border) / 0.7);
+  background: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+  box-shadow: 0 1px 2px rgba(20, 18, 30, 0.03), 0 16px 40px rgba(20, 18, 30, 0.04);
+}
+
+.dark .surface-card {
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.2);
+}

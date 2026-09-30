@@ -1,0 +1,599 @@
+{
+  "version": "0.1.0",
+  "provenance": "task template names only — inspiration for checklist evidence steps in Grace cyber module",
+  "count": 148,
+  "titles": [
+    {
+      "id": "frk_tt_68406cd9dde2d8cd4c463fe0",
+      "name": "2FA"
+    },
+    {
+      "id": "frk_tt_68e805457c2dcc784e72e3cc",
+      "name": "Access Review Log"
+    },
+    {
+      "id": "frk_tt_69ea91684c77e2310a928a7a",
+      "name": "AI Awareness Program"
+    },
+    {
+      "id": "frk_tt_69ea916984bd6ff9ec7fd09b",
+      "name": "AI Competence Record"
+    },
+    {
+      "id": "frk_tt_68cc25658bacb2ccff56adf9",
+      "name": "AI Context Register"
+    },
+    {
+      "id": "frk_tt_69ea9173e73c9a96895468c8",
+      "name": "AI Data Acquisition Record"
+    },
+    {
+      "id": "frk_tt_69ea91761c04c37d4f867908",
+      "name": "AI Data Preparation Record"
+    },
+    {
+      "id": "frk_tt_69ea9175640d0bbbddde05a7",
+      "name": "AI Data Provenance Record"
+    },
+    {
+      "id": "frk_tt_69ea9174fe7e40c0405cd057",
+      "name": "AI Data Quality Assessment"
+    },
+    {
+      "id": "frk_tt_69ea9166fd0793a689981939",
+      "name": "AI Data Resource Register"
+    },
+    {
+      "id": "frk_tt_69ea916e273fdb8732d89fc6",
+      "name": "AI Design and Development Documentation"
+    },
+    {
+      "id": "frk_tt_68cc3ffab3fb703917f51e19",
+      "name": "AI Impact Assessment Log"
+    },
+    {
+      "id": "frk_tt_68cc41ad7cbd2839c0bc7104",
+      "name": "AI Internal Audit Reports"
+    },
+    {
+      "id": "frk_tt_69ea9161097ef7eb142b70ff",
+      "name": "AI Leadership Commitment Record"
+    },
+    {
+      "id": "frk_tt_69ea917c23d26cfe23eb8fca",
+      "name": "AI Management Review Minutes"
+    },
+    {
+      "id": "frk_tt_68cc327ff5d3130a1b42420b",
+      "name": "AI MS Communication Plan"
+    },
+    {
+      "id": "frk_tt_68cc459ed57b70a4cb631e72",
+      "name": "AI MS Continual Improvement Log"
+    },
+    {
+      "id": "frk_tt_68cc4190caf0b458effcee6e",
+      "name": "AI MS Internal Audit Program"
+    },
+    {
+      "id": "frk_tt_68cc395b90e179fe3209b795",
+      "name": "AI MS Operational Control Procedure"
+    },
+    {
+      "id": "frk_tt_68cc30fbbeabb8a4c2f56082",
+      "name": "AI MS Resource Allocation Record"
+    },
+    {
+      "id": "frk_tt_68cc2ce9cb0d2a4774975ace",
+      "name": "AI MS Roles & Responsibilities Assignment"
+    },
+    {
+      "id": "frk_tt_68cc2fa423533e602e4dee25",
+      "name": "AI Objectives Register"
+    },
+    {
+      "id": "frk_tt_69ea916227fbbb6a722126b6",
+      "name": "AI Policy Alignment Review"
+    },
+    {
+      "id": "frk_tt_69ea9163eb166db383bb2140",
+      "name": "AI Policy Review"
+    },
+    {
+      "id": "frk_tt_69ea9164c6574221a69e1107",
+      "name": "AI Risk and Opportunity Register"
+    },
+    {
+      "id": "frk_tt_68cc39efd7916e240451cae5",
+      "name": "AI Risk Assessment Execution (Log)"
+    },
+    {
+      "id": "frk_tt_68cc3f427e309607f1ad5ba4",
+      "name": "AI Risk Treatment Implementation Record"
+    },
+    {
+      "id": "frk_tt_69ea9165056eb451ccc79c0f",
+      "name": "AI Societal Impact Assessment"
+    },
+    {
+      "id": "frk_tt_69ea917b78c7fc9f3c659a90",
+      "name": "AI Supplier Register"
+    },
+    {
+      "id": "frk_tt_68cc301a8fd914534ab95b11",
+      "name": "AI System Change Log"
+    },
+    {
+      "id": "frk_tt_69ea91725a27f56747512056",
+      "name": "AI System Event Logging Configuration"
+    },
+    {
+      "id": "frk_tt_68cc2f30b51920e5515465e6",
+      "name": "AI System Impact Assessment Procedure"
+    },
+    {
+      "id": "frk_tt_69ea917069457debb719152e",
+      "name": "AI System Operation & Monitoring Plan"
+    },
+    {
+      "id": "frk_tt_69ea916c7b0b9487da3dbe78",
+      "name": "AI System Requirements and Specification"
+    },
+    {
+      "id": "frk_tt_69ea917139f2541637597cc4",
+      "name": "AI System Technical Documentation (Model Card)"
+    },
+    {
+      "id": "frk_tt_69ea917abdbda1fa183386d2",
+      "name": "AI Third-Party Responsibility Matrix"
+    },
+    {
+      "id": "frk_tt_69ea9167679a59212c7db16f",
+      "name": "AI Tooling Inventory"
+    },
+    {
+      "id": "frk_tt_69ea916f42193436fb7b55de",
+      "name": "AI Verification & Validation Report"
+    },
+    {
+      "id": "frk_tt_69ea916a881ab0d59e67c930",
+      "name": "AIMS Documented Information Index"
+    },
+    {
+      "id": "frk_tt_69ea915f44950702d9f7733c",
+      "name": "AIMS Manual"
+    },
+    {
+      "id": "frk_tt_69ea915ebae9e6858fa4fa07",
+      "name": "AIMS Scope Statement"
+    },
+    {
+      "id": "frk_tt_69efd9de89f2f4d93e527127",
+      "name": "Annual CCPA Compliance Audit"
+    },
+    {
+      "id": "frk_tt_69efd9e2f40bdd1dd45c057e",
+      "name": "Annual CCPA Privacy Training"
+    },
+    {
+      "id": "frk_tt_69efd9e7f46963f71debd961",
+      "name": "Annual Data Inventory and Data Flow Refresh"
+    },
+    {
+      "id": "frk_tt_69efd9f2322df1e829df8087",
+      "name": "Annual Identity Verification Procedure Review"
+    },
+    {
+      "id": "frk_tt_69efd9f0124f63db79cb50b0",
+      "name": "Annual Incident Response Tabletop Exercise"
+    },
+    {
+      "id": "frk_tt_69f3ea67f1bbe13880b55fa4",
+      "name": "Annual Information Amendment & Refusal Procedure Review"
+    },
+    {
+      "id": "frk_tt_69f3ea640e0ea50dd2ed8efd",
+      "name": "Annual PIPEDA Privacy Notice Review"
+    },
+    {
+      "id": "frk_tt_69efd9e081684a02f1207ee0",
+      "name": "Annual Privacy Policy Review and Update"
+    },
+    {
+      "id": "frk_tt_69f3ea63c50892f7c9354dbb",
+      "name": "Annual Service Provider & Processor Contract Review (PIPEDA)"
+    },
+    {
+      "id": "frk_tt_69efd9ed795877621cdbd56d",
+      "name": "Annual Service Provider and Contractor Contract Review"
+    },
+    {
+      "id": "frk_tt_68406d2e86acc048d1774ea6",
+      "name": "App Availability"
+    },
+    {
+      "id": "frk_tt_68b5ce9b5393ae083c3beadf",
+      "name": "Appoint or Review Data Protection Officer"
+    },
+    {
+      "id": "frk_tt_69f3ea63df40dfc906558bb5",
+      "name": "Appoint or Review Privacy Officer (PIPEDA)"
+    },
+    {
+      "id": "frk_tt_68c3248edf65e750909dfd07",
+      "name": "Attestation of Compliance"
+    },
+    {
+      "id": "frk_tt_68e52b26b166e2c0a0d11956",
+      "name": "Backup logs"
+    },
+    {
+      "id": "frk_tt_68e52b269db179c434734766",
+      "name": "Backup Restoration Test"
+    },
+    {
+      "id": "frk_tt_68c8309516fdbc514404988d",
+      "name": "Board Meetings & Independence"
+    },
+    {
+      "id": "frk_tt_6901e040a21d5e8fdc9736e8",
+      "name": "Building / Workplace Rules"
+    },
+    {
+      "id": "frk_tt_69eb875e71616f3b8a9fadde",
+      "name": "Business Associate Agreement Registry"
+    },
+    {
+      "id": "frk_tt_68406d64f09f13271c14dd01",
+      "name": "Code Changes"
+    },
+    {
+      "id": "frk_tt_68406a514e90bb6e32e0b107",
+      "name": "Contact Information"
+    },
+    {
+      "id": "frk_tt_69eb8760d56cb8d18c53df13",
+      "name": "Contingency Plan Testing & Revision"
+    },
+    {
+      "id": "frk_tt_69e92cc75996378b01b27ec9",
+      "name": "Cookie Consent and Tracking Review"
+    },
+    {
+      "id": "frk_tt_691e6d9cb17ea23bfc68c57b",
+      "name": "Corrective Action Reports"
+    },
+    {
+      "id": "frk_tt_691e56cc1b3bb6027f665f8b",
+      "name": "Customer Requirement Review Records"
+    },
+    {
+      "id": "frk_tt_686b51339d7e9f8ef2081a70",
+      "name": "Data Masking"
+    },
+    {
+      "id": "frk_tt_69e92829b6aa752b0dfba9a8",
+      "name": "Data Protection Awareness Training"
+    },
+    {
+      "id": "frk_tt_69e92829e97f5a494f13d67b",
+      "name": "Data Subject Rights Request Handling"
+    },
+    {
+      "id": "frk_tt_691e56cd6fdc3abecbf7e34c",
+      "name": "Design & Development Documents"
+    },
+    {
+      "id": "frk_tt_68406903839203801ac8041a",
+      "name": "Device List"
+    },
+    {
+      "id": "frk_tt_6849aad98c50d734dd904d98",
+      "name": "Diagramming"
+    },
+    {
+      "id": "frk_tt_69efdbcee1d3e72ee6873ed1",
+      "name": "Document Consumer Rights Request Fulfillment"
+    },
+    {
+      "id": "frk_tt_69e92829ac42d6ca48bc6cd9",
+      "name": "DPIA Trigger Review and Execution"
+    },
+    {
+      "id": "frk_tt_68406ca292d9fffb264991b9",
+      "name": "Employee Access"
+    },
+    {
+      "id": "frk_tt_684069a3a0dd8322b2ac3f03",
+      "name": "Employee Descriptions"
+    },
+    {
+      "id": "frk_tt_68e52b27c4bdbf1b24051b8b",
+      "name": "Employee Performance Evaluations"
+    },
+    {
+      "id": "frk_tt_68406951bd282273ebe286cc",
+      "name": "Employee Verification"
+    },
+    {
+      "id": "frk_tt_68e52b26bf0e656af9e4e9c3",
+      "name": "Encryption at Rest"
+    },
+    {
+      "id": "frk_tt_69dd3f8f62639b078e7cc061",
+      "name": "Executive PCI accountability assignment"
+    },
+    {
+      "id": "frk_tt_69eb875fa49f13b4b81e9f3b",
+      "name": "Facility Security Plan"
+    },
+    {
+      "id": "frk_tt_68406b4f40c87c12ae0479ce",
+      "name": "Incident Response"
+    },
+    {
+      "id": "frk_tt_69033a6bfeb4759be36257bc",
+      "name": "Infrastructure Inventory"
+    },
+    {
+      "id": "frk_tt_69ea91773112b091b458de8d",
+      "name": "Intended Use Statement"
+    },
+    {
+      "id": "frk_tt_691e6d9cd5bf039fdc6d364f",
+      "name": "Internal Audit Reports & Schedule"
+    },
+    {
+      "id": "frk_tt_68e52b2618cb9d9722c6edfd",
+      "name": "Internal Security Audit"
+    },
+    {
+      "id": "frk_tt_68d28f68f117d45c0adcba33",
+      "name": "Legal Proof of Company Registration"
+    },
+    {
+      "id": "frk_tt_69eb8761ff2b2d874ae2a4da",
+      "name": "Login Monitoring & Password Management"
+    },
+    {
+      "id": "frk_tt_69e928283390c5483dccbcde",
+      "name": "Maintain Records of Processing Activities (RoPA)"
+    },
+    {
+      "id": "frk_tt_68b5ce9c6c1bdb171870f623",
+      "name": "Manage Third-party and EU Representative Relationships"
+    },
+    {
+      "id": "frk_tt_68e1d619944625cc1876540c",
+      "name": "Management Review Minutes"
+    },
+    {
+      "id": "frk_tt_691e6d9df70eabe2354b444d",
+      "name": "Management Review Minutes"
+    },
+    {
+      "id": "frk_tt_69eb875ffe511e3ce5298e21",
+      "name": "Media Sanitization & Disposal Log"
+    },
+    {
+      "id": "frk_tt_68406af04a4acb93083413b9",
+      "name": "Monitoring & Alerting"
+    },
+    {
+      "id": "frk_tt_691e6d9cb5e878db20e8919e",
+      "name": "Monitoring KPI Data"
+    },
+    {
+      "id": "frk_tt_68e1d5667f2b14a9b0c2daf8",
+      "name": "NEN 7510 Risk Assessments"
+    },
+    {
+      "id": "frk_tt_691e6d9c3d9e14f014b75a7b",
+      "name": "Nonconformity / Defect Records"
+    },
+    {
+      "id": "frk_tt_6901e041bb02b41fa3b7dca9",
+      "name": "Office Access & Door Monitoring"
+    },
+    {
+      "id": "frk_tt_68e52b274a7c38c62db08e80",
+      "name": "Organisation Chart"
+    },
+    {
+      "id": "frk_tt_69dd400bdc718337e0354ff7",
+      "name": "Passing ASV quarterly scan evidence"
+    },
+    {
+      "id": "frk_tt_69dd3fe1317ecf573a463bbb",
+      "name": "Payment page script approval & live integrity config"
+    },
+    {
+      "id": "frk_tt_6952951fc116ab206e4276d6",
+      "name": "Period Close-Out & Attestation"
+    },
+    {
+      "id": "frk_tt_69f3ea660239b769839c49d4",
+      "name": "Periodic Personal Information Accuracy Audit"
+    },
+    {
+      "id": "frk_tt_69f3ea66b653b0af244cf869",
+      "name": "PIPEDA Access Request Log Review"
+    },
+    {
+      "id": "frk_tt_69f3ea65d5b1a04e9c7e0a91",
+      "name": "PIPEDA Consent Records Audit"
+    },
+    {
+      "id": "frk_tt_69f3ea67845abbb56763649f",
+      "name": "PIPEDA Privacy Complaint Register & Investigation Review"
+    },
+    {
+      "id": "frk_tt_68406e7abae2a9b16c2cc197",
+      "name": "Planning"
+    },
+    {
+      "id": "frk_tt_69dd3fb7c4f015f0b5851eb0",
+      "name": "POI register & tamper inspection set"
+    },
+    {
+      "id": "frk_tt_69eb87606cb315ebeb98ea49",
+      "name": "Policy Documentation & Retention"
+    },
+    {
+      "id": "frk_tt_68fa2a852e70f757188f0c39",
+      "name": "Production Firewall & No-Public-Access Controls"
+    },
+    {
+      "id": "frk_tt_6840791cac0a7b780dbaf932",
+      "name": "Public Policies"
+    },
+    {
+      "id": "frk_tt_69efd9e45e6f00c44f622173",
+      "name": "Quarterly DSAR Volume and Response Time Review"
+    },
+    {
+      "id": "frk_tt_69f3ea6497e3c0fbd6726ea5",
+      "name": "Quarterly PIPEDA Privacy Notice Display Review"
+    },
+    {
+      "id": "frk_tt_69efd9f81f073e643fb5a19d",
+      "name": "Quarterly Privacy Notice Display Review"
+    },
+    {
+      "id": "frk_tt_68b5ce9dd597ac7d650e4915",
+      "name": "Reassess Legal Basis for Processing"
+    },
+    {
+      "id": "frk_tt_69ea916b05b146a8a544c406",
+      "name": "Responsible AI Development Objectives"
+    },
+    {
+      "id": "frk_tt_69ea91794c21fc8f347cdddd",
+      "name": "Responsible AI Use Objectives"
+    },
+    {
+      "id": "frk_tt_69ea9178aaa6c6a7058c0fcf",
+      "name": "Responsible AI Use Procedure"
+    },
+    {
+      "id": "frk_tt_69e92828297806545638eed7",
+      "name": "Review Data Retention, Minimization, and Encryption"
+    },
+    {
+      "id": "frk_tt_68b5ce9d508cacf8e4517b56",
+      "name": "Review International Data Transfers"
+    },
+    {
+      "id": "frk_tt_69f3ea65dd312f6d70654ac4",
+      "name": "Review International Personal Information Transfers (PIPEDA Accountability)"
+    },
+    {
+      "id": "frk_tt_69eb875d77ef6407785a500f",
+      "name": "Risk Analysis & Treatment Plan"
+    },
+    {
+      "id": "frk_tt_68e80544d9734e0402cfa807",
+      "name": "Role-based Access Controls"
+    },
+    {
+      "id": "frk_tt_69eb875d089573be3295269e",
+      "name": "Sanction Policy"
+    },
+    {
+      "id": "frk_tt_68406eedf0f0ddd220ea19c2",
+      "name": "Sanitized Inputs"
+    },
+    {
+      "id": "frk_tt_69dd3f6094fc732d635210ae",
+      "name": "Scope confirmation & CDE inventory pack"
+    },
+    {
+      "id": "frk_tt_68406e353df3bc002994acef",
+      "name": "Secure Code"
+    },
+    {
+      "id": "frk_tt_6840796f77d8a0dff53f947a",
+      "name": "Secure Devices"
+    },
+    {
+      "id": "frk_tt_68407ae5274a64092c305104",
+      "name": "Secure Secrets"
+    },
+    {
+      "id": "frk_tt_6901e0aa6d3f2bbab1ea5b84",
+      "name": "Secure Storage"
+    },
+    {
+      "id": "frk_tt_698cacc0f06de04786d097ca",
+      "name": "Security Awareness Training"
+    },
+    {
+      "id": "frk_tt_69eb875e9567b702dbb7f05e",
+      "name": "Security Officer Assignment"
+    },
+    {
+      "id": "frk_tt_68c332c3bc6d696bb61e7351",
+      "name": "Self-Assessment Questionnaires"
+    },
+    {
+      "id": "frk_tt_68e52a484cad0014de7a628f",
+      "name": "Separation of Environments"
+    },
+    {
+      "id": "frk_tt_691e56cdc42cb42e48d01ec0",
+      "name": "Service Release Approvals"
+    },
+    {
+      "id": "frk_tt_68cc27431d1266e3c77d7c0f",
+      "name": "Stakeholder Register / Interested Parties Log"
+    },
+    {
+      "id": "frk_tt_69f0d514d103c34ca40ad332",
+      "name": "Static Code Scanning  "
+    },
+    {
+      "id": "frk_tt_691e56cccca43b5df5080439",
+      "name": "Supplier Evaluation Records"
+    },
+    {
+      "id": "frk_tt_68dc1a3a9b92bb4ffb89e334",
+      "name": "Systems Description"
+    },
+    {
+      "id": "frk_tt_69f3ac66d4f449b6c8c503c4",
+      "name": "test"
+    },
+    {
+      "id": "frk_tt_68406f411fe27e47a0d6d5f3",
+      "name": "TLS / HTTPS"
+    },
+    {
+      "id": "frk_tt_691e56cc5a52ee1256d5e1d6",
+      "name": "Training / Competence Records"
+    },
+    {
+      "id": "frk_tt_69f10edce3013d5b6e0ab7c9",
+      "name": "Updated tasl"
+    },
+    {
+      "id": "frk_tt_69f10edc75a040a97dd41d0a",
+      "name": "Updated tasl"
+    },
+    {
+      "id": "frk_tt_6849c1a1038c3f18cfff47bf",
+      "name": "Utility Monitoring"
+    },
+    {
+      "id": "frk_tt_69efd9ef3ff6e8fed0fc0028",
+      "name": "Verify Global Privacy Control (GPC) Signal Honoring"
+    },
+    {
+      "id": "frk_tt_6901e0aa49fb834934748c93",
+      "name": "Visitor Control"
+    },
+    {
+      "id": "frk_tt_69eb876033531483191663a1",
+      "name": "Workforce Authorization & Supervision"
+    }
+  ]
+}

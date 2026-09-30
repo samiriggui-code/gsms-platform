@@ -1,0 +1,114 @@
+{
+  "examples": [
+    {
+      "version": "0.1.0",
+      "id": "grace-4f2a",
+      "source": "grace",
+      "category": "incendie_prevention",
+      "status": "non_conforme",
+      "severity": "majeure",
+      "client_id": "client-0042",
+      "site_id": "site-lyon-01",
+      "control_ref": "ctrl-incendie-extincteurs-01",
+      "referentiel": [
+        "reglementation_erp",
+        "commission_securite"
+      ],
+      "title": "Extincteurs non vérifiés depuis plus de 12 mois",
+      "description": "3 extincteurs sur 8 audités présentent une étiquette de contrôle périmée sur le site de Lyon.",
+      "remediation": "Planifier une vérification annuelle par un organisme agréé avant la prochaine commission de sécurité.",
+      "evidence_ref": [
+        "photo://grace/site-lyon-01/extincteur-3.jpg"
+      ],
+      "owner": "Responsable maintenance client",
+      "due_date": "2026-10-15",
+      "created_at": "2026-09-01T09:12:00Z",
+      "updated_at": "2026-09-01T09:12:00Z",
+      "metadata": {
+        "score_csmp": 62
+      }
+    },
+    {
+      "version": "0.1.0",
+      "id": "grace-8b91",
+      "source": "grace",
+      "category": "habilitation_agent",
+      "status": "conforme",
+      "client_id": "client-0042",
+      "site_id": "site-lyon-01",
+      "agent_id": "agent-1187",
+      "control_ref": "ctrl-habilitation-carte-pro",
+      "referentiel": [
+        "commission_securite"
+      ],
+      "title": "Carte professionnelle CNAPS valide",
+      "description": "Carte professionnelle de l'agent vérifiée et valide jusqu'en 2027.",
+      "evidence_ref": [
+        "doc://grace/agent-1187/carte-pro.pdf"
+      ],
+      "created_at": "2026-08-20T14:00:00Z",
+      "updated_at": "2026-08-20T14:00:00Z"
+    },
+    {
+      "version": "0.1.0",
+      "id": "qatrial-118",
+      "source": "qatrial",
+      "category": "qualite_capa",
+      "status": "en_cours",
+      "severity": "mineure",
+      "client_id": "client-0042",
+      "site_id": "site-lyon-01",
+      "control_ref": "ctrl-ronde-frequence",
+      "title": "Fréquence de rondes non respectée sur 2 nuits",
+      "description": "Écart constaté entre la fréquence de ronde contractuelle et les rondes réellement effectuées, relevé automatiquement.",
+      "remediation": "Action corrective ouverte auprès du chef de poste, suivi CAPA en cours.",
+      "owner": "Chef de poste site Lyon",
+      "created_at": "2026-08-28T22:30:00Z",
+      "updated_at": "2026-09-02T08:00:00Z",
+      "metadata": {
+        "capa_id": "CAPA-2026-0341"
+      }
+    },
+    {
+      "version": "0.1.0",
+      "id": "module-cyber-soc2-021",
+      "source": "module-cyber",
+      "category": "cyber",
+      "status": "non_conforme",
+      "severity": "critique",
+      "client_id": "client-0091",
+      "control_ref": "ctrl-cyber-mfa-admin",
+      "referentiel": [
+        "soc2"
+      ],
+      "title": "MFA non activé sur les comptes administrateurs",
+      "description": "2 comptes admin du client datacenter n'ont pas l'authentification multi-facteurs activée.",
+      "remediation": "Activer MFA sur tous les comptes à privilèges avant l'audit SOC2.",
+      "evidence_ref": [
+        "minio://grace/cyber/mfa-admin-check.pdf"
+      ],
+      "created_at": "2026-09-03T11:00:00Z",
+      "updated_at": "2026-09-03T11:00:00Z",
+      "metadata": {
+        "checklist_id": "soc2-cc6.1"
+      }
+    },
+    {
+      "version": "0.1.0",
+      "id": "tenderai-ao-77",
+      "source": "tenderai",
+      "category": "piece_ao",
+      "status": "a_verifier",
+      "client_id": "client-0042",
+      "tender_id": "ao-2026-0912",
+      "control_ref": "ctrl-incendie-extincteurs-01",
+      "referentiel": [
+        "cahier_charges_ao_client_x"
+      ],
+      "title": "Pièce justificative extincteurs à joindre au dossier d'AO",
+      "description": "Le cahier des charges de l'AO exige une preuve de conformité incendie identique au contrôle déjà suivi côté GRACE (control_ref partagé) — permet de réutiliser le finding grace-4f2a une fois corrigé, sans nouvel audit.",
+      "created_at": "2026-09-04T16:45:00Z",
+      "updated_at": "2026-09-04T16:45:00Z"
+    }
+  ]
+}

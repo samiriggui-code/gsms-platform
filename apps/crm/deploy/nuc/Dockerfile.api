@@ -1,0 +1,29 @@
+FROM oven/bun:1.2-debian
+
+# Debian 12's `nodejs` apt package is v18 — too old for prisma's CLI, which
+# needs Node's require(esm) support (>=20) for its @prisma/dev dependency.
+# NodeSource's setup script swaps the apt source for a current LTS first.
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends ca-certificates curl gnupg openssl \
+	&& curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+	&& apt-get install -y --no-install-recommends nodejs \
+	&& rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY . .
+
+# @crm/db's postinstall runs `prisma generate`, which only needs DATABASE_URL
+# to resolve (never connects) — a placeholder is enough at build time, the
+# real one comes from the container's env at runtime.
+ENV DATABASE_URL="postgresql://postgres:postgres@localhost:5432/crm?schema=public"
+
+RUN bun install
+
+RUN cd apps/api && bun run build
+
+WORKDIR /app/apps/api
+
+EXPOSE 3001
+
+CMD ["bun", "run", "start:prod"]

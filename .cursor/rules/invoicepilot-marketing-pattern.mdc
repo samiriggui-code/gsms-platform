@@ -1,0 +1,37 @@
+---
+description: InvoicePilot marketing — adapter le contenu, jamais casser le design/pattern
+alwaysApply: true
+---
+
+# Marketing InvoicePilot / GSMS vitrine
+
+## Positionnement (critique)
+
+**GSMS = prestations métier sécurité**, pas un produit SaaS à vendre.
+
+**Qui :** sociétés de sécurité privée **et** établissements (ERP, IGH, écoles, commerces,
+entrepôts, sites tertiaires…).
+
+**Quoi :** audit de sécurité (service, installations, bâtiments), préparation /
+accompagnement commission de sécurité (avant / pendant / après), prévention incendie,
+réponses aux AO et accompagnement post-attribution pour les sociétés de sécurité privée.
+
+**Formation :** besoin éventuel orienté vers gsms-school — **interdit** de présenter GSMS
+comme organisme qui « forme » sur la vitrine.
+
+Le hero explique le besoin ; les rubriques (`Features`) exposent le savoir-faire.
+
+Interdit dans le copy public : cockpit, Deal CRM, Eve, moteurs, DocType, licence, essai gratuit produit, jargon interne plateforme, noms d’apps internes (LexSocket, TenderAI, Grace…).
+
+## Interdit (design)
+
+- Remplacer Hero / HowItWorks / Features / Connectors / Pricing / Cta / Header / Footer.
+- Inventer une nouvelle mise en page sur la landing.
+- Redesigner Header/Footer — seuls labels et `href` peuvent changer.
+
+## Obligatoire
+
+- **Landing** : sections existantes ; adapter **uniquement** textes / liens — langage missions sécurité.
+- **Pages marketing** : `@/components/marketing/shell` (réf. `contact.tsx`, `partenaires.tsx`).
+- Formulaires = demande de devis / brief mission.
+- App (`/_app`) : `AppPageHero` / `AppPageShell`.

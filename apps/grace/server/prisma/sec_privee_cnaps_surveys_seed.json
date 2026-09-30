@@ -1,0 +1,303 @@
+{
+  "templates": [
+    {
+      "key": "survey-sec-privee-cnaps",
+      "name": "Sécurité privée — CNAPS",
+      "description": "Checklist agrégée organisation sécurité privée (P0). Agrément, cartes pro, contrats, formation (School), tenue, sous-traitance. Pack sec-privee-cnaps. Pas du walkthrough Physsec.",
+      "surveyType": "HYBRID",
+      "applicableClusterTypes": ["LOGICAL", "SPATIAL"],
+      "applicableAssetTypes": ["PROCESS", "INFORMATION", "PERSON", "EQUIPMENT"],
+      "requiresPhysical": true,
+      "questionIds": [
+        "cnaps-autorisation",
+        "cnaps-agrement-dirigeants",
+        "cnaps-activites",
+        "cnaps-cartes-valides",
+        "cnaps-registre",
+        "cnaps-port-carte",
+        "cnaps-contrat",
+        "cnaps-consignes",
+        "cnaps-formation",
+        "cnaps-tenue",
+        "cnaps-sous-traitance",
+        "cnaps-donneur-ordre"
+      ]
+    },
+    {
+      "key": "survey-sec-privee-cnaps-agrement",
+      "name": "Sécurité privée — Agrément",
+      "description": "Autorisation d’exercice et agrément des dirigeants (CSI livre VI).",
+      "surveyType": "DOC_REVIEW",
+      "applicableClusterTypes": ["LOGICAL"],
+      "applicableAssetTypes": ["PROCESS", "INFORMATION"],
+      "requiresPhysical": false,
+      "questionIds": ["cnaps-autorisation", "cnaps-agrement-dirigeants", "cnaps-activites"]
+    },
+    {
+      "key": "survey-sec-privee-cnaps-cartes",
+      "name": "Sécurité privée — Cartes professionnelles",
+      "description": "Cartes pro valides, registre, port apparent.",
+      "surveyType": "HYBRID",
+      "applicableClusterTypes": ["LOGICAL", "SPATIAL"],
+      "applicableAssetTypes": ["INFORMATION", "PERSON"],
+      "requiresPhysical": true,
+      "questionIds": ["cnaps-cartes-valides", "cnaps-registre", "cnaps-port-carte"]
+    },
+    {
+      "key": "survey-sec-privee-cnaps-contrats",
+      "name": "Sécurité privée — Contrats & consignes",
+      "description": "Périmètre de mission et consignes de poste.",
+      "surveyType": "DOC_REVIEW",
+      "applicableClusterTypes": ["LOGICAL"],
+      "applicableAssetTypes": ["INFORMATION", "PROCESS"],
+      "requiresPhysical": false,
+      "questionIds": ["cnaps-contrat", "cnaps-consignes"]
+    },
+    {
+      "key": "survey-sec-privee-cnaps-formation",
+      "name": "Sécurité privée — Formation",
+      "description": "Formation continue — preuves dans GSMS School, pas un LMS Grace.",
+      "surveyType": "DOC_REVIEW",
+      "applicableClusterTypes": ["LOGICAL"],
+      "applicableAssetTypes": ["INFORMATION", "PERSON"],
+      "requiresPhysical": false,
+      "questionIds": ["cnaps-formation"]
+    },
+    {
+      "key": "survey-sec-privee-cnaps-materiel",
+      "name": "Sécurité privée — Dotation & tenue",
+      "description": "Tenue et matériel de mission — pas Physsec portes/CCTV.",
+      "surveyType": "PHYSICAL",
+      "applicableClusterTypes": ["SPATIAL"],
+      "applicableAssetTypes": ["EQUIPMENT", "PERSON"],
+      "requiresPhysical": true,
+      "questionIds": ["cnaps-tenue"]
+    },
+    {
+      "key": "survey-sec-privee-cnaps-sous-traitance",
+      "name": "Sécurité privée — Sous-traitance",
+      "description": "Sous-traitants agréés et vérification donneur d’ordre.",
+      "surveyType": "DOC_REVIEW",
+      "applicableClusterTypes": ["LOGICAL"],
+      "applicableAssetTypes": ["PROCESS", "INFORMATION"],
+      "requiresPhysical": false,
+      "questionIds": ["cnaps-sous-traitance", "cnaps-donneur-ordre"]
+    }
+  ],
+  "questions": [
+    {
+      "id": "cnaps-autorisation",
+      "category": "CNAPS · Agrément",
+      "prompt": "L’autorisation d’exercice de la personne morale est-elle en cours de validité ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "CSI livre VI chap. II (conditions d’exercice). Checklist pièce + date — pas un jugement article-atomique. CNAPS = autorité de délivrance.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CSI L612 — https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000025503132/LEGISCTA000025506187/",
+        "CSI livre VI — https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000025503132/LEGISCTA000025506179/"
+      ],
+      "attach": {
+        "assetSlugs": ["cnaps-org", "cnaps-agrement-doc"],
+        "threatSlugs": ["cnaps-agrement-expire"],
+        "cmSlugs": ["cm-cnaps-veille-titres"]
+      }
+    },
+    {
+      "id": "cnaps-agrement-dirigeants",
+      "category": "CNAPS · Agrément",
+      "prompt": "Les dirigeants / associés soumis à agrément ont-ils un agrément valide ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "CSI L612-6 / L612-7 (conditions d’agrément). Liste des personnes agrées vs Kbis / organigramme.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CSI L612-7 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043564269"
+      ],
+      "attach": {
+        "assetSlugs": ["cnaps-agrement-doc", "cnaps-org"],
+        "threatSlugs": ["cnaps-agrement-expire"],
+        "cmSlugs": ["cm-cnaps-veille-titres"]
+      }
+    },
+    {
+      "id": "cnaps-activites",
+      "category": "CNAPS · Agrément",
+      "prompt": "Les activités réellement exercées (contrats) sont-elles couvertes par l’autorisation (CSI L611) ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Ne pas inventer une activité hors livre VI. Croiser contrats vs mention d’autorisation. Checklist, pas un avis juridique.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CSI livre VI L611 — https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000025503132/LEGISCTA000025506179/"
+      ],
+      "attach": {
+        "assetSlugs": ["cnaps-org", "cnaps-contrat"],
+        "threatSlugs": ["cnaps-agrement-expire", "cnaps-mission-floue"]
+      }
+    },
+    {
+      "id": "cnaps-cartes-valides",
+      "category": "CNAPS · Cartes pro",
+      "prompt": "Tous les agents en poste ont-ils une carte professionnelle valide pour l’activité exercée ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "HYBRID",
+      "hint": "CSI L612-20 s. (délivrance / retrait carte). Sondage planning vs registre. PARTIAL = quelques écarts documentés.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CSI L612 chap. II — https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000025503132/LEGISCTA000025506187/"
+      ],
+      "attach": {
+        "assetSlugs": ["cnaps-carte-pro", "cnaps-registre-agents"],
+        "threatSlugs": ["cnaps-agent-sans-carte"],
+        "cmSlugs": ["cm-cnaps-registre-cartes"]
+      }
+    },
+    {
+      "id": "cnaps-registre",
+      "category": "CNAPS · Cartes pro",
+      "prompt": "Un registre nominatif des cartes (échéances, affectations) est-il tenu et exploitable ?",
+      "type": "yes_no_partial",
+      "weight": 4,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Bonne pratique de contrôle — pas une cote unique. Doit permettre d’interdire une affectation sans titre.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CSI L612 — https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000025503132/LEGISCTA000025506187/"
+      ],
+      "attach": {
+        "assetSlugs": ["cnaps-registre-agents"],
+        "threatSlugs": ["cnaps-agent-sans-carte"],
+        "cmSlugs": ["cm-cnaps-registre-cartes"]
+      }
+    },
+    {
+      "id": "cnaps-port-carte",
+      "category": "CNAPS · Cartes pro",
+      "prompt": "Le port / la présentation de la carte professionnelle est-il effectif sur le(s) site(s) visité(s) ?",
+      "type": "yes_no_partial",
+      "weight": 3,
+      "evidenceType": "PHYSICAL",
+      "hint": "Contrôle terrain (échantillon). N/A si audit 100 % documentaire : PARTIAL + commentaire.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CSI L612 — https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000025503132/LEGISCTA000025506187/"
+      ],
+      "attach": {
+        "assetSlugs": ["cnaps-carte-pro"],
+        "threatSlugs": ["cnaps-agent-sans-carte"]
+      }
+    },
+    {
+      "id": "cnaps-contrat",
+      "category": "CNAPS · Contrats",
+      "prompt": "Les contrats de prestation délimitent-ils clairement sites, horaires, missions et limites ?",
+      "type": "yes_no_partial",
+      "weight": 4,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Périmètre écrit vs activité autorisée. Checklist opérationnelle, pas un audit juridique du contrat.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CSI livre VI — https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000025503132/LEGISCTA000025506179/"
+      ],
+      "attach": {
+        "assetSlugs": ["cnaps-contrat"],
+        "threatSlugs": ["cnaps-mission-floue"],
+        "cmSlugs": ["cm-cnaps-contrat-consignes"]
+      }
+    },
+    {
+      "id": "cnaps-consignes",
+      "category": "CNAPS · Contrats",
+      "prompt": "Des consignes de poste écrites sont-elles remises et visées pour chaque site ?",
+      "type": "yes_no_partial",
+      "weight": 4,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Fiches de poste / consignes client. Échantillon sites.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CSI livre VI — https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000025503132/LEGISCTA000025506179/"
+      ],
+      "attach": {
+        "assetSlugs": ["cnaps-consignes", "cnaps-contrat"],
+        "threatSlugs": ["cnaps-mission-floue"],
+        "cmSlugs": ["cm-cnaps-contrat-consignes"]
+      }
+    },
+    {
+      "id": "cnaps-formation",
+      "category": "CNAPS · Formation",
+      "prompt": "La formation continue liée au renouvellement de carte est-elle tracée (GSMS School ou équivalent) ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "CSI L612-20-1 : renouvellement subordonné à une formation continue. Preuves → School, pas un LMS dans Grace.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CSI L612-20-1 — https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031073682"
+      ],
+      "attach": {
+        "assetSlugs": ["cnaps-attestations-formation"],
+        "threatSlugs": ["cnaps-formation-lapse"],
+        "cmSlugs": ["cm-cnaps-school-recyclage"]
+      }
+    },
+    {
+      "id": "cnaps-tenue",
+      "category": "CNAPS · Matériel",
+      "prompt": "La tenue / les signes distinctifs évitent-ils la confusion avec un service public, et le matériel est-il inventorié ?",
+      "type": "yes_no_partial",
+      "weight": 3,
+      "evidenceType": "PHYSICAL",
+      "hint": "Checklist tenue + inventaire. Pas un audit Physsec (portes, CCTV) — pack site-surete.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CSI livre VI — https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000025503132/LEGISCTA000025506179/"
+      ],
+      "attach": {
+        "assetSlugs": ["cnaps-tenue"],
+        "threatSlugs": ["cnaps-tenue-non-conforme"],
+        "cmSlugs": ["cm-cnaps-dotation-inventaire"]
+      }
+    },
+    {
+      "id": "cnaps-sous-traitance",
+      "category": "CNAPS · Sous-traitance",
+      "prompt": "Les sous-traitants de sécurité privée sont-ils eux-mêmes autorisés / agréés, avec pièces au dossier ?",
+      "type": "yes_no_partial",
+      "weight": 5,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Si pas de sous-traitance : YES + commentaire N/A. Sinon copies d’autorisation / agrément.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CSI L612 — https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000025503132/LEGISCTA000025506187/"
+      ],
+      "attach": {
+        "assetSlugs": ["cnaps-sous-traitant"],
+        "threatSlugs": ["cnaps-sous-traitance-opaque"],
+        "cmSlugs": ["cm-cnaps-due-diligence-st"]
+      }
+    },
+    {
+      "id": "cnaps-donneur-ordre",
+      "category": "CNAPS · Sous-traitance",
+      "prompt": "Le donneur d’ordre (si c’est le cas d’espèce) a-t-il vérifié les titres du prestataire avant mission ?",
+      "type": "yes_no_partial",
+      "weight": 4,
+      "evidenceType": "DOC_REVIEW",
+      "hint": "Si org_kind = entreprise_secu uniquement : PARTIAL / N/A. Donneur d’ordre = pièces CNAPS au contrat. Croise pack entreprise-risques.",
+      "severityMap": { "YES": "ok", "PARTIAL": "warn", "NO": "bad" },
+      "officialArticleRefs": [
+        "CSI livre VI — https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000025503132/LEGISCTA000025506179/"
+      ],
+      "attach": {
+        "assetSlugs": ["cnaps-org", "cnaps-sous-traitant"],
+        "threatSlugs": ["cnaps-sous-traitance-opaque"]
+      }
+    }
+  ]
+}

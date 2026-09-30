@@ -1,0 +1,823 @@
+{
+  "version": "0.1.0",
+  "provenance": "control template NAMES only from Comp seed — rewrite UX copy; AGPL app code not copied",
+  "count": 204,
+  "prompts": [
+    {
+      "id": "frk_ct_69e6789971bc8d38d8df1c7c",
+      "name": " Accountability and governance"
+    },
+    {
+      "id": "frk_ct_69e678bab215222879333e90",
+      "name": " Accountability and governance"
+    },
+    {
+      "id": "frk_ct_69e678c48b22e4ca14c99684",
+      "name": " Accountability and governance"
+    },
+    {
+      "id": "frk_ct_69e69e7b48867208ff473273",
+      "name": " Privacy rights"
+    },
+    {
+      "id": "frk_ct_69efd5ce50b1ede13c3848f2",
+      "name": "\"Do Not Sell or Share My Personal Information\" Link"
+    },
+    {
+      "id": "frk_ct_68407c9513000617776104c7",
+      "name": "Acceptable Use"
+    },
+    {
+      "id": "frk_ct_683f4a410cf5bf6d40bf3583",
+      "name": "Access Rights"
+    },
+    {
+      "id": "frk_ct_69f3d98847a47dc8f9eacae4",
+      "name": "Administrative Safeguards"
+    },
+    {
+      "id": "frk_ct_69ea8dc667172a41022fcf27",
+      "name": "AI Awareness"
+    },
+    {
+      "id": "frk_ct_69ea8dbfb341d9b1021c8897",
+      "name": "AI Change Planning"
+    },
+    {
+      "id": "frk_ct_69ea8dc718a407d992cda795",
+      "name": "AI Communication"
+    },
+    {
+      "id": "frk_ct_69ea8dc6f10b53075c3beacb",
+      "name": "AI Competence"
+    },
+    {
+      "id": "frk_ct_69ea8db5182a7a6a4ad28ce1",
+      "name": "AI Concern Reporting"
+    },
+    {
+      "id": "frk_ct_69ea8de5cc73e611573e6db4",
+      "name": "AI Continual Improvement"
+    },
+    {
+      "id": "frk_ct_69ea8de02be9da8bf00ad0aa",
+      "name": "AI Customers"
+    },
+    {
+      "id": "frk_ct_69ea8dd5a750b30e2eb69d18",
+      "name": "AI Data Acquisition"
+    },
+    {
+      "id": "frk_ct_69ea8dd7f551ad7a56706b46",
+      "name": "AI Data Preparation"
+    },
+    {
+      "id": "frk_ct_69ea8dd6097d1766ac51e294",
+      "name": "AI Data Provenance"
+    },
+    {
+      "id": "frk_ct_69ea8dd54053dfd453b9dc4a",
+      "name": "AI Data Quality"
+    },
+    {
+      "id": "frk_ct_69ea8dc2e0fd4e97481baafd",
+      "name": "AI Data Resources"
+    },
+    {
+      "id": "frk_ct_69ea8dd9462f30b929260abf",
+      "name": "AI External Reporting"
+    },
+    {
+      "id": "frk_ct_69ea8dc5682f9f3146944252",
+      "name": "AI Human Resources"
+    },
+    {
+      "id": "frk_ct_69ea8dda97d0010af0cf826d",
+      "name": "AI Incident Communication"
+    },
+    {
+      "id": "frk_ct_69ea8dad9910710084d184a2",
+      "name": "AI Interested Parties"
+    },
+    {
+      "id": "frk_ct_69ea8de2d97d1f09cc61b896",
+      "name": "AI Internal Audit"
+    },
+    {
+      "id": "frk_ct_69ea8db0b7f88f1ce0079240",
+      "name": "AI Leadership Commitment"
+    },
+    {
+      "id": "frk_ct_69ea8de302274112e7ccc264",
+      "name": "AI Management Review"
+    },
+    {
+      "id": "frk_ct_69ea8daf133ebd28ca732b9d",
+      "name": "AI Management System Establishment"
+    },
+    {
+      "id": "frk_ct_69ea8de6018b6b80d862c906",
+      "name": "AI Nonconformity and Corrective Action"
+    },
+    {
+      "id": "frk_ct_69ea8dbe99f14797e50f9685",
+      "name": "AI Objectives and Planning"
+    },
+    {
+      "id": "frk_ct_69ea8dcaa9b51a2b1e5f2abd",
+      "name": "AI Operational Planning and Control"
+    },
+    {
+      "id": "frk_ct_69ea8dac2ff1cd0bfe0c8614",
+      "name": "AI Organizational Context"
+    },
+    {
+      "id": "frk_ct_69ea8db4a22bb4f0e4c649e1",
+      "name": "AI Organizational Roles, Responsibilities and Authorities"
+    },
+    {
+      "id": "frk_ct_69ea8de1bd41309fdbe08e20",
+      "name": "AI Performance Monitoring, Measurement, Analysis and Evaluation"
+    },
+    {
+      "id": "frk_ct_69ea8db16a12eecb3f3a5ecb",
+      "name": "AI Policy"
+    },
+    {
+      "id": "frk_ct_69ea8db2c7ed1af765c5981d",
+      "name": "AI Policy Alignment with Other Organizational Policies"
+    },
+    {
+      "id": "frk_ct_69ea8db3571415b8485b6976",
+      "name": "AI Policy Review"
+    },
+    {
+      "id": "frk_ct_69ea8dc1f55bd5e338716f16",
+      "name": "AI Resource Documentation"
+    },
+    {
+      "id": "frk_ct_69ea8dc048654718cfb1d12c",
+      "name": "AI Resources"
+    },
+    {
+      "id": "frk_ct_69ea8db62ab22968f85f85f6",
+      "name": "AI Risk and Opportunity Actions"
+    },
+    {
+      "id": "frk_ct_69ea8db77c8dd4b36c9ac007",
+      "name": "AI Risk Assessment"
+    },
+    {
+      "id": "frk_ct_69ea8db865093703fdf71fc7",
+      "name": "AI Risk Treatment"
+    },
+    {
+      "id": "frk_ct_69ea8ddf2226651c7382d81c",
+      "name": "AI Suppliers"
+    },
+    {
+      "id": "frk_ct_69ea8dc4c401188497d417c2",
+      "name": "AI System and Computing Resources"
+    },
+    {
+      "id": "frk_ct_69ea8dd0de2f746bb95acd4b",
+      "name": "AI System Deployment"
+    },
+    {
+      "id": "frk_ct_69ea8dcef8ff3c2ed55ea14a",
+      "name": "AI System Design and Development Documentation"
+    },
+    {
+      "id": "frk_ct_69ea8dd8aa91ceac379fa2c3",
+      "name": "AI System Documentation and Information for Users"
+    },
+    {
+      "id": "frk_ct_69ea8dd38d7945cd54758b49",
+      "name": "AI System Event Logging"
+    },
+    {
+      "id": "frk_ct_69ea8dbbf19cd6ba156e97bd",
+      "name": "AI System Impact Assessment Documentation"
+    },
+    {
+      "id": "frk_ct_69ea8db92daf193f6aba0348",
+      "name": "AI System Impact Assessment Process"
+    },
+    {
+      "id": "frk_ct_69ea8dd148f84ea6656bce7d",
+      "name": "AI System Operation and Monitoring"
+    },
+    {
+      "id": "frk_ct_69ea8dcd4cffcf9dd949ca02",
+      "name": "AI System Requirements and Specification"
+    },
+    {
+      "id": "frk_ct_69ea8dd28d9b23fd806840e7",
+      "name": "AI System Technical Documentation"
+    },
+    {
+      "id": "frk_ct_69ea8dcfcba021703a55bf97",
+      "name": "AI System Verification and Validation"
+    },
+    {
+      "id": "frk_ct_69ea8ddf8ba2e517ab4a366d",
+      "name": "AI Third-Party Responsibility Allocation"
+    },
+    {
+      "id": "frk_ct_69ea8dc3a37b3f833dc7d6f3",
+      "name": "AI Tooling Resources"
+    },
+    {
+      "id": "frk_ct_69ea8dc8ec4ced8e76b114c0",
+      "name": "AIMS Documented Information"
+    },
+    {
+      "id": "frk_ct_69ea8daea335821ba4148123",
+      "name": "AIMS Scope Definition"
+    },
+    {
+      "id": "frk_ct_69ea8dbccf28e8a000ba1934",
+      "name": "Assessing AI System Impact on Individuals and Groups"
+    },
+    {
+      "id": "frk_ct_69ea8dbdbd2ce5e539a326fa",
+      "name": "Assessing Societal Impacts of AI Systems"
+    },
+    {
+      "id": "frk_ct_683f42c71eea99f22f9df060",
+      "name": "Asset Inventory"
+    },
+    {
+      "id": "frk_ct_684073617d0706858cceb8c7",
+      "name": "Asset Return"
+    },
+    {
+      "id": "frk_ct_69dd33a74b6fd1d459c4af20",
+      "name": "ASV & PCI assessment interfaces"
+    },
+    {
+      "id": "frk_ct_69e914db8cd2039367ccbf0f",
+      "name": "ASV Scanning"
+    },
+    {
+      "id": "frk_ct_69efd5e395082fabf04e53b7",
+      "name": "Authorized Agent Process"
+    },
+    {
+      "id": "frk_ct_69e918eb8f6e80605d3fa3e5",
+      "name": "Automated Decision-Making Safeguards"
+    },
+    {
+      "id": "frk_ct_69eb87703649e5234a56d529",
+      "name": "Business Associate Management"
+    },
+    {
+      "id": "frk_ct_69e639b9d5ced482c12ae932",
+      "name": "Business Continuity & ICT Readiness"
+    },
+    {
+      "id": "frk_ct_69efd5c84ccf6f3f5bbe29bd",
+      "name": "CCPA Privacy Training Program"
+    },
+    {
+      "id": "frk_ct_69efd5a32e52c113f97254db",
+      "name": "CCPA-Compliant Privacy Policy"
+    },
+    {
+      "id": "frk_ct_683f4c30e2d3f1117fa58e13",
+      "name": "Change management"
+    },
+    {
+      "id": "frk_ct_69f3d98fd53148ecfa29efa0",
+      "name": "Complaint Investigation and Remediation"
+    },
+    {
+      "id": "frk_ct_683f4c9db20e7cf4a303af1f",
+      "name": "Compliance Register"
+    },
+    {
+      "id": "frk_ct_6840738800f98fa3c0f3a3ae",
+      "name": "Configuration & Patch Management"
+    },
+    {
+      "id": "frk_ct_69f3d97c03fd8213c05dbbde",
+      "name": "Consent Management Procedure"
+    },
+    {
+      "id": "frk_ct_69f3d97d7c0f6c1d629e8fbf",
+      "name": "Consent Withdrawal Mechanism"
+    },
+    {
+      "id": "frk_ct_69efd5c63e9c6fc1f8bec055",
+      "name": "Consumer Identity Verification Procedure"
+    },
+    {
+      "id": "frk_ct_69efd5cd34220c6db57b2710",
+      "name": "Consumer Request Records Retention"
+    },
+    {
+      "id": "frk_ct_69eb87701093fde54e1169dc",
+      "name": "Contingency Plan Operations"
+    },
+    {
+      "id": "frk_ct_69e6766bd483954a1f0b8445",
+      "name": "Continual Improvement & Corrective Action"
+    },
+    {
+      "id": "frk_ct_683f50556124040dc15d62cb",
+      "name": "Continuity-Time Security"
+    },
+    {
+      "id": "frk_ct_683f4ae4acbd63d0e558a6f5",
+      "name": "Credential Management"
+    },
+    {
+      "id": "frk_ct_69f3d9846258471679ba5a28",
+      "name": "Data Accuracy Policy"
+    },
+    {
+      "id": "frk_ct_69efd5e906d5418ee6b5dc6a",
+      "name": "Data Breach Notification Process"
+    },
+    {
+      "id": "frk_ct_69f897d2abcbb2cff15807ac",
+      "name": "Data Encryption"
+    },
+    {
+      "id": "frk_ct_69ea8dd44d3b368f85df728c",
+      "name": "Data for AI Development and Enhancement"
+    },
+    {
+      "id": "frk_ct_69e918e6d72a45b4f933a112",
+      "name": "Data Inventory and Mapping"
+    },
+    {
+      "id": "frk_ct_6849c343d7fbe4e71446ce78",
+      "name": "Data Masking"
+    },
+    {
+      "id": "frk_ct_69f3d9808d78f354f8f804b4",
+      "name": "Data Minimization Standard"
+    },
+    {
+      "id": "frk_ct_69e918e8cc289b978f31a12a",
+      "name": "Data Minimization, Encryption, and Pseudonymization"
+    },
+    {
+      "id": "frk_ct_684071e280c4e0f777b957f7",
+      "name": "Data Privacy"
+    },
+    {
+      "id": "frk_ct_69e918eaa930d07ea41dd0d0",
+      "name": "Data Processing Agreements with Third Parties"
+    },
+    {
+      "id": "frk_ct_69e918e9be6da6eba7d0ea4e",
+      "name": "Data Protection Impact Assessment Process"
+    },
+    {
+      "id": "frk_ct_683f44c8074680be528353c1",
+      "name": "Data Retention & Destruction"
+    },
+    {
+      "id": "frk_ct_69f3d982f21bf2e86c1ef98d",
+      "name": "Data Retention Schedule"
+    },
+    {
+      "id": "frk_ct_69e918eb724c553d2e5749ea",
+      "name": "Data Subject Rights Request Workflow"
+    },
+    {
+      "id": "frk_ct_69eb87717ae82d509fb927ed",
+      "name": "Device & Media Controls"
+    },
+    {
+      "id": "frk_ct_683f4dd564057a97ae323c9f",
+      "name": "Disaster Recovery Planning"
+    },
+    {
+      "id": "frk_ct_683f4457b14856e700c8c25b",
+      "name": "Disciplinary process"
+    },
+    {
+      "id": "frk_ct_69f3d97a7b80d8564339ffc5",
+      "name": "Documentation of Collection Purposes"
+    },
+    {
+      "id": "frk_ct_69dd33a73264cb77236367ba",
+      "name": "E-commerce & payment page integrity"
+    },
+    {
+      "id": "frk_ct_68e8079750107bcc63fc79d9",
+      "name": "Encrypted Data at Rest"
+    },
+    {
+      "id": "frk_ct_69e669af7fd9ef27754dc041",
+      "name": "Encrypted Data at Rest"
+    },
+    {
+      "id": "frk_ct_68407429371f33886d8ab80d",
+      "name": "Encryption Key Management"
+    },
+    {
+      "id": "frk_ct_684072e06f4a49ee669076cc",
+      "name": "Endpoint Protection"
+    },
+    {
+      "id": "frk_ct_68407406644c56d42eac3295",
+      "name": "Endpoint Security"
+    },
+    {
+      "id": "frk_ct_69f3d97fab711de81e99e786",
+      "name": "Express Consent for Sensitive Information"
+    },
+    {
+      "id": "frk_ct_69f3d981cefe4efa0efe0847",
+      "name": "Fair and Lawful Collection Procedure"
+    },
+    {
+      "id": "frk_ct_69becde6133891181f5fbfe1",
+      "name": "Fridge kept between 2-5"
+    },
+    {
+      "id": "frk_ct_69e918ea7bd6df3b3cdd2ddc",
+      "name": "GDPR Accountability Roles and Representatives"
+    },
+    {
+      "id": "frk_ct_69eb876ea13506b36fd63a3e",
+      "name": "HIPAA Security Program Governance"
+    },
+    {
+      "id": "frk_ct_69e639b958a20954c4afa186",
+      "name": "Human Resources Security"
+    },
+    {
+      "id": "frk_ct_69f3d98d61c5a3ef65a23e20",
+      "name": "Identity Verification for Access Requests"
+    },
+    {
+      "id": "frk_ct_683f4f59dea367ca96145e14",
+      "name": "Independent ISMS Review"
+    },
+    {
+      "id": "frk_ct_69f3d98c52d9000ac36cc791",
+      "name": "Individual Access Request Procedure"
+    },
+    {
+      "id": "frk_ct_69f3d98e0758e358b1f71b49",
+      "name": "Information Amendment and Refusal Procedure"
+    },
+    {
+      "id": "frk_ct_683f464bec8bea67de7b9c31",
+      "name": "Information Classification"
+    },
+    {
+      "id": "frk_ct_69ea8ddbb737f1f09bbcd82e",
+      "name": "Information for Interested Parties"
+    },
+    {
+      "id": "frk_ct_69f3d9891d140c7d3b7d542c",
+      "name": "Information Security Breach Response"
+    },
+    {
+      "id": "frk_ct_69f3d9864551468e007fc4d8",
+      "name": "Information Security Policy"
+    },
+    {
+      "id": "frk_ct_69e918e8c57e2f6756c995ca",
+      "name": "Information Security Policy and Awareness Training"
+    },
+    {
+      "id": "frk_ct_69ea8dde7453dbed221162e8",
+      "name": "Intended Use of AI System"
+    },
+    {
+      "id": "frk_ct_69e639b96ad6c5e729676acb",
+      "name": "Internal Audit & Management Review"
+    },
+    {
+      "id": "frk_ct_68b59e50eeb9f92ce425327c",
+      "name": "ISO"
+    },
+    {
+      "id": "frk_ct_68cc25ac90e3fe79c1beb98d",
+      "name": "ISO 42001"
+    },
+    {
+      "id": "frk_ct_691e53f4024ab9cc096bbc70",
+      "name": "ISO 9001"
+    },
+    {
+      "id": "frk_ct_69e918e7f403f696c2577de1",
+      "name": "Lawful Basis Register"
+    },
+    {
+      "id": "frk_ct_69e639b9148c96a37c8936fc",
+      "name": "Legal, Regulatory & IP Compliance"
+    },
+    {
+      "id": "frk_ct_683f41e775f4ca03d8f6bae2",
+      "name": "Management Security Accountability"
+    },
+    {
+      "id": "frk_ct_69efd5d1c0499ab2c136b759",
+      "name": "Minor Consent Management"
+    },
+    {
+      "id": "frk_ct_684070c1f0091d850df02e59",
+      "name": "Mobile Security"
+    },
+    {
+      "id": "frk_ct_68e1364141d03b5e6d70e728",
+      "name": "NEN 7510"
+    },
+    {
+      "id": "frk_ct_684070f0b4f6c2036306e23c",
+      "name": "Network Security"
+    },
+    {
+      "id": "frk_ct_69bed10053f2dfa2421b5e4e",
+      "name": "New Control"
+    },
+    {
+      "id": "frk_ct_69efd5e12d61c6019d213f60",
+      "name": "Notice at Collection"
+    },
+    {
+      "id": "frk_ct_69efd5e71ad52c5ab2ec069e",
+      "name": "Notice of Financial Incentive"
+    },
+    {
+      "id": "frk_ct_69f3d97b66301a97f6b8e4a3",
+      "name": "Notification of Purposes at Collection"
+    },
+    {
+      "id": "frk_ct_68e80a11f225cb2253e31fa0",
+      "name": "Organization Structure & Reporting Lines"
+    },
+    {
+      "id": "frk_ct_69dd3265dadac07cd88ae96c",
+      "name": "Payment terminals & POI"
+    },
+    {
+      "id": "frk_ct_68c1eb1c5f317f452216e2d7",
+      "name": "PCI"
+    },
+    {
+      "id": "frk_ct_69dd33a6c094ddd8a7268013",
+      "name": "PCI DSS program management"
+    },
+    {
+      "id": "frk_ct_69dd33a6d12ae294a95e9ac1",
+      "name": "PCI DSS scope & cardholder data environment (CDE)"
+    },
+    {
+      "id": "frk_ct_69e6766b4fd2b466bf7686cf",
+      "name": "Performance Monitoring & Measurement"
+    },
+    {
+      "id": "frk_ct_69f3d9854a029af0a24299a3",
+      "name": "Periodic Accuracy Review and Audit"
+    },
+    {
+      "id": "frk_ct_69efd5d2b0758b1e1c1b6d87",
+      "name": "Periodic CCPA Compliance Audit"
+    },
+    {
+      "id": "frk_ct_69e918e94e68c0fb15ee98d0",
+      "name": "Personal Data Breach Response Procedure"
+    },
+    {
+      "id": "frk_ct_69efd5a163fc3dcd87372ccc",
+      "name": "Personal Information Inventory and Data Flow Mapping"
+    },
+    {
+      "id": "frk_ct_683f43a65de3b6044e63220f",
+      "name": "Personnel Security"
+    },
+    {
+      "id": "frk_ct_69e639b8c95150ea34dc07bf",
+      "name": "Physical & Environmental Security"
+    },
+    {
+      "id": "frk_ct_69e65ef9c20933590d85cc31",
+      "name": "Physical & Environmental Security"
+    },
+    {
+      "id": "frk_ct_68407122565b1968676d93db",
+      "name": "Physical Access Control"
+    },
+    {
+      "id": "frk_ct_69eb877091d96bcaeae40219",
+      "name": "Physical Facility Security"
+    },
+    {
+      "id": "frk_ct_69f3d987482f9da8d882e592",
+      "name": "Physical Safeguards"
+    },
+    {
+      "id": "frk_ct_683f3ecd42e62fde624c59c1",
+      "name": "Policy Compliance"
+    },
+    {
+      "id": "frk_ct_69f3d9781dacd8da2864fd17",
+      "name": "Privacy Awareness and Training Program"
+    },
+    {
+      "id": "frk_ct_69e918e805776785f8f80a14",
+      "name": "Privacy by Design and by Default"
+    },
+    {
+      "id": "frk_ct_69f3d98f897fe2984e8163e5",
+      "name": "Privacy Complaint Procedure"
+    },
+    {
+      "id": "frk_ct_69f3d98b12951c79a1a1cf36",
+      "name": "Privacy Information Materials"
+    },
+    {
+      "id": "frk_ct_69e918e7f7739946f5034799",
+      "name": "Privacy Notice"
+    },
+    {
+      "id": "frk_ct_69f3d976c53fd192b48e6236",
+      "name": "Privacy Officer Designation"
+    },
+    {
+      "id": "frk_ct_69f3d977f853eaee5ff05fe7",
+      "name": "Privacy Policies and Procedures Framework"
+    },
+    {
+      "id": "frk_ct_69efd5ee3eb484fc081cd20a",
+      "name": "Prominent Privacy Policy Display"
+    },
+    {
+      "id": "frk_ct_69f3d98a95c7623e660bf33d",
+      "name": "Public Privacy Policy Publication"
+    },
+    {
+      "id": "frk_ct_69efd5c9acbf83b0a500050e",
+      "name": "Reasonable Security Safeguards for Personal Information"
+    },
+    {
+      "id": "frk_ct_6840705b6dcee0506dabacfb",
+      "name": "Regulatory Compliance"
+    },
+    {
+      "id": "frk_ct_683f45c5058c486f3fa5b7bc",
+      "name": "Regulatory Liaison"
+    },
+    {
+      "id": "frk_ct_6840731ae0b857152b35ca8f",
+      "name": "Remote-Work Security"
+    },
+    {
+      "id": "frk_ct_683f4b7614d209f8b6ffd477",
+      "name": "Resource Capacity Management"
+    },
+    {
+      "id": "frk_ct_69ea8dcb210958cb72f499f2",
+      "name": "Responsible AI Development Objectives"
+    },
+    {
+      "id": "frk_ct_69ea8dddda00d3522c538085",
+      "name": "Responsible AI Use Objectives"
+    },
+    {
+      "id": "frk_ct_69ea8ddce361e7f7eb0fc2b9",
+      "name": "Responsible AI Use Processes"
+    },
+    {
+      "id": "frk_ct_69efd5b1e6f19c87845f5939",
+      "name": "Right to Correct Process"
+    },
+    {
+      "id": "frk_ct_69efd5a87004249e7b6e62af",
+      "name": "Right to Delete Process"
+    },
+    {
+      "id": "frk_ct_69efd5a6e66d4c6c92fdd3df",
+      "name": "Right to Know Process"
+    },
+    {
+      "id": "frk_ct_69efd5b3cdfebf7ee46a5cf7",
+      "name": "Right to Limit Use of Sensitive Personal Information"
+    },
+    {
+      "id": "frk_ct_69efd5ad9dcc82739178f525",
+      "name": "Right to Non-Discrimination"
+    },
+    {
+      "id": "frk_ct_69efd5aac8f24094878ff701",
+      "name": "Right to Opt-Out of Sale or Sharing"
+    },
+    {
+      "id": "frk_ct_69eb876ec7f4fc346ff10b12",
+      "name": "Risk Analysis & Management"
+    },
+    {
+      "id": "frk_ct_683f484fc7b5506ab97c26af",
+      "name": "Risk Management"
+    },
+    {
+      "id": "frk_ct_69e639b90a3bf8c1443cbf5b",
+      "name": "Risk Management"
+    },
+    {
+      "id": "frk_ct_69e6766bd8ca18f572d4c34f",
+      "name": "Scope & Governance"
+    },
+    {
+      "id": "frk_ct_69e676cf185023edccc55755",
+      "name": "Scope & Governance"
+    },
+    {
+      "id": "frk_ct_69f3d983dce2e00263034481",
+      "name": "Secure Data Disposal and Anonymization"
+    },
+    {
+      "id": "frk_ct_68406fc94e08f884cc085ded",
+      "name": "Secure Data Transfer"
+    },
+    {
+      "id": "frk_ct_683f50aae46f5e4e096e6bb3",
+      "name": "Secure SDLC Integration"
+    },
+    {
+      "id": "frk_ct_69eb876f3270ed0b11233ece",
+      "name": "Security Awareness & Training"
+    },
+    {
+      "id": "frk_ct_683f4036b541126388e2989a",
+      "name": "Security Governance Roles"
+    },
+    {
+      "id": "frk_ct_683f47cc2faa426603d6bee8",
+      "name": "Security Incident Management"
+    },
+    {
+      "id": "frk_ct_684070831cc83c4ab4c2c4d8",
+      "name": "Security Logging"
+    },
+    {
+      "id": "frk_ct_683f46f3f181af3f93773c1d",
+      "name": "Security Monitoring & Detection"
+    },
+    {
+      "id": "frk_ct_684073ba24475a83ba048022",
+      "name": "Segregation of duties"
+    },
+    {
+      "id": "frk_ct_69efd5cb8d9092bd71665722",
+      "name": "Service Provider and Contractor Agreements"
+    },
+    {
+      "id": "frk_ct_683f4ef6c6a5481a377be413",
+      "name": "Standard Operating Procedures (SOPs)"
+    },
+    {
+      "id": "frk_ct_69e6766b7c6c7a214eea9c3c",
+      "name": "Statement of Applicability (SoA)"
+    },
+    {
+      "id": "frk_ct_69e639b9bf66b5a6ffb17d27",
+      "name": "Supplier & Third-Party Security"
+    },
+    {
+      "id": "frk_ct_683f48ee9534e1e0a088e922",
+      "name": "Supplier Security"
+    },
+    {
+      "id": "frk_ct_69f3d988421e37ecdc514fc0",
+      "name": "Technical Safeguards"
+    },
+    {
+      "id": "frk_ct_69f3d9793720eec4d4945150",
+      "name": "Third-Party Data Processing Agreements"
+    },
+    {
+      "id": "frk_ct_684073d541bfb8b8b777e529",
+      "name": "Threat intelligence"
+    },
+    {
+      "id": "frk_ct_69ea8dccd7c01c6d2503448b",
+      "name": "Trustworthy AI Design and Development Processes"
+    },
+    {
+      "id": "frk_ct_69f3d98163541c15c34554c0",
+      "name": "Use and Disclosure Limitation"
+    },
+    {
+      "id": "frk_ct_6849ba93636ff0155eb89158",
+      "name": "Utility Tool monitoring"
+    },
+    {
+      "id": "frk_ct_683f4d7360a876b972aba39a",
+      "name": "Vulnerability Management"
+    },
+    {
+      "id": "frk_ct_69eb876f6362393759ecd351",
+      "name": "Workforce Security & Sanctions"
+    }
+  ]
+}

@@ -1,0 +1,581 @@
+// Survey listing + "Start new survey" drawer. Rows navigate to
+// /surveys/:id (run page). System templates are filterable together
+// with tenant-owned ones.
+
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { Plus, ClipboardCheck, X } from 'lucide-react';
+import { Topbar } from '../components/shell/Topbar';
+import { Btn2 } from '../components/hifi/Btn2';
+import { Pill } from '../components/hifi/Pill';
+import {
+  surveysApi, surveyTemplatesApi, clustersApi, adminSurveyConfigApi, clusterSurveyScopesApi,
+  type BuiltInSurveyTypeOverride,
+} from '../lib/csmp-api';
+import { extractError } from '../lib/api';
+import {
+  SURVEY_TYPES, SURVEY_STATUSES,
+  type SurveyResponseSummary, type SurveyTemplateSummary,
+  type ClusterSummary, type SurveyType, type SurveyStatus,
+  type SurveyRating, type ClusterSurveyScopeSummary,
+} from '../lib/csmp-types';
+import { useT } from '../i18n';
+
+type CustomTypeLite = { code: string; name: string };
+
+// Render the survey-type code the admin's tenant-renamed name if they
+// overrode a built-in, else the custom-type name, else the raw enum
+// code humanised.
+function typeLabel(
+  code: string,
+  overrides: BuiltInSurveyTypeOverride[],
+  customTypes: CustomTypeLite[],
+): string {
+  const ov = overrides.find((o) => o.code === code);
+  if (ov?.name) return ov.name;
+  const ct = customTypes.find((c) => c.code === code);
+  if (ct) return ct.name;
+  return code.replace('_', ' ');
+}
+
+const RATING_VARIANT: Record<SurveyRating, 'ok' | 'info' | 'warn' | 'bad'> = {
+  STRONG: 'ok',
+  BASELINE: 'info',
+  BARELY_ADEQUATE: 'warn',
+  INADEQUATE: 'bad',
+};
+
+const STATUS_VARIANT: Record<SurveyStatus, 'warn' | 'info' | 'ok' | 'bad'> = {
+  DRAFT: 'warn',
+  SUBMITTED: 'info',
+  APPROVED: 'ok',
+  REJECTED: 'bad',
+};
+
+type Filters = { surveyType?: SurveyType; status?: SurveyStatus };
+
+export function SurveysPage() {
+  const t = useT();
+  const [items, setItems] = useState<SurveyResponseSummary[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [filters, setFilters] = useState<Filters>({});
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [overrides, setOverrides] = useState<BuiltInSurveyTypeOverride[]>([]);
+  const [customTypes, setCustomTypes] = useState<CustomTypeLite[]>([]);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [res, cfg] = await Promise.all([
+        surveysApi.list(filters),
+        surveysApi.enabledTypes(),
+      ]);
+      setItems(res.items);
+      setOverrides(cfg.builtInOverrides ?? []);
+      setCustomTypes(cfg.customTypes.map((c) => ({ code: c.code, name: c.name })));
+    } catch (err) {
+      setError(await extractError(err));
+    } finally {
+      setLoading(false);
+    }
+  }, [filters]);
+
+  useEffect(() => { void load(); }, [load]);
+
+  return (
+    <>
+      <Topbar
+        breadcrumbs={<span>{t('page.surveys.crumbs')}</span>}
+        title={t('page.surveys.title')}
+        subtitle={t('page.surveys.subtitle', { count: items.length })}
+        actions={
+          <Btn2
+            variant="primary"
+            leading={<Plus className="w-3.5 h-3.5" />}
+            onClick={() => setDrawerOpen(true)}
+          >
+            {t('page.surveys.start')}
+          </Btn2>
+        }
+      />
+
+      <div className="p-6 space-y-4">
+        {error && (
+          <div className="text-[12px] text-bad bg-bad-bg border border-bad/20 rounded-r2 px-3 py-2">
+            {error}
+          </div>
+        )}
+
+        <div className="flex flex-wrap items-center gap-2 bg-white border border-n-150 rounded-r3 shadow-sh1 p-3">
+          <FilterSelect
+            label={t('common.type')}
+            value={filters.surveyType ?? ''}
+            options={SURVEY_TYPES.map((st) => ({ value: st, label: typeLabel(st, overrides, customTypes) }))}
+            onChange={(v) => setFilters((f) => ({ ...f, surveyType: (v as SurveyType) || undefined }))}
+            allLabel={t('common.all')}
+          />
+          <FilterSelect
+            label={t('common.status')}
+            value={filters.status ?? ''}
+            options={SURVEY_STATUSES.map((s) => ({ value: s, label: t(`enum.surveyStatus.${s}`) }))}
+            onChange={(v) => setFilters((f) => ({ ...f, status: (v as SurveyStatus) || undefined }))}
+            allLabel={t('common.all')}
+          />
+          {(filters.surveyType || filters.status) && (
+            <button
+              type="button"
+              onClick={() => setFilters({})}
+              className="text-[11.5px] text-n-500 hover:text-n-800 underline ml-auto"
+            >
+              {t('common.clearFilters')}
+            </button>
+          )}
+        </div>
+
+        {loading ? (
+          <div className="bg-white border border-n-150 rounded-r3 shadow-sh1 p-10 text-center text-[12.5px] text-n-500">
+            {t('common.loading')}
+          </div>
+        ) : items.length === 0 ? (
+          <div className="bg-white border border-n-150 rounded-r3 shadow-sh1 p-10 text-center">
+            <div className="inline-flex items-center justify-center w-10 h-10 rounded-r2 bg-n-75 text-n-500 mb-3">
+              <ClipboardCheck className="w-5 h-5" />
+            </div>
+            <div className="text-[13px] font-medium text-n-800 mb-1">{t('page.surveys.empty')}</div>
+            <div className="text-[12px] text-n-500 mb-4">
+              {t('page.surveys.emptyLong')}
+            </div>
+            <Btn2
+              variant="primary"
+              leading={<Plus className="w-3.5 h-3.5" />}
+              onClick={() => setDrawerOpen(true)}
+            >
+              {t('page.surveys.start')}
+            </Btn2>
+          </div>
+        ) : (
+          <div className="bg-white border border-n-150 rounded-r3 shadow-sh1 overflow-hidden">
+            <table className="w-full text-[12.5px]">
+              <thead className="bg-n-50 text-[11px] font-mono uppercase text-n-500 tracking-[0.4px]">
+                <tr>
+                  <th className="text-left px-4 py-2">{t('page.surveys.colTemplate')}</th>
+                  <th className="text-left px-4 py-2">{t('page.surveys.colCluster')}</th>
+                  <th className="text-left px-4 py-2">{t('page.surveys.colType')}</th>
+                  <th className="text-left px-4 py-2">{t('common.status')}</th>
+                  <th className="text-left px-4 py-2">{t('page.surveys.colRating')}</th>
+                  <th className="text-left px-4 py-2">{t('page.surveys.colScore')}</th>
+                  <th className="text-left px-4 py-2">{t('page.surveys.colConducted')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {items.map((s) => (
+                  <tr key={s.id} className="border-t border-n-100 hover:bg-n-50">
+                    <td className="px-4 py-2.5">
+                      <Link
+                        to="/surveys/$id"
+                        params={{ id: s.id }}
+                        className="font-medium text-n-900 hover:text-a-700"
+                      >
+                        {s.templateName ?? s.scopeName ?? '—'}
+                      </Link>
+                      <div className="flex gap-1.5 mt-0.5 items-center">
+                        {s.clusterSurveyScopeId && <Pill variant="accent">scope</Pill>}
+                        {s.conductedByName && (
+                          <div className="text-[10.5px] font-mono text-n-500 tracking-[0.4px]">
+                            {t('common.by')} {s.conductedByName}
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-4 py-2.5 text-n-700">{s.clusterName ?? '—'}</td>
+                    <td className="px-4 py-2.5">
+                      <Pill variant="accent">{typeLabel(s.surveyType, overrides, customTypes)}</Pill>
+                    </td>
+                    <td className="px-4 py-2.5">
+                      <Pill variant={STATUS_VARIANT[s.status]}>{t(`enum.surveyStatus.${s.status}`)}</Pill>
+                    </td>
+                    <td className="px-4 py-2.5">
+                      {s.rating ? (
+                        <Pill variant={RATING_VARIANT[s.rating]}>{t(`enum.vulnerabilityRating.${s.rating}`)}</Pill>
+                      ) : (
+                        <span className="text-n-400">—</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-2.5 text-n-700">
+                      {s.scorePct == null ? '—' : `${s.scorePct.toFixed(1)}%`}
+                    </td>
+                    <td className="px-4 py-2.5 text-n-600 text-[11.5px]">
+                      {new Date(s.conductedAt).toLocaleDateString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {drawerOpen && (
+        <StartSurveyDrawer
+          onClose={() => setDrawerOpen(false)}
+          onCreated={(id) => {
+            setDrawerOpen(false);
+            void load();
+            window.setTimeout(() => {
+              window.location.href = `/surveys/${id}`;
+            }, 50);
+          }}
+        />
+      )}
+    </>
+  );
+}
+
+function FilterSelect({
+  label, value, options, onChange, allLabel,
+}: {
+  label: string;
+  value: string;
+  options: Array<{ value: string; label: string }>;
+  onChange: (v: string) => void;
+  allLabel: string;
+}) {
+  return (
+    <label className="inline-flex items-center gap-1.5 text-[11.5px] text-n-700">
+      <span className="font-mono uppercase text-[10px] text-n-500 tracking-[0.4px]">{label}</span>
+      <select
+        className="h-7 border border-n-200 rounded-r1 px-2 text-[12px] bg-white"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      >
+        <option value="">{allLabel}</option>
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>{o.label}</option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+function StartSurveyDrawer({
+  onClose, onCreated,
+}: { onClose: () => void; onCreated: (id: string) => void }) {
+  const t = useT();
+  const navigate = useNavigate();
+  void navigate;
+
+  type Mode = 'scope' | 'template';
+  const [mode, setMode] = useState<Mode>('scope');
+  const [templates, setTemplates] = useState<SurveyTemplateSummary[]>([]);
+  const [clusters, setClusters] = useState<ClusterSummary[]>([]);
+  const [enabledTypes, setEnabledTypes] = useState<string[] | null>(null);
+  const [overrides, setOverrides] = useState<BuiltInSurveyTypeOverride[]>([]);
+  const [customTypes, setCustomTypes] = useState<CustomTypeLite[]>([]);
+  const [clusterId, setClusterId] = useState('');
+  const [templateId, setTemplateId] = useState('');
+  const [scopes, setScopes] = useState<ClusterSurveyScopeSummary[]>([]);
+  const [scopeId, setScopeId] = useState('');
+  const [scopesLoading, setScopesLoading] = useState(false);
+  const [evidenceSource, setEvidenceSource] = useState('');
+  const [typeFilter, setTypeFilter] = useState<SurveyType | ''>('');
+  const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  useEffect(() => {
+    void (async () => {
+      try {
+        const [tpl, cls, cfg] = await Promise.all([
+          surveyTemplatesApi.list({ activeOnly: true }),
+          clustersApi.list(),
+          surveysApi.enabledTypes(),
+        ]);
+        setTemplates(tpl.items);
+        setClusters(cls.items);
+        setEnabledTypes(cfg.enabledTypes);
+        setOverrides(cfg.builtInOverrides ?? []);
+        setCustomTypes(cfg.customTypes.map((c) => ({ code: c.code, name: c.name })));
+      } catch (e) {
+        setErr(await extractError(e));
+      }
+    })();
+  }, []);
+
+  const typeOptions = useMemo<SurveyType[]>(() => {
+    if (!enabledTypes) return SURVEY_TYPES;
+    return SURVEY_TYPES.filter((t) => enabledTypes.includes(t));
+  }, [enabledTypes]);
+
+  const templatesByEnabledType = useMemo(
+    () => (enabledTypes
+      ? templates.filter((t) => enabledTypes.includes(t.surveyType))
+      : templates),
+    [templates, enabledTypes],
+  );
+
+  const visibleTemplates = useMemo(
+    () => (typeFilter
+      ? templatesByEnabledType.filter((t) => t.surveyType === typeFilter)
+      : templatesByEnabledType),
+    [templatesByEnabledType, typeFilter],
+  );
+
+  // When the selected cluster changes (and we're in scope mode), refresh
+  // the list of APPROVED scopes available for it.
+  useEffect(() => {
+    if (mode !== 'scope' || !clusterId) {
+      setScopes([]);
+      setScopeId('');
+      return;
+    }
+    setScopesLoading(true);
+    setScopeId('');
+    void (async () => {
+      try {
+        const r = await clusterSurveyScopesApi.list({ clusterId, status: 'APPROVED' });
+        setScopes(r.items);
+      } catch (e) {
+        setErr(await extractError(e));
+      } finally {
+        setScopesLoading(false);
+      }
+    })();
+  }, [mode, clusterId]);
+
+  async function submit() {
+    setSaving(true);
+    setErr(null);
+    try {
+      const created = mode === 'scope'
+        ? await surveysApi.fromScope({
+            scopeId,
+            evidenceSource: evidenceSource.trim() || undefined,
+          })
+        : await surveysApi.create({
+            clusterId,
+            templateId,
+            evidenceSource: evidenceSource.trim() || undefined,
+          });
+      onCreated(created.id);
+    } catch (e) {
+      setErr(await extractError(e));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const canSave = mode === 'scope'
+    ? !!scopeId && !saving
+    : !!clusterId && !!templateId && !saving;
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      className="fixed inset-0 z-50 bg-black/40 flex items-center justify-end"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white h-full w-full max-w-[560px] shadow-sh3 flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between px-5 py-3 border-b border-n-150">
+          <div className="text-[14px] font-semibold text-n-900">{t('page.surveys.drawerTitle')}</div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-7 h-7 flex items-center justify-center text-n-500 hover:bg-n-100 rounded-r1"
+            aria-label="Close"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+          {err && (
+            <div className="text-[12px] text-bad bg-bad-bg border border-bad/20 rounded-r2 px-3 py-2">
+              {err}
+            </div>
+          )}
+
+          <div className="inline-flex bg-n-75 rounded-r1 p-0.5 text-[12px]">
+            {(['scope', 'template'] as const).map((m) => (
+              <button
+                key={m}
+                type="button"
+                onClick={() => setMode(m)}
+                className={[
+                  'px-3 h-7 rounded-r1 font-medium transition-colors',
+                  mode === m ? 'bg-white text-n-900 shadow-sh1' : 'text-n-600 hover:text-n-900',
+                ].join(' ')}
+              >
+                {m === 'scope' ? t('page.surveys.modeScope') : t('page.surveys.modeTemplate')}
+              </button>
+            ))}
+          </div>
+
+          <Field label={t('page.surveys.fieldCluster')}>
+            <select
+              className="w-full border border-n-200 rounded-r1 h-8 px-2 text-[12.5px] bg-white"
+              value={clusterId}
+              onChange={async (e) => {
+                const id = e.target.value;
+                setClusterId(id);
+                if (!id) return;
+                try {
+                  const s = await adminSurveyConfigApi.suggest(id);
+                  if (s.reason !== 'FALLBACK') {
+                    setTypeFilter(s.surveyType);
+                    if (s.templateId) setTemplateId(s.templateId);
+                  }
+                } catch {
+                  // suggestion is best-effort
+                }
+              }}
+            >
+              <option value="">{t('page.surveys.pickCluster')}</option>
+              {clusters.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name} · {c.clusterType}
+                </option>
+              ))}
+            </select>
+          </Field>
+
+          {mode === 'template' && (
+            <>
+              <Field label={t('page.surveys.fieldTypeFilter')}>
+                <select
+                  className="w-full border border-n-200 rounded-r1 h-8 px-2 text-[12.5px] bg-white"
+                  value={typeFilter}
+                  onChange={(e) => {
+                    setTypeFilter(e.target.value as SurveyType | '');
+                    setTemplateId('');
+                  }}
+                >
+                  <option value="">{t('page.surveys.allTypes')}</option>
+                  {typeOptions.map((t) => (
+                    <option key={t} value={t}>{typeLabel(t, overrides, customTypes)}</option>
+                  ))}
+                </select>
+              </Field>
+
+              <Field label={t('page.surveys.fieldTemplate')}>
+                <div className="space-y-1.5">
+                  {visibleTemplates.length === 0 ? (
+                    <div className="text-[11.5px] text-n-500 bg-n-50 rounded-r1 px-2 py-2">
+                      {t('page.surveys.noTemplatesMatch')}
+                    </div>
+                  ) : (
+                    visibleTemplates.map((tpl) => {
+                      const active = tpl.id === templateId;
+                      return (
+                        <button
+                          key={tpl.id}
+                          type="button"
+                          onClick={() => setTemplateId(tpl.id)}
+                          className={[
+                            'w-full text-left border rounded-r2 px-3 py-2',
+                            active
+                              ? 'border-a-300 bg-a-50'
+                              : 'border-n-200 bg-white hover:bg-n-50',
+                          ].join(' ')}
+                        >
+                          <div className="flex items-center gap-2">
+                            <div className="font-medium text-[12.5px] text-n-900 flex-1">
+                              {tpl.name}
+                            </div>
+                            {tpl.isSystem && <Pill variant="outline">system</Pill>}
+                            <Pill variant="accent">{typeLabel(tpl.surveyType, overrides, customTypes)}</Pill>
+                          </div>
+                          {tpl.description && (
+                            <div className="text-[11px] text-n-500 mt-0.5">{tpl.description}</div>
+                          )}
+                          <div className="text-[10.5px] font-mono text-n-500 tracking-[0.4px] mt-1">
+                            {t('page.surveys.drawerQuestions', { count: tpl.questionCount })} · {tpl.requiresPhysical ? t('page.surveys.requiresSiteVisit') : t('page.surveys.remoteOk')}
+                          </div>
+                        </button>
+                      );
+                    })
+                  )}
+                </div>
+              </Field>
+            </>
+          )}
+
+          {mode === 'scope' && (
+            <Field label={t('page.surveys.fieldApprovedScope')}>
+              <div className="space-y-1.5">
+                {!clusterId && (
+                  <div className="text-[11.5px] text-n-500 bg-n-50 rounded-r1 px-2 py-2">
+                    {t('page.surveys.pickClusterFirst')}
+                  </div>
+                )}
+                {clusterId && scopesLoading && (
+                  <div className="text-[11.5px] text-n-500">{t('page.surveys.loadingScopes')}</div>
+                )}
+                {clusterId && !scopesLoading && scopes.length === 0 && (
+                  <div className="text-[11.5px] text-n-500 bg-n-50 rounded-r1 px-2 py-2">
+                    {t('page.surveys.noApprovedScopes')}
+                  </div>
+                )}
+                {scopes.map((s) => {
+                  const active = s.id === scopeId;
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => setScopeId(s.id)}
+                      className={[
+                        'w-full text-left border rounded-r2 px-3 py-2',
+                        active ? 'border-a-300 bg-a-50' : 'border-n-200 bg-white hover:bg-n-50',
+                      ].join(' ')}
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className="font-medium text-[12.5px] text-n-900 flex-1">{s.name}</div>
+                        <Pill variant="outline">v{s.version}</Pill>
+                        {s.evidenceTypes.map((et) => (
+                          <Pill key={et} variant="accent">{typeLabel(et, overrides, customTypes)}</Pill>
+                        ))}
+                      </div>
+                      <div className="text-[10.5px] font-mono text-n-500 tracking-[0.4px] mt-1">
+                        {t('page.surveys.drawerScopeItems', { count: s.itemCount })} · {s.aggregationMode === 'AGGREGATE_BY_CM_TEMPLATE' ? t('page.surveys.aggregated') : t('page.surveys.perInstance')}
+                        {s.approvedAt && ` · ${t('page.surveys.approvedOn', { date: new Date(s.approvedAt).toLocaleDateString() })}`}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </Field>
+          )}
+
+          <Field label={t('page.surveys.fieldEvidenceSource')}>
+            <input
+              className="w-full border border-n-200 rounded-r1 h-8 px-2 text-[12.5px]"
+              placeholder={t('page.surveys.evidenceSourcePh')}
+              value={evidenceSource}
+              onChange={(e) => setEvidenceSource(e.target.value)}
+            />
+          </Field>
+        </div>
+
+        <div className="flex items-center justify-end gap-2 border-t border-n-150 px-5 py-3">
+          <Btn2 variant="ghost" onClick={onClose} disabled={saving}>{t('common.cancel')}</Btn2>
+          <Btn2 variant="primary" onClick={submit} disabled={!canSave}>
+            {saving ? t('common.creating') : t('page.surveys.createDraft')}
+          </Btn2>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className="block">
+      <div className="text-[10px] font-mono uppercase text-n-500 tracking-[0.4px] mb-1">{label}</div>
+      {children}
+    </label>
+  );
+}
