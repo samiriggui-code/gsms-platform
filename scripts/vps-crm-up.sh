@@ -18,19 +18,19 @@ if [ "$need_regen" = "1" ]; then
   CRON=$(openssl rand -hex 16)
   BRIDGE=$(openssl rand -hex 16)
   cat > .env <<EOF
-CRM_DOMAIN=crm.global-it-ss.com
-APP_URL=https://crm.global-it-ss.com
+CRM_DOMAIN=crm.gsms-security.com
+APP_URL=https://crm.gsms-security.com
 POSTGRES_PASSWORD=${PW}
 DATABASE_URL=postgresql://postgres:${PW}@db:5432/crm?schema=public
 NEXTAUTH_SECRET=${SECRET}
-NEXTAUTH_URL=https://crm.global-it-ss.com
+NEXTAUTH_URL=https://crm.gsms-security.com
 ALLOWED_SIGN_IN=
 AGENT_BRIDGE_SECRET=${BRIDGE}
 CRON_SECRET=${CRON}
 MINIO_ROOT_USER=crmminio
 MINIO_ROOT_PASSWORD=${PW}
 S3_BUCKET=crm-blob
-S3_PUBLIC_URL=https://crm.global-it-ss.com/blob/crm-blob
+S3_PUBLIC_URL=https://crm.gsms-security.com/blob/crm-blob
 CRM_TELEMETRY_DISABLED=1
 EOF
   echo "wrote lab .env"

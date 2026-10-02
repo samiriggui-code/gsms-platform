@@ -2,18 +2,18 @@
 
 **VPS :** `187.77.166.124` · Traefik déjà en place (Comp).  
 **NUC :** lab `http://192.168.1.37` via Caddy — DB `crm` séparée de Comp AI.  
-**FQDN :** `crm.global-it-ss.com` (A encore NUC jusqu’au GO).
+**FQDN :** `crm.gsms-security.com` (A encore NUC jusqu’au GO).
 
 ## Ordre migration GSMS (après Comp)
 
 | # | App | FQDN | État |
 |---|-----|------|------|
-| 1 | Comp AI | `comp.global-it-ss.com` | **VPS + DNS** |
-| 2 | Comp CRM / Eve | `crm.global-it-ss.com` | en cours |
-| 3 | TenderAI MCP | `mcp.global-it-ss.com` | à faire |
-| 4 | QAtrial | `qatrial.global-it-ss.com` | à faire |
-| 5 | GRACE | `grace.global-it-ss.com` | à faire |
-| — | InvoicePilot vitrine | `global-it-ss.com` | déjà VPS |
+| 1 | Comp AI | `comp.gsms-security.com` | **VPS + DNS** |
+| 2 | Comp CRM / Eve | `crm.gsms-security.com` | en cours |
+| 3 | TenderAI MCP | `mcp.gsms-security.com` | à faire |
+| 4 | QAtrial | `qatrial.gsms-security.com` | à faire |
+| 5 | GRACE | `grace.gsms-security.com` | à faire |
+| — | InvoicePilot vitrine | `gsms-security.com` | déjà VPS |
 | — | Hub / Memory / Tencent | `hub` / `memory` | **reste NUC** |
 
 ## État (2026-09-05)

@@ -4,21 +4,21 @@ cd /opt/gsms/crm
 # Fix required ALLOWED_SIGN_IN without dumping secrets
 if grep -q '^ALLOWED_SIGN_IN=$' .env 2>/dev/null || ! grep -q '^ALLOWED_SIGN_IN=' .env 2>/dev/null; then
   if grep -q '^ALLOWED_SIGN_IN=' .env; then
-    sed -i 's/^ALLOWED_SIGN_IN=.*/ALLOWED_SIGN_IN=global-it-ss.com/' .env
+    sed -i 's/^ALLOWED_SIGN_IN=.*/ALLOWED_SIGN_IN=gsms-security.com/' .env
   else
-    echo 'ALLOWED_SIGN_IN=global-it-ss.com' >> .env
+    echo 'ALLOWED_SIGN_IN=gsms-security.com' >> .env
   fi
   echo "set ALLOWED_SIGN_IN"
 else
   # empty quoted value
-  sed -i 's/^ALLOWED_SIGN_IN=""$/ALLOWED_SIGN_IN=global-it-ss.com/' .env
-  sed -i "s/^ALLOWED_SIGN_IN=''$/ALLOWED_SIGN_IN=global-it-ss.com/" .env
+  sed -i 's/^ALLOWED_SIGN_IN=""$/ALLOWED_SIGN_IN=gsms-security.com/' .env
+  sed -i "s/^ALLOWED_SIGN_IN=''$/ALLOWED_SIGN_IN=gsms-security.com/" .env
   echo "normalized ALLOWED_SIGN_IN"
 fi
 # ensure non-empty
 val=$(grep '^ALLOWED_SIGN_IN=' .env | head -1 | cut -d= -f2- | tr -d '"' | tr -d "'")
 if [ -z "$val" ]; then
-  sed -i 's/^ALLOWED_SIGN_IN=.*/ALLOWED_SIGN_IN=global-it-ss.com/' .env
+  sed -i 's/^ALLOWED_SIGN_IN=.*/ALLOWED_SIGN_IN=gsms-security.com/' .env
   echo "forced ALLOWED_SIGN_IN"
 fi
 grep -c '^ALLOWED_SIGN_IN=.' .env || true

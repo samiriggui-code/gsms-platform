@@ -25,7 +25,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.mcp.entrypoints=websecure
-      - traefik.http.routers.mcp.rule=Host(`mcp.global-it-ss.com`)
+      - traefik.http.routers.mcp.rule=Host(`mcp.gsms-security.com`)
       - traefik.http.routers.mcp.tls.certresolver=letsencrypt
       - traefik.http.services.mcp.loadbalancer.server.port=8090
 

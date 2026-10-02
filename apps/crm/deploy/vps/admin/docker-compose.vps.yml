@@ -1,5 +1,5 @@
 # GSMS Admin sondes — VPS (nginx + probe cron)
-# Smoke: http://187.77.166.124:3055 — FQDN admin.global-it-ss.com
+# Smoke: http://187.77.166.124:3055 — FQDN admin.gsms-security.com
 name: gsms-admin
 
 services:
@@ -15,12 +15,12 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.gsms-admin.entrypoints=websecure
-      - traefik.http.routers.gsms-admin.rule=Host(`admin.global-it-ss.com`)
+      - traefik.http.routers.gsms-admin.rule=Host(`admin.gsms-security.com`)
       - traefik.http.routers.gsms-admin.tls.certresolver=letsencrypt
       - traefik.http.services.gsms-admin.loadbalancer.server.port=80
-      - traefik.http.middlewares.gsms-admin-auth.basicauth.users=admin@global-it-ss.com:$$2a$$14$$cm1pc4cnd5RRmvk50ofr4uloTyUYiybvQtbVyO4N50G22tLVKfGNa
+      - traefik.http.middlewares.gsms-admin-auth.basicauth.users=admin@gsms-security.com:$$2a$$14$$cm1pc4cnd5RRmvk50ofr4uloTyUYiybvQtbVyO4N50G22tLVKfGNa
       - traefik.http.routers.gsms-admin-status.entrypoints=websecure
-      - traefik.http.routers.gsms-admin-status.rule=Host(`admin.global-it-ss.com`) && Path(`/status.json`)
+      - traefik.http.routers.gsms-admin-status.rule=Host(`admin.gsms-security.com`) && Path(`/status.json`)
       - traefik.http.routers.gsms-admin-status.tls.certresolver=letsencrypt
       - traefik.http.routers.gsms-admin-status.middlewares=gsms-admin-auth
       - traefik.http.routers.gsms-admin-status.priority=100

@@ -37,7 +37,7 @@ services:
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
       PORT: '3001'
       HOST: '0.0.0.0'
-      CORS_ORIGIN: ${CORS_ORIGIN:-https://grace.global-it-ss.com}
+      CORS_ORIGIN: ${CORS_ORIGIN:-https://grace.gsms-security.com}
     networks:
       - grace
 
@@ -59,7 +59,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.grace.entrypoints=websecure
-      - traefik.http.routers.grace.rule=Host(`grace.global-it-ss.com`)
+      - traefik.http.routers.grace.rule=Host(`grace.gsms-security.com`)
       - traefik.http.routers.grace.tls.certresolver=letsencrypt
       - traefik.http.services.grace.loadbalancer.server.port=80
 
