@@ -64,6 +64,9 @@ services:
       # Le navigateur ne parle qu'au web ; le web relaie vers le Core sur le réseau interne.
       CORE_API_URL: http://core:8000
       CORE_TIMEOUT_MS: ${CORE_TIMEOUT_MS:-5000}
+      # Obligatoire derrière Traefik : Next écoute sur 0.0.0.0, sans ça les redirects
+      # partent vers https://0.0.0.0:3000/…
+      APP_URL: ${APP_URL:-http://localhost:${WEB_PORT:-3100}}
     ports:
       - "127.0.0.1:${WEB_PORT:-3100}:3000"
 

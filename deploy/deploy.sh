@@ -53,6 +53,7 @@ if [[ ! -f .env ]]; then
   cat > .env <<ENV
 # Généré par deploy/deploy.sh le $(date -u +%Y-%m-%d). Ne jamais committer ce fichier.
 DOMAIN=$DOMAIN
+APP_URL=https://$DOMAIN
 POSTGRES_PASSWORD=$(secret)
 GSMS_JWT_SECRET=$(secret)
 # Secrets HMAC des webhooks entrants (GRACE, QAtrial, CRM → Core), à recopier dans chaque application.
@@ -73,6 +74,7 @@ ENV
   echo ".env créé (secrets générés, lisible par vous seul)."
 fi
 set_env DOMAIN "$DOMAIN"
+set_env APP_URL "https://$DOMAIN"
 
 # Les ports locaux ne doivent pas déjà être pris par une autre application (ex. gsms-qualiopi : 3000 / 8000).
 env_value() { sed -nE "s/^$1=//p" .env | tail -1; }

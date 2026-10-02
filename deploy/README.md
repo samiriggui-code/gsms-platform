@@ -61,6 +61,7 @@ TRAEFIK_ENTRYPOINT=websecure TRAEFIK_CERTRESOLVER=letsencrypt ./deploy/deploy.sh
 - **Le certificat ne couvre que `gsms-security.com`.** Pour `www.gsms-security.com`, créer d'abord son DNS, puis ajouter `|| Host(\`www.${DOMAIN}\`)` à la règle du routeur. Sinon Let's Encrypt échoue pour tout le certificat.
 - Le nom de projet est fixé (`name: gsms-platform` dans `docker-compose.yml`) : le réseau s'appelle toujours `gsms-platform_default`, quel que soit le dossier du clone.
 - **Healthcheck :** Traefik ne route vers le web qu'une fois son healthcheck vert. Pendant une mise à jour, le site répond 404 environ 10 à 20 secondes, le temps que le nouveau conteneur démarre.
+- **`APP_URL=https://$DOMAIN`** est écrit dans `.env` par `deploy.sh` et injecté dans le conteneur `web`. Sans ça, Next (HOSTNAME=0.0.0.0) renvoie des redirects vers `https://0.0.0.0:3000/…` (logout, garde `/app`).
 - **Docker 29 et Traefik < 3.6 :** Docker 29 refuse l'ancienne API qu'utilisent les Traefik 3.5 et antérieurs. Le fournisseur Docker de Traefik échoue alors (« client version 1.24 is too old ») et **aucun site** n'est plus routé. Si Docker est mis à jour sur le VPS, passer Traefik en v3.6 ou plus.
 
 ## Mettre à jour

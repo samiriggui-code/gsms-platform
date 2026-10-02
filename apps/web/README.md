@@ -56,7 +56,7 @@ Stack : Next.js 16 (App Router, Turbopack), React 19, TypeScript strict, Tailwin
 |---|---|
 | `POST /api/intake` | Valide la demande (pot de miel, champs requis), puis la relaie au Core avec `Idempotency-Key`. Renvoie 503 si le Core est indisponible. |
 | `POST /api/auth/login` | Relaie l'authentification au Core et pose les cookies `gsms_session` (httpOnly, SameSite=Lax, Secure en production) et `gsms_ws` |
-| `POST /api/auth/logout` | Révoque la session côté Core (au mieux), efface les cookies et redirige vers `/login` |
+| `POST /api/auth/logout` | Révoque la session côté Core (au mieux), efface les cookies et redirige vers la landing `/` |
 | `GET /api/auth/logout?next=` | Nettoie la session quand le Core renvoie 401 (jeton expiré) |
 | `POST /api/session/workspace` | Mémorise le site courant choisi dans le sélecteur |
 | `/api/core/[...path]` | Relais authentifié navigateur → Core, réservé aux préfixes `me` et `workspaces/` |
