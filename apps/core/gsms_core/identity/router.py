@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from gsms_core.deps import Principal, get_current_principal, get_db, get_settings_dep
 from gsms_core.identity import service
+from gsms_core.identity.models import Organization
 from gsms_core.identity.schemas import LoginIn, MeOut, SwitchWorkspaceIn, TokenOut, WorkspaceOut
 from gsms_core.security import TokenClaims, create_access_token
 from gsms_core.settings import Settings
@@ -65,6 +66,7 @@ def me(principal: Principal = Depends(get_current_principal), db: Session = Depe
         name=user.name,
         locale=user.locale,
         org_id=principal.claims.org_id,
+        organization_name=org.name if (org := db.get(Organization, principal.claims.org_id)) else None,
         workspace_id=principal.claims.workspace_id,
         role=principal.claims.role,
         workspaces=[_ws_out(a) for a in service.accessible_workspaces(db, user.id)],

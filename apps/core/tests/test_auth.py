@@ -26,6 +26,7 @@ def test_login_token_claims_and_me(client, demo, settings):
 
     me = client.get("/api/v1/auth/me", headers=headers).json()
     assert me["email"] == EMAILS["lyon"]
+    assert me["organization_name"] == "ABC Retail"
     assert [w["id"] for w in me["workspaces"]] == [demo.lyon]
 
 

@@ -41,6 +41,7 @@ class MeOut(BaseModel):
     name: str
     locale: str
     org_id: uuid.UUID
+    organization_name: str | None = None
     workspace_id: uuid.UUID | None
     role: Role
     workspaces: list[WorkspaceOut]
