@@ -1,0 +1,8 @@
+# Serveur : réglages communs, ajoutés au docker-compose.yml de la racine avec l'un des deux fichiers de
+# branchement Traefik (docker-compose.traefik.yml ou docker-compose.traefik-host.yml). deploy/deploy.sh choisit
+# et l'écrit dans .env (COMPOSE_FILE) : ensuite « docker compose » suffit.
+services:
+  core:
+    environment:
+      # Refuse de démarrer avec un secret JWT de développement ou une base SQLite.
+      GSMS_ENV: prod

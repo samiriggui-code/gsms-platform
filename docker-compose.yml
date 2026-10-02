@@ -1,0 +1,72 @@
+# GSMS Platform — base PostgreSQL, Core (FastAPI), Web (Next.js).
+# Sur le VPS : ./deploy/deploy.sh gsms-security.com (ajoute deploy/docker-compose.prod.yml + le branchement Traefik).
+# Secrets obligatoires (pas de valeur par défaut) : POSTGRES_PASSWORD, GSMS_JWT_SECRET. Voir deploy/README.md.
+#
+# Nom de projet fixe : le réseau interne s'appelle toujours « gsms-platform_default », quel que soit le dossier
+# du clone. C'est ce réseau que Traefik (mode host) rejoint ; aucun réseau partagé avec les autres applications.
+name: gsms-platform
+
+services:
+  db:
+    # PostgreSQL 16 avec l'extension pgvector disponible (recherche documentaire du Core, migrations à venir).
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: gsms_core
+      POSTGRES_USER: gsms
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD est obligatoire}
+    volumes:
+      - gsms-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gsms -d gsms_core"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  core:
+    build:
+      context: ./apps/core
+      additional_contexts:
+        shared: ./shared
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      GSMS_ENV: ${GSMS_ENV:-prod}
+      GSMS_DATABASE_URL: postgresql+psycopg://gsms:${POSTGRES_PASSWORD}@db:5432/gsms_core
+      GSMS_JWT_SECRET: ${GSMS_JWT_SECRET:?GSMS_JWT_SECRET est obligatoire (32 caractères minimum)}
+      GSMS_JWT_TTL_MINUTES: ${GSMS_JWT_TTL_MINUTES:-480}
+      GSMS_STORAGE_BACKEND: local
+      # JSON {"grace": "...", "qatrial": "...", "crm": "..."} — généré par deploy/deploy.sh.
+      GSMS_WEBHOOK_SECRETS: ${GSMS_WEBHOOK_SECRETS:?GSMS_WEBHOOK_SECRETS est obligatoire}
+      GSMS_CRM_URL: ${GSMS_CRM_URL:-}
+      GSMS_CRM_TOKEN: ${GSMS_CRM_TOKEN:-}
+      GSMS_GRACE_URL: ${GSMS_GRACE_URL:-}
+      GSMS_GRACE_TOKEN: ${GSMS_GRACE_TOKEN:-}
+      GSMS_QATRIAL_URL: ${GSMS_QATRIAL_URL:-}
+      GSMS_QATRIAL_TOKEN: ${GSMS_QATRIAL_TOKEN:-}
+      GSMS_TENDERAI_MCP_URL: ${GSMS_TENDERAI_MCP_URL:-}
+      GSMS_TENDERAI_MCP_TOKEN: ${GSMS_TENDERAI_MCP_TOKEN:-}
+    volumes:
+      - gsms-documents:/app/var/blobs
+    # Local uniquement (exploitation / débogage), jamais exposé sur Internet.
+    ports:
+      - "127.0.0.1:${CORE_PORT:-8100}:8000"
+
+  web:
+    build: ./apps/web
+    restart: unless-stopped
+    depends_on:
+      core:
+        condition: service_healthy
+    environment:
+      # Le navigateur ne parle qu'au web ; le web relaie vers le Core sur le réseau interne.
+      CORE_API_URL: http://core:8000
+      CORE_TIMEOUT_MS: ${CORE_TIMEOUT_MS:-5000}
+    ports:
+      - "127.0.0.1:${WEB_PORT:-3100}:3000"
+
+volumes:
+  gsms-postgres:
+  gsms-documents:

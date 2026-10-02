@@ -1,27 +1,31 @@
 import type { Metadata, Viewport } from "next";
-import { DM_Mono, Manrope, Newsreader } from "next/font/google";
+import localFont from "next/font/local";
 import type { ReactNode } from "react";
 import { THEME_INIT_SCRIPT } from "@/components/brand/theme";
 import { GSMS_META } from "@/lib/copy/landing";
 import "./globals.css";
 
-const manrope = Manrope({
-  subsets: ["latin"],
+// Polices auto-hébergées (app/fonts, licence OFL) : aucun appel à Google Fonts, au build comme chez le visiteur.
+const manrope = localFont({
+  src: "./fonts/manrope-latin-wght-normal.woff2",
+  weight: "200 800",
   variable: "--font-manrope",
   display: "swap",
 });
 
-const dmMono = DM_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
+const dmMono = localFont({
+  src: [
+    { path: "./fonts/dm-mono-latin-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/dm-mono-latin-500-normal.woff2", weight: "500", style: "normal" },
+  ],
   variable: "--font-dm-mono",
   display: "swap",
 });
 
-const newsreader = Newsreader({
-  subsets: ["latin"],
-  style: ["italic"],
-  weight: ["400"],
+const newsreader = localFont({
+  src: "./fonts/newsreader-latin-400-italic.woff2",
+  weight: "400",
+  style: "italic",
   variable: "--font-newsreader",
   display: "swap",
 });

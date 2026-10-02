@@ -1,0 +1,23 @@
+# Traefik (déjà en place, ports 80/443) joint les applications par un réseau Docker partagé.
+# Seul le service « web » rejoint ce réseau ; le Core et la base restent sur le réseau interne du projet.
+# Noms de routeur / service / middleware préfixés « gsms-platform » : aucune collision avec les autres sites.
+# Valeurs détectées par deploy/deploy.sh et écrites dans .env.
+services:
+  web:
+    networks:
+      - default
+      - traefik
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: ${TRAEFIK_NETWORK}
+      traefik.http.routers.gsms-platform.rule: Host(`${DOMAIN}`)
+      traefik.http.routers.gsms-platform.entrypoints: ${TRAEFIK_ENTRYPOINT}
+      traefik.http.routers.gsms-platform.tls: "true"
+      traefik.http.routers.gsms-platform.tls.certresolver: ${TRAEFIK_CERTRESOLVER}
+      traefik.http.routers.gsms-platform.service: gsms-platform
+      traefik.http.services.gsms-platform.loadbalancer.server.port: "3000"
+
+networks:
+  traefik:
+    external: true
+    name: ${TRAEFIK_NETWORK}

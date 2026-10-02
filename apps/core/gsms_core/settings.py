@@ -6,8 +6,10 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+DEV_JWT_SECRET = "change-me-dev-only-not-a-secret-0123456789"  # noqa: S105 - valeur de dev, refusée en prod
 
 
 class Settings(BaseSettings):
@@ -16,7 +18,7 @@ class Settings(BaseSettings):
     env: Literal["dev", "test", "prod"] = "dev"
     database_url: str = "sqlite:///./var/gsms_core.db"
 
-    jwt_secret: str = Field(default="change-me-dev-only-not-a-secret-0123456789", min_length=32)
+    jwt_secret: str = Field(default=DEV_JWT_SECRET, min_length=32)
     jwt_algorithm: Literal["HS256"] = "HS256"
     jwt_ttl_minutes: int = 60
 
@@ -48,6 +50,15 @@ class Settings(BaseSettings):
     contracts_dir: Path | None = None
 
     remediation_severity_threshold: Literal["critical", "major", "minor"] = "minor"
+
+    @model_validator(mode="after")
+    def _refuse_dev_secrets_in_prod(self) -> Settings:
+        if self.env == "prod":
+            if self.jwt_secret == DEV_JWT_SECRET:
+                raise ValueError("GSMS_JWT_SECRET doit être défini en production")
+            if self.database_url.startswith("sqlite"):
+                raise ValueError("GSMS_DATABASE_URL doit pointer vers PostgreSQL en production")
+        return self
 
 
 @lru_cache

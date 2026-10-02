@@ -1,0 +1,12 @@
+# Ajouté seulement si Traefik a une entrée HTTP (:80) : http://DOMAIN → https://DOMAIN.
+# Si Traefik redirige déjà tout le port 80 vers 443 au niveau de l'entrée, cette règle ne sert simplement pas.
+# Le défi Let's Encrypt HTTP-01 reste traité par Traefik en priorité (chemin /.well-known/acme-challenge).
+services:
+  web:
+    labels:
+      traefik.http.routers.gsms-platform-http.rule: Host(`${DOMAIN}`)
+      traefik.http.routers.gsms-platform-http.entrypoints: ${TRAEFIK_HTTP_ENTRYPOINT}
+      traefik.http.routers.gsms-platform-http.middlewares: gsms-platform-https
+      traefik.http.routers.gsms-platform-http.service: gsms-platform
+      traefik.http.middlewares.gsms-platform-https.redirectscheme.scheme: https
+      traefik.http.middlewares.gsms-platform-https.redirectscheme.permanent: "true"

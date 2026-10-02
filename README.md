@@ -38,9 +38,18 @@ Chaque brique **possède son métier et sa base**. Le Core possède le **transve
 | [`shared/`](shared/README.md) | contrats et données lus par le code (finding schema, catalogues de contrôles, rulesets) |
 | [`audits/`](audits/README.md) | un audit de code par brique (stack, licence, données, API, tests, décisions) |
 | [`docs/`](docs/README.md) | architecture, savoir réglementaire (domaine), exploitation NUC / VPS |
+| [`deploy/`](deploy/README.md) | déploiement Docker sur le VPS derrière Traefik (`gsms-security.com`) |
 | `scripts/` | scripts d'exploitation (VPS, NUC, dev) |
 
-## Démarrer
+## Déployer (VPS, Docker + Traefik existant)
+
+```bash
+curl -fsSLO https://raw.githubusercontent.com/samiriggui-code/gsms-platform/main/deploy/install.sh && bash install.sh
+```
+
+Publie `https://gsms-security.com` par le Traefik déjà en place (pas de Caddy). Détails : [`deploy/README.md`](deploy/README.md).
+
+## Développer
 
 | Brique | Commande | Doc |
 |---|---|---|

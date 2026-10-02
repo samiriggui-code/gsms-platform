@@ -1,0 +1,14 @@
+# Traefik en mode « host » (cas du VPS GSMS) : il joint directement le réseau interne du projet
+# (gsms-platform_default, nom fixe grâce à « name: gsms-platform »). Aucun réseau partagé avec les autres
+# applications. Noms préfixés « gsms-platform » : aucune collision avec les autres routeurs.
+services:
+  web:
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: ${TRAEFIK_NETWORK}
+      traefik.http.routers.gsms-platform.rule: Host(`${DOMAIN}`)
+      traefik.http.routers.gsms-platform.entrypoints: ${TRAEFIK_ENTRYPOINT}
+      traefik.http.routers.gsms-platform.tls: "true"
+      traefik.http.routers.gsms-platform.tls.certresolver: ${TRAEFIK_CERTRESOLVER}
+      traefik.http.routers.gsms-platform.service: gsms-platform
+      traefik.http.services.gsms-platform.loadbalancer.server.port: "3000"

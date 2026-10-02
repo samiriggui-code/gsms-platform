@@ -26,3 +26,7 @@ tmp-*
 .claude/
 *.log.err
 NUL
+
+# Déploiement (deploy/deploy.sh) — secrets et marqueur d’installation, jamais committés
+/.env
+/.gsms-initialise
