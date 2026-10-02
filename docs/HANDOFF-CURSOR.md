@@ -1,5 +1,20 @@
 # Handoff Cursor → Claude
 
+## 2026-10-02 — Clarification : Core = pont, pas CRM ; sous-domaines `*.gsms-security.com`
+
+**Intention user (reformulée) :**
+- Un Docker / une base **par** app (CRM, GRACE, QAtrial, MCP…).
+- Tous sous **`*.gsms-security.com`** (pas `global-it-ss.com` — domaine entreprise / vitrine du studio).
+- Landing + Core = façade client ; chaque app spécialité travaille un dossier (manuel **et** circuit).
+- Formulaire `/demande` : CRM crée Company/Contact/Deal ; Core crée Workspace/Mission (en parallèle si possible).
+
+**Réponse technique (code actuel) :**
+- Le Core **peut** (et doit) être le **pont** : événements, missions, workspaces, connecteurs, passerelle MCP.
+- Le Core **ne remplace pas** Comp CRM + Eve aujourd’hui : pas d’`/intake`, pas de Company/Deal/mail/agenda/Eve. La landing attend `POST /api/v1/intake` (absent → 503).
+- **Garder CRM + Eve** dans le circuit sous `crm.gsms-security.com`. Canon V2 WF-INTAKE = landing → Core intake → CRM (deal) + Core (org/ws/mission).
+
+---
+
 ## 2026-10-02 — Unification sous `gsms-security.com` (état live + recommandation)
 
 ### État live (vérifié aujourd’hui)
