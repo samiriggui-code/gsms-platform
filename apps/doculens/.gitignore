@@ -95,3 +95,9 @@ target/
 
 # Local ingestion uploads
 data/ingestion/
+
+# GSMS: never commit ingested documents
+app/data/ingestion/*
+!app/data/ingestion/.gitkeep
+data/ingestion/*
+!data/ingestion/.gitkeep
