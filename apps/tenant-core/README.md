@@ -1,5 +1,8 @@
 # GSMS Tenant Core + Portail client
 
+> **V2 (2026-10-02) :** ce POC est **en cours d'absorption** — modèle identité/workspace réécrit dans [`../core`](../core/README.md), UI (Shell, login, notifications, plaquette PDF) portée dans [`../web`](../web/README.md). Voir [`../../audits/tenant-core/AUDIT.md`](../../audits/tenant-core/AUDIT.md).
+
+
 **Un seul package** (`apps/tenant-core`) — comme QAtrial : API Hono + front Vite.
 
 | Couche | Stack |
