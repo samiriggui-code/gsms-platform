@@ -125,7 +125,7 @@ const PACKAGE = {
     'Réf. cartographie : AUD.PRECOMMISSION.ERP. Ne remplace pas banking-finance. ' +
     'Ne modifie pas le risk engine — contenu via templates uniquement. ' +
     'IMPORTANT : checklist scoped Légifrance — pas une évaluation article-atomique ' +
-    '(voir docs/cartography/SOURCES-STATUS-ERP-PRECOM.md).',
+    '(voir docs/domain/SOURCES-STATUS-ERP-PRECOM.md).',
   complianceRefs: [
     'ERP.RS',
     'ERP.DG',

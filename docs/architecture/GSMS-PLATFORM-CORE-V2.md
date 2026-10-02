@@ -1,9 +1,9 @@
 # GSMS Platform — Core V2 (Python + Next.js)
 
-**Statut :** proposition d'architecture, en attente du GO de Samir. Aucun code applicatif n'a été modifié.
+**Statut :** **architecture canonique** (adoptée 2026-10-02 — remplace `STACK-GSMS-FINALE.md`, `DOCTRINE.md` §2 et les anciennes cartes d'intégration).
 **Date :** 2026-10-02
 **Branche :** `claude/gsms-core-v2-architecture`
-**Méthode :** six audits du code réel menés en parallèle (CRM, GRACE, QAtrial, Tenant Core, Tender ×3, DocuLens upstream) et relecture de la doctrine existante (`DOCTRINE.md`, `STACK-GSMS-FINALE.md`, `GSMS_INTEGRATION_MAP.md`, `CHANTIERS-METIER-INTERCONNEXION.md`, `circuit/*`, `HANDOFF-*`).
+**Méthode :** six audits du code réel menés en parallèle (CRM, GRACE, QAtrial, Tenant Core, Tender ×3, DocuLens upstream) et relecture de la doctrine existante (anciens `DOCTRINE.md`, `STACK-GSMS-FINALE.md`, `GSMS_INTEGRATION_MAP.md`, `CHANTIERS-METIER-INTERCONNEXION.md`, `circuit/*`, `HANDOFF-*` — retirés après adoption, consultables dans l'historique git).
 
 > **Décision en une phrase.** Je recommande une architecture **hybride** :
 > - un **Core Python natif** (FastAPI, SQLAlchemy, PostgreSQL) qui possède le transverse : identité, établissements, missions, documents, événements, workflows, actions, échéances et audit trail ;
@@ -757,7 +757,7 @@ apps/core/
 | tdai-memory-agents / TencentDB Memory | **KEEP** séparé | Mémoire de contexte pour Eve ; jamais une vérité métier. |
 | DocuLens | voir § 18 | Moteur → Core ; reste → retiré. |
 | InvoicePilot (vitrine hors repo) | **REMOVE** comme vitrine ; **EXTRACT** du contenu si meilleur | Une seule landing. |
-| `docs/circuit/contracts/finding.schema.json` | **KEEP** (contrat des connecteurs) | Déjà implémenté par GRACE et QAtrial ; devient un test de contrat du Core. |
+| `shared/contracts/finding.schema.json` | **KEEP** (contrat des connecteurs) | Déjà implémenté par GRACE et QAtrial ; devient un test de contrat du Core. |
 
 ## Annexe B — Interface Appels d'offres
 
@@ -807,4 +807,4 @@ apps/core/
 
 ---
 
-*Ce document est une proposition. Rien ne démarre (P0 compris) sans GO explicite de Samir. Les chiffres (lignes, tests, tailles) viennent des audits de code du 2026-10-02 sur `main@80e7419`.*
+*Audits détaillés par brique : [`../../audits/`](../../audits/README.md). Les chiffres (lignes, tests, tailles) viennent des audits de code du 2026-10-02 sur `main@80e7419`.*

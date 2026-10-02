@@ -250,7 +250,7 @@ export async function registerCircuitHandoffRoutes(app: FastifyInstance) {
         generatedAt: new Date().toISOString(),
         disclaimer:
           'Export circuit P0 — pont conceptuel. Contenu terrain = checklist opérationnelle, pas articles Légifrance atomiques. ' +
-          'Ne pas importer comme conformité opposable. Voir docs/circuit/CIRCUIT-PRECOM-ERP.md et SOURCES-STATUS-ERP-PRECOM.md.',
+          'Ne pas importer comme conformité opposable. Voir docs/domain/SOURCES-STATUS-ERP-PRECOM.md.',
         assessment: {
           id: a.id,
           title: a.title,

@@ -121,7 +121,7 @@ const PACKAGE = {
     'Ne remplace pas erp-precommission, site-surete ni banking-finance. ' +
     'Ne modifie pas le risk engine — contenu via templates uniquement. ' +
     'IMPORTANT : checklist opérationnelle scoped — pas une évaluation article-atomique ' +
-    '(voir docs/cartography/SOURCES-STATUS-IGH-PRECOM.md). Ne pas appliquer les largeurs CO ERP.',
+    '(voir docs/domain/SOURCES-STATUS-IGH-PRECOM.md). Ne pas appliquer les largeurs CO ERP.',
   complianceRefs: [
     'IGH',
     'CCH',

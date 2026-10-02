@@ -1,10 +1,11 @@
-# Cartographie FR/UE — préalable au fork GRACE
+# Domaine réglementaire FR/UE — le « QUOI » contrôler
+
+> **Principe HOW vs WHAT (repris de l'ancienne doctrine) :** les moteurs (GRACE, Core) portent le **COMMENT** (assessment, scoring, workflow) ; ce dossier et `shared/rulesets/` portent le **QUOI** contrôler, **pourquoi**, **sur quel site** et **selon quel texte**. Interdit : coder du droit en `if (ERP) if (IGH)` dans un moteur, ou un ruleset unique UE qui écrase le droit national. Source de vérité = textes officiels, jamais un dépôt GitHub d'inspiration.
 
 **Statut :** phase 1 carto métier — domaines prioritaires en `draft` + mapping précom ERP  
-**Gate doctrine :** [`../DOCTRINE.md`](../DOCTRINE.md) §7  
 **Objectif :** savoir *précisément* textes → domaines → applicabilité → preuves → types d’audit **avant** de toucher le moteur GRACE.
 
-**Livrables :** [`audit-types/AUD.PRECOMMISSION.ERP.mapping.md`](./audit-types/AUD.PRECOMMISSION.ERP.mapping.md) · [`audit-types/AUD.PRECOMMISSION.IGH.mapping.md`](./audit-types/AUD.PRECOMMISSION.IGH.mapping.md) · [`audit-types/AUD.SITE.SURETE.mapping.md`](./audit-types/AUD.SITE.SURETE.mapping.md) · routage [`../EXTRACT-ROUTING.md`](../EXTRACT-ROUTING.md)
+**Livrables :** [`audit-types/AUD.PRECOMMISSION.ERP.mapping.md`](./audit-types/AUD.PRECOMMISSION.ERP.mapping.md) · [`audit-types/AUD.PRECOMMISSION.IGH.mapping.md`](./audit-types/AUD.PRECOMMISSION.IGH.mapping.md) · [`audit-types/AUD.SITE.SURETE.mapping.md`](./audit-types/AUD.SITE.SURETE.mapping.md)
 
 ---
 

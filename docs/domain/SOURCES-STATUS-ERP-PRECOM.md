@@ -3,7 +3,7 @@
 ## Réponse courte
 
 **P0 initial :** checklist opérationnelle (pas article-par-article).  
-**Relecture 2026-09-03 :** familles F1–F8 passées en **`scoped`** (DP R/N + SSIAP) avec cotes Légifrance/CCH/guides — voir [`../rulesets/OFFICIAL-REFS.md`](../rulesets/OFFICIAL-REFS.md).  
+**Relecture 2026-09-03 :** familles F1–F8 passées en **`scoped`** (DP R/N + SSIAP) avec cotes Légifrance/CCH/guides — voir [`shared/rulesets/OFFICIAL-REFS.md`](../../shared/rulesets/OFFICIAL-REFS.md).  
 Toujours **pas** `detailed` (pas de jugement PASS/FAIL article-atomique).
 
 ---
