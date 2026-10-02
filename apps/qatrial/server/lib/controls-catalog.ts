@@ -1,6 +1,6 @@
 /**
  * Control / policy catalogs salvaged from Comp AI (JSON only).
- * Runtime: src/data/controls/ — also mirrored under docs/circuit/controls/.
+ * Runtime: src/data/controls/ — also mirrored under shared/controls/.
  */
 
 import { readFileSync, existsSync } from 'node:fs';
@@ -32,7 +32,7 @@ function resolveCatalogPath(slug: QatrialCatalogSlug): string {
     join(process.cwd(), 'src/data/controls', fileName),
     join(process.cwd(), '../src/data/controls', fileName),
     join(__dirname, '../../src/data/controls', fileName),
-    join(process.cwd(), '../../../docs/circuit/controls', fileName),
+    join(process.cwd(), '../../../shared/controls', fileName),
   ];
   for (const p of candidates) {
     if (existsSync(p)) return p;

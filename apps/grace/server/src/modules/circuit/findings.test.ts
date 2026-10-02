@@ -1,6 +1,6 @@
 /**
  * Conformance test: the Grace findings module must stay in sync with the
- * cross-app contract docs/circuit/contracts/finding.schema.json (platform root).
+ * cross-app contract shared/contracts/finding.schema.json (platform root).
  * If this test fails, either the contract changed (bump FINDING_VERSION and
  * update the module) or the module drifted (fix the module).
  */
@@ -17,7 +17,7 @@ import {
 } from './findings.js';
 
 const contractsDir = new URL(
-  '../../../../../../docs/circuit/contracts/',
+  '../../../../../../shared/contracts/',
   import.meta.url,
 );
 

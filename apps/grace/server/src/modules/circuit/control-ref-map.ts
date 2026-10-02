@@ -1,5 +1,5 @@
 /**
- * Map Grace threat/gap signals → SSP control_ref (docs/circuit/controls/ssp-surete.json).
+ * Map Grace threat/gap signals → SSP control_ref (shared/controls/ssp-surete.json).
  * Synthetic grace-cm-* refs remain as fallback when no SSP match.
  */
 

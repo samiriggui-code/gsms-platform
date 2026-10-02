@@ -4,7 +4,7 @@
   "auditType": "AUD.PRECOMMISSION.ERP",
   "packageSlug": "erp-precommission",
   "maturity": "scoped",
-  "disclaimer": "Composition scoped (2026-09-03) : F1–F8 rattachées à des cotes Légifrance/CCH/guides. DP R/N + SSIAP inclus. Pas encore évaluation article-atomique PASS/FAIL. Voir docs/rulesets/OFFICIAL-REFS.md.",
+  "disclaimer": "Composition scoped (2026-09-03) : F1–F8 rattachées à des cotes Légifrance/CCH/guides. DP R/N + SSIAP inclus. Pas encore évaluation article-atomique PASS/FAIL. Voir shared/rulesets/OFFICIAL-REFS.md.",
   "requiredContext": ["country", "site_kind", "erp_type", "erp_category", "commission_phase"],
   "gates": {
     "country": "FR",

@@ -1,6 +1,6 @@
 /**
  * Findings export — read-only, conforms to the cross-app contract
- * docs/circuit/contracts/finding.schema.json (v0.1.0) at the gsms-platform
+ * shared/contracts/finding.schema.json (v0.1.0) at the gsms-platform
  * root. QAtrial is the "source: qatrial" producer; Eve/CRM aggregates
  * without knowing QAtrial internals.
  *

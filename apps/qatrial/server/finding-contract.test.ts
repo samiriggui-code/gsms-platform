@@ -1,6 +1,6 @@
 /**
  * Conformance test: QAtrial's finding helpers must stay in sync with the
- * cross-app contract docs/circuit/contracts/finding.schema.json at the
+ * cross-app contract shared/contracts/finding.schema.json at the
  * gsms-platform root. If this fails, either the contract changed (bump
  * FINDING_VERSION and update the helpers) or the helpers drifted.
  */
@@ -19,11 +19,11 @@ import {
 
 // Built via fileURLToPath + path.resolve rather than `new URL(literal, import.meta.url)`:
 // Vite statically special-cases that exact literal pattern for asset bundling, which
-// mangles the resolved URL for a target outside the module graph (docs/ is outside apps/qatrial).
+// mangles the resolved URL for a target outside the module graph (shared/ is outside apps/qatrial).
 const thisFilePath = fileURLToPath(import.meta.url);
 const contractPath = path.resolve(
   path.dirname(thisFilePath),
-  '../../../docs/circuit/contracts/finding.schema.json',
+  '../../../shared/contracts/finding.schema.json',
 );
 const contract = JSON.parse(readFileSync(contractPath, 'utf8'));
 

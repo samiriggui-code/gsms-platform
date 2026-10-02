@@ -1,6 +1,6 @@
 /**
  * Pure helpers for the cross-app Finding contract
- * (docs/circuit/contracts/finding.schema.json v0.1.0, gsms-platform root).
+ * (shared/contracts/finding.schema.json v0.1.0, gsms-platform root).
  * Kept free of Prisma/auth imports so conformance tests stay light.
  */
 

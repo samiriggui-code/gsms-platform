@@ -1,6 +1,6 @@
 /**
  * Applicability composer — Phase 6 RuleSets (WHAT), outside risk-engine.
- * Loads declarative JSON from docs/rulesets and filters by SiteContext.
+ * Loads declarative JSON from shared/rulesets and filters by SiteContext.
  * Does NOT evaluate regulatory PASS/FAIL or touch IRV/TEAR.
  */
 
@@ -13,11 +13,11 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 async function resolveRulesetFile(fileName: string): Promise<string> {
   const candidates = [
     // Typical: cwd = apps/grace/server
-    join(process.cwd(), '../../../docs/rulesets', fileName),
+    join(process.cwd(), '../../../shared/rulesets', fileName),
     // cwd = monorepo root
-    join(process.cwd(), 'docs/rulesets', fileName),
+    join(process.cwd(), 'shared/rulesets', fileName),
     // Relative to this module (src)
-    join(__dirname, '../../../../../../docs/rulesets', fileName),
+    join(__dirname, '../../../../../../shared/rulesets', fileName),
   ];
   for (const p of candidates) {
     try {

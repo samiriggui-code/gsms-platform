@@ -46,7 +46,7 @@ Composition {
 ## 3. Emplacement code
 
 ```
-docs/rulesets/                          ← design + JSON déclaratif
+shared/rulesets/                          ← design + JSON déclaratif
 apps/grace/server/src/modules/rulesets/ ← API pure (compose)
 ```
 

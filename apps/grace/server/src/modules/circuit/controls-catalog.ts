@@ -1,7 +1,7 @@
 /**
  * Control catalogs salvaged from Comp AI (JSON only, no AGPL code).
  * Runtime copies live under server/data/controls/ — canon also in
- * docs/circuit/controls/ at platform root.
+ * shared/controls/ at platform root.
  */
 
 import { access, readFile } from 'node:fs/promises';
@@ -35,8 +35,8 @@ async function resolveCatalogFile(slug: CatalogSlug): Promise<string> {
     join(process.cwd(), 'data/controls', fileName),
     join(process.cwd(), 'server/data/controls', fileName),
     join(__dirname, '../../../../data/controls', fileName),
-    join(process.cwd(), '../../../docs/circuit/controls', fileName),
-    join(process.cwd(), 'docs/circuit/controls', fileName),
+    join(process.cwd(), '../../../shared/controls', fileName),
+    join(process.cwd(), 'shared/controls', fileName),
   ];
   for (const p of candidates) {
     try {
