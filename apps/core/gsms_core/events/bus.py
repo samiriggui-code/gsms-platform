@@ -22,6 +22,7 @@ Handler = Callable[[Session, EventEnvelope], None]
 OUTBOX_ROUTES: dict[str, tuple[str, ...]] = {
     "capa.requested": ("qatrial",),
     "action.closed": ("grace",),
+    "intake.request.received": ("crm",),
     "tender.go_no_go.decided": ("crm",),
     "tender.submitted": ("crm",),
 }

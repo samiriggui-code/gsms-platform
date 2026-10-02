@@ -4,6 +4,7 @@ import { Alert, AlertTitle } from "@crm/ui/components/alert";
 import { Button } from "@crm/ui/components/button";
 import { Input } from "@crm/ui/components/input";
 import { signIn } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -27,7 +28,7 @@ export function SignInForm() {
 		});
 
 		if (response?.error) {
-			setError("Incorrect email or password.");
+			setError("E-mail ou mot de passe incorrect.");
 			setIsSubmitting(false);
 			return;
 		}
@@ -44,9 +45,9 @@ export function SignInForm() {
 				</Alert>
 			) : null}
 
-			<div className="flex flex-col gap-1.5">
-				<label htmlFor="email" className="text-sm/5 font-medium">
-					Email
+			<div className="flex flex-col gap-2">
+				<label htmlFor="email" className="text-sm font-medium">
+					E-mail
 				</label>
 				<Input
 					id="email"
@@ -56,12 +57,13 @@ export function SignInForm() {
 					required
 					value={email}
 					onChange={(event) => setEmail(event.target.value)}
+					className="h-11 rounded-[12px] bg-muted/40"
 				/>
 			</div>
 
-			<div className="flex flex-col gap-1.5">
-				<label htmlFor="password" className="text-sm/5 font-medium">
-					Password
+			<div className="flex flex-col gap-2">
+				<label htmlFor="password" className="text-sm font-medium">
+					Mot de passe
 				</label>
 				<Input
 					id="password"
@@ -71,12 +73,27 @@ export function SignInForm() {
 					required
 					value={password}
 					onChange={(event) => setPassword(event.target.value)}
+					className="h-11 rounded-[12px] bg-muted/40"
 				/>
 			</div>
 
-			<Button type="submit" disabled={isSubmitting} className="w-full">
-				{isSubmitting ? "Signing in…" : "Sign in"}
+			<Button
+				type="submit"
+				disabled={isSubmitting}
+				className="h-11 w-full bg-[#111721] text-white hover:bg-[#111721]/90"
+			>
+				{isSubmitting ? "Connexion…" : "Se connecter"}
 			</Button>
+
+			<p className="text-center text-[12.5px] text-muted-foreground">
+				Pas encore client ?{" "}
+				<Link
+					href="https://gsms-security.com/contact"
+					className="font-medium text-foreground underline-offset-4 hover:underline"
+				>
+					Contactez-nous
+				</Link>
+			</p>
 		</form>
 	);
 }

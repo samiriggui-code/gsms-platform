@@ -1,91 +1,149 @@
+import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
+
+export type AuthPanelItem = {
+  icon: LucideIcon;
+  label: string;
+};
 
 type AuthBrandedLayoutProps = {
   children: ReactNode;
-  brandName: string;
-  panelTitle: string;
-  panelBody: ReactNode;
-  mark?: string;
+  product?: string;
+  eyebrow: string;
+  titleLead: string;
+  titleEmph: string;
+  body: string;
+  items: AuthPanelItem[];
+  siteHref?: string;
   controls?: ReactNode;
 };
 
-/** Auth shell — palette landing claire (#4f56e5), Inter only. */
+/** Pattern auth GSMS (apps/web) — split form + panneau #111721. */
 export function AuthBrandedLayout({
   children,
-  brandName,
-  panelTitle,
-  panelBody,
-  mark = 'Q',
+  product,
+  eyebrow,
+  titleLead,
+  titleEmph,
+  body,
+  items,
+  siteHref = 'https://gsms-security.com',
   controls,
 }: AuthBrandedLayoutProps) {
   return (
-    <div className="grid min-h-screen w-full grow bg-surface-secondary font-sans lg:grid-cols-2">
+    <div className="grid min-h-svh w-full grow bg-n-50 font-sans lg:grid-cols-2">
       <div className="order-2 flex flex-col lg:order-1">
-        <div className="flex h-14 items-center justify-between border-b border-border bg-surface-secondary px-4 sm:px-6 lg:hidden">
-          <BrandMark name={brandName} mark={mark} />
+        <header className="flex h-14 items-center justify-between border-b border-border px-4 sm:px-6 lg:hidden">
+          <BrandMark product={product} />
           {controls}
-        </div>
+        </header>
 
-        <div className="relative flex flex-1 items-center justify-center p-6 sm:p-8 lg:p-10">
-          {controls ? (
-            <div className="absolute end-6 top-6 hidden rounded-r2 border border-border bg-surface px-0.5 py-0.5 shadow-sh1 lg:block">
-              {controls}
-            </div>
-          ) : null}
-          <div className="w-full max-w-[400px] rounded-r4 border border-border bg-surface p-6 shadow-sh2">
+        <div className="relative flex flex-1 items-center justify-center p-5 sm:p-8 lg:p-10">
+          <div className="absolute end-6 top-6 hidden items-center gap-2 lg:flex">
+            <a
+              href={siteHref}
+              className="text-[13px] text-text-tertiary no-underline hover:text-text-primary"
+            >
+              Retour au site
+            </a>
+            {controls}
+          </div>
+          <div className="w-full max-w-[420px] rounded-2xl border border-border bg-card p-6 shadow-[0_1px_2px_rgba(20,18,30,0.03),0_12px_32px_rgba(20,18,30,0.035)] sm:p-7">
             {children}
           </div>
         </div>
       </div>
 
-      <div className="order-1 flex flex-col overflow-hidden bg-surface-tertiary lg:order-2 lg:m-5 lg:rounded-r4 lg:border lg:border-border">
-        <div className="flex flex-col gap-4 p-8 lg:px-12 lg:pb-6 lg:pt-12">
+      <aside
+        aria-label="GSMS"
+        className="order-1 flex flex-col overflow-hidden bg-[#111721] text-white lg:order-2 lg:m-5 lg:rounded-[28px] lg:border lg:border-white/10"
+      >
+        <div className="flex flex-col gap-5 p-8 lg:px-12 lg:pb-6 lg:pt-12">
           <div className="hidden lg:block">
-            <BrandMark name={brandName} mark={mark} />
+            <BrandMark product={product} inverted />
           </div>
           <div className="flex flex-col gap-3">
-            <h2 className="text-[22px] font-semibold leading-snug tracking-[-0.02em] text-text-primary lg:text-[24px]">
-              {panelTitle}
+            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/55">
+              {eyebrow}
+            </p>
+            <h2 className="text-balance text-2xl font-semibold tracking-[-0.035em] md:text-[30px]/[1.15]">
+              {titleLead}{' '}
+              <span className="font-serif font-normal italic text-white/60">{titleEmph}</span>
             </h2>
-            <div className="text-[13.5px] font-medium leading-relaxed tracking-[-0.011em] text-text-secondary lg:text-[15px]">
-              {panelBody}
-            </div>
+            <p className="max-w-md text-sm leading-6 text-white/60">{body}</p>
           </div>
         </div>
 
-        <div className="relative flex flex-1 items-end justify-center px-6 pb-8 sm:px-10 lg:pb-10">
-          <AuthHeroArt mark={mark} />
-        </div>
-      </div>
+        <ul className="relative mt-auto hidden flex-1 flex-col justify-end gap-3 px-8 pb-8 sm:flex lg:px-12 lg:pb-12">
+          {items.map(({ icon: Icon, label }) => (
+            <li
+              key={label}
+              className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3"
+            >
+              <span className="grid size-9 place-items-center rounded-xl bg-white/10">
+                <Icon className="size-4" strokeWidth={2} aria-hidden />
+              </span>
+              <span className="text-sm font-medium text-white/85">{label}</span>
+            </li>
+          ))}
+        </ul>
+      </aside>
     </div>
   );
 }
 
-function BrandMark({ name, mark }: { name: string; mark: string }) {
+function LogoMark() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden className="size-[17px]">
+      <path
+        d="M12 2.5 4 5.6v6.1c0 4.6 3.2 8.6 8 9.8 4.8-1.2 8-5.2 8-9.8V5.6L12 2.5Z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      <path
+        d="m8.5 12 2.4 2.4 4.6-4.8"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function BrandMark({
+  product,
+  inverted,
+}: {
+  product?: string;
+  inverted?: boolean;
+}) {
   return (
     <div className="inline-flex items-center gap-2.5">
       <span
-        className="flex size-7 shrink-0 items-center justify-center rounded-[4px] text-[12px] font-bold text-white"
-        style={{ background: 'var(--brand-mark)' }}
+        className={
+          inverted
+            ? 'grid size-8 place-items-center rounded-[10px] bg-white text-[#111721] shadow-sm'
+            : 'grid size-8 place-items-center rounded-[10px] bg-n-900 text-white shadow-sm'
+        }
       >
-        {mark}
+        <LogoMark />
       </span>
-      <span className="text-[14px] font-semibold tracking-[-0.2px] text-text-primary">{name}</span>
-    </div>
-  );
-}
-
-function AuthHeroArt({ mark }: { mark: string }) {
-  return (
-    <div
-      className="relative flex aspect-[4/3] w-full max-w-md items-center justify-center rounded-r4 border border-border bg-surface shadow-sh2"
-      aria-hidden
-    >
       <span
-        className="flex size-16 items-center justify-center rounded-r3 text-2xl font-bold text-white"
-        style={{ background: 'var(--brand-mark)' }}
+        className={
+          inverted
+            ? 'text-[15px] font-semibold tracking-[-0.025em] text-white'
+            : 'text-[15px] font-semibold tracking-[-0.025em] text-text-primary'
+        }
       >
-        {mark}
+        GSMS
+        {product ? (
+          <span className={inverted ? 'text-white/55' : 'text-text-tertiary'}>
+            {' '}
+            {product}
+          </span>
+        ) : null}
       </span>
     </div>
   );

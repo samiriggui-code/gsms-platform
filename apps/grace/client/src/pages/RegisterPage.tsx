@@ -1,11 +1,17 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
-import { UserPlus } from 'lucide-react';
+import { Building2, CalendarClock, FileText, UserPlus } from 'lucide-react';
 import { AuthBrandedLayout } from '../components/auth/AuthBrandedLayout';
 import { Btn2 } from '../components/hifi/Btn2';
 import { HeaderControls } from '../components/shell/HeaderControls';
 import { useAuthStore } from '../stores/auth';
 import { useT } from '../i18n';
+
+const PANEL_ITEMS = [
+  { icon: Building2, label: 'Votre organisation et ses sites' },
+  { icon: FileText, label: 'Vos preuves et rapports, au même endroit' },
+  { icon: CalendarClock, label: 'Vos échéances CSMP suivies' },
+] as const;
 
 export function RegisterPage() {
   const t = useT();
@@ -46,29 +52,27 @@ export function RegisterPage() {
 
   return (
     <AuthBrandedLayout
-      brandName={t('app.name')}
-      mark="G"
+      product="Grace"
+      eyebrow="Premier démarrage"
+      titleLead="Votre organisation,"
+      titleEmph="prête à auditer."
+      body="Créez l’administrateur et l’organisation — une seule fois. Ensuite, les accès passent par la connexion."
+      items={[...PANEL_ITEMS]}
       controls={<HeaderControls />}
-      panelTitle="Premier démarrage"
-      panelBody={
-        <>
-          Créez l’administrateur et l’organisation — une seule fois.
-          <br />
-          Ensuite, les accès passent par la{' '}
-          <span className="font-semibold text-foreground">connexion</span>.
-        </>
-      }
     >
-      <form onSubmit={onSubmit} className="block w-full space-y-4">
-        <div className="space-y-1 pb-1 text-center">
-          <h1 className="text-[20px] font-semibold tracking-[-0.02em] text-n-900">
+      <form onSubmit={onSubmit} className="flex w-full flex-col gap-4">
+        <div className="flex flex-col gap-1.5">
+          <h1 className="text-[22px]/[1.2] font-[650] tracking-[-0.03em] text-n-900">
             {t('auth.registerTitle')}
           </h1>
-          <p className="text-[12px] text-n-500">{t('auth.registerHint')}</p>
+          <p className="text-[13.5px]/[1.55] text-n-500">{t('auth.registerHint')}</p>
         </div>
 
         {error && (
-          <div className="rounded-r2 border border-bad/20 bg-bad-bg px-3 py-2 text-[12px] text-bad">
+          <div
+            role="alert"
+            className="rounded-[10px] border border-bad/20 bg-bad-bg px-3.5 py-2.5 text-[13px] text-bad"
+          >
             {error}
           </div>
         )}
@@ -77,9 +81,9 @@ export function RegisterPage() {
           <Field label={t('auth.firstName')} value={firstName} onChange={setFirstName} autoComplete="given-name" />
           <Field label={t('auth.lastName')} value={lastName} onChange={setLastName} autoComplete="family-name" />
         </div>
-        <Field label={t('auth.email')} value={email} onChange={setEmail} type="email" autoComplete="email" />
+        <Field label="E-mail" value={email} onChange={setEmail} type="email" autoComplete="email" />
         <Field
-          label={t('auth.password')}
+          label="Mot de passe"
           value={password}
           onChange={setPassword}
           type="password"
@@ -102,15 +106,15 @@ export function RegisterPage() {
           type="submit"
           variant="primary"
           disabled={loading}
-          className="w-full"
+          className="h-11 w-full"
           leading={<UserPlus className="h-3.5 w-3.5" />}
         >
           {loading ? t('auth.settingUp') : t('auth.bootstrap')}
         </Btn2>
 
-        <p className="text-center text-[12px] text-n-500">
+        <p className="text-center text-[12.5px] text-n-500">
           {t('auth.alreadyAccount')}{' '}
-          <Link to="/login" className="font-semibold text-a-600 hover:text-a-700">
+          <Link to="/login" className="font-medium text-n-900 underline-offset-4 hover:underline">
             {t('auth.signIn')}
           </Link>
         </p>
@@ -128,10 +132,8 @@ function Field(props: {
   autoComplete?: string;
 }) {
   return (
-    <label className="block">
-      <div className="mb-1 text-[10px] font-mono uppercase tracking-[0.4px] text-n-500">
-        {props.label}
-      </div>
+    <label className="flex flex-col gap-2">
+      <span className="text-sm font-medium text-n-800">{props.label}</span>
       <input
         type={props.type ?? 'text'}
         value={props.value}
@@ -139,7 +141,7 @@ function Field(props: {
         placeholder={props.placeholder}
         autoComplete={props.autoComplete}
         required
-        className="h-9 w-full rounded-r2 border border-border bg-card px-2.5 text-[12.5px] text-n-900 outline-none transition focus:border-a-400 focus:ring-2 focus:ring-a-100"
+        className="h-11 w-full rounded-[12px] border border-border bg-n-75 px-3 text-[13.5px] text-n-900 outline-none transition focus:border-a-400 focus:ring-2 focus:ring-a-100"
       />
     </label>
   );

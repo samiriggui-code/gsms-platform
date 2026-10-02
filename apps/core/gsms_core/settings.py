@@ -36,6 +36,8 @@ class Settings(BaseSettings):
 
     crm_url: str = "http://localhost:3001"
     crm_token: str | None = None
+    # Clé publique CRM (`x-gsms-public-key`) pour relayer l'intake vitrine.
+    crm_public_key: str | None = None
     grace_url: str = "http://localhost:3002"
     grace_token: str | None = None
     qatrial_url: str = "http://localhost:3003"

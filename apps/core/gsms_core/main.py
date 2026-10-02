@@ -14,10 +14,12 @@ from gsms_core.documents.storage import Storage, build_storage
 from gsms_core.events.bus import bus
 from gsms_core.events.router import router as events_router
 from gsms_core.identity.router import router as identity_router
+from gsms_core.intake.router import router as intake_router
 from gsms_core.missions.router import router as missions_router
 from gsms_core.settings import Settings, get_settings
 from gsms_core.work.router import router as work_router
 from gsms_core.workflows import build_engine
+from gsms_core.workspaces.router import router as workspaces_router
 
 log = logging.getLogger("gsms_core")
 
@@ -46,6 +48,14 @@ def create_app(
             db_ok = False
         return {"status": "ok" if db_ok else "degraded", "version": __version__, "database": db_ok}
 
-    for router in (identity_router, missions_router, documents_router, work_router, events_router):
+    for router in (
+        identity_router,
+        intake_router,
+        workspaces_router,
+        missions_router,
+        documents_router,
+        work_router,
+        events_router,
+    ):
         app.include_router(router)
     return app

@@ -7,7 +7,7 @@ import { getSession } from "@/lib/session";
 import { SignInForm } from "./sign-in-form";
 
 export const metadata: Metadata = {
-	title: "Sign in",
+	title: "Connexion",
 };
 
 async function currentSession() {
@@ -28,8 +28,8 @@ export default function SignInPage() {
 			<Suspense
 				fallback={
 					<AuthHeading
-						title="Bon retour"
-						description="Connectez-vous pour continuer sur le CRM GSMS."
+						title="Connexion"
+						description="Accédez à votre espace GSMS CRM."
 					/>
 				}
 			>
@@ -49,8 +49,8 @@ async function SignIn() {
 	return (
 		<>
 			<AuthHeading
-				title="Bon retour"
-				description="Connectez-vous pour continuer sur le CRM GSMS."
+				title="Connexion"
+				description="Accédez à votre espace GSMS CRM."
 			/>
 
 			<SignInForm />

@@ -1,6 +1,6 @@
-const CACHE_NAME = 'qatrial-v2';
+/** Bump on each UI deploy so clients drop stale HTML/JS (was cache-first forever). */
+const CACHE_NAME = 'qatrial-v3-auth-ui';
 const STATIC_ASSETS = [
-  '/',
   '/favicon.svg',
   '/manifest.json',
   '/icon-192.png',
@@ -9,7 +9,7 @@ const STATIC_ASSETS = [
   '/apple-touch-icon.png',
 ];
 
-// Install: cache static assets (best-effort — don't fail install if one icon 404s)
+// Install: cache icons only — never pin `/` or hashed bundles
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(async (cache) => {
@@ -23,7 +23,7 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// Activate: clean old caches
+// Activate: wipe every previous qatrial cache
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -41,6 +41,22 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
+
+  // Navigations / HTML: always network-first (avoid stuck old login shell)
+  if (request.mode === 'navigate' || url.pathname === '/' || url.pathname.endsWith('.html')) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => response)
+        .catch(async () => {
+          return (
+            (await caches.match('/')) ||
+            (await caches.match(request)) ||
+            new Response('Offline', { status: 503 })
+          );
+        })
+    );
+    return;
+  }
 
   // API calls: network-first, fall back to cache
   if (url.pathname.startsWith('/api/')) {
@@ -83,18 +99,37 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Static assets: cache-first
+  // Hashed JS/CSS: network-first, then cache (hashed names are immutable once fetched)
+  if (
+    url.pathname.endsWith('.js') ||
+    url.pathname.endsWith('.css') ||
+    url.pathname.startsWith('/assets/')
+  ) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          if (response.ok && request.method === 'GET') {
+            const responseClone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(request, responseClone);
+            });
+          }
+          return response;
+        })
+        .catch(() => caches.match(request))
+    );
+    return;
+  }
+
+  // Other static (icons, fonts): cache-first
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) return cached;
       return fetch(request).then((response) => {
-        // Cache JS, CSS, images, fonts
         if (
           response.ok &&
           request.method === 'GET' &&
-          (url.pathname.endsWith('.js') ||
-            url.pathname.endsWith('.css') ||
-            url.pathname.endsWith('.svg') ||
+          (url.pathname.endsWith('.svg') ||
             url.pathname.endsWith('.png') ||
             url.pathname.endsWith('.woff2') ||
             url.pathname.endsWith('.json'))
@@ -105,13 +140,7 @@ self.addEventListener('fetch', (event) => {
           });
         }
         return response;
-      }).catch(() => {
-        // SPA fallback for navigation requests
-        if (request.mode === 'navigate') {
-          return caches.match('/');
-        }
-        return new Response('Offline', { status: 503 });
-      });
+      }).catch(() => new Response('Offline', { status: 503 }));
     })
   );
 });
