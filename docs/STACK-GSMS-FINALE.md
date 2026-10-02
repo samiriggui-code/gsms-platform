@@ -6,6 +6,8 @@
 
 > Les docs plus anciennes restent en archive de chantier ; si conflit → **ce fichier gagne**.
 
+> **2026-10-02 — Proposition V2 en revue :** [`architecture/GSMS-PLATFORM-CORE-V2.md`](./architecture/GSMS-PLATFORM-CORE-V2.md) (Core Python + Next.js, hybride). Tant qu’elle n’a pas le GO de Samir, **ce fichier reste canonique**.
+
 ---
 
 ## Pattern ops
