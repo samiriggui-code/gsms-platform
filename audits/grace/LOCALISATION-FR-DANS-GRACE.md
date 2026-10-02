@@ -2,8 +2,8 @@
 
 **Date :** 2026-09-02  
 **Statut :** décision d’architecture lab  
-**Doctrine :** [`../docs/DOCTRINE.md`](../../docs/DOCTRINE.md)  
-**Cartographie métier :** [`../docs/cartography/`](../../docs/cartography/)
+**Doctrine HOW/WHAT :** [`docs/domain/README.md`](../../docs/domain/README.md)  
+**Cartographie métier :** [`docs/domain/`](../../docs/domain/)
 
 ---
 
@@ -144,7 +144,7 @@ Upstream Grace reste pullable ; le contenu FR est **additive**.
 | Validation commission | — | — | — | **Review** + PDF |
 | Formation corrective | Action plan → lien School (hors Grace) | — | — | Treatment |
 
-Lien cartographie domaines : `docs/cartography/domains/*.md` · types d’audit `AUD.PRECOMMISSION.ERP` etc.
+Lien cartographie domaines : `docs/domain/domains/*.md` · types d’audit `AUD.PRECOMMISSION.ERP` etc.
 
 ---
 

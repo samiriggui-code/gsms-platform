@@ -1,6 +1,6 @@
 # GSMS STACK STATUS — NUC jarvis-nuc
 
-> **Canon plateforme :** [`STACK-GSMS-FINALE.md`](./STACK-GSMS-FINALE.md). Ce fichier = **état ops NUC** (peut différer du lab laptop).  
+> **Canon plateforme :** [`GSMS-PLATFORM-CORE-V2.md`](../architecture/GSMS-PLATFORM-CORE-V2.md). Ce fichier = **état ops NUC** (peut différer du lab laptop).  
 > **Split NUC/VPS :** [`GSMS_NUC_VPS_SPLIT.md`](./GSMS_NUC_VPS_SPLIT.md) — NUC = lab **IP locale** · VPS = prod **FQDN** · Tencent **reste NUC**.
 
 **Date :** 2026-09-05 (split NUC/VPS + OOM Comp)  

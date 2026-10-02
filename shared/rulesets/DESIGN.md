@@ -58,7 +58,7 @@ Pas d’import depuis `risk-engine.ts`.
 ## 4. SiteContext (entrée)
 
 Lu depuis `Assessment.metadata.customFields['erp-precommission']`  
-Keys : voir [`../cartography/CUSTOM-FIELDS-ERP-PRECOM.md`](../cartography/CUSTOM-FIELDS-ERP-PRECOM.md)
+Keys : voir [`../cartography/CUSTOM-FIELDS-ERP-PRECOM.md`](../../docs/domain/CUSTOM-FIELDS-ERP-PRECOM.md)
 
 Gate minimale pour `AUD.PRECOMMISSION.ERP` :
 

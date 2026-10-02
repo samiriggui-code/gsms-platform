@@ -2,7 +2,7 @@
 
 **Rôle.** Données pour **GRACE** (physique + module cyber) et **QAtrial** (échéances / policy). Comp AI GRC **supprimé** du laptop 2026-09-06.
 
-**Canon :** [`COMP-AI-DECOMPOSITION.md`](../../COMP-AI-DECOMPOSITION.md) · [`gsms-plateforme-complet.md`](../../gsms-plateforme-complet.md) §7.
+**Origine :** données récupérées de Comp AI GRC avant son retrait (historique git). Architecture : [`docs/architecture/GSMS-PLATFORM-CORE-V2.md`](../../docs/architecture/GSMS-PLATFORM-CORE-V2.md).
 
 ## Fichiers salvage
 
@@ -22,5 +22,4 @@
 
 1. Texte normatif ISO/SOC2 = **OSCAL**, pas Comp.
 2. Aucun code AGPL Comp dans Grace/QAtrial/CRM.
-3. Patterns : [`../PATTERNS-FROM-COMP-AI.md`](../PATTERNS-FROM-COMP-AI.md).
-4. Ops : laptop → NUC → VPS si RAM/CPU insuffisants (`STACK-GSMS-FINALE`).
+3. Lus au runtime par GRACE (`circuit/controls-catalog.ts`) et QAtrial (`lib/controls-catalog.ts`) : ne pas renommer.
