@@ -1,5 +1,18 @@
 # Handoff Cursor → Claude
 
+## 2026-10-02 — Spine AO Core (tenders + LexSocket)
+
+Router HTTP `GET/POST /api/v1/workspaces/{ws}/tenders` :
+- liste dossiers, ouverture case, summary, go-no-go GET + POST decision
+- `GET …/tenders/opportunities` → LexSocket MCP (`get_open_opportunities` / `search_tenders`), best-effort (vide sans token)
+- UI `/app/tenders` déjà branchée sur ces endpoints
+
+Tests `test_tenders.py` étendus (HTTP + MCP mock). Commit à pousser avec ce vertical.
+
+**Ops :** `GSMS_LEXSOCKET_MCP_TOKEN` (+ URL) sur Core pour la veille live.
+
+---
+
 ## 2026-10-02 — Vertical semaine 1 : dashboard + intake Core
 
 **Dashboard** (`GET /api/v1/workspaces/{ws}/dashboard`) — agrégat attention / deadlines / missions / activity. Tests `test_dashboard.py` verts. UI `/app` déjà branchée.

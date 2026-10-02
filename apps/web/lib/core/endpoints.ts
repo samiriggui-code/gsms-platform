@@ -11,7 +11,7 @@
  *
  * Ce fichier est la source de vérité côté front : tout endpoint utilisé par
  * l'UI doit y être déclaré. Les endpoints sans route Core correspondante
- * renvoient encore 404 (dashboard ✓ · intake ✓ depuis vertical semaine 1).
+ * renvoient encore 404 (dashboard ✓ · intake ✓ · tenders spine ✓).
  */
 
 const enc = encodeURIComponent;

@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import uuid
 from dataclasses import asdict
 
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from gsms_core.audit.service import record
@@ -18,6 +20,29 @@ class TenderError(ValueError):
     pass
 
 
+class NotFound(LookupError):
+    pass
+
+
+def list_cases(session: Session, workspace_id: uuid.UUID) -> list[TenderCase]:
+    return list(
+        session.scalars(
+            select(TenderCase)
+            .where(TenderCase.workspace_id == workspace_id)
+            .order_by(TenderCase.submission_deadline.asc().nullslast(), TenderCase.created_at.desc())
+        )
+    )
+
+
+def get_case_by_mission(session: Session, workspace_id: uuid.UUID, mission_id: uuid.UUID) -> TenderCase:
+    case = session.scalar(
+        select(TenderCase).where(TenderCase.workspace_id == workspace_id, TenderCase.mission_id == mission_id)
+    )
+    if case is None:
+        raise NotFound("dossier AO")
+    return case
+
+
 def open_case(
     session: Session,
     mission: Mission,
@@ -29,6 +54,9 @@ def open_case(
 ) -> TenderCase:
     if mission.type != MissionType.APPEL_OFFRES:
         raise TenderError("la mission doit être de type APPEL_OFFRES")
+    existing = session.scalar(select(TenderCase).where(TenderCase.mission_id == mission.id))
+    if existing is not None:
+        raise TenderError("un dossier AO existe déjà pour cette mission")
     case = TenderCase(
         workspace_id=mission.workspace_id,
         mission_id=mission.id,

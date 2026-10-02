@@ -17,6 +17,7 @@ from gsms_core.identity.router import router as identity_router
 from gsms_core.intake.router import router as intake_router
 from gsms_core.missions.router import router as missions_router
 from gsms_core.settings import Settings, get_settings
+from gsms_core.tenders.router import router as tenders_router
 from gsms_core.work.router import router as work_router
 from gsms_core.workflows import build_engine
 from gsms_core.workspaces.router import router as workspaces_router
@@ -53,6 +54,7 @@ def create_app(
         intake_router,
         workspaces_router,
         missions_router,
+        tenders_router,
         documents_router,
         work_router,
         events_router,
