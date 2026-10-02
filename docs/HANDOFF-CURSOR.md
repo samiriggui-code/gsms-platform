@@ -7,9 +7,11 @@ Router HTTP `GET/POST /api/v1/workspaces/{ws}/tenders` :
 - `GET …/tenders/opportunities` → LexSocket MCP (`get_open_opportunities` / `search_tenders`), best-effort (vide sans token)
 - UI `/app/tenders` déjà branchée sur ces endpoints
 
-Tests `test_tenders.py` étendus (HTTP + MCP mock). Commit à pousser avec ce vertical.
+Tests `test_tenders.py` étendus (HTTP + MCP mock). **Poussé** `60f47f5`.
 
 **Ops :** `GSMS_LEXSOCKET_MCP_TOKEN` (+ URL) sur Core pour la veille live.
+
+**Prochain :** connecteurs lecture Grace → findings / actions, ou onglets AO restants (pièces, analyse).
 
 ---
 
