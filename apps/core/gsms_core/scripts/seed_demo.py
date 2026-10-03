@@ -35,9 +35,13 @@ def seed(session: Session, password: str) -> dict[str, object]:
     if session.scalar(select(Organization).where(Organization.name == ORG_NAME)):
         return {"status": "déjà présent"}
 
-    gsms = Organization(name="GSMS", kind=OrganizationKind.GSMS)
+    # Réutilise l'organisation GSMS existante (créée par create-admin) : jamais de doublon.
+    gsms = session.scalar(select(Organization).where(Organization.kind == OrganizationKind.GSMS).limit(1))
+    if gsms is None:
+        gsms = Organization(name="GSMS", kind=OrganizationKind.GSMS)
+        session.add(gsms)
     org = Organization(name=ORG_NAME, kind=OrganizationKind.CLIENT, crm_company_ref="crm://company/demo-abc")
-    session.add_all([gsms, org])
+    session.add(org)
     session.flush()
 
     sites = {
@@ -96,9 +100,8 @@ def seed(session: Session, password: str) -> dict[str, object]:
                 workspace_id=None,
                 role=Role.CONSULTANT,
             ),
-            Membership(
-                user_id=users["consultant"].id, organization_id=gsms.id, workspace_id=None, role=Role.MEMBER
-            ),
+            # Pas de membership sur l'organisation GSMS : ce compte de démo (mot de passe connu) verrait
+            # sinon toutes les prestations des vrais clients (identity.service.staff_role).
         ]
     )
     for mission_type, (code, required) in DEFAULT_TEMPLATES.items():

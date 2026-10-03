@@ -26,8 +26,22 @@ GSMS_ORG_NAME = "GSMS"
 MIN_PASSWORD_LENGTH = 12
 
 
-def create_admin(session: Session, email: str, name: str, password: str) -> str:
-    """Crée (ou promeut) un administrateur de l'organisation GSMS. Idempotent sur l'e-mail."""
+# Rôles DocuLens (outil interne de l'équipe) → rôles appliqués par le Core sur toutes les prestations.
+TEAM_ROLES: dict[str, Role] = {
+    "admin": Role.ADMIN,  # utilisateurs, réglages, toutes les pièces
+    "analyst": Role.CONSULTANT,  # dépôt, analyse, exploitation des pièces
+    "reviewer": Role.AUDITOR,  # relecture, contrôle, constats
+    "manager": Role.MANAGER,  # pilotage, tableaux de bord, missions
+    "viewer": Role.VIEWER,  # lecture seule (aucun dépôt)
+}
+
+
+def create_member(session: Session, email: str, name: str, password: str, role: Role) -> str:
+    """Crée (ou met à jour) un compte de l'équipe GSMS avec ce rôle. Idempotent sur l'e-mail.
+
+    Un membre de l'équipe GSMS voit toutes les prestations de tous les clients avec ce rôle
+    (``identity.service.staff_role``).
+    """
     if len(password) < MIN_PASSWORD_LENGTH:
         raise ValueError(f"mot de passe trop court ({MIN_PASSWORD_LENGTH} caractères minimum)")
     email = email.strip().lower()
@@ -54,11 +68,16 @@ def create_admin(session: Session, email: str, name: str, password: str) -> str:
         )
     )
     if membership is None:
-        session.add(Membership(user_id=user.id, organization_id=gsms.id, workspace_id=None, role=Role.OWNER))
+        session.add(Membership(user_id=user.id, organization_id=gsms.id, workspace_id=None, role=role))
     else:
-        membership.role = Role.OWNER
+        membership.role = role
     session.commit()
     return status
+
+
+def create_admin(session: Session, email: str, name: str, password: str) -> str:
+    """Crée (ou promeut) un administrateur de l'organisation GSMS. Idempotent sur l'e-mail."""
+    return create_member(session, email, name, password, Role.OWNER)
 
 
 def _read_password() -> str:
@@ -94,14 +113,48 @@ def _vault_migrate(settings, db: Database) -> int:
     return 1 if report.errors else 0
 
 
+def _demo(settings, db: Database) -> int:
+    from gsms_core.documents.parsers import DoclingAdapter
+    from gsms_core.documents.storage import build_storage
+    from gsms_core.scripts.demo import run_demo
+    from gsms_core.vault.storage import Vault
+
+    password = os.environ.get("GSMS_SEED_PASSWORD", "")
+    if settings.env == "prod" and len(password) < MIN_PASSWORD_LENGTH:
+        print(
+            f"Erreur : en production, définir GSMS_SEED_PASSWORD ({MIN_PASSWORD_LENGTH} caractères minimum) "
+            "pour les comptes de démonstration.",
+            file=sys.stderr,
+        )
+        return 1
+    password = password or "demo-password-change-me"
+    vault = Vault.from_settings(build_storage(settings), settings)
+    with db.session_factory() as session:
+        result = run_demo(session, vault, DoclingAdapter(), password)
+    print("Client de démonstration ABC Retail (comptes client fictifs) :")
+    print("  direction@abc-retail.example          administrateur client (Lyon + Paris)")
+    print("  responsable.lyon@abc-retail.example   membre client (site de Lyon)")
+    print("  responsable.paris@abc-retail.example  membre client (site de Paris)")
+    print("L'équipe GSMS (create-member / create-admin) voit cette prestation avec son propre rôle.")
+    print(f"Prestation appel d'offres : {result['prestation_appel_offres']}")
+    for piece in result["pieces"]:
+        print(f"  pièce {piece['piece']} : {piece['analyse']} {piece['erreur']}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="gsms_core.cli")
     sub = parser.add_subparsers(dest="command", required=True)
     admin = sub.add_parser("create-admin", help="créer le compte administrateur GSMS")
     admin.add_argument("email")
     admin.add_argument("name")
+    member = sub.add_parser("create-member", help="créer le compte d'un membre de l'équipe GSMS")
+    member.add_argument("email")
+    member.add_argument("name")
+    member.add_argument("--role", required=True, choices=sorted(TEAM_ROLES), help="rôle DocuLens")
     sub.add_parser("seed-demo", help="installer l'organisation de démonstration")
     sub.add_parser("vault-migrate", help="chiffrer les fichiers existants et les ranger dans le coffre-fort")
+    sub.add_parser("demo", help="client de démonstration : prestation appel d'offres et pièces analysées")
     args = parser.parse_args(argv)
 
     settings = get_settings()
@@ -116,15 +169,21 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "vault-migrate":
         return _vault_migrate(settings, db)
+    if args.command == "demo":
+        return _demo(settings, db)
 
     try:
         password = _read_password()
         with db.session_factory() as session:
-            status = create_admin(session, args.email, args.name, password)
+            if args.command == "create-member":
+                status = create_member(session, args.email, args.name, password, TEAM_ROLES[args.role])
+            else:
+                status = create_admin(session, args.email, args.name, password)
     except ValueError as exc:
         print(f"Erreur : {exc}", file=sys.stderr)
         return 1
-    print(f"Administrateur {args.email} {status}.")
+    label = f"Membre ({args.role})" if args.command == "create-member" else "Administrateur"
+    print(f"{label} {args.email} {status}.")
     return 0
 
 
