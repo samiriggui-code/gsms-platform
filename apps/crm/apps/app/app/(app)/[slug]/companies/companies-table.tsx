@@ -14,6 +14,7 @@ import {
 } from "@crm/ui/components/entity-logo";
 import { useTableSelection } from "@crm/ui/hooks/use-table-selection";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 import { EnrichmentIndicator } from "@/components/crm/enrichment-status";
 import { useFieldColumns } from "@/components/crm/fields/field-columns";
@@ -34,7 +35,6 @@ import {
 } from "@/lib/enrichment-status";
 import { useTRPC } from "@/lib/trpc/client";
 import type { RouterOutputs } from "@/lib/trpc/types";
-import { useTranslations } from "next-intl";
 import { CompaniesBulkActions } from "./companies-bulk-actions";
 import { companiesSearchParams } from "./companies-search-params";
 
@@ -249,10 +249,8 @@ export function CompaniesTable() {
 	return (
 		<EntityListShell
 			eyebrow={t("pulseEyebrow")}
-			headline={t("pulseHeadline", { count: total.toLocaleString() })}
-			subhead={
-				input.archived ? t("pulseSubheadArchived") : t("pulseSubhead")
-			}
+			headline={t("pulseHeadline", { count: total.toLocaleString("fr-FR") })}
+			subhead={input.archived ? t("pulseSubheadArchived") : t("pulseSubhead")}
 			body={t("pulseBody")}
 			panelTitle={t("panelTitle")}
 			panelRows={[
@@ -264,8 +262,16 @@ export function CompaniesTable() {
 				},
 			]}
 			stats={[
-				{ label: t("statAccounts"), value: String(total), helper: t("statFiltered") },
-				{ label: t("statPage"), value: String(rows.length), helper: t("statRows") },
+				{
+					label: t("statAccounts"),
+					value: String(total),
+					helper: t("statFiltered"),
+				},
+				{
+					label: t("statPage"),
+					value: String(rows.length),
+					helper: t("statRows"),
+				},
 				{
 					label: t("statMode"),
 					value: input.archived ? t("modeArchive") : t("modeActive"),
@@ -273,45 +279,45 @@ export function CompaniesTable() {
 				},
 			]}
 		>
-		<DataTable
-			query={query}
-			search={<ListSearch placeholder={t("search")} />}
-			actions={
-				<>
-					<SavedViewsMenu entity="COMPANY" table={table} />
-					<Button
-						variant={input.archived ? "contrast" : "outline"}
-						size="sm"
-						className="justify-start sm:justify-center"
-						onClick={() => setArchived(!input.archived)}
-					>
-						<Archive data-icon="inline-start" />
-						{t("archived")}
-					</Button>
-				</>
-			}
-			columns={columns}
-			rows={rows}
-			total={total}
-			facetCounts={facetCounts}
-			facets={facets}
-			selection={{
-				state: selection,
-				actions: (
-					<CompaniesBulkActions
-						ids={selection.ids}
-						onDone={selection.clear}
-						archived={input.archived}
-					/>
-				),
-				rowLabel: (row) => row.name,
-			}}
-			getRowId={(row) => row.id}
-			loading={companies.isFetching}
-			onRowHover={(row) => prefetchRecord({ kind: "company", id: row.id })}
-			onRowClick={(row) => openRecord({ kind: "company", id: row.id })}
-			empty={input.archived ? t("emptyArchived") : t("empty")}
-		/>
+			<DataTable
+				query={query}
+				search={<ListSearch placeholder={t("search")} />}
+				actions={
+					<>
+						<SavedViewsMenu entity="COMPANY" table={table} />
+						<Button
+							variant={input.archived ? "contrast" : "outline"}
+							size="sm"
+							className="justify-start sm:justify-center"
+							onClick={() => setArchived(!input.archived)}
+						>
+							<Archive data-icon="inline-start" />
+							{t("archived")}
+						</Button>
+					</>
+				}
+				columns={columns}
+				rows={rows}
+				total={total}
+				facetCounts={facetCounts}
+				facets={facets}
+				selection={{
+					state: selection,
+					actions: (
+						<CompaniesBulkActions
+							ids={selection.ids}
+							onDone={selection.clear}
+							archived={input.archived}
+						/>
+					),
+					rowLabel: (row) => row.name,
+				}}
+				getRowId={(row) => row.id}
+				loading={companies.isFetching}
+				onRowHover={(row) => prefetchRecord({ kind: "company", id: row.id })}
+				onRowClick={(row) => openRecord({ kind: "company", id: row.id })}
+				empty={input.archived ? t("emptyArchived") : t("empty")}
+			/>
 		</EntityListShell>
 	);
 }

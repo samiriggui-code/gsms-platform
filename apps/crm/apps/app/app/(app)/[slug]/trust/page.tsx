@@ -1,7 +1,7 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { Suspense, useEffect, useState } from "react";
 import { DeskPulseBand } from "@/components/desk-ui/desk-pulse-band";
 import {
 	AccentActionPanel,
@@ -58,9 +58,7 @@ export function TrustFindingsPanel() {
 						message?: string;
 						error?: string;
 					} | null;
-					throw new Error(
-						body?.message ?? body?.error ?? `HTTP ${res.status}`,
-					);
+					throw new Error(body?.message ?? body?.error ?? `HTTP ${res.status}`);
 				}
 				const json = (await res.json()) as Payload;
 				if (!cancelled) setData(json);
@@ -99,7 +97,7 @@ export function TrustFindingsPanel() {
 				eyebrow={t("pulseEyebrow")}
 				headline={
 					wired
-						? t("pulseHeadline", { count: data.count.toLocaleString() })
+						? t("pulseHeadline", { count: data.count.toLocaleString("fr-FR") })
 						: t("pulseHeadlineOff")
 				}
 				subhead={
@@ -120,7 +118,7 @@ export function TrustFindingsPanel() {
 					{
 						label: t("total"),
 						value: String(data.count),
-						helper: new Date(data.generatedAt).toLocaleString(),
+						helper: new Date(data.generatedAt).toLocaleString("fr-FR"),
 					},
 					{
 						label: t("open"),
@@ -174,10 +172,7 @@ export function TrustFindingsPanel() {
 						</thead>
 						<tbody className="divide-y divide-border">
 							{data.findings.map((f) => (
-								<tr
-									key={f.id}
-									className="transition-colors hover:bg-muted/40"
-								>
+								<tr key={f.id} className="transition-colors hover:bg-muted/40">
 									<td className="px-5 py-3.5 font-mono text-xs sm:px-6">
 										{f.source}
 									</td>

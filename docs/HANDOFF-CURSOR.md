@@ -1,5 +1,35 @@
 # Handoff Cursor → Claude
 
+## 2026-10-03 — CRM, étape 1 : le métier GSMS
+
+**Fait (apps/crm)**
+- **Étapes d'affaire GSMS**, migration Prisma `20261003170000_gsms_deal_stages` (les affaires existantes gardent leur étape, renommée) :
+  - Prospect ;
+  - Qualification ;
+  - Visite / analyse du besoin ;
+  - Devis envoyé ;
+  - **Négociation** (nouvelle) ;
+  - Gagné / Perdu / Sans suite.
+- **Euros par défaut** : affaires et devise de reporting. Montants, pourcentages et dates au format français (fr-FR), y compris côté serveur, ce qui supprime un écart d'affichage entre serveur et navigateur.
+- **Champs métier créés en production**, migration `20261003171000_gsms_fields`, idempotente :
+  - **sociétés** : statut commercial, type d'établissement (ERP, IGH, ICPE…), catégorie ERP, types d'activité ERP, effectif, prochaine commission, SIRET, nombre de sites ;
+  - **affaires** : type de mission (audit, appel d'offres, commission, accompagnement, conformité), établissement, échéance commission, référence AO, date limite de remise.
+  - Auparavant, ces champs n'existaient que dans le seed local.
+- **Seed de démonstration réécrit en français** : 15 établissements fictifs, contacts, affaires en euros, activités.
+
+**Vérifié**
+- check-types de l'app, de l'API, de l'agent, de db et d'ui.
+- Tests : api 386/386 ; db, auth et seed sur PostgreSQL.
+- Écran des affaires et des sociétés dans Chromium.
+- Deux échecs existaient déjà avant ce chantier : la liste `TOOL_VERBS` de l'app et le briefing GRACE/QAtrial de l'agent.
+
+**Suite**
+- Étape 2 : pont CRM ↔ Core.
+- Étape 3 : interface 100 % français (en-têtes de colonnes, fiches, paramètres, onboarding).
+- Étape 4 : agents métier.
+
+---
+
 ## 2026-10-03 — Identité unique : équipe gérée dans le Core, connexion GSMS dans GRACE, QAtrial et le CRM
 
 **But :** les mêmes comptes partout, chaque app gardant sa base. Contrat : `docs/architecture/IDENTITE-SSO.md`.

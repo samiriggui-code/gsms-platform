@@ -21,7 +21,10 @@ const deals = new DealsService(
 	agent,
 	new ActivityStampService(db),
 	new ConversionService(db),
-	new FieldsService(db, { fieldBackfill: async () => undefined } as never),
+	new FieldsService(db, {
+		fieldBackfill: async () => undefined,
+		fieldBackfillRecords: async () => ({ queued: 0, merged: 0 }),
+	} as never),
 );
 
 let companyId: string;

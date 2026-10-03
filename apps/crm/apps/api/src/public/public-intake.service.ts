@@ -1,12 +1,12 @@
-import { WORKSPACE_ID } from "@crm/db/workspace";
 import {
 	ActivityType,
+	type Db,
 	EnrichmentStatus,
 	Prisma,
 	RecordSource,
-	type Db,
 } from "@crm/db";
 import { lockIdempotencyKey } from "@crm/db/idempotency";
+import { WORKSPACE_ID } from "@crm/db/workspace";
 import {
 	BadRequestException,
 	HttpException,
@@ -139,10 +139,11 @@ export class PublicIntakeService {
 			.filter(Boolean)
 			.join("\n\n");
 
-		const dealTitle = body.title.trim().startsWith("[AO]") ||
+		const dealTitle =
+			body.title.trim().startsWith("[AO]") ||
 			body.title.trim().startsWith("[AUDIT]")
-			? body.title.trim()
-			: `[AO] ${body.title.trim()}`;
+				? body.title.trim()
+				: `[AO] ${body.title.trim()}`;
 
 		const outcome = await this.agent.withCrmEvents(async (tx, emit) => {
 			await lockIdempotencyKey(
@@ -240,7 +241,8 @@ export class PublicIntakeService {
 						source: "FORM",
 					},
 				});
-			} else {				const linked = await tx.contact.findFirst({
+			} else {
+				const linked = await tx.contact.findFirst({
 					where: { id: contact.id, companyId: company.id },
 					select: { id: true },
 				});
@@ -258,7 +260,7 @@ export class PublicIntakeService {
 					description,
 					companyId: company.id,
 					ownerId,
-					stage: "DEMO_BOOKED",
+					stage: "PROSPECT",
 					stageChangedAt: now,
 					expectedCloseDate: body.expectedCloseDate
 						? new Date(body.expectedCloseDate)
@@ -277,15 +279,13 @@ export class PublicIntakeService {
 				type: "deal.created",
 				record: { kind: "deal", id: deal.id },
 				occurredAt: now,
-				data: { companyId: company.id, stage: "DEMO_BOOKED" },
+				data: { companyId: company.id, stage: "PROSPECT" },
 			});
 
 			await tx.activity.create({
 				data: {
 					type: ActivityType.NOTE,
-					subject: isAudit
-						? "Demande audit (vitrine)"
-						: "Demande AO (vitrine)",
+					subject: isAudit ? "Demande audit (vitrine)" : "Demande AO (vitrine)",
 					body: description,
 					companyId: company.id,
 					contactId: contact.id,

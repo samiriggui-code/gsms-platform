@@ -48,11 +48,152 @@ function daysFromNow(days: number, jitterHours = 0): Date {
 	return new Date(NOW + days * DAY_MS + jitter);
 }
 
+function digits(count: number): string {
+	let value = "";
+	for (let index = 0; index < count; index++) value += String(integer(0, 9));
+	return value;
+}
+
+function frenchPhone(prefix: string): string {
+	const pairs = Array.from({ length: 4 }, () =>
+		String(integer(0, 99)).padStart(2, "0"),
+	);
+	return `+33 ${prefix} ${pairs.join(" ")}`;
+}
+
 const OWNERS = [
-	{ name: "Ada Okafor", email: "ada@trycomp.ai" },
-	{ name: "Marcus Lindqvist", email: "marcus@trycomp.ai" },
-	{ name: "Priya Raman", email: "priya@trycomp.ai" },
+	{ name: "Claire Martin", email: "claire.martin@gsms-security.example" },
+	{ name: "Julien Bernard", email: "julien.bernard@gsms-security.example" },
+	{ name: "Nadia Haddad", email: "nadia.haddad@gsms-security.example" },
 ] as const;
+
+const MISSION_TYPES = [
+	"audit",
+	"appel-offres",
+	"commission-securite",
+	"accompagnement",
+	"conformite",
+	"contact",
+] as const;
+
+type Mission = (typeof MISSION_TYPES)[number];
+
+const STATUTS_COMMERCIAUX = [
+	"Prospect",
+	"Client",
+	"Ancien client",
+	"Partenaire",
+	"Fournisseur",
+] as const;
+
+const TYPES_ETABLISSEMENT = [
+	"ERP",
+	"IGH",
+	"ERP + IGH",
+	"ICPE",
+	"Habitation",
+	"Bureaux / tertiaire (Code du travail)",
+	"Industrie / logistique",
+	"Santé / médico-social",
+	"Société de sécurité privée",
+] as const;
+
+type TypeEtablissement = (typeof TYPES_ETABLISSEMENT)[number];
+
+const CATEGORIES_ERP = [
+	"1re catégorie (plus de 1 500 personnes)",
+	"2e catégorie (701 à 1 500)",
+	"3e catégorie (301 à 700)",
+	"4e catégorie (300 et moins)",
+	"5e catégorie (petit établissement)",
+] as const;
+
+type CategorieErp = (typeof CATEGORIES_ERP)[number];
+
+const ETABLISSEMENT_TYPES = [
+	"Établissement recevant du public",
+	"Santé et accueil spécialisé",
+	"Tertiaire, industrie et logistique",
+	"Société de sécurité privée",
+] as const;
+
+type DealEtablissement = (typeof ETABLISSEMENT_TYPES)[number];
+
+const DEAL_ETABLISSEMENT: Record<TypeEtablissement, DealEtablissement> = {
+	ERP: "Établissement recevant du public",
+	IGH: "Tertiaire, industrie et logistique",
+	"ERP + IGH": "Établissement recevant du public",
+	ICPE: "Tertiaire, industrie et logistique",
+	Habitation: "Santé et accueil spécialisé",
+	"Bureaux / tertiaire (Code du travail)": "Tertiaire, industrie et logistique",
+	"Industrie / logistique": "Tertiaire, industrie et logistique",
+	"Santé / médico-social": "Santé et accueil spécialisé",
+	"Société de sécurité privée": "Société de sécurité privée",
+};
+
+const TITLES_ERP = [
+	"Directeur de site",
+	"Responsable sécurité",
+	"Chargé de sécurité incendie",
+	"Directeur technique",
+	"Responsable des services généraux",
+	"Chef de service SSIAP",
+] as const;
+
+const TITLES_SANTE = [
+	"Directeur d'établissement",
+	"Directeur des services techniques",
+	"Responsable sécurité",
+	"Acheteur",
+	"Responsable HSE",
+	"Chef de service SSIAP",
+] as const;
+
+const TITLES_PUBLIC = [
+	"Secrétaire général de mairie",
+	"Directeur des services techniques",
+	"Responsable du patrimoine bâti",
+	"Acheteur public",
+	"Chargé de sécurité incendie",
+] as const;
+
+const TITLES_ENSEIGNEMENT = [
+	"Proviseur",
+	"Gestionnaire",
+	"Directeur du patrimoine immobilier",
+	"Responsable sécurité",
+	"Acheteur public",
+] as const;
+
+const TITLES_INDUSTRIE = [
+	"Directeur de site",
+	"Responsable HSE",
+	"Directeur technique",
+	"Responsable maintenance",
+	"Acheteur",
+] as const;
+
+const TITLES_IGH = [
+	"Directeur de l'immeuble",
+	"Property manager",
+	"Chef de service SSIAP 3",
+	"Responsable des services généraux",
+	"Acheteur",
+] as const;
+
+const TITLES_SECURITE_PRIVEE = [
+	"Directeur d'agence",
+	"Responsable commercial",
+	"Responsable des appels d'offres",
+	"Directeur des opérations",
+] as const;
+
+type DealTemplate = {
+	title: string;
+	mission: Mission;
+	min: number;
+	max: number;
+};
 
 type SeedCompany = {
 	name: string;
@@ -61,260 +202,585 @@ type SeedCompany = {
 	city: string;
 	country: string;
 	countryCode: string;
+	phonePrefix: string;
+	titles: readonly string[];
+	statut: (typeof STATUTS_COMMERCIAUX)[number];
+	typeEtablissement: TypeEtablissement;
+	categorieErp: CategorieErp | null;
+	typesActiviteErp: string | null;
+	effectif: number | null;
+	prochaineCommission: string | null;
+	nombreDeSites: number;
+	deals: readonly DealTemplate[];
 };
 
 const COMPANIES: readonly SeedCompany[] = [
 	{
-		name: "Stripe",
-		domain: "stripe.com",
-		industry: "Financial Services",
-		city: "San Francisco",
-		country: "United States",
-		countryCode: "US",
+		name: "Centre commercial Les Arcades",
+		domain: "arcades-lyon.example",
+		industry: "Commerce et centres commerciaux",
+		city: "Lyon",
+		country: "France",
+		countryCode: "FR",
+		phonePrefix: "4 78",
+		titles: TITLES_ERP,
+		statut: "Client",
+		typeEtablissement: "ERP",
+		categorieErp: "1re catégorie (plus de 1 500 personnes)",
+		typesActiviteErp: "M, N",
+		effectif: 4500,
+		prochaineCommission: "2027-03-16",
+		nombreDeSites: 1,
+		deals: [
+			{
+				title: "Audit sécurité incendie",
+				mission: "audit",
+				min: 8,
+				max: 18,
+			},
+			{
+				title: "Préparation commission de sécurité 2027",
+				mission: "commission-securite",
+				min: 4,
+				max: 9,
+			},
+		],
 	},
 	{
-		name: "Linear",
-		domain: "linear.app",
-		industry: "Software",
-		city: "San Francisco",
-		country: "United States",
-		countryCode: "US",
+		name: "Clinique du Parc",
+		domain: "clinique-du-parc.example",
+		industry: "Santé",
+		city: "Grenoble",
+		country: "France",
+		countryCode: "FR",
+		phonePrefix: "4 76",
+		titles: TITLES_SANTE,
+		statut: "Prospect",
+		typeEtablissement: "ERP",
+		categorieErp: "3e catégorie (301 à 700)",
+		typesActiviteErp: "U",
+		effectif: 420,
+		prochaineCommission: "2026-12-08",
+		nombreDeSites: 1,
+		deals: [
+			{
+				title: "AO gardiennage et SSIAP 2027",
+				mission: "appel-offres",
+				min: 90,
+				max: 165,
+			},
+		],
 	},
 	{
-		name: "Vercel",
-		domain: "vercel.com",
-		industry: "Software",
-		city: "San Francisco",
-		country: "United States",
-		countryCode: "US",
+		name: "Hôtel Le Belvédère",
+		domain: "hotel-belvedere.example",
+		industry: "Hôtellerie et restauration",
+		city: "Bordeaux",
+		country: "France",
+		countryCode: "FR",
+		phonePrefix: "5 56",
+		titles: TITLES_ERP,
+		statut: "Client",
+		typeEtablissement: "ERP",
+		categorieErp: "4e catégorie (300 et moins)",
+		typesActiviteErp: "O, N",
+		effectif: 180,
+		prochaineCommission: "2027-05-11",
+		nombreDeSites: 1,
+		deals: [
+			{
+				title: "Mise en conformité désenfumage",
+				mission: "conformite",
+				min: 12,
+				max: 35,
+			},
+			{
+				title: "Accompagnement registre de sécurité",
+				mission: "accompagnement",
+				min: 2,
+				max: 5,
+			},
+		],
 	},
 	{
-		name: "Ramp",
-		domain: "ramp.com",
-		industry: "Financial Services",
-		city: "New York",
-		country: "United States",
-		countryCode: "US",
+		name: "Mairie de Saint-Aubin",
+		domain: "mairie-saint-aubin.example",
+		industry: "Collectivité territoriale",
+		city: "Nantes",
+		country: "France",
+		countryCode: "FR",
+		phonePrefix: "2 40",
+		titles: TITLES_PUBLIC,
+		statut: "Prospect",
+		typeEtablissement: "ERP",
+		categorieErp: "3e catégorie (301 à 700)",
+		typesActiviteErp: "W, L",
+		effectif: 550,
+		prochaineCommission: "2027-01-19",
+		nombreDeSites: 12,
+		deals: [
+			{
+				title: "Audit du patrimoine ERP communal",
+				mission: "audit",
+				min: 15,
+				max: 40,
+			},
+		],
 	},
 	{
-		name: "Notion",
-		domain: "notion.so",
-		industry: "Software",
-		city: "San Francisco",
-		country: "United States",
-		countryCode: "US",
+		name: "Lycée Jean-Moulin",
+		domain: "lycee-jean-moulin.example",
+		industry: "Enseignement",
+		city: "Lille",
+		country: "France",
+		countryCode: "FR",
+		phonePrefix: "3 20",
+		titles: TITLES_ENSEIGNEMENT,
+		statut: "Client",
+		typeEtablissement: "ERP",
+		categorieErp: "2e catégorie (701 à 1 500)",
+		typesActiviteErp: "R, N",
+		effectif: 1200,
+		prochaineCommission: "2026-11-24",
+		nombreDeSites: 1,
+		deals: [
+			{
+				title: "Préparation commission de sécurité périodique",
+				mission: "commission-securite",
+				min: 3,
+				max: 7,
+			},
+			{
+				title: "Accompagnement exercices d'évacuation",
+				mission: "accompagnement",
+				min: 2,
+				max: 4,
+			},
+		],
 	},
 	{
-		name: "Monzo",
-		domain: "monzo.com",
-		industry: "Banking",
-		city: "London",
-		country: "United Kingdom",
-		countryCode: "GB",
+		name: "Résidence seniors Les Tilleuls",
+		domain: "residence-les-tilleuls.example",
+		industry: "Résidences services seniors",
+		city: "Nantes",
+		country: "France",
+		countryCode: "FR",
+		phonePrefix: "2 51",
+		titles: TITLES_SANTE,
+		statut: "Prospect",
+		typeEtablissement: "Habitation",
+		categorieErp: null,
+		typesActiviteErp: null,
+		effectif: null,
+		prochaineCommission: null,
+		nombreDeSites: 2,
+		deals: [
+			{
+				title: "Audit sécurité incendie des parties communes",
+				mission: "audit",
+				min: 4,
+				max: 9,
+			},
+		],
 	},
 	{
-		name: "Wise",
-		domain: "wise.com",
-		industry: "Financial Services",
-		city: "London",
-		country: "United Kingdom",
-		countryCode: "GB",
+		name: "Logistique Rhône Express",
+		domain: "rhone-express-logistique.example",
+		industry: "Transport et logistique",
+		city: "Vénissieux",
+		country: "France",
+		countryCode: "FR",
+		phonePrefix: "4 72",
+		titles: TITLES_INDUSTRIE,
+		statut: "Client",
+		typeEtablissement: "ICPE",
+		categorieErp: null,
+		typesActiviteErp: null,
+		effectif: null,
+		prochaineCommission: null,
+		nombreDeSites: 3,
+		deals: [
+			{
+				title: "Mise en conformité entrepôt ICPE 1510",
+				mission: "conformite",
+				min: 20,
+				max: 60,
+			},
+			{
+				title: "Audit sécurité incendie plateforme de Corbas",
+				mission: "audit",
+				min: 6,
+				max: 14,
+			},
+		],
 	},
 	{
-		name: "Personio",
-		domain: "personio.com",
-		industry: "Human Resources",
-		city: "Munich",
-		country: "Germany",
-		countryCode: "DE",
+		name: "Tour Horizon",
+		domain: "tour-horizon.example",
+		industry: "Immobilier tertiaire",
+		city: "Courbevoie",
+		country: "France",
+		countryCode: "FR",
+		phonePrefix: "1 47",
+		titles: TITLES_IGH,
+		statut: "Prospect",
+		typeEtablissement: "IGH",
+		categorieErp: null,
+		typesActiviteErp: null,
+		effectif: 2800,
+		prochaineCommission: "2027-06-08",
+		nombreDeSites: 1,
+		deals: [
+			{
+				title: "AO sécurité incendie SSIAP 3 2027",
+				mission: "appel-offres",
+				min: 120,
+				max: 180,
+			},
+		],
 	},
 	{
-		name: "Pennylane",
-		domain: "pennylane.com",
-		industry: "Accounting",
+		name: "Groupe Sécurité Alpha",
+		domain: "securite-alpha.example",
+		industry: "Sécurité privée",
+		city: "Marseille",
+		country: "France",
+		countryCode: "FR",
+		phonePrefix: "4 91",
+		titles: TITLES_SECURITE_PRIVEE,
+		statut: "Partenaire",
+		typeEtablissement: "Société de sécurité privée",
+		categorieErp: null,
+		typesActiviteErp: null,
+		effectif: null,
+		prochaineCommission: null,
+		nombreDeSites: 4,
+		deals: [
+			{
+				title: "Accompagnement réponse AO gardiennage",
+				mission: "accompagnement",
+				min: 5,
+				max: 15,
+			},
+			{
+				title: "Premier contact — partenariat SSIAP",
+				mission: "contact",
+				min: 2,
+				max: 6,
+			},
+		],
+	},
+	{
+		name: "Cinéma Le Grand Écran",
+		domain: "grand-ecran-cinema.example",
+		industry: "Culture et loisirs",
+		city: "Bordeaux",
+		country: "France",
+		countryCode: "FR",
+		phonePrefix: "5 57",
+		titles: TITLES_ERP,
+		statut: "Prospect",
+		typeEtablissement: "ERP",
+		categorieErp: "2e catégorie (701 à 1 500)",
+		typesActiviteErp: "L",
+		effectif: 1100,
+		prochaineCommission: "2027-02-23",
+		nombreDeSites: 1,
+		deals: [
+			{
+				title: "Préparation commission de sécurité 2027",
+				mission: "commission-securite",
+				min: 3,
+				max: 8,
+			},
+		],
+	},
+	{
+		name: "Musée des Beaux-Arts de Saint-Aubin",
+		domain: "musee-saint-aubin.example",
+		industry: "Culture et patrimoine",
 		city: "Paris",
 		country: "France",
 		countryCode: "FR",
+		phonePrefix: "1 42",
+		titles: TITLES_PUBLIC,
+		statut: "Ancien client",
+		typeEtablissement: "ERP",
+		categorieErp: "3e catégorie (301 à 700)",
+		typesActiviteErp: "Y, T",
+		effectif: 400,
+		prochaineCommission: "2027-09-14",
+		nombreDeSites: 1,
+		deals: [
+			{
+				title: "Audit sécurité incendie et plan de sauvegarde des œuvres",
+				mission: "audit",
+				min: 7,
+				max: 16,
+			},
+			{
+				title: "Mise en conformité SSI catégorie A",
+				mission: "conformite",
+				min: 25,
+				max: 70,
+			},
+		],
 	},
 	{
-		name: "Cal.com",
-		domain: "cal.com",
-		industry: "Software",
-		city: "San Francisco",
-		country: "United States",
-		countryCode: "US",
+		name: "Salle de spectacle L'Odyssée",
+		domain: "salle-odyssee.example",
+		industry: "Spectacle vivant",
+		city: "Marseille",
+		country: "France",
+		countryCode: "FR",
+		phonePrefix: "4 91",
+		titles: TITLES_ERP,
+		statut: "Client",
+		typeEtablissement: "ERP",
+		categorieErp: "1re catégorie (plus de 1 500 personnes)",
+		typesActiviteErp: "L, N",
+		effectif: 2200,
+		prochaineCommission: "2026-12-15",
+		nombreDeSites: 1,
+		deals: [
+			{
+				title: "Accompagnement commission de sécurité avant réouverture",
+				mission: "commission-securite",
+				min: 6,
+				max: 14,
+			},
+		],
 	},
 	{
-		name: "Supabase",
-		domain: "supabase.com",
-		industry: "Software",
-		city: "Singapore",
-		country: "Singapore",
-		countryCode: "SG",
+		name: "Centre hospitalier de Valmont",
+		domain: "ch-valmont.example",
+		industry: "Santé",
+		city: "Lille",
+		country: "France",
+		countryCode: "FR",
+		phonePrefix: "3 28",
+		titles: TITLES_SANTE,
+		statut: "Client",
+		typeEtablissement: "Santé / médico-social",
+		categorieErp: null,
+		typesActiviteErp: null,
+		effectif: null,
+		prochaineCommission: "2027-04-13",
+		nombreDeSites: 5,
+		deals: [
+			{
+				title: "AO sécurité incendie et sûreté 2027",
+				mission: "appel-offres",
+				min: 110,
+				max: 180,
+			},
+			{
+				title: "Formation SSIAP 1 — équipe de nuit",
+				mission: "accompagnement",
+				min: 3,
+				max: 8,
+			},
+		],
 	},
 	{
-		name: "Retool",
-		domain: "retool.com",
-		industry: "Software",
-		city: "San Francisco",
-		country: "United States",
-		countryCode: "US",
+		name: "Université de Valmont",
+		domain: "univ-valmont.example",
+		industry: "Enseignement supérieur",
+		city: "Grenoble",
+		country: "France",
+		countryCode: "FR",
+		phonePrefix: "4 76",
+		titles: TITLES_ENSEIGNEMENT,
+		statut: "Prospect",
+		typeEtablissement: "ERP + IGH",
+		categorieErp: "1re catégorie (plus de 1 500 personnes)",
+		typesActiviteErp: "R, S, N",
+		effectif: 6000,
+		prochaineCommission: "2027-10-05",
+		nombreDeSites: 7,
+		deals: [
+			{
+				title: "Audit du parc ERP universitaire",
+				mission: "audit",
+				min: 30,
+				max: 80,
+			},
+		],
 	},
 	{
-		name: "Deel",
-		domain: "deel.com",
-		industry: "Human Resources",
-		city: "New York",
-		country: "United States",
-		countryCode: "US",
-	},
-	{
-		name: "Mercury",
-		domain: "mercury.com",
-		industry: "Banking",
-		city: "San Francisco",
-		country: "United States",
-		countryCode: "US",
-	},
-	{
-		name: "Attio",
-		domain: "attio.com",
-		industry: "Software",
-		city: "London",
-		country: "United Kingdom",
-		countryCode: "GB",
+		name: "Entrepôt Nord Distribution",
+		domain: "nord-distribution.example",
+		industry: "Logistique et distribution",
+		city: "Lesquin",
+		country: "France",
+		countryCode: "FR",
+		phonePrefix: "3 20",
+		titles: TITLES_INDUSTRIE,
+		statut: "Ancien client",
+		typeEtablissement: "Industrie / logistique",
+		categorieErp: null,
+		typesActiviteErp: null,
+		effectif: null,
+		prochaineCommission: null,
+		nombreDeSites: 2,
+		deals: [
+			{
+				title: "Mise en conformité désenfumage et RIA",
+				mission: "conformite",
+				min: 15,
+				max: 45,
+			},
+			{
+				title: "AO gardiennage et sécurité incendie 2027",
+				mission: "appel-offres",
+				min: 60,
+				max: 140,
+			},
+		],
 	},
 ];
 
 const FIRST_NAMES = [
-	"Amara",
-	"Ben",
-	"Chidi",
-	"Dana",
-	"Elias",
-	"Farah",
-	"Gus",
-	"Hana",
-	"Ines",
-	"Jonas",
-	"Kofi",
-	"Lena",
-	"Mateo",
-	"Nadia",
-	"Omar",
-	"Pia",
-	"Quinn",
-	"Rosa",
-	"Sami",
-	"Tara",
-	"Ugo",
-	"Vera",
-	"Wes",
-	"Yuki",
+	"Antoine",
+	"Camille",
+	"Céline",
+	"David",
+	"Élodie",
+	"François",
+	"Hélène",
+	"Isabelle",
+	"Jérôme",
+	"Karim",
+	"Laurence",
+	"Mathieu",
+	"Nathalie",
+	"Olivier",
+	"Pauline",
+	"Rachid",
+	"Sandrine",
+	"Sébastien",
+	"Sophie",
+	"Thierry",
+	"Valérie",
+	"Yann",
+	"Amélie",
+	"Jean-Pierre",
 ] as const;
 
 const LAST_NAMES = [
-	"Adeyemi",
-	"Bergström",
-	"Chen",
 	"Dubois",
-	"Eriksen",
-	"Fontaine",
-	"Gupta",
-	"Haddad",
-	"Ivanova",
-	"Jensen",
-	"Kowalski",
-	"Lombardi",
 	"Moreau",
-	"Nakamura",
-	"Oyelaran",
-	"Petrov",
-	"Quintana",
-	"Rossi",
-	"Sørensen",
-	"Takahashi",
-] as const;
-
-const TITLES = [
-	"Head of Security",
-	"CTO",
-	"VP Engineering",
-	"Compliance Manager",
-	"Head of Legal",
-	"Security Engineer",
-	"COO",
-	"IT Director",
-	"Head of Platform",
-	"Chief of Staff",
+	"Laurent",
+	"Simon",
+	"Michel",
+	"Lefebvre",
+	"Leroy",
+	"Roux",
+	"David",
+	"Bertrand",
+	"Morel",
+	"Fournier",
+	"Girard",
+	"Bonnet",
+	"Dupont",
+	"Lambert",
+	"Fontaine",
+	"Rousseau",
+	"Benali",
+	"Mercier",
 ] as const;
 
 const OPEN_STAGES = [
-	DealStage.DEMO_BOOKED,
-	DealStage.QUALIFIED_TO_BUY,
-	DealStage.DECISION_MAKER_BOUGHT_IN,
-	DealStage.CONTRACT_SENT,
+	DealStage.PROSPECT,
+	DealStage.QUALIFICATION,
+	DealStage.NEEDS_ANALYSIS,
+	DealStage.QUOTE_SENT,
+	DealStage.NEGOTIATION,
 ] as const;
 
 const CLOSED_STAGES = [
 	DealStage.CLOSED_WON,
 	DealStage.CLOSED_LOST,
-	DealStage.UNQUALIFIED_TO_BUY,
+	DealStage.NOT_QUALIFIED,
 ] as const;
 
-const DEAL_DESCRIPTIONS = [
-	"Replacing a spreadsheet-and-Drive evidence process before their first SOC 2 audit. Security owns the decision, finance signs.",
-	"Expansion onto the platform team after the security org went live. Blocked on whether the current contract can be co-termed.",
-	"Inbound from a failed vendor renewal. They want automated evidence collection and one auditor-ready report.",
-	"Their enterprise deals keep stalling on security questionnaires. The buying trigger is the pipeline, not the audit.",
-	"Champion ran the evaluation themselves and wants the agent, not the checklist. Procurement is the long pole.",
-] as const;
+const DEAL_DESCRIPTIONS: Record<Mission, readonly string[]> = {
+	audit: [
+		"Audit complet du site avant la prochaine visite périodique : SSI, désenfumage, dégagements, registre de sécurité. Le directeur de site décide, les services généraux suivent.",
+		"Le dernier rapport de vérification signale plusieurs non-conformités. Le client veut un état des lieux indépendant et un plan d'actions chiffré.",
+	],
+	"appel-offres": [
+		"Consultation pour le gardiennage et la sécurité incendie (SSIAP 1 et 2, rondes, PC sécurité). DCE reçu, réponse en cours avec un partenaire de sécurité privée.",
+		"Renouvellement du marché de sécurité incendie arrivant à échéance. Critères : prix 40 %, valeur technique 60 %. Visite de site obligatoire.",
+	],
+	"commission-securite": [
+		"Préparation de la visite de la commission de sécurité : relecture du registre, levée des prescriptions précédentes, présence le jour J.",
+		"Avis défavorable lors de la dernière commission. Objectif : lever les prescriptions et obtenir un avis favorable à la contre-visite.",
+	],
+	accompagnement: [
+		"Accompagnement du responsable sécurité sur la tenue du registre, les consignes et les exercices d'évacuation.",
+		"Mission d'assistance ponctuelle : mise à jour des plans d'intervention et formation des équipes au poste de sécurité.",
+	],
+	conformite: [
+		"Mise en conformité suite au rapport du bureau de contrôle : désenfumage, compartimentage et signalisation. Travaux à planifier hors période d'ouverture.",
+		"Remise à niveau du SSI et des moyens de secours. Le budget dépend du vote en conseil d'administration.",
+	],
+	contact: [
+		"Premier échange après une recommandation. Besoin à qualifier lors d'une visite de site.",
+	],
+};
 
 const LOST_REASONS = [
-	"Went with an incumbent vendor",
-	"No budget this cycle",
-	"Timeline slipped to next year",
-	"Not a fit — no compliance requirement yet",
+	"Prix trop élevé",
+	"Concurrent moins-disant",
+	"Projet reporté à l'année prochaine",
+	"Budget non voté",
+	"Marché attribué au prestataire sortant",
+	"Pas de besoin réglementaire identifié",
 ] as const;
 
 const NOTE_BODIES = [
-	"Ran through the SOC 2 timeline. They want evidence collection automated before the audit window opens.",
-	"Procurement wants a security questionnaire back before they will look at pricing.",
-	"Champion is keen, but the budget owner has not been in a call yet.",
-	"They are evaluating us against two others. Differentiator is the agent, not the checklist.",
-	"Asked for a reference in the same vertical. Following up with marketing.",
-	"Pushed the decision to after their board meeting.",
+	"Visite de site effectuée. Registre de sécurité incomplet, dernières vérifications SSI à relancer auprès du mainteneur.",
+	"L'acheteur demande un devis détaillé par lot avant fin de mois.",
+	"Le directeur de site est convaincu, mais la décision passe par le siège.",
+	"Deux autres cabinets consultés. Notre avantage : la présence le jour de la commission.",
+	"Prescriptions de la dernière commission transmises. Trois points bloquants sur le désenfumage.",
+	"Décision reportée après le vote du budget en conseil municipal.",
+	"DCE téléchargé. Visite obligatoire prévue, questions à poser avant la date limite.",
 ] as const;
 
 const CALL_SUBJECTS = [
-	"Discovery call",
-	"Technical deep dive",
-	"Pricing discussion",
-	"Follow-up call",
-	"Security review",
+	"Appel de découverte",
+	"Relance devis",
+	"Questions acheteur sur le DCE",
+	"Point sur les prescriptions",
+	"Échange avec le mainteneur SSI",
 ] as const;
 
 const TASK_SUBJECTS = [
-	"Send the security questionnaire",
-	"Share pricing proposal",
-	"Book the technical deep dive",
-	"Chase procurement",
-	"Send SOC 2 report",
-	"Introduce the implementation team",
+	"Envoyer le devis",
+	"Relancer le devis",
+	"Planifier la visite de site",
+	"Préparer le dossier de commission",
+	"Poser les questions acheteur avant la date limite",
+	"Envoyer le rapport d'audit",
+	"Mettre à jour le registre de sécurité",
 ] as const;
 
 const MEETING_SUBJECTS = [
-	"Product demo",
-	"Onboarding walkthrough",
-	"Quarterly check-in",
-	"Stakeholder alignment",
+	"Visite de site",
+	"Réunion de préparation commission",
+	"Restitution de l'audit",
+	"Visite obligatoire AO",
+	"Point d'avancement trimestriel",
 ] as const;
 
 const EMAIL_SUBJECTS = [
-	"Re: next steps",
-	"Following up after the demo",
-	"Pricing and terms",
-	"Intro to your implementation lead",
+	"Re : prochaines étapes",
+	"Suite à notre visite de site",
+	"Devis et conditions",
+	"Réception du DCE",
+	"Compte rendu de la commission de sécurité",
 ] as const;
 
 type Transliterations = Record<string, string>;
@@ -344,11 +810,13 @@ async function seedOwners(): Promise<string[]> {
 	const existing = await db.user.findMany({ select: { id: true } });
 
 	if (existing.length > 0) {
-		console.log(`Using ${existing.length} existing user(s) as owners.`);
+		console.log(
+			`${existing.length} utilisateur(s) existant(s) utilisé(s) comme responsables.`,
+		);
 		return existing.map((user) => user.id);
 	}
 
-	console.log("No users yet — creating placeholder sales reps.");
+	console.log("Aucun utilisateur — création de commerciaux de démonstration.");
 	const created = await Promise.all(
 		OWNERS.map((owner) =>
 			db.user.upsert({
@@ -369,9 +837,14 @@ async function seedOwners(): Promise<string[]> {
 	return created.map((user) => user.id);
 }
 
-async function seedCompanies(
-	ownerIds: string[],
-): Promise<{ id: string; name: string; domain: string }[]> {
+type SeededCompany = {
+	id: string;
+	name: string;
+	domain: string;
+	seed: SeedCompany;
+};
+
+async function seedCompanies(ownerIds: string[]): Promise<SeededCompany[]> {
 	const companies = [];
 
 	for (const company of COMPANIES) {
@@ -385,13 +858,18 @@ async function seedCompanies(
 				city: company.city,
 				country: company.country,
 				countryCode: company.countryCode,
+				phone: frenchPhone(company.phonePrefix),
 				ownerId: pick(ownerIds),
 				createdAt: daysFromNow(-integer(30, 400), 12),
 			},
 			update: {},
 			select: { id: true, name: true, domain: true, iconUrl: true },
 		});
-		companies.push({ ...row, domain: row.domain ?? company.domain });
+		companies.push({
+			...row,
+			domain: row.domain ?? company.domain,
+			seed: company,
+		});
 	}
 
 	await seedIcons(companies);
@@ -422,20 +900,10 @@ async function seedIcons(
 		resolved += 1;
 	}
 
-	console.log(`Resolved ${resolved} of ${missing.length} company icons.`);
+	console.log(
+		`${resolved} icône(s) de société résolue(s) sur ${missing.length}.`,
+	);
 }
-
-const ACCOUNT_TYPES = ["Prospect", "Customer", "Partner", "Churned"] as const;
-const SEGMENT_TIERS = ["Enterprise", "Mid-Market", "SMB"] as const;
-const TERRITORIES = ["AMER", "EMEA", "APAC"] as const;
-const LIFECYCLE_STAGES = [
-	"Lead",
-	"MQL",
-	"SQL",
-	"Opportunity",
-	"Customer",
-] as const;
-const LEAD_SOURCES = ["Inbound", "Outbound", "Event"] as const;
 
 type SeededField = {
 	id: string;
@@ -444,13 +912,22 @@ type SeededField = {
 };
 
 type SeededFieldSet = {
-	accountType: SeededField;
-	segment: SeededField;
-	territory: SeededField;
-	lifecycleStage: SeededField;
-	leadSource: SeededField;
-	icpFitScore: SeededField;
-	bdrOwner: SeededField;
+	statutCommercial: SeededField;
+	typeEtablissement: SeededField;
+	categorieErp: SeededField;
+	typesActiviteErp: SeededField;
+	effectifAccueilli: SeededField;
+	prochaineCommission: SeededField;
+	siret: SeededField;
+	nombreDeSites: SeededField;
+};
+
+type SeededDealFieldSet = {
+	typeDeMission: SeededField;
+	typeEtablissement: SeededField;
+	echeanceCommission: SeededField;
+	referenceAo: SeededField;
+	dateLimiteOffres: SeededField;
 };
 
 async function upsertField(
@@ -459,6 +936,7 @@ async function upsertField(
 	type: FieldType,
 	position: number,
 	options: readonly string[] = [],
+	agentFilled: boolean = type !== "USER" && type !== "NUMBER",
 ): Promise<SeededField> {
 	const key = fieldKeyFromLabel(label);
 	const definition = await db.fieldDefinition.upsert({
@@ -470,7 +948,7 @@ async function upsertField(
 			type,
 			showOnTable: false,
 			showOnFilter: false,
-			agentFilled: type !== "USER" && type !== "NUMBER",
+			agentFilled,
 			position,
 			options: {
 				create: options.map((optionLabel, index) => ({
@@ -483,23 +961,50 @@ async function upsertField(
 		include: { options: true },
 	});
 
+	const missing = options.filter(
+		(optionLabel) =>
+			!definition.options.some((option) => option.label === optionLabel),
+	);
+	if (missing.length === 0) {
+		return {
+			id: definition.id,
+			key: definition.key,
+			options: definition.options,
+		};
+	}
+
+	await db.fieldOption.createMany({
+		data: missing.map((optionLabel, index) => ({
+			fieldId: definition.id,
+			label: optionLabel,
+			position: definition.options.length + index,
+		})),
+	});
+
 	return {
 		id: definition.id,
 		key: definition.key,
-		options: definition.options,
+		options: await db.fieldOption.findMany({
+			where: { fieldId: definition.id },
+			select: { id: true, label: true },
+		}),
 	};
 }
 
-const MISSION_TYPES = ["audit", "appel-offres", "contact"] as const;
-const ETABLISSEMENT_TYPES = [
-	"Établissement recevant du public",
-	"Santé et accueil spécialisé",
-	"Tertiaire, industrie et logistique",
-	"Société de sécurité privée",
-] as const;
+const INTAKE_BRIEF =
+	"Lis le bloc [GSMS_INTAKE] dans la description du deal ou dans la note d'activité créée à sa réception. Chaque ligne est au format clé: valeur — reprends la valeur de la clé correspondante.";
 
-async function seedDealFields(): Promise<void> {
-	await Promise.all([
+const DATE_LIMITE_BRIEF =
+	"Pour un appel d'offres : date et heure limites de remise des offres indiquées dans le règlement de consultation (RC).";
+
+async function seedDealFields(): Promise<SeededDealFieldSet> {
+	const [
+		typeDeMission,
+		typeEtablissement,
+		echeanceCommission,
+		referenceAo,
+		dateLimiteOffres,
+	] = await Promise.all([
 		upsertField("DEAL", "Type de mission", FieldType.SELECT, 0, MISSION_TYPES),
 		upsertField(
 			"DEAL",
@@ -510,6 +1015,7 @@ async function seedDealFields(): Promise<void> {
 		),
 		upsertField("DEAL", "Échéance commission", FieldType.DATE, 2),
 		upsertField("DEAL", "Référence AO", FieldType.TEXT, 3),
+		upsertField("DEAL", "Date limite de remise des offres", FieldType.DATE, 4),
 	]);
 
 	await db.fieldDefinition.updateMany({
@@ -517,181 +1023,192 @@ async function seedDealFields(): Promise<void> {
 			entity: "DEAL",
 			key: {
 				in: [
-					fieldKeyFromLabel("Type de mission"),
-					fieldKeyFromLabel("Type d'établissement"),
-					fieldKeyFromLabel("Échéance commission"),
-					fieldKeyFromLabel("Référence AO"),
+					typeDeMission.key,
+					typeEtablissement.key,
+					echeanceCommission.key,
+					referenceAo.key,
 				],
 			},
 		},
-		data: {
-			agentBrief:
-				"Lis le bloc [GSMS_INTAKE] dans la description du deal ou dans la note d'activité créée à sa réception. Chaque ligne est au format clé: valeur — reprends la valeur de la clé correspondante.",
-		},
+		data: { agentBrief: INTAKE_BRIEF },
 	});
+
+	await db.fieldDefinition.updateMany({
+		where: { entity: "DEAL", key: dateLimiteOffres.key, agentBrief: null },
+		data: { agentBrief: DATE_LIMITE_BRIEF },
+	});
+
+	return {
+		typeDeMission,
+		typeEtablissement,
+		echeanceCommission,
+		referenceAo,
+		dateLimiteOffres,
+	};
 }
 
 async function seedCompanyFields(): Promise<SeededFieldSet> {
 	const [
-		accountType,
-		segment,
-		territory,
-		lifecycleStage,
-		leadSource,
-		icpFitScore,
-		bdrOwner,
+		statutCommercial,
+		typeEtablissement,
+		categorieErp,
+		typesActiviteErp,
+		effectifAccueilli,
+		prochaineCommission,
+		siret,
+		nombreDeSites,
 	] = await Promise.all([
-		upsertField("COMPANY", "Account type", FieldType.SELECT, 0, ACCOUNT_TYPES),
-		upsertField("COMPANY", "Segment", FieldType.SELECT, 1, SEGMENT_TIERS),
-		upsertField("COMPANY", "Territory", FieldType.SELECT, 2, TERRITORIES),
 		upsertField(
 			"COMPANY",
-			"Lifecycle stage",
+			"Statut commercial",
 			FieldType.SELECT,
-			3,
-			LIFECYCLE_STAGES,
+			0,
+			STATUTS_COMMERCIAUX,
+			false,
 		),
-		upsertField("COMPANY", "Lead source", FieldType.SELECT, 4, LEAD_SOURCES),
-		upsertField("COMPANY", "ICP fit score", FieldType.NUMBER, 5),
-		upsertField("COMPANY", "BDR owner", FieldType.USER, 6),
+		upsertField(
+			"COMPANY",
+			"Type d'établissement",
+			FieldType.SELECT,
+			1,
+			TYPES_ETABLISSEMENT,
+		),
+		upsertField(
+			"COMPANY",
+			"Catégorie ERP",
+			FieldType.SELECT,
+			2,
+			CATEGORIES_ERP,
+		),
+		upsertField("COMPANY", "Types d'activité ERP", FieldType.TEXT, 3),
+		upsertField("COMPANY", "Effectif accueilli", FieldType.NUMBER, 4),
+		upsertField(
+			"COMPANY",
+			"Prochaine commission de sécurité",
+			FieldType.DATE,
+			5,
+			[],
+			false,
+		),
+		upsertField("COMPANY", "SIRET", FieldType.TEXT, 6),
+		upsertField("COMPANY", "Nombre de sites", FieldType.NUMBER, 7),
 	]);
 
 	return {
-		accountType,
-		segment,
-		territory,
-		lifecycleStage,
-		leadSource,
-		icpFitScore,
-		bdrOwner,
+		statutCommercial,
+		typeEtablissement,
+		categorieErp,
+		typesActiviteErp,
+		effectifAccueilli,
+		prochaineCommission,
+		siret,
+		nombreDeSites,
 	};
 }
 
 function optionIdFor(field: SeededField, label: string): string {
 	const option = field.options.find((entry) => entry.label === label);
 	if (!option)
-		throw new Error(`Seed field "${field.key}" has no "${label}" option.`);
+		throw new Error(`Le champ "${field.key}" n'a pas d'option "${label}".`);
 	return option.id;
+}
+
+type FieldValueData = {
+	text?: string;
+	number?: number;
+	date?: Date;
+	optionId?: string;
+};
+
+async function upsertCompanyValue(
+	field: SeededField,
+	companyId: string,
+	data: FieldValueData,
+): Promise<void> {
+	await db.fieldValue.upsert({
+		where: { fieldId_companyId: { fieldId: field.id, companyId } },
+		create: { fieldId: field.id, companyId, ...data },
+		update: {},
+	});
+}
+
+async function upsertDealValue(
+	field: SeededField,
+	dealId: string,
+	data: FieldValueData,
+): Promise<void> {
+	await db.fieldValue.upsert({
+		where: { fieldId_dealId: { fieldId: field.id, dealId } },
+		create: { fieldId: field.id, dealId, ...data },
+		update: {},
+	});
+}
+
+function commissionDate(value: string): Date {
+	return new Date(`${value}T09:00:00.000Z`);
 }
 
 async function seedCompanyFieldValues(
 	fields: SeededFieldSet,
-	companies: { id: string }[],
-	ownerIds: string[],
+	companies: SeededCompany[],
 ): Promise<void> {
 	for (const company of companies) {
-		const accountType = pick(ACCOUNT_TYPES);
+		const seed = company.seed;
+		const isErp =
+			seed.typeEtablissement === "ERP" ||
+			seed.typeEtablissement === "ERP + IGH";
+		const writes: Promise<void>[] = [
+			upsertCompanyValue(fields.statutCommercial, company.id, {
+				optionId: optionIdFor(fields.statutCommercial, seed.statut),
+			}),
+			upsertCompanyValue(fields.typeEtablissement, company.id, {
+				optionId: optionIdFor(fields.typeEtablissement, seed.typeEtablissement),
+			}),
+			upsertCompanyValue(fields.siret, company.id, {
+				text: `${integer(3, 9)}${digits(13)}`,
+			}),
+			upsertCompanyValue(fields.nombreDeSites, company.id, {
+				number: seed.nombreDeSites,
+			}),
+		];
 
-		await Promise.all([
-			db.fieldValue.upsert({
-				where: {
-					fieldId_companyId: {
-						fieldId: fields.accountType.id,
-						companyId: company.id,
-					},
-				},
-				create: {
-					fieldId: fields.accountType.id,
-					companyId: company.id,
-					optionId: optionIdFor(fields.accountType, accountType),
-				},
-				update: {},
-			}),
-			db.fieldValue.upsert({
-				where: {
-					fieldId_companyId: {
-						fieldId: fields.segment.id,
-						companyId: company.id,
-					},
-				},
-				create: {
-					fieldId: fields.segment.id,
-					companyId: company.id,
-					optionId: optionIdFor(fields.segment, pick(SEGMENT_TIERS)),
-				},
-				update: {},
-			}),
-			db.fieldValue.upsert({
-				where: {
-					fieldId_companyId: {
-						fieldId: fields.territory.id,
-						companyId: company.id,
-					},
-				},
-				create: {
-					fieldId: fields.territory.id,
-					companyId: company.id,
-					optionId: optionIdFor(fields.territory, pick(TERRITORIES)),
-				},
-				update: {},
-			}),
-			db.fieldValue.upsert({
-				where: {
-					fieldId_companyId: {
-						fieldId: fields.lifecycleStage.id,
-						companyId: company.id,
-					},
-				},
-				create: {
-					fieldId: fields.lifecycleStage.id,
-					companyId: company.id,
-					optionId: optionIdFor(
-						fields.lifecycleStage,
-						accountType === "Customer" ? "Customer" : pick(LIFECYCLE_STAGES),
-					),
-				},
-				update: {},
-			}),
-			db.fieldValue.upsert({
-				where: {
-					fieldId_companyId: {
-						fieldId: fields.leadSource.id,
-						companyId: company.id,
-					},
-				},
-				create: {
-					fieldId: fields.leadSource.id,
-					companyId: company.id,
-					optionId: optionIdFor(fields.leadSource, pick(LEAD_SOURCES)),
-				},
-				update: {},
-			}),
-			db.fieldValue.upsert({
-				where: {
-					fieldId_companyId: {
-						fieldId: fields.icpFitScore.id,
-						companyId: company.id,
-					},
-				},
-				create: {
-					fieldId: fields.icpFitScore.id,
-					companyId: company.id,
-					number: integer(40, 95),
-				},
-				update: {},
-			}),
-			db.fieldValue.upsert({
-				where: {
-					fieldId_companyId: {
-						fieldId: fields.bdrOwner.id,
-						companyId: company.id,
-					},
-				},
-				create: {
-					fieldId: fields.bdrOwner.id,
-					companyId: company.id,
-					userId: pick(ownerIds),
-				},
-				update: {},
-			}),
-		]);
+		if (isErp && seed.categorieErp) {
+			writes.push(
+				upsertCompanyValue(fields.categorieErp, company.id, {
+					optionId: optionIdFor(fields.categorieErp, seed.categorieErp),
+				}),
+			);
+		}
+		if (isErp && seed.typesActiviteErp) {
+			writes.push(
+				upsertCompanyValue(fields.typesActiviteErp, company.id, {
+					text: seed.typesActiviteErp,
+				}),
+			);
+		}
+		if (seed.effectif !== null) {
+			writes.push(
+				upsertCompanyValue(fields.effectifAccueilli, company.id, {
+					number: seed.effectif,
+				}),
+			);
+		}
+		if (seed.prochaineCommission) {
+			writes.push(
+				upsertCompanyValue(fields.prochaineCommission, company.id, {
+					date: commissionDate(seed.prochaineCommission),
+				}),
+			);
+		}
+
+		await Promise.all(writes);
 	}
 }
 
 type SeededContact = { id: string; companyId: string };
 
 async function seedContacts(
-	companies: { id: string; domain: string }[],
+	companies: SeededCompany[],
 	ownerIds: string[],
 ): Promise<SeededContact[]> {
 	const contacts: SeededContact[] = [];
@@ -711,8 +1228,12 @@ async function seedContacts(
 					firstName,
 					lastName,
 					email,
-					title: pick(TITLES),
-					phone: chance(0.4) ? `+1 415 555 ${integer(1000, 9999)}` : null,
+					title: pick(company.seed.titles),
+					phone: chance(0.6)
+						? frenchPhone(
+								chance(0.5) ? pick(["6", "7"]) : company.seed.phonePrefix,
+							)
+						: null,
 					companyId: company.id,
 					ownerId: pick(ownerIds),
 					createdAt: daysFromNow(-integer(10, 300), 12),
@@ -741,22 +1262,28 @@ type SeededDeal = {
 	id: string;
 	companyId: string;
 	ownerId: string;
+	stage: DealStage;
 	closed: boolean;
+	mission: Mission;
+	etablissement: DealEtablissement;
+	commission: Date | null;
+	referenceAo: string | null;
+	dateLimiteOffres: Date | null;
 };
 
 type SeedRates = Record<string, number>;
 
+const DEAL_CURRENCY = "EUR";
+
 const SEED_RATES: SeedRates = {
-	EUR: 1.09,
-	GBP: 1.27,
-	CAD: 0.73,
-	AUD: 0.66,
-	JPY: 0.0067,
+	USD: 0.92,
+	GBP: 1.17,
+	CHF: 1.06,
+	CAD: 0.67,
+	JPY: 0.0061,
 };
 
-const DEAL_CURRENCIES = ["USD", "USD", "USD", "EUR", "GBP", "JPY", "CAD"];
-
-let seedBase = "USD";
+let seedBase = DEFAULT_REPORTING_CURRENCY;
 
 async function seedRates(): Promise<number> {
 	const asOf = daysFromNow(-1);
@@ -773,10 +1300,10 @@ async function seedRates(): Promise<number> {
 
 	seedBase = await readReportingCurrency(db);
 
-	if (seedBase !== "USD") {
+	if (seedBase !== DEAL_CURRENCY) {
 		console.log(
-			`Reporting currency is ${seedBase} — seeding a converted figure only for ` +
-				`deals already in ${seedBase}; the rates cron converts the rest.`,
+			`La devise de reporting est ${seedBase} — les montants en ${DEAL_CURRENCY} ` +
+				"sont laissés à convertir par la tâche de mise à jour des taux.",
 		);
 	}
 
@@ -784,13 +1311,13 @@ async function seedRates(): Promise<number> {
 		await db.exchangeRate.upsert({
 			where: {
 				baseCurrency_quoteCurrency_source: {
-					baseCurrency: "USD",
+					baseCurrency: DEAL_CURRENCY,
 					quoteCurrency,
 					source: RateSource.FETCHED,
 				},
 			},
 			create: {
-				baseCurrency: "USD",
+				baseCurrency: DEAL_CURRENCY,
 				quoteCurrency,
 				rate,
 				asOf,
@@ -804,38 +1331,30 @@ async function seedRates(): Promise<number> {
 	return Object.keys(SEED_RATES).length;
 }
 
-function money(usdAmount: number, currency: string) {
-	const rate = SEED_RATES[currency] ?? 1;
-	const places = currency === "JPY" ? 0 : 2;
-	const amount = Number((usdAmount / rate).toFixed(places));
-
-	const converted =
-		currency === seedBase
-			? { baseAmount: amount, fxRate: 1 }
-			: seedBase === "USD"
-				? { baseAmount: Number((amount * rate).toFixed(2)), fxRate: rate }
-				: null;
+function money(eurAmount: number) {
+	const amount = Number(eurAmount.toFixed(2));
+	const converted = seedBase === DEAL_CURRENCY;
 
 	return {
 		amount,
-		currency,
-		baseAmount: converted?.baseAmount ?? null,
+		currency: DEAL_CURRENCY,
+		baseAmount: converted ? amount : null,
 		baseCurrency: converted ? seedBase : null,
-		fxRate: converted?.fxRate ?? null,
+		fxRate: converted ? 1 : null,
 	};
 }
 
+let aoCounter = 0;
+
 async function seedDeals(
-	companies: { id: string; name: string }[],
+	companies: SeededCompany[],
 	contacts: SeededContact[],
 	ownerIds: string[],
 ): Promise<SeededDeal[]> {
 	const deals: SeededDeal[] = [];
 
-	for (const [index, company] of companies.entries()) {
-		const count = index % 2 === 0 ? 2 : 1;
-
-		for (let n = 0; n < count; n++) {
+	for (const company of companies) {
+		for (const [n, template] of company.seed.deals.entries()) {
 			const id = `seed-deal-${slug(company.name)}-${n}`;
 			const closed = chance(0.35);
 			const stage = closed ? pick(CLOSED_STAGES) : pick(OPEN_STAGES);
@@ -849,23 +1368,21 @@ async function seedDeals(
 				closedDaysAgo === null ? -integer(1, 20) : -closedDaysAgo,
 				12,
 			);
+			const isAo = template.mission === "appel-offres";
 
 			await db.deal.upsert({
 				where: { id },
 				create: {
 					id,
-					name:
-						n === 0
-							? `${company.name} — Comp AI`
-							: `${company.name} — expansion`,
-					description: pick(DEAL_DESCRIPTIONS),
+					name: `${template.title} — ${company.name}`,
+					description: pick(DEAL_DESCRIPTIONS[template.mission]),
 					companyId: company.id,
 					ownerId,
 					stage,
 					stageChangedAt,
 					...(() => {
 						const { amount, currency, baseAmount, baseCurrency, fxRate } =
-							money(integer(6, 90) * 1000, pick(DEAL_CURRENCIES));
+							money(integer(template.min * 2, template.max * 2) * 500);
 						return {
 							amount,
 							currency,
@@ -882,8 +1399,7 @@ async function seedDeals(
 					),
 					closedAt: closed ? stageChangedAt : null,
 					closedReason:
-						stage === DealStage.CLOSED_LOST ||
-						stage === DealStage.UNQUALIFIED_TO_BUY
+						stage === DealStage.CLOSED_LOST || stage === DealStage.NOT_QUALIFIED
 							? pick(LOST_REASONS)
 							: null,
 					createdAt,
@@ -900,17 +1416,81 @@ async function seedDeals(
 					create: {
 						dealId: id,
 						contactId: contact.id,
-						role: chance(0.5) ? "Champion" : "Decision maker",
+						role: chance(0.5) ? "Prescripteur" : "Décideur",
 					},
 					update: {},
 				});
 			}
 
-			deals.push({ id, companyId: company.id, ownerId, closed });
+			if (isAo) aoCounter += 1;
+
+			deals.push({
+				id,
+				companyId: company.id,
+				ownerId,
+				stage,
+				closed,
+				mission: template.mission,
+				etablissement: DEAL_ETABLISSEMENT[company.seed.typeEtablissement],
+				commission:
+					(template.mission === "commission-securite" ||
+						template.mission === "audit") &&
+					company.seed.prochaineCommission
+						? commissionDate(company.seed.prochaineCommission)
+						: null,
+				referenceAo: isAo
+					? `AO-2026-${String(aoCounter * 7 + 35).padStart(4, "0")}`
+					: null,
+				dateLimiteOffres: isAo
+					? closed
+						? daysFromNow(-integer(20, 90), 4)
+						: daysFromNow(integer(10, 45), 4)
+					: null,
+			});
 		}
 	}
 
 	return deals;
+}
+
+async function seedDealFieldValues(
+	fields: SeededDealFieldSet,
+	deals: SeededDeal[],
+): Promise<void> {
+	for (const deal of deals) {
+		const writes: Promise<void>[] = [
+			upsertDealValue(fields.typeDeMission, deal.id, {
+				optionId: optionIdFor(fields.typeDeMission, deal.mission),
+			}),
+			upsertDealValue(fields.typeEtablissement, deal.id, {
+				optionId: optionIdFor(fields.typeEtablissement, deal.etablissement),
+			}),
+		];
+
+		if (deal.commission) {
+			writes.push(
+				upsertDealValue(fields.echeanceCommission, deal.id, {
+					date: deal.commission,
+				}),
+			);
+		}
+		if (deal.referenceAo) {
+			writes.push(
+				upsertDealValue(fields.referenceAo, deal.id, {
+					text: deal.referenceAo,
+				}),
+			);
+		}
+		if (deal.dateLimiteOffres) {
+			writes.push(
+				upsertDealValue(fields.dateLimiteOffres, deal.id, {
+					date: deal.dateLimiteOffres,
+				}),
+			);
+		}
+
+		await Promise.all(writes);
+	}
 }
 
 async function seedActivities(
@@ -921,7 +1501,7 @@ async function seedActivities(
 ): Promise<number> {
 	const existing = await db.activity.count();
 	if (existing > 0) {
-		console.log(`Activities already seeded (${existing}) — skipping.`);
+		console.log(`Activités déjà présentes (${existing}) — ignorées.`);
 		return existing;
 	}
 
@@ -989,10 +1569,13 @@ async function seedActivities(
 			...base(deal.companyId, deal.ownerId, daysFromNow(-integer(1, 20), 12)),
 			type: ActivityType.STAGE_CHANGE,
 			dealId: deal.id,
-			subject: "Stage changed",
+			subject: "Étape modifiée",
 			meta: {
-				from: DealStage.DEMO_BOOKED,
-				to: deal.closed ? DealStage.CLOSED_WON : DealStage.QUALIFIED_TO_BUY,
+				from: DealStage.PROSPECT,
+				to:
+					deal.stage === DealStage.PROSPECT
+						? DealStage.QUALIFICATION
+						: deal.stage,
 			},
 		});
 	}
@@ -1040,13 +1623,14 @@ async function main() {
 	const deals = await seedDeals(companies, contacts, ownerIds);
 	const activities = await seedActivities(companies, contacts, deals, ownerIds);
 	const companyFields = await seedCompanyFields();
-	await seedCompanyFieldValues(companyFields, companies, ownerIds);
-	await seedDealFields();
+	await seedCompanyFieldValues(companyFields, companies);
+	const dealFields = await seedDealFields();
+	await seedDealFieldValues(dealFields, deals);
 
 	console.log(
-		`Seeded ${companies.length} companies, ${contacts.length} contacts, ` +
-			`${deals.length} deals, ${activities} activities, ${rates} exchange rates, ` +
-			"7 company fields, 4 deal fields.",
+		`${companies.length} sociétés, ${contacts.length} contacts, ` +
+			`${deals.length} affaires, ${activities} activités, ${rates} taux de change, ` +
+			"8 champs société et 5 champs affaire créés.",
 	);
 }
 

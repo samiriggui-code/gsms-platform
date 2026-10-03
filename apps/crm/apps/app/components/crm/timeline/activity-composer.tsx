@@ -29,7 +29,7 @@ const TYPES = ["NOTE", "CALL", "EMAIL", "MEETING", "TASK"] as const;
 
 type ComposableType = (typeof TYPES)[number];
 
-const dueFormat = new Intl.DateTimeFormat("en-US", {
+const dueFormat = new Intl.DateTimeFormat("fr-FR", {
 	month: "short",
 	day: "numeric",
 });

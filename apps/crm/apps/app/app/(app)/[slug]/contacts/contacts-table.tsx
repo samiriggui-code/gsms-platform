@@ -12,6 +12,7 @@ import { PersonAvatar } from "@crm/ui/components/person-avatar";
 import { useSearchInput } from "@crm/ui/hooks/use-search-input";
 import { useTableSelection } from "@crm/ui/hooks/use-table-selection";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { CompanyCell } from "@/components/crm/company-cell";
 import { contactName } from "@/components/crm/contact-name";
@@ -28,7 +29,6 @@ import { LocalRelativeTime } from "@/components/local-date-time";
 import { ACTIVITY_FACET_OPTIONS } from "@/lib/activity-recency";
 import { useTRPC } from "@/lib/trpc/client";
 import type { RouterOutputs } from "@/lib/trpc/types";
-import { useTranslations } from "next-intl";
 import { ContactsBulkActions } from "./contacts-bulk-actions";
 import { contactsSearchParams } from "./contacts-search-params";
 
@@ -270,10 +270,8 @@ export function ContactsTable() {
 	return (
 		<EntityListShell
 			eyebrow={t("pulseEyebrow")}
-			headline={t("pulseHeadline", { count: total.toLocaleString() })}
-			subhead={
-				input.archived ? t("pulseSubheadArchived") : t("pulseSubhead")
-			}
+			headline={t("pulseHeadline", { count: total.toLocaleString("fr-FR") })}
+			subhead={input.archived ? t("pulseSubheadArchived") : t("pulseSubhead")}
 			body={t("pulseBody")}
 			panelTitle={t("panelTitle")}
 			panelRows={[
@@ -302,45 +300,45 @@ export function ContactsTable() {
 				},
 			]}
 		>
-		<DataTable
-			query={query}
-			search={<ListSearch placeholder={t("search")} />}
-			actions={
-				<>
-					<SavedViewsMenu entity="CONTACT" table={table} />
-					<Button
-						variant={input.archived ? "contrast" : "outline"}
-						size="sm"
-						className="justify-start sm:justify-center"
-						onClick={() => toggleArchived(!input.archived)}
-					>
-						<Archive data-icon="inline-start" />
-						{t("archived")}
-					</Button>
-				</>
-			}
-			columns={columns}
-			rows={rows}
-			total={total}
-			facetCounts={facetCounts}
-			facets={facets}
-			selection={{
-				state: selection,
-				actions: (
-					<ContactsBulkActions
-						ids={settledIds}
-						onDone={selection.clear}
-						archived={input.archived}
-					/>
-				),
-				rowLabel: (row) => contactName(row),
-			}}
-			getRowId={(row) => row.id}
-			loading={contacts.isFetching}
-			onRowHover={(row) => prefetchRecord({ kind: "contact", id: row.id })}
-			onRowClick={(row) => openRecord({ kind: "contact", id: row.id })}
-			empty={input.archived ? t("emptyArchived") : t("empty")}
-		/>
+			<DataTable
+				query={query}
+				search={<ListSearch placeholder={t("search")} />}
+				actions={
+					<>
+						<SavedViewsMenu entity="CONTACT" table={table} />
+						<Button
+							variant={input.archived ? "contrast" : "outline"}
+							size="sm"
+							className="justify-start sm:justify-center"
+							onClick={() => toggleArchived(!input.archived)}
+						>
+							<Archive data-icon="inline-start" />
+							{t("archived")}
+						</Button>
+					</>
+				}
+				columns={columns}
+				rows={rows}
+				total={total}
+				facetCounts={facetCounts}
+				facets={facets}
+				selection={{
+					state: selection,
+					actions: (
+						<ContactsBulkActions
+							ids={settledIds}
+							onDone={selection.clear}
+							archived={input.archived}
+						/>
+					),
+					rowLabel: (row) => contactName(row),
+				}}
+				getRowId={(row) => row.id}
+				loading={contacts.isFetching}
+				onRowHover={(row) => prefetchRecord({ kind: "contact", id: row.id })}
+				onRowClick={(row) => openRecord({ kind: "contact", id: row.id })}
+				empty={input.archived ? t("emptyArchived") : t("empty")}
+			/>
 		</EntityListShell>
 	);
 }
