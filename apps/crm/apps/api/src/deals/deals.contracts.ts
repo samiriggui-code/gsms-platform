@@ -33,6 +33,8 @@ export const dealListInput = listInput.extend({
 	closing: z.array(z.string()).default([]),
 	fields: z.record(z.string(), z.array(z.string())).default({}),
 	archived: z.boolean().default(false),
+	sourceSystem: z.string().trim().min(1).max(100).optional(),
+	externalId: z.string().trim().min(1).max(200).optional(),
 });
 
 export type DealListInput = z.infer<typeof dealListInput>;

@@ -1,4 +1,6 @@
 import { EnrichmentStatus } from "@crm/db";
+import { CRM_EVENT_CATALOG } from "@crm/db/crm-events";
+import { crmEventTask } from "@crm/validation/agent-events";
 import { fieldBackfillPayload } from "@crm/validation/field-backfill";
 import { APP_AUTH, type AppAuth } from "./app-auth";
 import { brandOutcome, runBrand } from "./brand";
@@ -6,6 +8,7 @@ import { queueEventAgentRuns } from "./custom-agent-dispatch";
 import { settledWithin } from "./deadline";
 import { DISPATCH } from "./dispatch-config";
 import { markRunning, settle } from "./enrichment";
+import { describeForward, forwardToGsmsCore } from "./gsms-core";
 import { collapsing, runLimited } from "./pool";
 import { runPortrait } from "./portrait";
 import { runSlackChannelJoin } from "./slack-join-task";
@@ -119,11 +122,25 @@ async function handleDirect(task: LeasedTask): Promise<void> {
 
 	if (task.kind === "agent-event") {
 		const queued = await queueEventAgentRuns(task);
+		const event = crmEventTask.safeParse(task.payload);
+		const forwarded = event.success
+			? describeForward(
+					await forwardToGsmsCore({
+						type: event.data.type,
+						record: {
+							kind: CRM_EVENT_CATALOG[event.data.type].recordKind,
+							id: event.data.record.id,
+						},
+					}),
+				)
+			: "GSMS Core: unreadable event.";
 		await completeTask(
 			task.id,
-			queued === 1
-				? "Queued 1 matching agent run."
-				: `Queued ${queued} matching agent runs.`,
+			`${
+				queued === 1
+					? "Queued 1 matching agent run."
+					: `Queued ${queued} matching agent runs.`
+			} ${forwarded}`,
 		);
 		return;
 	}

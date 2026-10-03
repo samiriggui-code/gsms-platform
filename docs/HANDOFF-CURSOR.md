@@ -1,5 +1,34 @@
 # Handoff Cursor → Claude
 
+## 2026-10-03 — CRM, étape 2 : pont CRM ↔ Core
+
+**Fait**
+- **Core** (`gsms_core/crm_sync/`, `POST /api/v1/integrations/crm/events`, signé HMAC avec le secret `crm`) :
+  - une société devient un client (avec un site par défaut, ERP et catégorie repris) ;
+  - un contact devient un contact Core ;
+  - une affaire passée à « Gagné » ouvre la prestation : `WorkspaceManager` crée l'espace et la mission du bon type selon le champ « Type de mission » (appel d'offres, audit, commission, accompagnement, conformité) ;
+  - les événements suivants d'une affaire liée vont dans la chronologie de sa prestation ;
+  - tout est idempotent, grâce aux liaisons `camp_ai`.
+- **Portail** :
+  - `/api/integrations/crm/events` relaie les événements au Core, qui n'est pas exposé publiquement ;
+  - `/app/espace/{workspace}` ouvre directement l'espace d'une prestation.
+- **CRM** :
+  - l'agent (`apps/agent/agent/lib/gsms-core.ts`) envoie chaque tâche `agent-event` au Core ; c'est la file durable de l'agent, pas un appel HTTP depuis Nest ;
+  - le lien de la prestation est écrit dans le champ « Prestation GSMS », avec une note « Prestation ouverte dans GSMS » ;
+  - nouveaux champs « Prestation GSMS » et « Statut dossier AO » (migration) ;
+  - filtre `sourceSystem` / `externalId` sur la recherche des affaires ;
+  - script `bun run gsms:sync` pour la première synchronisation.
+- **Déploiement** : `deploy-all.sh` écrit `GSMS_CORE_URL` et `GSMS_CORE_WEBHOOK_SECRET` dans le `.env` du CRM, reconstruit l'app et l'agent, puis lance la synchronisation.
+
+**Vérifié en vrai** (seed CRM → portail → Core, PostgreSQL) :
+- 77 enregistrements synchronisés ;
+- 16 clients et 39 contacts créés ;
+- les 4 affaires gagnées ont ouvert leur prestation, et le lien et la note sont présents dans le CRM.
+
+**Tests** : Core 170 ; CRM api 386 ; agent 370 (1 échec qui existait déjà).
+
+---
+
 ## 2026-10-03 — CRM, étape 1 : le métier GSMS
 
 **Fait (apps/crm)**

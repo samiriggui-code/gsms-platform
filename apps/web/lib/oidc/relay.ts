@@ -6,7 +6,12 @@ import { coreBaseUrl } from "@/lib/core/client";
  * GRACE, QAtrial et du CRM, pas par le navigateur : corps, en-têtes d'authentification et codes d'erreur OAuth
  * passent tels quels. Voir docs/architecture/IDENTITE-SSO.md.
  */
-export async function relayToCore(request: Request, corePath: string, forward: string[] = []) {
+export function relayToCore(request: Request, corePath: string, forward: string[] = []) {
+  return relayRaw(request, `/oidc/${corePath}`, forward);
+}
+
+/** Relais brut d'une requête vers `${CORE_API_URL}/api/v1${path}` (corps, en-têtes choisis et statut inchangés). */
+export async function relayRaw(request: Request, path: string, forward: string[] = []) {
   const base = coreBaseUrl();
   if (!base) {
     return NextResponse.json({ error: "temporarily_unavailable", error_description: "Core non configuré" }, { status: 503 });
@@ -18,7 +23,7 @@ export async function relayToCore(request: Request, corePath: string, forward: s
   }
   const hasBody = request.method !== "GET" && request.method !== "HEAD";
   try {
-    const res = await fetch(`${base}/api/v1/oidc/${corePath}`, {
+    const res = await fetch(`${base}/api/v1${path}`, {
       method: request.method,
       headers,
       body: hasBody ? await request.arrayBuffer() : undefined,

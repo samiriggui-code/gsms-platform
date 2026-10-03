@@ -129,6 +129,17 @@ deploy_app() {
   if [[ "$app" == "qatrial" ]]; then
     set_env_in "$target_env" REGISTRATION_ENABLED false   # plus d'inscription libre : comptes = Core
   fi
+  if [[ "$app" == "crm" ]]; then
+    # Pont CRM → Core : l'agent du CRM envoie sociétés, contacts et affaires au Core (via le portail).
+    local crm_secret
+    crm_secret="$(get_env_in "$REPO/.env" GSMS_WEBHOOK_SECRETS | python3 -c 'import json,sys; print(json.loads(sys.stdin.read().strip().strip(chr(39)) or "{}").get("crm",""))' 2>/dev/null || true)"
+    if [[ -n "$crm_secret" ]]; then
+      set_env_in "$target_env" GSMS_CORE_URL "$ISSUER"
+      set_env_in "$target_env" GSMS_CORE_WEBHOOK_SECRET "$crm_secret"
+    else
+      warn "crm : secret « crm » absent de GSMS_WEBHOOK_SECRETS (.env de la plateforme), pont CRM → Core inactif."
+    fi
+  fi
   echo "Connexion GSMS configurée dans $target_env (secret non affiché)"
 
   # Reconstruction des seuls services applicatifs (bases et volumes intacts).
@@ -148,12 +159,20 @@ deploy_app() {
   # shellcheck disable=SC2086
   "${compose[@]}" up -d --no-deps $services
   OK+=("$app : https://$app.$DOMAIN (bouton « Se connecter avec GSMS »)")
+  if [[ "$app" == "crm" ]] && [[ -n "$(get_env_in "$target_env" GSMS_CORE_WEBHOOK_SECRET)" ]]; then
+    # Première synchronisation (idempotente) : sociétés, contacts, affaires ; les affaires gagnées ouvrent leur prestation.
+    if "${compose[@]}" exec -T agent bun run gsms:sync; then
+      OK+=("crm : sociétés, contacts et affaires synchronisés avec le Core")
+    else
+      warn "crm : synchronisation avec le Core incomplète (voir les lignes « Échec » ci-dessus)."
+    fi
+  fi
 }
 
 say "2/4 Applications (GRACE, QAtrial, CRM)"
 deploy_app grace gsms-grace-api "api web" "https://grace.$DOMAIN/api/auth/sso/callback"
 deploy_app qatrial gsms-qatrial-app "app" "https://qatrial.$DOMAIN/api/auth/sso/callback"
-deploy_app crm gsms-crm-app "app" "https://crm.$DOMAIN/api/auth/callback/gsms"
+deploy_app crm gsms-crm-app "app agent" "https://crm.$DOMAIN/api/auth/callback/gsms"
 
 # ── 3. Vérifications ────────────────────────────────────────────────────────────────────────────────────
 say "3/4 Vérifications"
