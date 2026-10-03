@@ -33,7 +33,11 @@ import {
 	BulkOwnerMenu,
 	useReportBulk,
 } from "@/components/crm/bulk-actions";
-import { DEAL_STAGE_OPTIONS, LOSING_STAGES } from "@/lib/deal-stage";
+import {
+	DEAL_STAGE_NAMESPACE,
+	DEAL_STAGE_OPTIONS,
+	LOSING_STAGES,
+} from "@/lib/deal-stage";
 import { useCrmCache } from "@/lib/trpc/cache";
 import { useTRPC } from "@/lib/trpc/client";
 
@@ -47,6 +51,7 @@ export function DealsBulkActions({
 	archived: boolean;
 }) {
 	const t = useTranslations("crmBulk");
+	const tStage = useTranslations(DEAL_STAGE_NAMESPACE);
 	const reportBulk = useReportBulk();
 	const trpc = useTRPC();
 	const cache = useCrmCache();
@@ -177,7 +182,7 @@ export function DealsBulkActions({
 										setStage.mutate({ ids, stage: option.value });
 									}}
 								>
-									{option.label}
+									{tStage(option.value)}
 								</DropdownMenuItem>
 							))}
 						</DropdownMenuGroup>

@@ -27,9 +27,13 @@ import { SavedViewsMenu } from "@/components/data-table/saved-views-menu";
 import { useTableQuery } from "@/components/data-table/use-table-query";
 import { EntityListShell } from "@/components/desk-ui/entity-list-shell";
 import { LocalRelativeTime } from "@/components/local-date-time";
-import { ACTIVITY_FACET_OPTIONS } from "@/lib/activity-recency";
+import {
+	ACTIVITY_FACET_OPTIONS,
+	ACTIVITY_RECENCY_NAMESPACE,
+} from "@/lib/activity-recency";
 import {
 	ENRICHMENT_FACET_OPTIONS,
+	ENRICHMENT_LABEL_NAMESPACE,
 	ENRICHMENT_POLL_MS,
 	isEnriching,
 } from "@/lib/enrichment-status";
@@ -177,7 +181,8 @@ const archivedColumn = (tt: Translate): DataTableColumn<CompanyRow> => ({
 export function CompaniesTable() {
 	const t = useTranslations("companies");
 	const tt = useTranslations("crmTables");
-	const tEnrichment = useTranslations("crmEnrichment");
+	const tEnrichment = useTranslations(ENRICHMENT_LABEL_NAMESPACE);
+	const tRecency = useTranslations(ACTIVITY_RECENCY_NAMESPACE);
 	const openRecord = useOpenRecord();
 	const trpc = useTRPC();
 	const prefetchRecord = usePrefetchRecord();
@@ -231,7 +236,7 @@ export function CompaniesTable() {
 				(option) => (facetCounts?.enrichment?.[option.value] ?? 0) > 0,
 			).map((option) => ({
 				value: option.value,
-				label: tEnrichment(option.value),
+				label: tEnrichment(option.labelKey),
 			})),
 		},
 		{
@@ -241,7 +246,7 @@ export function CompaniesTable() {
 				(option) => (facetCounts?.activity?.[option.value] ?? 0) > 0,
 			).map((option) => ({
 				value: option.value,
-				label: tt("activityWithin", { days: option.value }),
+				label: tRecency(option.labelKey),
 			})),
 		},
 		...fieldFacets,

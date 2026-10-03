@@ -1,13 +1,4 @@
 {
-	"crmActivity": {
-		"NOTE": "Note",
-		"CALL": "Appel",
-		"EMAIL": "E-mail",
-		"MEETING": "Rendez-vous",
-		"TASK": "Tâche",
-		"STAGE_CHANGE": "Changement d’étape",
-		"ENRICHMENT": "Enrichissement"
-	},
 	"crmAgent": {
 		"newConversation": "Nouvelle conversation",
 		"nothingYet": "Rien pour l’instant",
@@ -21,31 +12,7 @@
 		"hintUnreachable": "Lancez-le avec `bun run dev`, ou vérifiez AGENT_URL.",
 		"hintUnconfigured": "Définissez AGENT_BRIDGE_SECRET pour l’application et pour l’agent.",
 		"followUp": "Question complémentaire",
-		"openSource": "Ouvrir {title}",
-		"contact": {
-			"title": "Interroger l’agent sur cette personne",
-			"blurb": "Chaque étape s’affiche en direct, y compris les pistes écartées.",
-			"placeholder": "Est-elle toujours en poste ?",
-			"s1": "Qui est cette personne ?",
-			"s2": "Est-elle toujours en poste ?",
-			"s3": "Que dois-je savoir avant un appel ?"
-		},
-		"company": {
-			"title": "Interroger l’agent sur cette société",
-			"blurb": "Il lit leur site et notre historique avec eux, et montre son raisonnement.",
-			"placeholder": "Que vendent-ils ?",
-			"s1": "Que font-ils ?",
-			"s2": "Qui connaissons-nous chez eux ?",
-			"s3": "Qu’est-ce qui a changé récemment ?"
-		},
-		"deal": {
-			"title": "Interroger l’agent sur cette affaire",
-			"blurb": "Il peut lire les échanges, les rendez-vous et les interlocuteurs des deux côtés.",
-			"placeholder": "Où cela bloque-t-il ?",
-			"s1": "Où en est-on ?",
-			"s2": "Qui d’autre devrait être impliqué ?",
-			"s3": "Quel est le risque ici ?"
-		}
+		"openSource": "Ouvrir {title}"
 	},
 	"crmBulk": {
 		"nothingChanged": "Aucune modification.",
@@ -218,14 +185,6 @@
 		"save": "Enregistrer",
 		"cancel": "Annuler"
 	},
-	"crmEnrichment": {
-		"PENDING": "Non recherché",
-		"RUNNING": "Enrichissement en cours",
-		"COMPLETE": "Enrichi",
-		"FAILED": "Échec de l’enrichissement",
-		"SKIPPED": "Rien trouvé",
-		"QUEUED": "En file d’attente"
-	},
 	"crmPicker": {
 		"chooseCompany": "Choisir une société",
 		"searchCompanies": "Rechercher des sociétés…",
@@ -262,7 +221,6 @@
 		"searching": "Recherche…",
 		"noCompanyMatches": "Aucune société ne correspond.",
 		"noCompany": "Aucune société",
-		"activityWithin": "Actif dans les {days} derniers jours",
 		"closingOptions": {
 			"overdue": "En retard",
 			"this-month": "Clôture ce mois-ci",

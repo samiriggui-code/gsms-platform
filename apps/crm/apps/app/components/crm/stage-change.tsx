@@ -27,7 +27,11 @@ import { useTranslations } from "next-intl";
 import { parseAsString, useQueryStates } from "nuqs";
 import { useId, useState } from "react";
 import { toast } from "sonner";
-import { DEAL_STAGE_OPTIONS, LOSING_STAGES } from "@/lib/deal-stage";
+import {
+	DEAL_STAGE_NAMESPACE,
+	DEAL_STAGE_OPTIONS,
+	LOSING_STAGES,
+} from "@/lib/deal-stage";
 import { SEARCH_PARAM } from "@/lib/search-param-keys";
 import { useCrmCache } from "@/lib/trpc/cache";
 import { useTRPC } from "@/lib/trpc/client";
@@ -62,6 +66,7 @@ export function DealStageMenu({
 	stage: DealStage;
 	variant?: "inline" | "control";
 }) {
+	const tStage = useTranslations(DEAL_STAGE_NAMESPACE);
 	const [, setCloseParams] = useQueryStates(closeReasonParams);
 	const setStage = useStageMutation();
 
@@ -111,7 +116,7 @@ export function DealStageMenu({
 				>
 					{DEAL_STAGE_OPTIONS.map((option) => (
 						<DropdownMenuRadioItem key={option.value} value={option.value}>
-							{option.label}
+							{tStage(option.value)}
 						</DropdownMenuRadioItem>
 					))}
 				</DropdownMenuRadioGroup>

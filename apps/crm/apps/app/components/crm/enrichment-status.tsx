@@ -1,7 +1,10 @@
 import type { EnrichmentStatus } from "@crm/db/enums";
 import { StatusIndicator } from "@crm/ui/components/status-indicator";
 import { useTranslations } from "next-intl";
-import { enrichmentPresentation } from "@/lib/enrichment-status";
+import {
+	ENRICHMENT_LABEL_NAMESPACE,
+	enrichmentPresentation,
+} from "@/lib/enrichment-status";
 
 export function EnrichmentIndicator({
 	status,
@@ -14,9 +17,9 @@ export function EnrichmentIndicator({
 	title?: string | null;
 	className?: string;
 }) {
-	const t = useTranslations("crmEnrichment");
-	const { tone, busy } = enrichmentPresentation(status, queued);
-	const label = t(status === "PENDING" && queued ? "QUEUED" : status);
+	const t = useTranslations(ENRICHMENT_LABEL_NAMESPACE);
+	const { labelKey, tone, busy } = enrichmentPresentation(status, queued);
+	const label = t(labelKey);
 
 	return (
 		<StatusIndicator

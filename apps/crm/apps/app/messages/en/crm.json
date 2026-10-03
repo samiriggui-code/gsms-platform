@@ -1,13 +1,4 @@
 {
-	"crmActivity": {
-		"NOTE": "Note",
-		"CALL": "Call",
-		"EMAIL": "Email",
-		"MEETING": "Meeting",
-		"TASK": "Task",
-		"STAGE_CHANGE": "Stage change",
-		"ENRICHMENT": "Enrichment"
-	},
 	"crmAgent": {
 		"newConversation": "New conversation",
 		"nothingYet": "Nothing yet",
@@ -21,31 +12,7 @@
 		"hintUnreachable": "Start it with `bun run dev`, or check AGENT_URL.",
 		"hintUnconfigured": "Set AGENT_BRIDGE_SECRET for both the app and the agent.",
 		"followUp": "Follow-up",
-		"openSource": "Open {title}",
-		"contact": {
-			"title": "Ask about this person",
-			"blurb": "Every step is shown as it happens — including the leads it throws away.",
-			"placeholder": "Are they still there?",
-			"s1": "Who is this person?",
-			"s2": "Are they still there?",
-			"s3": "What should I know before a call?"
-		},
-		"company": {
-			"title": "Ask about this company",
-			"blurb": "It reads their site and our own history with them, and shows its working.",
-			"placeholder": "What do they sell?",
-			"s1": "What do they do?",
-			"s2": "Who do we know here?",
-			"s3": "What has changed recently?"
-		},
-		"deal": {
-			"title": "Ask about this deal",
-			"blurb": "It can read the thread, the meetings and the people on both sides of it.",
-			"placeholder": "Where has this stalled?",
-			"s1": "Where does this stand?",
-			"s2": "Who else should be involved?",
-			"s3": "What is the risk here?"
-		}
+		"openSource": "Open {title}"
 	},
 	"crmBulk": {
 		"nothingChanged": "Nothing changed.",
@@ -218,14 +185,6 @@
 		"save": "Save",
 		"cancel": "Cancel"
 	},
-	"crmEnrichment": {
-		"PENDING": "Not researched",
-		"RUNNING": "Researching",
-		"COMPLETE": "Enriched",
-		"FAILED": "Enrichment failed",
-		"SKIPPED": "Nothing found",
-		"QUEUED": "Queued"
-	},
 	"crmPicker": {
 		"chooseCompany": "Choose a company",
 		"searchCompanies": "Search companies…",
@@ -262,7 +221,6 @@
 		"searching": "Searching…",
 		"noCompanyMatches": "No company matches.",
 		"noCompany": "No company",
-		"activityWithin": "Active within {days} days",
 		"closingOptions": {
 			"overdue": "Overdue",
 			"this-month": "Closing this month",

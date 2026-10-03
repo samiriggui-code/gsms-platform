@@ -12,7 +12,7 @@ import type { ReactNode } from "react";
 import { AreaTrend, DonutStat } from "@/components/dashboard-charts";
 import { DeskPulseBand } from "@/components/desk-ui/desk-pulse-band";
 import { SoftPanel } from "@/components/desk-ui/soft-panel";
-import { dealStageColor, dealStageLabel } from "@/lib/deal-stage";
+import { DEAL_STAGE_NAMESPACE, dealStageColor } from "@/lib/deal-stage";
 import type { RouterOutputs } from "@/lib/trpc/types";
 import { useWorkspaceUrl } from "@/lib/use-workspace-url";
 import { useTranslations } from "next-intl";
@@ -22,6 +22,7 @@ type Summary = RouterOutputs["dashboard"]["summary"];
 export function SalesDashboard({ summary }: { summary: Summary }) {
 	const t = useTranslations("overview");
 	const tc = useTranslations("crmDashboard");
+	const tStage = useTranslations(DEAL_STAGE_NAMESPACE);
 	const trendConfig: ChartConfig = {
 		won: { label: tc("trendWon"), color: "var(--success)" },
 		created: { label: tc("trendCreated"), color: "var(--chart-1)" },
@@ -59,7 +60,7 @@ export function SalesDashboard({ summary }: { summary: Summary }) {
 			? [
 					{
 						key: stage.stage,
-						label: dealStageLabel(stage.stage),
+						label: tStage(stage.stage),
 						value: stage.valueCents,
 						color: dealStageColor(stage.stage),
 						count: stage.count,

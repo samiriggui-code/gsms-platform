@@ -25,7 +25,7 @@ import { ListSearch } from "@/components/data-table/list-search";
 import { useTableQuery } from "@/components/data-table/use-table-query";
 import { EntityListShell } from "@/components/desk-ui/entity-list-shell";
 import { LocalDay, LocalRelativeTime } from "@/components/local-date-time";
-import { DEAL_STAGE_OPTIONS } from "@/lib/deal-stage";
+import { DEAL_STAGE_NAMESPACE, DEAL_STAGE_OPTIONS } from "@/lib/deal-stage";
 import { useTRPC } from "@/lib/trpc/client";
 import type { RouterOutputs } from "@/lib/trpc/types";
 import { DealsBulkActions } from "./deals-bulk-actions";
@@ -151,6 +151,7 @@ const archivedColumn = (tt: Translate): DataTableColumn<DealRow> => ({
 export function DealsTable() {
 	const t = useTranslations("deals");
 	const tt = useTranslations("crmTables");
+	const tStage = useTranslations(DEAL_STAGE_NAMESPACE);
 	const openRecord = useOpenRecord();
 	const trpc = useTRPC();
 	const prefetchRecord = usePrefetchRecord();
@@ -205,7 +206,10 @@ export function DealsTable() {
 			label: tt("stage"),
 			options: DEAL_STAGE_OPTIONS.filter(
 				(option) => (facetCounts?.stage?.[option.value] ?? 0) > 0,
-			),
+			).map((option) => ({
+				value: option.value,
+				label: tStage(option.value),
+			})),
 		},
 		{
 			id: "closing",

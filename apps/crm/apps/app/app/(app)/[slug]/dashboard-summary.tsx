@@ -37,6 +37,7 @@ import { RecordLink } from "@/components/crm/record-sheet/record-link";
 import { useOpenRecord } from "@/components/crm/record-sheet/record-stack";
 import { SoftPanel } from "@/components/desk-ui/soft-panel";
 import { LocalRelativeTime } from "@/components/local-date-time";
+import { ACTIVITY_LABEL_NAMESPACE } from "@/lib/activity-presentation";
 import { dealStageColor } from "@/lib/deal-stage";
 import { SEARCH_PARAM } from "@/lib/search-param-keys";
 import { useCrmCache } from "@/lib/trpc/cache";
@@ -94,7 +95,7 @@ const activityColumns = (t: Translate): SimpleTableColumn[] => [
 
 export function DashboardSummary() {
 	const t = useTranslations("crmDashboard");
-	const tActivity = useTranslations("crmActivity");
+	const tActivity = useTranslations(ACTIVITY_LABEL_NAMESPACE);
 	const trpc = useTRPC();
 	const cache = useCrmCache();
 	const openRecord = useOpenRecord();

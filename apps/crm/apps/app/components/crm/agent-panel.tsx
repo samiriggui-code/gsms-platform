@@ -56,6 +56,7 @@ import {
 } from "@/components/crm/agent-conversations";
 import {
 	type AgentRecord,
+	RECORD_COPY_NAMESPACE,
 	recordFilter,
 	recordHeader,
 } from "@/lib/agent-record";
@@ -72,7 +73,10 @@ import {
 	resolveThread,
 	type Source,
 	type Tone,
+	TOOL_VERB_NAMESPACE,
+	TOOL_VERBS,
 	type TranscriptItem,
+	toolVerbKey,
 	toTranscript,
 } from "@/lib/agent-transcript";
 import { useTRPC } from "@/lib/trpc/client";
@@ -203,6 +207,7 @@ function Thread({
 	onNewThread: () => void;
 }) {
 	const t = useTranslations("crmAgent");
+	const tCopy = useTranslations(RECORD_COPY_NAMESPACE);
 	const agent = useEveAgent({
 		headers: recordHeader(record),
 		...(thread && "session" in thread
@@ -301,7 +306,7 @@ function Thread({
 						<Input
 							value={draft}
 							onChange={(event) => setDraft(event.target.value)}
-							placeholder={t(`${record.kind}.placeholder`)}
+							placeholder={tCopy(`${record.kind}Placeholder`)}
 							disabled={locked}
 						/>
 						<Button
@@ -327,11 +332,11 @@ function Idle({
 	kind: AgentRecord["kind"];
 	onAsk: (question: string) => void;
 }) {
-	const t = useTranslations("crmAgent");
+	const t = useTranslations(RECORD_COPY_NAMESPACE);
 	const suggestions = [
-		t(`${kind}.s1`),
-		t(`${kind}.s2`),
-		t(`${kind}.s3`),
+		t(`${kind}Suggestion1`),
+		t(`${kind}Suggestion2`),
+		t(`${kind}Suggestion3`),
 	];
 
 	return (
@@ -342,8 +347,8 @@ function Idle({
 						<Logo className="size-4" />
 					</span>
 				</EmptyMedia>
-				<EmptyTitle>{t(`${kind}.title`)}</EmptyTitle>
-				<EmptyDescription>{t(`${kind}.blurb`)}</EmptyDescription>
+				<EmptyTitle>{t(`${kind}Title`)}</EmptyTitle>
+				<EmptyDescription>{t(`${kind}Blurb`)}</EmptyDescription>
 			</EmptyHeader>
 
 			<EmptyContent layout="row">
@@ -394,6 +399,7 @@ const SOURCE_ICONS = {
 
 function Item({ item }: { item: TranscriptItem }) {
 	const t = useTranslations("crmAgent");
+	const tVerb = useTranslations(TOOL_VERB_NAMESPACE);
 	if (item.kind === "said") {
 		return item.mine ? (
 			<Message align="end" className="min-w-0">
@@ -436,12 +442,25 @@ function Item({ item }: { item: TranscriptItem }) {
 				<MarkerIcon>
 					{item.pending ? <Spinner /> : <Icon icon={TONE_ICONS[item.tone]} />}
 				</MarkerIcon>
-				<MarkerContent>{item.label}</MarkerContent>
+				<MarkerContent>{toolLabel(item, tVerb)}</MarkerContent>
 			</Marker>
 
 			{item.sources.length > 0 ? <Sources sources={item.sources} /> : null}
 		</div>
 	);
+}
+
+function toolLabel(
+	item: Extract<TranscriptItem, { kind: "did" }>,
+	tVerb: (key: string) => string,
+): string {
+	const key = toolVerbKey(item.tool);
+	if (!key) return item.label;
+	const english = TOOL_VERBS[key] ?? "";
+	const rest = item.label.startsWith(english)
+		? item.label.slice(english.length)
+		: "";
+	return `${tVerb(key)}${rest}`;
 }
 
 function Sources({ sources }: { sources: Source[] }) {
