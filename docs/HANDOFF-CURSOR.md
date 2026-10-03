@@ -1,5 +1,22 @@
 # Handoff Cursor → Claude
 
+## 2026-10-03 — DocuLens live sur VPS (psycopg2 + Traefik)
+
+Branche `cursor/doculens-server-gsms-74cc` (commit `212eecf`).
+
+**Fix prod :** SQLAlchemy 2.1 mappe `postgresql://` → psycopg v3 ; image n’a que `psycopg2-binary`. Dialecte forcé `postgresql+psycopg2://` dans `database_utils.py`.
+
+**Live vérifié (VPS `187.77.166.124`) :**
+- Stack `gsms-doculens` healthy (api / celery / db / redis / frontend)
+- `http://127.0.0.1:3053/health/live` → 200
+- Auth : documents sans clé → **401** ; clé sans workspace → **400** ; clé + `X-GSMS-Workspace-Id` → **200** `[]`
+- HTTPS Traefik : `https://doculens.gsms-security.com/health/live` → **200** ; `/` → **200** ; `/events/documents` → **401**
+- `ANTHROPIC_API_KEY` présent ; **pas** d’`OPENAI_API_KEY` → warning OpenAI au boot (classif embedding peut échouer tant que non fourni)
+
+**Ops :** checkout ciblé `git checkout origin/cursor/doculens-server-gsms-74cc -- apps/doculens` puis `docker compose -f apps/doculens/deploy/vps/docker-compose.vps.yml up -d --build`.
+
+---
+
 ## 2026-10-03 — Chantier 1 DocuLens serveur (auth / sites / Core / FR / Traefik)
 
 Branche `cursor/doculens-server-gsms-74cc`. Uniquement le serveur DocuLens (pas UI i18n).
