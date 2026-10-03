@@ -3,10 +3,15 @@ import * as bcrypt from 'bcryptjs';
 import { prisma } from '../lib/prisma.js';
 import { authMiddleware, getUser, signAccessToken, signRefreshToken, verifyRefreshToken } from '../middleware/auth.js';
 import type { JwtPayload } from '../middleware/auth.js';
+import { isRegistrationEnabled } from '../lib/sso-mapping.js';
 
 const auth = new Hono();
 
 auth.post('/register', async (c) => {
+  // Self-service sign-up can be disabled when accounts come from the GSMS Core (SSO).
+  if (!isRegistrationEnabled()) {
+    return c.json({ message: 'Registration is disabled' }, 403);
+  }
   try {
     const { email, password, name } = await c.req.json();
 

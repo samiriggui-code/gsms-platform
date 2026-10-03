@@ -971,6 +971,7 @@
   },
   "sso": {
     "signInWithSso": "Se connecter avec SSO",
+    "signInWithProvider": "Se connecter avec {{name}}",
     "orEmail": "ou se connecter avec un e-mail",
     "enabled": "SSO activé",
     "disabled": "SSO non configuré",

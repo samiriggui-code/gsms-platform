@@ -192,6 +192,8 @@ services:
         S3_PUBLIC_URL: ${S3_PUBLIC_URL:-}
     container_name: gsms-crm-app
     restart: unless-stopped
+    # Connexion GSMS (SSO) : GSMS_SSO_ISSUER, GSMS_SSO_CLIENT_ID (crm), GSMS_SSO_CLIENT_SECRET
+    # sont lus depuis ce .env racine. Retour OIDC : https://crm.gsms-security.com/api/auth/callback/gsms
     env_file:
       - ../../.env
     environment:

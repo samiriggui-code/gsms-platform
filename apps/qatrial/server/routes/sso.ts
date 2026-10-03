@@ -1,8 +1,19 @@
 import { Hono } from 'hono';
 import { prisma } from '../lib/prisma.js';
-import { signAccessToken, signRefreshToken, type JwtPayload } from '../middleware/auth.js';
+import { signAccessToken, signRefreshToken, VALID_ROLES, type JwtPayload } from '../middleware/auth.js';
 import * as crypto from 'crypto';
+import * as bcrypt from 'bcryptjs';
 import { createRemoteJWKSet, jwtVerify } from 'jose';
+import {
+  buildExistingUserUpdate,
+  codeChallengeS256,
+  findOrCreateSsoOrg,
+  generateCodeVerifier,
+  isRegistrationEnabled,
+  mapIdpError,
+  normalizeEmail,
+  resolveSsoRole,
+} from '../lib/sso-mapping.js';
 
 const sso = new Hono();
 
@@ -18,6 +29,11 @@ function getSsoConfig() {
     callbackUrl: process.env.SSO_CALLBACK_URL || 'http://localhost:3001/api/auth/sso/callback',
     defaultRole: process.env.SSO_DEFAULT_ROLE || 'qa_engineer',
     autoProvision: process.env.SSO_AUTO_PROVISION !== 'false',
+    // Claim carrying the QAtrial role (GSMS Core: `gsms_role`, already translated).
+    roleClaim: process.env.SSO_ROLE_CLAIM ?? 'gsms_role',
+    // All SSO users are attached to this organisation (created if absent).
+    orgName: process.env.SSO_ORG_NAME || 'GSMS',
+    providerName: process.env.SSO_PROVIDER_NAME || 'GSMS',
   };
 }
 
@@ -61,7 +77,7 @@ function getJwks(discovery: OidcDiscovery): ReturnType<typeof createRemoteJWKSet
 }
 
 // In-memory state store for CSRF (in production, use Redis or DB)
-const stateStore = new Map<string, { nonce: string; createdAt: number }>();
+const stateStore = new Map<string, { nonce: string; codeVerifier: string; createdAt: number }>();
 
 // Clean expired states (older than 10 minutes)
 function cleanStates() {
@@ -80,9 +96,8 @@ sso.get('/config', (c) => {
   return c.json({
     enabled: config.enabled,
     type: config.type,
-    providerName: config.issuerUrl
-      ? new URL(config.issuerUrl).hostname.replace(/\.\w+$/, '')
-      : null,
+    providerName: config.enabled ? config.providerName : null,
+    registrationEnabled: isRegistrationEnabled(),
   });
 });
 
@@ -101,8 +116,10 @@ sso.get('/login', async (c) => {
     const state = crypto.randomBytes(32).toString('hex');
     const nonce = crypto.randomBytes(32).toString('hex');
 
+    const codeVerifier = generateCodeVerifier();
+
     cleanStates();
-    stateStore.set(state, { nonce, createdAt: Date.now() });
+    stateStore.set(state, { nonce, codeVerifier, createdAt: Date.now() });
 
     const params = new URLSearchParams({
       response_type: 'code',
@@ -111,6 +128,8 @@ sso.get('/login', async (c) => {
       scope: 'openid profile email',
       state,
       nonce,
+      code_challenge: codeChallengeS256(codeVerifier),
+      code_challenge_method: 'S256',
     });
 
     const authUrl = `${discovery.authorization_endpoint}?${params.toString()}`;
@@ -135,8 +154,8 @@ sso.get('/callback', async (c) => {
   const errorParam = c.req.query('error');
 
   if (errorParam) {
-    const errorDesc = c.req.query('error_description') || errorParam;
-    return c.redirect(`/?sso_error=${encodeURIComponent(errorDesc)}`);
+    const message = mapIdpError(errorParam, c.req.query('error_description'), config.providerName);
+    return c.redirect(`/?sso_error=${encodeURIComponent(message)}`);
   }
 
   if (!code || !state) {
@@ -149,6 +168,9 @@ sso.get('/callback', async (c) => {
     return c.redirect('/?sso_error=Invalid+or+expired+state');
   }
   stateStore.delete(state);
+  if (Date.now() - storedState.createdAt > 600_000) {
+    return c.redirect('/?sso_error=Invalid+or+expired+state');
+  }
 
   try {
     const discovery = await getOidcDiscovery(config.issuerUrl);
@@ -163,6 +185,7 @@ sso.get('/callback', async (c) => {
         redirect_uri: config.callbackUrl,
         client_id: config.clientId,
         client_secret: config.clientSecret,
+        code_verifier: storedState.codeVerifier,
       }).toString(),
     });
 
@@ -187,19 +210,22 @@ sso.get('/callback', async (c) => {
 
     let email = '';
     let name = '';
+    let claims: Record<string, unknown> = {};
 
     try {
       const jwks = getJwks(discovery);
       const { payload } = await jwtVerify(tokenData.id_token, jwks, {
         issuer: discovery.issuer,
         audience: config.clientId,
+        algorithms: ['RS256'],
       });
 
       if (!payload.nonce || payload.nonce !== storedState.nonce) {
         return c.redirect('/?sso_error=Nonce+mismatch');
       }
 
-      email = typeof payload.email === 'string' ? payload.email : '';
+      claims = payload as Record<string, unknown>;
+      email = normalizeEmail(payload.email);
       name =
         (typeof payload.name === 'string' && payload.name) ||
         (typeof payload.preferred_username === 'string' && payload.preferred_username) ||
@@ -211,14 +237,22 @@ sso.get('/callback', async (c) => {
 
     // If no email from ID token, fall back to userinfo endpoint (still over
     // an access_token we just received directly from the token endpoint)
-    if (!email && discovery.userinfo_endpoint) {
+    const needsUserinfo = !email || (config.roleClaim && claims[config.roleClaim] === undefined);
+    if (needsUserinfo && discovery.userinfo_endpoint) {
       const userinfoRes = await fetch(discovery.userinfo_endpoint, {
         headers: { Authorization: `Bearer ${tokenData.access_token}` },
       });
       if (userinfoRes.ok) {
-        const userinfo = await userinfoRes.json() as { email?: string; name?: string; preferred_username?: string };
-        email = userinfo.email || '';
-        name = name || userinfo.name || userinfo.preferred_username || '';
+        const userinfo = await userinfoRes.json() as Record<string, unknown>;
+        email = email || normalizeEmail(userinfo.email);
+        name =
+          name ||
+          (typeof userinfo.name === 'string' && userinfo.name) ||
+          (typeof userinfo.preferred_username === 'string' && userinfo.preferred_username) ||
+          '';
+        if (config.roleClaim && claims[config.roleClaim] === undefined && userinfo[config.roleClaim] !== undefined) {
+          claims = { ...claims, [config.roleClaim]: userinfo[config.roleClaim] };
+        }
       }
     }
 
@@ -226,29 +260,42 @@ sso.get('/callback', async (c) => {
       return c.redirect('/?sso_error=No+email+in+SSO+response');
     }
 
-    // Find or create user
-    let user = await prisma.user.findUnique({ where: { email } });
+    // Find or create user (an existing local account with the same e-mail is the same user)
+    let user = await prisma.user.findFirst({
+      where: { email: { equals: email, mode: 'insensitive' } },
+    });
 
-    if (!user && config.autoProvision) {
-      // Auto-provision: create org + workspace + user
-      const org = await prisma.organization.create({
-        data: { name: `${name || email}'s Organization` },
-      });
+    const roleResult = resolveSsoRole({
+      claims,
+      roleClaim: config.roleClaim,
+      validRoles: VALID_ROLES,
+      defaultRole: config.defaultRole,
+      isNewUser: !user,
+    });
+    if (!roleResult.ok) {
+      console.error('SSO role rejected:', roleResult.error);
+      return c.redirect(`/?sso_error=${encodeURIComponent(roleResult.error)}`);
+    }
 
-      await prisma.workspace.create({
-        data: { name: 'Default Workspace', orgId: org.id },
-      });
+    const ssoOrgId = () => findOrCreateSsoOrg(prisma, config.orgName);
 
-      // SSO users get a random password hash (they authenticate via SSO, not password)
-      const randomHash = crypto.randomBytes(64).toString('hex');
+    if (user) {
+      const data = await buildExistingUserUpdate(user, { name, role: roleResult.role }, ssoOrgId);
+      if (Object.keys(data).length > 0) {
+        user = await prisma.user.update({ where: { id: user.id }, data });
+      }
+    } else if (config.autoProvision) {
+      // SSO users get an unusable password (real bcrypt hash of random bytes):
+      // they authenticate via SSO, and bcrypt.compare against it simply returns false.
+      const randomHash = await bcrypt.hash(crypto.randomBytes(32).toString('hex'), 10);
 
       user = await prisma.user.create({
         data: {
           email,
           passwordHash: randomHash,
           name: name || email.split('@')[0],
-          role: config.defaultRole,
-          orgId: org.id,
+          role: roleResult.role ?? config.defaultRole,
+          orgId: await ssoOrgId(),
         },
       });
     }

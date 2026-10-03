@@ -1,9 +1,53 @@
-import { ensureWorkspaceMembership, workspaceRoleOf } from "@crm/auth";
+import {
+	ensureWorkspaceMembership,
+	GSMS_PROVIDER_ID,
+	gsmsSignInDecision,
+	gsmsSsoCredentials,
+	gsmsWellKnownUrl,
+	syncGsmsUser,
+	workspaceRoleOf,
+} from "@crm/auth";
 import { hasSignInAllowList, isWorkspaceEmail } from "@crm/auth/workspace";
 import { db } from "@crm/db";
 import bcrypt from "bcrypt";
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import type { OAuthConfig } from "next-auth/providers/oauth";
+
+type GsmsProfile = {
+	sub: string;
+	email?: string;
+	name?: string;
+	gsms_role?: string;
+};
+
+function gsmsProvider(): OAuthConfig<GsmsProfile> | undefined {
+	const credentials = gsmsSsoCredentials();
+	if (!credentials) return undefined;
+
+	return {
+		id: GSMS_PROVIDER_ID,
+		name: "GSMS",
+		type: "oauth",
+		wellKnown: gsmsWellKnownUrl(credentials.issuer),
+		clientId: credentials.clientId,
+		clientSecret: credentials.clientSecret,
+		authorization: { params: { scope: "openid profile email" } },
+		idToken: true,
+		checks: ["pkce", "state", "nonce"],
+		profile(profile) {
+			const email = profile.email?.trim().toLowerCase() ?? "";
+			return {
+				id: profile.sub,
+				email,
+				name: profile.name?.trim() || email,
+				image: null,
+			};
+		},
+	};
+}
+
+const gsms = gsmsProvider();
 
 const authOptions: NextAuthOptions = {
 	session: {
@@ -51,14 +95,55 @@ const authOptions: NextAuthOptions = {
 				};
 			},
 		}),
+		...(gsms ? [gsms] : []),
 	],
 
 	pages: {
 		signIn: "/sign-in",
+		error: "/sign-in",
 	},
 
 	callbacks: {
-		async jwt({ token, user }) {
+		async signIn({ account, profile }) {
+			if (account?.provider !== GSMS_PROVIDER_ID) return true;
+
+			const decision = gsmsSignInDecision(profile);
+			if (!decision.ok) {
+				console.warn(
+					`[auth] GSMS SSO refusé (${decision.reason}) pour sub=${String(profile?.sub ?? "?")}`,
+				);
+				return false;
+			}
+
+			const synced = await syncGsmsUser(decision.identity);
+			if (!synced) {
+				console.error(
+					`[auth] GSMS SSO : impossible d'inscrire ${decision.identity.email} dans l'espace de travail`,
+				);
+				return false;
+			}
+
+			return true;
+		},
+
+		async jwt({ token, user, account }) {
+			if (user && account?.provider === GSMS_PROVIDER_ID) {
+				const local = await db.user.findUnique({
+					where: { email: user.email.trim().toLowerCase() },
+					select: { id: true, email: true, name: true, image: true },
+				});
+
+				if (!local) {
+					throw new Error("GSMS SSO: user missing after sign-in sync.");
+				}
+
+				user.id = local.id;
+				user.image = local.image;
+				token.sub = local.id;
+				token.email = local.email;
+				token.name = local.name;
+			}
+
 			if (user) {
 				token.id = user.id;
 				token.image = user.image ?? null;

@@ -28,7 +28,14 @@ export function LoginForm({ next, notice }: { next: string; notice?: string }) {
       });
       const data = (await res.json().catch(() => ({}))) as { error?: string; next?: string };
       if (!res.ok) throw new Error(data.error ?? "Connexion impossible.");
-      router.replace(data.next ?? next);
+      const target = data.next ?? next;
+      // Connexion demandée par une application (GRACE, QAtrial, CRM) : navigation complète, l'autorisation
+      // OIDC renvoie ensuite le navigateur vers l'application.
+      if (target.startsWith("/oidc/")) {
+        window.location.assign(target);
+        return;
+      }
+      router.replace(target);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Connexion impossible.");

@@ -293,6 +293,58 @@ def _demo(settings, db: Database) -> int:
     return 0
 
 
+_SSO_ENV = {
+    "grace": "GRACE (apps/grace, fichier .env du serveur)",
+    "qatrial": "QAtrial (apps/qatrial)",
+    "crm": "CRM (apps/crm/.env)",
+}
+
+
+def _sso_env(app: str, issuer: str, redirect_uri: str, secret: str) -> list[str]:
+    if app == "crm":
+        return [f"GSMS_SSO_ISSUER={issuer}", "GSMS_SSO_CLIENT_ID=crm", f"GSMS_SSO_CLIENT_SECRET={secret}"]
+    lines = [
+        "SSO_ENABLED=true",
+        f"SSO_ISSUER_URL={issuer}",
+        f"SSO_CLIENT_ID={app}",
+        f"SSO_CLIENT_SECRET={secret}",
+        f"SSO_CALLBACK_URL={redirect_uri}",
+        "SSO_ROLE_CLAIM=gsms_role",
+    ]
+    return lines + (["SSO_ORG_NAME=GSMS"] if app == "qatrial" else [])
+
+
+def _sso_client(settings, db: Database, args) -> int:
+    """Déclare (ou met à jour) l'application auprès du fournisseur OIDC et affiche ses variables."""
+    from gsms_core.oidc import service as oidc
+
+    apps = list(_SSO_ENV) if args.app == "all" else [args.app]
+    if len(apps) > 1 and args.redirect_uri:
+        print("Erreur : --redirect-uri s'utilise avec une seule application.", file=sys.stderr)
+        return 1
+    issuer = oidc.issuer(settings)
+    with db.session_factory() as session:
+        for app in apps:
+            uris = args.redirect_uri or oidc.default_redirect_uris(settings, app)
+            try:
+                client, secret = oidc.save_client(
+                    session, app, uris, "cli:sso-client", args.post_logout_uri, rotate=args.rotate
+                )
+            except ValueError as exc:
+                print(f"Erreur ({app}) : {exc}", file=sys.stderr)
+                return 1
+            session.commit()
+            print(f"\n== {_SSO_ENV[app]} ==")
+            print(f"Adresse de retour : {', '.join(client.redirect_uris)}")
+            if secret is None:
+                print("Secret inchangé (déjà affiché à la création). Pour en générer un nouveau : --rotate")
+                continue
+            print("Variables à ajouter (le secret ne sera plus affiché) :")
+            for line in _sso_env(app, issuer, client.redirect_uris[0], secret):
+                print(f"  {line}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="gsms_core.cli")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -322,6 +374,13 @@ def main(argv: list[str] | None = None) -> int:
     mail.add_argument("to")
     sub.add_parser("vault-migrate", help="chiffrer les fichiers existants et les ranger dans le coffre-fort")
     sub.add_parser("demo", help="client de démonstration : prestation appel d'offres et pièces analysées")
+    sso = sub.add_parser("sso-client", help="déclarer GRACE, QAtrial ou le CRM auprès de la connexion GSMS")
+    sso.add_argument("app", choices=[*_SSO_ENV, "all"])
+    sso.add_argument(
+        "--redirect-uri", action="append", help="adresse de retour (défaut : https://<app>.<domaine>/…)"
+    )
+    sso.add_argument("--post-logout-uri", action="append", default=[], help="retour après déconnexion")
+    sso.add_argument("--rotate", action="store_true", help="générer un nouveau secret")
     args = parser.parse_args(argv)
 
     settings = get_settings()
@@ -344,6 +403,8 @@ def main(argv: list[str] | None = None) -> int:
         return _vault_migrate(settings, db)
     if args.command == "demo":
         return _demo(settings, db)
+    if args.command == "sso-client":
+        return _sso_client(settings, db, args)
 
     try:
         password = _read_password()

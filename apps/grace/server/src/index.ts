@@ -12,6 +12,7 @@ import {
 } from 'fastify-type-provider-zod';
 
 import authRoutes from './modules/auth/routes.js';
+import ssoRoutes from './modules/sso/routes.js';
 import healthRoutes from './modules/health/routes.js';
 import userRoutes from './modules/users/routes.js';
 import assetRoutes from './modules/assets/routes.js';
@@ -103,6 +104,7 @@ await app.register(swaggerUi, { routePrefix: '/api/docs' });
 await app.register(async (api) => {
   await api.register(healthRoutes);
   await api.register(authRoutes, { prefix: '/auth' });
+  await api.register(ssoRoutes, { prefix: '/auth/sso' });
   await api.register(userRoutes, { prefix: '/users' });
   await api.register(assetRoutes, { prefix: '/assets' });
   await api.register(clusterRoutes, { prefix: '/clusters' });

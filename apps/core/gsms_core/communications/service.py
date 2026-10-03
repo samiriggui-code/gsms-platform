@@ -48,6 +48,13 @@ RELANCES_DEFAULTS = {
     "rattrapage_jours": 2,  # un message dont la date est passée depuis ≤ N jours part encore
     "regles_desactivees": [],
 }
+# Messages envoyés hors calendrier : test SMTP et e-mails de compte (le lien d'activation n'est pas gardé).
+DIRECT_LABELS = {
+    "test_smtp": "Test d'envoi",
+    "invitation_equipe": "Invitation à l'équipe",
+    "reinitialisation_mot_de_passe": "Réinitialisation du mot de passe",
+}
+CONFIDENTIAL = frozenset({"invitation_equipe", "reinitialisation_mot_de_passe"})
 ORGANISME = {"nom": "GSMS Sécurité", "couleur": "#111827"}
 TEAM_ROLES = (Role.OWNER, Role.ADMIN, Role.MANAGER, Role.CONSULTANT)
 ADMIN_ROLES = (Role.OWNER, Role.ADMIN)
@@ -245,7 +252,7 @@ def create_message(
 
 def still_relevant(session: Session, msg: Message) -> str | None:
     """None si le message doit toujours partir ; sinon le motif pour lequel il est devenu sans objet."""
-    if msg.rule_key == "test_smtp":
+    if msg.rule_key in DIRECT_LABELS:
         return None
     rule = find_rule(msg.rule_key)
     if rule is None:
@@ -268,7 +275,16 @@ def still_relevant(session: Session, msg: Message) -> str | None:
     return None
 
 
-def _deliver(session: Session, msg: Message, sender: Sender, enabled: bool, actor: str) -> Message:
+def _deliver(
+    session: Session,
+    msg: Message,
+    sender: Sender,
+    enabled: bool,
+    actor: str,
+    content: templates.Rendered | None = None,
+) -> Message:
+    """Envoie le message. ``content`` : contenu réellement envoyé quand le journal n'en garde qu'une version
+    masquée (lien d'activation : il ne doit pas être lisible depuis la messagerie)."""
     reason = still_relevant(session, msg)
     if reason:
         msg.status, msg.cancel_reason = MessageStatus.ANNULE, reason
@@ -292,8 +308,8 @@ def _deliver(session: Session, msg: Message, sender: Sender, enabled: bool, acto
                 to=msg.recipient_email,
                 to_name=msg.recipient_name,
                 subject=msg.subject,
-                html=msg.body_html,
-                text=msg.body_text,
+                html=content.html if content else msg.body_html,
+                text=content.text if content else msg.body_text,
                 reply_to=relance_settings(session)["adresse_reponse"] or None,
             )
             msg.status = MessageStatus.ENVOYE
@@ -384,6 +400,10 @@ def cancel(session: Session, msg: Message, motif: str, actor: str) -> Message:
 def retry(session: Session, msg: Message, sender: Sender, enabled: bool, actor: str) -> Message:
     if msg.status != MessageStatus.ECHEC:
         raise MessageError(f"{msg.reference} n'est pas en échec")
+    if msg.rule_key in CONFIDENTIAL:
+        raise MessageError(
+            "le lien de ce message n'est pas conservé : renvoyez l'invitation depuis Paramètres → Équipe"
+        )
     msg.status = MessageStatus.PREVU
     return _deliver(session, msg, sender, enabled, actor)
 
@@ -403,10 +423,38 @@ def send_test(session: Session, sender: Sender, enabled: bool, to: str, actor: s
     return _deliver(session, msg, sender, enabled, actor)
 
 
+def send_confidential(
+    session: Session,
+    sender: Sender,
+    enabled: bool,
+    *,
+    template: str,
+    context: dict,
+    masked: dict,
+    recipient: Recipient,
+    actor: str,
+) -> Message:
+    """Envoi immédiat d'un e-mail contenant un secret (lien d'activation…) : le journal de la messagerie garde
+    le message, mais avec les valeurs de ``masked`` à la place ; seul le destinataire reçoit le vrai lien."""
+    real = templates.render(template, context)
+    msg = create_message(
+        session,
+        templates.render(template, context | masked),
+        rule_key=template,
+        occurrence_key=f"{template}|{uuid.uuid4()}",
+        recipient=recipient,
+        due_on=date.today(),
+        external=False,
+        actor=actor,
+    )
+    assert msg is not None
+    return _deliver(session, msg, sender, enabled, actor, content=real)
+
+
 def message_view(session: Session, msg: Message, full: bool = False) -> dict:
     ws = session.get(Workspace, msg.workspace_id) if msg.workspace_id else None
     rule = find_rule(msg.rule_key)
-    label = rule.libelle if rule else ("Test d'envoi" if msg.rule_key == "test_smtp" else msg.rule_key)
+    label = rule.libelle if rule else DIRECT_LABELS.get(msg.rule_key, msg.rule_key)
     out = {
         "id": str(msg.id),
         "reference": msg.reference,

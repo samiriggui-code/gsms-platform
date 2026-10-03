@@ -97,6 +97,49 @@ docker compose -f docker/docker-compose.yml exec api pnpm db:seed -- --reset
 # Login: admin@nordica.demo / Demo123!
 ```
 
+## Connexion GSMS (SSO)
+
+GRACE peut déléguer la connexion au **GSMS Core** (OpenID Connect, flux *authorization code* + PKCE) :
+le bouton **« Se connecter avec GSMS »** apparaît sur la page de connexion dès que `SSO_ENABLED=true`.
+Le contrat complet (endpoints, claims, correspondance des rôles) est dans
+`docs/architecture/IDENTITE-SSO.md` à la racine de la plateforme.
+
+1. Dans le Core, enregistrer le client et noter le secret (affiché une seule fois) :
+   ```bash
+   docker compose exec core python -m gsms_core.cli sso-client grace \
+     --redirect-uri https://grace.gsms-security.com/api/auth/sso/callback
+   ```
+2. Côté API GRACE (`server/.env`, ou `.env` du compose VPS) :
+
+   | Variable | Exemple / défaut |
+   |---|---|
+   | `SSO_ENABLED` | `true` (défaut `false`) |
+   | `SSO_ISSUER_URL` | `https://gsms-security.com` |
+   | `SSO_CLIENT_ID` | `grace` |
+   | `SSO_CLIENT_SECRET` | secret du client |
+   | `SSO_CALLBACK_URL` | `https://grace.gsms-security.com/api/auth/sso/callback` (identique à l'URI enregistrée) |
+   | `SSO_ROLE_CLAIM` | `gsms_role` (défaut) |
+   | `SSO_PROVIDER_NAME` | `GSMS` (défaut, libellé du bouton) |
+
+   Si `SSO_ENABLED=true` et qu'une variable manque, l'API refuse de démarrer avec un message explicite.
+
+Comportement :
+
+- À chaque connexion, l'utilisateur est créé ou mis à jour **dans la base GRACE** à partir de l'e-mail
+  (insensible à la casse) : prénom/nom, rôle (`gsms_role` = `ADMIN`, `LEAD_ASSESSOR`, `ASSESSOR`,
+  `REVIEWER` ou `STAKEHOLDER`) et réactivation du compte. Un compte local de même e-mail est le même
+  utilisateur et garde son mot de passe ; un compte créé par SSO n'a pas de mot de passe utilisable.
+- Rôle absent ou inconnu, accès refusé par le Core (« Accès refusé par GSMS »), jeton invalide :
+  la connexion est refusée et le message s'affiche sur la page de connexion.
+- L'instance doit déjà être initialisée (organisation créée via l'inscription initiale) ; sinon le SSO
+  ne crée aucun compte.
+- Endpoints : `GET /api/auth/sso/config`, `GET /api/auth/sso/login`, `GET /api/auth/sso/callback`,
+  `POST /api/auth/sso/token`. L'état de connexion (state, nonce, PKCE, code d'échange de 60 s) est gardé
+  en mémoire : une seule instance d'API.
+- En développement (Vite sur `:5173`, proxy `/api`), utiliser
+  `SSO_CALLBACK_URL=http://localhost:5173/api/auth/sso/callback` et ouvrir l'app sur `localhost`
+  (le cookie de `state` est lié à l'hôte).
+
 ## Development
 
 ```bash

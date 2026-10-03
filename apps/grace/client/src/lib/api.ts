@@ -83,7 +83,8 @@ export const api = ky.create({
         const url = new URL(req.url);
         if (
           url.pathname.endsWith('/api/auth/login') ||
-          url.pathname.endsWith('/api/auth/register')
+          url.pathname.endsWith('/api/auth/register') ||
+          url.pathname.endsWith('/api/auth/sso/token')
         ) {
           return;
         }

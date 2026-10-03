@@ -25,6 +25,8 @@ interface AuthState {
   organization: Organization | null;
   loading: boolean;
   login: (input: { email: string; password: string }) => Promise<void>;
+  /** "Se connecter avec GSMS": trade the one-time code from the SSO callback. */
+  loginWithSsoToken: (ssoToken: string) => Promise<void>;
   register: (input: {
     email: string;
     password: string;
@@ -51,6 +53,21 @@ export const useAuthStore = create<AuthState>()(
         set({ loading: true });
         try {
           const data = await api.post('auth/login', { json: input }).json<AuthResponse>();
+          set({ token: data.token, user: data.user, organization: data.organization });
+        } catch (err) {
+          throw new Error(await extractError(err));
+        } finally {
+          set({ loading: false });
+        }
+      },
+
+      loginWithSsoToken: async (ssoToken) => {
+        set({ loading: true });
+        try {
+          const data = await api
+            .post('auth/sso/token', { json: { token: ssoToken } })
+            .json<AuthResponse>();
+          if (!data?.token) throw new Error('Connexion GSMS indisponible hors ligne.');
           set({ token: data.token, user: data.user, organization: data.organization });
         } catch (err) {
           throw new Error(await extractError(err));

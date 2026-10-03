@@ -128,6 +128,7 @@ def import_all_models() -> None:
     from gsms_core.identity import models as _identity  # noqa: F401
     from gsms_core.intake import models as _intake  # noqa: F401
     from gsms_core.missions import models as _missions  # noqa: F401
+    from gsms_core.oidc import models as _oidc  # noqa: F401
     from gsms_core.platform import models as _platform  # noqa: F401
     from gsms_core.tenders import models as _tenders  # noqa: F401
     from gsms_core.vault import models as _vault  # noqa: F401

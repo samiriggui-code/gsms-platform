@@ -1,0 +1,9 @@
+{% extends "_base.html" %}
+{% from "_macros.html" import infos %}
+{% block contenu %}
+<p>Bonjour {{ destinataire }},</p>
+<p>{{ invite_par }} vous a ajouté à l'équipe GSMS. Un seul compte vous donne accès au portail et aux applications de l'équipe : DocuLens, GRACE, QAtrial et le CRM selon vos droits.</p>
+{{ infos([("Identifiant", email), ("Rôle", role)]) }}
+<p>Choisissez votre mot de passe avec le bouton ci-dessous. Ce lien est personnel et ne sert qu'une fois ; il expire le {{ expire_le }}.</p>
+<p style="font-size:13px;color:#6b7280;">Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :<br><a href="{{ lien }}" style="color:#374151;word-break:break-all;">{{ lien }}</a></p>
+{% endblock %}

@@ -1,0 +1,8 @@
+{% extends "_base.html" %}
+{% block contenu %}
+<p>Bonjour {{ destinataire }},</p>
+<p>{{ invite_par }} a demandé la réinitialisation du mot de passe de votre compte GSMS ({{ email }}). Votre mot de passe actuel reste valable tant que vous n'en avez pas choisi un nouveau.</p>
+<p>Choisissez un nouveau mot de passe avec le bouton ci-dessous. Ce lien est personnel et ne sert qu'une fois ; il expire le {{ expire_le }}.</p>
+<p style="font-size:13px;color:#6b7280;">Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :<br><a href="{{ lien }}" style="color:#374151;word-break:break-all;">{{ lien }}</a></p>
+<p style="font-size:13px;color:#6b7280;">Vous n'êtes pas à l'origine de cette demande ? Ignorez ce message et prévenez votre administrateur.</p>
+{% endblock %}

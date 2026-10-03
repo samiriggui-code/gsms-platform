@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import {
   CalendarClock,
@@ -7,12 +7,20 @@ import {
   EyeOff,
   FileText,
   Lock,
+  ShieldCheck,
 } from 'lucide-react';
 import { Btn2 } from '../components/hifi/Btn2';
 import { AuthBrandedLayout } from '../components/auth/AuthBrandedLayout';
 import { HeaderControls } from '../components/shell/HeaderControls';
 import { useAuthStore } from '../stores/auth';
 import { useT } from '../i18n';
+import {
+  SSO_LOGIN_URL,
+  clearSsoErrorFromUrl,
+  fetchSsoConfig,
+  readSsoErrorFromUrl,
+  type SsoConfig,
+} from '../lib/sso';
 
 /** Seed admin — prefilled on login only in Vite DEV. */
 const DEV_ADMIN = {
@@ -37,7 +45,31 @@ export function LoginPage() {
   const [email, setEmail] = useState(isDev ? DEV_ADMIN.email : '');
   const [password, setPassword] = useState(isDev ? DEV_ADMIN.password : '');
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // An error coming back from "Se connecter avec GSMS" (?sso_error=…).
+  const [error, setError] = useState<string | null>(() => readSsoErrorFromUrl());
+  const [sso, setSso] = useState<SsoConfig | null>(null);
+  const [ssoRedirecting, setSsoRedirecting] = useState(false);
+
+  useEffect(() => {
+    clearSsoErrorFromUrl();
+    let cancelled = false;
+    void fetchSsoConfig().then((cfg) => {
+      if (!cancelled) setSso(cfg);
+    });
+    // Back button from the GSMS page (bfcache): re-enable the button.
+    const onPageShow = () => setSsoRedirecting(false);
+    window.addEventListener('pageshow', onPageShow);
+    return () => {
+      cancelled = true;
+      window.removeEventListener('pageshow', onPageShow);
+    };
+  }, []);
+
+  function onSsoLogin() {
+    setError(null);
+    setSsoRedirecting(true);
+    window.location.assign(SSO_LOGIN_URL);
+  }
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -131,6 +163,26 @@ export function LoginPage() {
         >
           {loading ? t('common.loading') : 'Se connecter'}
         </Btn2>
+
+        {sso?.enabled && (
+          <>
+            <div className="flex items-center gap-3 text-[12px] text-n-400" aria-hidden="true">
+              <span className="h-px flex-1 bg-border" />
+              ou
+              <span className="h-px flex-1 bg-border" />
+            </div>
+            <Btn2
+              type="button"
+              variant="secondary"
+              disabled={ssoRedirecting}
+              onClick={onSsoLogin}
+              className="h-11 w-full"
+              leading={<ShieldCheck className="h-3.5 w-3.5" />}
+            >
+              {ssoRedirecting ? t('common.loading') : `Se connecter avec ${sso.providerName}`}
+            </Btn2>
+          </>
+        )}
 
         <p className="text-center text-[12.5px] text-n-500">
           Pas encore client ?{' '}

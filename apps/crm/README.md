@@ -295,6 +295,44 @@ failing to sync.
 
 </details>
 
+### Connexion GSMS (SSO)
+
+Le Core GSMS est un fournisseur OpenID Connect : il gère les comptes de l'équipe et
+leurs rôles (contrat : `docs/architecture/IDENTITE-SSO.md` à la racine du monorepo).
+Le CRM propose alors un bouton **« Se connecter avec GSMS »** sur `/sign-in`.
+
+1. Côté Core, créer le client `crm` avec l'adresse de retour du CRM :
+
+   ```sh
+   docker compose exec core python -m gsms_core.cli sso-client crm \
+     --redirect-uri https://crm.gsms-security.com/api/auth/callback/gsms
+   ```
+
+   L'adresse de retour est toujours `{NEXTAUTH_URL}/api/auth/callback/gsms`.
+2. Dans le `.env` racine du CRM :
+
+   ```sh
+   GSMS_SSO_ISSUER="https://gsms-security.com"   # URL publique du portail
+   GSMS_SSO_CLIENT_ID="crm"                      # « crm » par défaut
+   GSMS_SSO_CLIENT_SECRET="…"                    # affiché une seule fois par le Core
+   ```
+
+   Le bouton n'apparaît que si `GSMS_SSO_ISSUER` et `GSMS_SSO_CLIENT_SECRET` sont définis.
+
+Fonctionnement :
+
+- Flux *authorization code* avec PKCE, `state` et `nonce` ; portée `openid profile email`.
+- L'utilisateur est créé ou mis à jour **dans la base du CRM** à partir de son e-mail
+  (en minuscules). Un compte local et un compte GSMS de même e-mail sont le même utilisateur.
+- Le rôle CRM (`owner`, `admin`, `member`) vient du claim `gsms_role` de l'id_token et
+  est réappliqué à chaque connexion. Exception : le dernier `owner` du CRM le reste
+  (un avertissement est journalisé).
+- Sans e-mail ou sans `gsms_role` valide, la connexion est refusée (`?error=AccessDenied`).
+- `ALLOWED_SIGN_IN` ne s'applique pas aux connexions GSMS : le Core les a déjà
+  autorisées. Il s'applique toujours aux connexions par mot de passe.
+- La session (JWT NextAuth) contient l'identifiant **CRM** de l'utilisateur, pas le
+  `sub` du Core : l'API lit le même jeton qu'avant.
+
 ## Configuration
 
 **There is one `.env`, at the root of the repo**, read by all three processes. Real

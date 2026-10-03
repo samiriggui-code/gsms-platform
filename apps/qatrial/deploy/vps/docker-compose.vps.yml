@@ -34,6 +34,18 @@ services:
       AI_PROVIDER_URL: ${AI_PROVIDER_URL:-}
       AI_PROVIDER_KEY: ${AI_PROVIDER_KEY:-}
       AI_PROVIDER_MODEL: ${AI_PROVIDER_MODEL:-}
+      # SSO GSMS (OIDC, Core = fournisseur) — docs/architecture/IDENTITE-SSO.md
+      SSO_ENABLED: ${SSO_ENABLED:-false}
+      SSO_ISSUER_URL: ${SSO_ISSUER_URL:-https://gsms-security.com}
+      SSO_CLIENT_ID: ${SSO_CLIENT_ID:-qatrial}
+      SSO_CLIENT_SECRET: ${SSO_CLIENT_SECRET:-}
+      SSO_CALLBACK_URL: ${SSO_CALLBACK_URL:-https://qatrial.gsms-security.com/api/auth/sso/callback}
+      SSO_ROLE_CLAIM: ${SSO_ROLE_CLAIM:-gsms_role}
+      SSO_ORG_NAME: ${SSO_ORG_NAME:-GSMS}
+      SSO_PROVIDER_NAME: ${SSO_PROVIDER_NAME:-GSMS}
+      SSO_DEFAULT_ROLE: ${SSO_DEFAULT_ROLE:-qa_engineer}
+      SSO_AUTO_PROVISION: ${SSO_AUTO_PROVISION:-true}
+      REGISTRATION_ENABLED: ${REGISTRATION_ENABLED:-true}
     ports:
       - '3051:3001'
     volumes:

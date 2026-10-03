@@ -104,6 +104,7 @@ class User(UUIDPk, Timestamped, Base):
     oidc_subject: Mapped[str | None] = mapped_column(String(200))
     locale: Mapped[str] = mapped_column(String(10), default="fr-FR")
     is_active: Mapped[bool] = mapped_column(default=True)
+    last_login_at: Mapped[datetime | None] = mapped_column()
 
 
 class Membership(UUIDPk, Timestamped, Base):
@@ -127,3 +128,38 @@ class ServiceAccount(UUIDPk, Timestamped, Base):
     key_hash: Mapped[str] = mapped_column(String(128), unique=True)
     is_active: Mapped[bool] = mapped_column(default=True)
     last_used_at: Mapped[datetime | None] = mapped_column()
+
+
+class AppAccess(UUIDPk, Timestamped, Base):
+    """Dérogation d'un membre de l'équipe pour une application (GRACE, CRM, QAtrial).
+
+    Sans ligne, le rôle se déduit du rôle Core (``identity.apps.DEFAULT_ROLES``). ``role`` NULL = rôle par
+    défaut ; ``enabled`` False = accès coupé à cette application.
+    """
+
+    __tablename__ = "identity_app_access"
+    __table_args__ = (UniqueConstraint("user_id", "app"),)
+
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("identity_user.id"), index=True)
+    app: Mapped[str] = mapped_column(String(32))
+    enabled: Mapped[bool] = mapped_column(default=True)
+    role: Mapped[str | None] = mapped_column(String(40))
+    updated_by: Mapped[str] = mapped_column(String(200))
+
+
+class UserTokenPurpose(enum.StrEnum):
+    INVITATION = "invitation"
+    RESET = "reset"
+
+
+class UserToken(UUIDPk, Timestamped, Base):
+    """Lien d'activation (invitation) ou de réinitialisation du mot de passe : à usage unique, haché."""
+
+    __tablename__ = "identity_user_token"
+
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("identity_user.id"), index=True)
+    purpose: Mapped[UserTokenPurpose] = mapped_column(str_enum(UserTokenPurpose))
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True)
+    expires_at: Mapped[datetime] = mapped_column()
+    used_at: Mapped[datetime | None] = mapped_column()
+    created_by: Mapped[str] = mapped_column(String(200))

@@ -34,6 +34,14 @@ services:
       PORT: '3001'
       HOST: '0.0.0.0'
       CORS_ORIGIN: ${CORS_ORIGIN:-}
+      # « Se connecter avec GSMS » (OIDC) — docs/architecture/IDENTITE-SSO.md
+      SSO_ENABLED: ${SSO_ENABLED:-false}
+      SSO_ISSUER_URL: ${SSO_ISSUER_URL:-https://gsms-security.com}
+      SSO_CLIENT_ID: ${SSO_CLIENT_ID:-grace}
+      SSO_CLIENT_SECRET: ${SSO_CLIENT_SECRET:-}
+      SSO_CALLBACK_URL: ${SSO_CALLBACK_URL:-http://localhost:8080/api/auth/sso/callback}
+      SSO_ROLE_CLAIM: ${SSO_ROLE_CLAIM:-gsms_role}
+      SSO_PROVIDER_NAME: ${SSO_PROVIDER_NAME:-GSMS}
     ports:
       - '127.0.0.1:${API_HOST_PORT:-3001}:3001'
 

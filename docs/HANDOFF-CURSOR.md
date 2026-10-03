@@ -1,5 +1,39 @@
 # Handoff Cursor → Claude
 
+## 2026-10-03 — Identité unique : équipe gérée dans le Core, connexion GSMS dans GRACE, QAtrial et le CRM
+
+**But :** les mêmes comptes partout, chaque app gardant sa base. Contrat : `docs/architecture/IDENTITE-SSO.md`.
+
+- **Core**
+  - Équipe : `/api/v1/admin/team` (inviter, rôle, désactiver, nouveau lien) et `/admin/team/{id}/apps/{app}` (dérogation par app).
+  - Rôles : `/admin/roles`, tableau rôle Core → rôle par app (`identity/apps.py`).
+  - Liens d'activation hachés, à usage unique. Les e-mails d'invitation passent par la messagerie, avec le lien masqué dans le journal.
+  - Fournisseur OIDC (`gsms_core/oidc/`) :
+    - code + PKCE S256 ;
+    - jetons RS256, clé chiffrée par la clé maître ;
+    - claim `gsms_role` déjà traduit pour l'app ;
+    - clients déclarés par `cli sso-client` ou dans le portail.
+  - Migration `0009`, validée sur PG16 dans les deux sens. Tests : `test_team_sso.py`.
+- **Portail**
+  - `/.well-known/openid-configuration`, `/oidc/{authorize,token,jwks,userinfo,logout}` relaient le Core.
+  - Page `/activation` (le jeton est dans le fragment #).
+  - Paramètres : Équipe GSMS, Rôles et droits par application, Applications connectées.
+- **Apps**
+  - GRACE : module `server/src/modules/sso`, bouton sur la page de connexion.
+  - QAtrial : `server/routes/sso.ts` adapté (PKCE, rôle synchronisé, org `GSMS`, `REGISTRATION_ENABLED`).
+  - CRM : fournisseur NextAuth `gsms` (`packages/auth/src/gsms-sso*.ts`).
+- **Vérifié en vrai** (PG16, Chromium, serveur SMTP local) :
+  - invitation reçue, mot de passe choisi ;
+  - QAtrial → portail → retour connecté (`qa_engineer`, org GSMS) ;
+  - accès QAtrial coupé : « Accès refusé par GSMS » ;
+  - GRACE en un clic (`ASSESSOR`) ;
+  - CRM (`member`).
+- **Limite :** une session déjà ouverte dans une app vit jusqu'à son expiration (GRACE et CRM 7 j, QAtrial 24 h) ; la désactivation empêche la connexion suivante.
+
+**Ops VPS :** voir `deploy/README.md` § « Équipe et connexion unique ».
+
+---
+
 ## 2026-10-03 — Coffre-fort documentaire (Core + portail)
 
 Branche `cursor/core-vault`. Demande : un stockage unique, sécurisé, partagé par toutes les applications,
