@@ -73,6 +73,7 @@ const STATUS_TONES: Record<string, "neutral" | "primary" | "success" | "warning"
   a_venir: "primary",
   rec_go: "primary",
   rec_no_go: "warning",
+  moyenne: "neutral",
 };
 
 /** Codes renvoyés par le Core affichés en clair. */
@@ -90,6 +91,7 @@ const STATUS_LABELS: Record<string, string> = {
   rec_go: "recommandé go",
   rec_no_go: "recommandé no-go",
   no_go: "no-go",
+  elevee: "élevée",
 };
 
 export function StatusBadge({ value }: { value: unknown }) {

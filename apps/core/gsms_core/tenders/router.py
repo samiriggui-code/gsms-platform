@@ -33,9 +33,11 @@ from gsms_core.identity.service import accessible_workspaces, staff_role
 from gsms_core.missions import service as missions
 from gsms_core.settings import Settings
 from gsms_core.tenders import dossier, lifecycle, service, views
-from gsms_core.tenders.models import GoNoGo, TenderCase
+from gsms_core.tenders import requirements as matrix
+from gsms_core.tenders.models import GoNoGo, TenderCase, TenderRequirement
 from gsms_core.tenders.opportunities import fetch_opportunities
 from gsms_core.tenders.schemas import (
+    ComplianceOut,
     CriterionOut,
     DceFileOut,
     DceIngestOut,
@@ -45,9 +47,13 @@ from gsms_core.tenders.schemas import (
     DossierStatusOut,
     GoNoGoOut,
     OpportunityOut,
+    RequirementCreate,
+    RequirementOut,
+    RequirementPatch,
     StatusChangeIn,
     StatusChangeOut,
     StatusTransitionOut,
+    SyncOut,
     TenderCreateIn,
     TenderListItem,
     TenderOpenIn,
@@ -425,3 +431,127 @@ def post_go_no_go_decision(
     db.commit()
     db.refresh(case)
     return _go_no_go(db, case)
+
+
+def _requirement_out(row: TenderRequirement) -> RequirementOut:
+    return RequirementOut(
+        id=row.id,
+        code=row.code,
+        origin=row.origin,
+        type=row.type,
+        type_label=matrix.TYPE_LABELS.get(row.type, row.type),
+        text=row.text,
+        mandatory=row.mandatory,
+        source=row.source,
+        source_label=row.source_label,
+        planned_response=row.planned_response,
+        evidence=row.evidence,
+        target_document=row.target_document,
+        owner=row.owner,
+        status=row.status,
+        stale=row.stale,
+        updated_by=row.updated_by,
+        updated_at=row.updated_at,
+    )
+
+
+def _rows_out(db: Session, rows: list[TenderRequirement]) -> list[RequirementOut]:
+    names = views.actor_names(db, {r.updated_by for r in rows if r.updated_by})
+    out = []
+    for row in rows:
+        item = _requirement_out(row)
+        if row.updated_by:
+            item.updated_by = names.get(row.updated_by, row.updated_by)
+        out.append(item)
+    return out
+
+
+@router.get("/{mission_id}/analysis")
+def tender_analysis(case: TenderCase = Depends(_load_case), db: Session = Depends(get_db)) -> dict[str, Any]:
+    return views.analysis(db, case)
+
+
+@router.get("/{mission_id}/risks")
+def tender_risks(
+    case: TenderCase = Depends(_load_case), db: Session = Depends(get_db)
+) -> list[dict[str, Any]]:
+    return views.risks(db, case)
+
+
+@router.get("/{mission_id}/requirements", response_model=list[RequirementOut])
+def list_requirements(
+    case: TenderCase = Depends(_load_case),
+    ctx: WorkspaceContext = Depends(require_workspace),
+    db: Session = Depends(get_db),
+) -> list[RequirementOut]:
+    _team(ctx)
+    return _rows_out(db, matrix.list_requirements(db, case))
+
+
+@router.post("/{mission_id}/requirements", response_model=RequirementOut, status_code=status.HTTP_201_CREATED)
+def create_requirement(
+    body: RequirementCreate,
+    case: TenderCase = Depends(_load_case),
+    ctx: WorkspaceContext = Depends(require_roles(CONTRIBUTE_ROLES)),
+    db: Session = Depends(get_db),
+) -> RequirementOut:
+    _team(ctx)
+    try:
+        row = matrix.add_manual(
+            db, case, text=body.text, type_=body.type, mandatory=body.mandatory, actor=ctx.actor
+        )
+    except matrix.RequirementError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(exc)) from exc
+    db.commit()
+    return _rows_out(db, [row])[0]
+
+
+@router.post("/{mission_id}/requirements/sync", response_model=SyncOut)
+def sync_requirements(
+    case: TenderCase = Depends(_load_case),
+    ctx: WorkspaceContext = Depends(require_roles(CONTRIBUTE_ROLES)),
+    db: Session = Depends(get_db),
+) -> SyncOut:
+    """Relit le dernier Digest : nouvelles exigences ajoutées, disparues marquées, réponses conservées."""
+    _team(ctx)
+    report = matrix.sync_from_digest(db, case, ctx.actor)
+    db.commit()
+    return SyncOut(added=report.added, refreshed=report.refreshed, stale=report.stale, total=report.total)
+
+
+@router.patch("/{mission_id}/requirements/{requirement_id}", response_model=RequirementOut)
+def patch_requirement(
+    requirement_id: uuid.UUID,
+    body: RequirementPatch,
+    case: TenderCase = Depends(_load_case),
+    ctx: WorkspaceContext = Depends(require_roles(CONTRIBUTE_ROLES)),
+    db: Session = Depends(get_db),
+) -> RequirementOut:
+    _team(ctx)
+    changes = body.model_dump(exclude_unset=True)
+    if "status" in changes and changes["status"] is None:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "statut obligatoire")
+    try:
+        row = matrix.update_requirement(db, case, requirement_id, changes, ctx.actor)
+    except LookupError as exc:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "exigence introuvable") from exc
+    except matrix.RequirementError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(exc)) from exc
+    db.commit()
+    return _rows_out(db, [row])[0]
+
+
+@router.get("/{mission_id}/compliance", response_model=ComplianceOut)
+def compliance_matrix(
+    case: TenderCase = Depends(_load_case),
+    ctx: WorkspaceContext = Depends(require_workspace),
+    db: Session = Depends(get_db),
+) -> ComplianceOut:
+    _team(ctx)
+    rows = matrix.list_requirements(db, case)
+    return ComplianceOut(
+        summary=matrix.coverage(rows),
+        types=matrix.TYPE_LABELS,
+        targets=matrix.TARGET_LABELS,
+        rows=_rows_out(db, rows),
+    )

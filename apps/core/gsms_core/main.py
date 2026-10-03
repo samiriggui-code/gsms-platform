@@ -26,6 +26,7 @@ from gsms_core.missions.router import router as missions_router
 from gsms_core.oidc.router import router as oidc_router
 from gsms_core.platform.router import router as platform_router
 from gsms_core.settings import Settings, get_settings
+from gsms_core.tenders import requirements as tender_requirements
 from gsms_core.tenders.router import dossiers_router as tender_dossiers_router
 from gsms_core.tenders.router import router as tenders_router
 from gsms_core.vault.router import router as vault_router
@@ -61,6 +62,8 @@ def create_app(
     # Moteur de parsing derrière l'interface DocumentParser (Docling par défaut, import paresseux).
     app.state.document_parser = document_parser or DoclingAdapter()
     app.state.workflows = build_engine(settings, bus)
+    # Matrice d'exigences AO : resynchronisée à chaque nouveau Digest.
+    tender_requirements.register(bus)
     if settings.cors_origins:
         app.add_middleware(
             CORSMiddleware,

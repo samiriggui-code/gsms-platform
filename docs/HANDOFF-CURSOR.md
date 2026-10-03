@@ -1,5 +1,39 @@
 # Handoff Cursor → Claude
 
+## 2026-10-03 — Chantier AO-MCP, étape 2 : Digest AO et matrice d'exigences
+
+Branche `cursor/ao-mcp-exigences`. Plan : `docs/chantiers/AO-MCP-AUDIT.md` (§8).
+
+- **Digest (règles déterministes, sans LLM)**, uniquement pour une mission APPEL_OFFRES :
+  - `digest/clauses.py` : chaque phrase du DCE est rattachée à un thème. Thèmes : reprise du personnel, convention collective, clause sociale, clause environnementale, sous-traitance, plan de prévention, mobilisation, qualifications (SSIAP, CNAPS…), horaires, moyens humains, moyens matériels, sécurité / sûreté, prix et bordereaux, mémoire technique, pièces administratives, variantes, visite, durée du marché, pénalités, confidentialité. Chaque clause est marquée obligatoire ou non et garde sa source.
+  - `digest/criteria.py` : critères d'attribution et pondérations (« Prix : 40 % », « 60 % pour la valeur technique », tableau « Critère | Pondération »).
+  - Corrections :
+    - un titre « Pièces à fournir » n'est plus pris pour une pièce ;
+    - « d'un chef d'équipe SSIAP 2 » est maintenant compté. `test_digest` attendait l'ancien oubli et a été mis à jour.
+- **Matrice** (`tenders/requirements.py`, table `tender_requirement`, migration `0011`)
+  - Colonnes du §11 : code `REQ-001…`, source (pièce, page, section, cellule), exigence, type, obligatoire, réponse prévue, preuve, document cible (administratif / technique / financier / annexes), responsable, statut (TODO, IN_PROGRESS, COVERED, PARTIAL, BLOCKED, NOT_APPLICABLE).
+  - Construction : pièce à produire > effectif > critère éliminatoire > clause > obligation, sans doublon pour un même passage. Les pénalités vont dans l'onglet Risques.
+  - Synchronisation automatique : abonné EventBus `digest.updated`, plus `POST …/requirements/sync`.
+    - Les réponses humaines ne sont jamais écrasées.
+    - Une exigence disparue du DCE (rectificatif) est marquée `stale`, jamais supprimée ni renumérotée.
+  - Chaque modification est auditée, avec l'événement `tender.requirement.updated`.
+- **API**
+  - `GET …/analysis` : thèmes et critères, avec alerte si la somme des pondérations n'est pas 100 %.
+  - `GET …/risks`.
+  - `GET|POST …/requirements`, `PATCH …/requirements/{id}`, `GET …/compliance` (couverture des obligatoires).
+  - La matrice est réservée à l'équipe GSMS.
+- **Portail**
+  - Onglets Analyse, Exigences (filtres, lien vers la pièce à la bonne page, ajout manuel, « Relire le DCE »), Conformité (indicateurs, statut, responsable, document cible, réponse et preuve modifiables) et Risques.
+  - L'historique affiche en clair les changements de la matrice et les statuts.
+- **Vérifié en vrai** (PostgreSQL 16, migration 0011 dans les deux sens, Core, portail compilé, Chromium sur ordinateur et mobile 390 px) :
+  - ZIP RC + CCTP → 12 exigences sourcées, critères 40 / 60, risques classés ;
+  - exigence CNAPS passée à « Couverte » avec responsable, réponse et preuve ; couverture 1 / 9 ;
+  - historique lisible.
+  - Limite : la conversion Docling était simulée ; les extracteurs sont réels.
+- **Tests** : `tests/test_tender_requirements.py` (4 tests ; 182 au total). La fixture `staff` (équipe GSMS) est passée dans `conftest.py`.
+
+---
+
 ## 2026-10-03 — Chantier AO-MCP, étape 1 : dossier AO et DCE
 
 Branche `cursor/ao-mcp-dossier`. Plan complet : `docs/chantiers/AO-MCP-AUDIT.md` (§8).

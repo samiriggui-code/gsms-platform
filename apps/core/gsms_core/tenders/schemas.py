@@ -8,7 +8,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from gsms_core.tenders.models import DossierStatus, GoNoGo
+from gsms_core.tenders.models import DossierStatus, GoNoGo, RequirementStatus
 
 
 class TenderOpenIn(BaseModel):
@@ -146,3 +146,56 @@ class DceSkippedOut(BaseModel):
 class DceIngestOut(BaseModel):
     files: list[DceFileOut]
     skipped: list[DceSkippedOut]
+
+
+class RequirementOut(BaseModel):
+    id: uuid.UUID
+    code: str
+    origin: str
+    type: str
+    type_label: str
+    text: str
+    mandatory: bool
+    source: dict[str, Any] | None = None
+    source_label: str | None = None
+    planned_response: str | None = None
+    evidence: str | None = None
+    target_document: str | None = None
+    owner: str | None = None
+    status: RequirementStatus
+    stale: bool
+    updated_by: str | None = None
+    updated_at: datetime | None = None
+
+
+class RequirementPatch(BaseModel):
+    """Champs humains de la matrice ; seuls les champs envoyés sont modifiés."""
+
+    status: RequirementStatus | None = None
+    owner: str | None = Field(default=None, max_length=200)
+    planned_response: str | None = Field(default=None, max_length=8000)
+    evidence: str | None = Field(default=None, max_length=4000)
+    target_document: str | None = Field(default=None, max_length=20)
+    mandatory: bool | None = None
+    type: str | None = Field(default=None, max_length=40)
+    text: str | None = Field(default=None, min_length=3, max_length=4000)
+
+
+class RequirementCreate(BaseModel):
+    text: str = Field(min_length=3, max_length=4000)
+    type: str = Field(default="obligation", max_length=40)
+    mandatory: bool = True
+
+
+class SyncOut(BaseModel):
+    added: int
+    refreshed: int
+    stale: int
+    total: int
+
+
+class ComplianceOut(BaseModel):
+    summary: dict[str, Any]
+    types: dict[str, str]
+    targets: dict[str, str]
+    rows: list[RequirementOut]
