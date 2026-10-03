@@ -12,6 +12,7 @@ import './styles/globals.css';
 
 const AppLayout = lazy(() => import('./App'));
 const LandingPage = lazy(() => import('./pages/LandingPage'));
+const GsmsCallbackPage = lazy(() => import('./pages/GsmsCallbackPage').then((module) => ({ default: module.GsmsCallbackPage })));
 const LoginPage = lazy(() => import('./pages/LoginPage').then((module) => ({ default: module.LoginPage })));
 const IntakePage = lazy(() => import('./pages/IntakePage').then((module) => ({ default: module.IntakePage })));
 const WorkQueuesPage = lazy(() => import('./pages/WorkQueuesPage').then((module) => ({ default: module.WorkQueuesPage })));
@@ -38,8 +39,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <SettingsProvider>
             <Suspense fallback={<RouteLoader />}>
               <Routes>
-                <Route path="/" element={<LandingPage />} />
+                <Route path="/" element={isCoreMode ? <Navigate to="/app" replace /> : <LandingPage />} />
                 <Route path="/login" element={<LoginPage />} />
+                <Route path="/auth/callback" element={<GsmsCallbackPage />} />
                 <Route
                   path="/app"
                   element={

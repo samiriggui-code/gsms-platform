@@ -41,6 +41,13 @@ fi
 
 core_cli() { docker compose exec -T core python -m gsms_core.cli "$@"; }
 
+# DocuLens (servi par la plateforme) : « Se connecter avec GSMS », client public sans secret.
+if core_cli sso-client doculens --redirect-uri "https://doculens.$DOMAIN/auth/callback" >/dev/null; then
+  OK+=("DocuLens : bouton « Se connecter avec GSMS » actif")
+else
+  warn "DocuLens : déclaration de la connexion GSMS impossible (voir le message ci-dessus)."
+fi
+
 # Écrit ou remplace KEY=VALUE dans un fichier .env donné (droits 600), sans rien afficher.
 set_env_in() {
   local file="$1" key="$2" value="$3"
