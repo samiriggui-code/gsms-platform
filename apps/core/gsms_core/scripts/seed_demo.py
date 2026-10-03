@@ -100,9 +100,8 @@ def seed(session: Session, password: str) -> dict[str, object]:
                 workspace_id=None,
                 role=Role.CONSULTANT,
             ),
-            Membership(
-                user_id=users["consultant"].id, organization_id=gsms.id, workspace_id=None, role=Role.MEMBER
-            ),
+            # Pas de membership sur l'organisation GSMS : ce compte de démo (mot de passe connu) verrait
+            # sinon toutes les prestations des vrais clients (identity.service.staff_role).
         ]
     )
     for mission_type, (code, required) in DEFAULT_TEMPLATES.items():

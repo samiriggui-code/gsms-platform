@@ -1,21 +1,22 @@
-"""Démonstration complète : comptes par rôle, prestation créée comme après un devis accepté, pièces analysées.
+"""Client de démonstration : ABC Retail, sa prestation appel d'offres et ses pièces analysées.
+
+Seul le côté client est fictif ; les comptes de l'équipe GSMS sont de vrais comptes
+(``python -m gsms_core.cli create-member``), qui voient automatiquement cette prestation.
 
 ``python -m gsms_core.cli demo`` (idempotent) :
 1. organisation cliente « ABC Retail » (sites Lyon et Paris) et ses comptes client (``seed_demo``) ;
-2. un compte équipe GSMS par rôle DocuLens (admin, analyste, relecteur, manager, lecteur) ;
-3. une prestation « Appel d'offres » sur le site de Lyon, créée par le WorkspaceManager comme le fera
+2. une prestation « Appel d'offres » sur le site de Lyon, créée par le WorkspaceManager comme le fera
    l'acceptation d'un devis (workspace dédié + applications du catalogue) ;
-4. trois pièces client (CCTP, RC, BPU) déposées dans son coffre-fort, analysées (Docling) puis rangées ;
-   le Digest relève les exigences, l'échéance et le conflit d'effectif CCTP / BPU.
+3. trois pièces (CCTP, RC, BPU) déposées par le client dans le coffre-fort de la prestation, analysées
+   (Docling) puis rangées ; le Digest relève les exigences, l'échéance et le conflit d'effectif CCTP / BPU.
 
-Mot de passe commun : ``GSMS_SEED_PASSWORD`` (obligatoire en production, 12 caractères minimum).
+Mot de passe des comptes client de démo : ``GSMS_SEED_PASSWORD`` (obligatoire en production).
 """
 
 from __future__ import annotations
 
 import io
 import uuid
-from dataclasses import dataclass
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -27,28 +28,11 @@ from gsms_core.documents.parsers.base import DocumentParser
 from gsms_core.identity.models import Membership, Organization, OrganizationKind, Role, Site, User
 from gsms_core.missions.models import Mission
 from gsms_core.scripts.seed_demo import ORG_NAME, seed
-from gsms_core.security import hash_password
 from gsms_core.vault import folders
 from gsms_core.vault.storage import Vault
 
 DEMO_TITLE = "Gardiennage et sécurité incendie 2027"
 
-
-@dataclass(frozen=True)
-class TeamAccount:
-    email: str
-    name: str
-    role: Role
-    doculens_role: str
-
-
-TEAM = (
-    TeamAccount("admin@gsms.example", "Admin GSMS (démo)", Role.ADMIN, "admin"),
-    TeamAccount("analyste@gsms.example", "Analyste GSMS (démo)", Role.CONSULTANT, "analyst"),
-    TeamAccount("relecteur@gsms.example", "Relecteur GSMS (démo)", Role.AUDITOR, "reviewer"),
-    TeamAccount("manager@gsms.example", "Manager GSMS (démo)", Role.MANAGER, "manager"),
-    TeamAccount("lecteur@gsms.example", "Lecteur GSMS (démo)", Role.VIEWER, "viewer"),
-)
 
 CCTP = """# Cahier des clauses techniques particulières
 
@@ -83,53 +67,7 @@ Chef d'équipe SSIAP 2,heure,1,
 PIECES = (("CCTP.md", CCTP, "text/markdown"), ("RC.md", RC, "text/markdown"), ("BPU.csv", BPU, "text/csv"))
 
 
-def _gsms_org(session: Session) -> Organization:
-    org = session.scalar(select(Organization).where(Organization.kind == OrganizationKind.GSMS).limit(1))
-    if org is None:
-        org = Organization(name="GSMS", kind=OrganizationKind.GSMS)
-        session.add(org)
-        session.flush()
-    return org
-
-
-def _ensure_member(session: Session, user: User, org_id: uuid.UUID, role: Role) -> None:
-    membership = session.scalar(
-        select(Membership).where(
-            Membership.user_id == user.id,
-            Membership.organization_id == org_id,
-            Membership.workspace_id.is_(None),
-        )
-    )
-    if membership is None:
-        session.add(Membership(user_id=user.id, organization_id=org_id, workspace_id=None, role=role))
-    else:
-        membership.role = role
-
-
-def ensure_team(session: Session, client: Organization, password: str) -> list[dict[str, str]]:
-    gsms = _gsms_org(session)
-    pw = hash_password(password)
-    out = []
-    for account in TEAM:
-        user = session.scalar(select(User).where(User.email == account.email))
-        if user is None:
-            user = User(email=account.email, name=account.name, password_hash=pw)
-            session.add(user)
-            session.flush()
-        else:
-            user.password_hash = pw
-        _ensure_member(session, user, gsms.id, account.role)
-        _ensure_member(
-            session, user, client.id, account.role
-        )  # l'équipe voit toutes les prestations du client
-        out.append(
-            {"email": account.email, "core_role": account.role.value, "doculens_role": account.doculens_role}
-        )
-    session.flush()
-    return out
-
-
-def ensure_tender_workspace(session: Session, client: Organization, actor_id: uuid.UUID) -> uuid.UUID:
+def ensure_tender_workspace(session: Session, client: Organization) -> uuid.UUID:
     existing = session.scalar(select(Mission).where(Mission.title == DEMO_TITLE))
     if existing is not None:
         return existing.workspace_id
@@ -142,7 +80,6 @@ def ensure_tender_workspace(session: Session, client: Organization, actor_id: uu
         engagement_type="tender",
         title=DEMO_TITLE,
         actor="service:demo",
-        owner_id=actor_id,
         description="Démonstration : workspace dédié créé comme après l'acceptation du devis.",
     )
     session.flush()
@@ -192,15 +129,46 @@ def add_pieces(
 
 def run_demo(session: Session, vault: Vault, parser: DocumentParser, password: str) -> dict[str, object]:
     base = seed(session, password)
+    _confine_demo_consultant(session)
     client = session.scalar(select(Organization).where(Organization.name == ORG_NAME))
-    team = ensure_team(session, client, password)
-    analyst = session.scalar(select(User).where(User.email == "analyste@gsms.example"))
-    workspace_id = ensure_tender_workspace(session, client, analyst.id)
+    workspace_id = ensure_tender_workspace(session, client)
     session.commit()
-    pieces = add_pieces(session, vault, parser, workspace_id, f"user:{analyst.id}")
+    depositor = session.scalar(select(User).where(User.email == "responsable.lyon@abc-retail.example"))
+    if depositor is not None:
+        # Le responsable de Lyon dépose les pièces de la nouvelle prestation de son site.
+        _grant_workspace(session, depositor, workspace_id, client.id)
+        session.commit()
+    actor = f"user:{depositor.id}" if depositor else "service:demo"
+    pieces = add_pieces(session, vault, parser, workspace_id, actor)
     return {
         "organisation": base.get("status"),
-        "equipe": team,
         "prestation_appel_offres": str(workspace_id),
         "pieces": pieces,
     }
+
+
+def _grant_workspace(session: Session, user: User, workspace_id: uuid.UUID, org_id: uuid.UUID) -> None:
+    exists = session.scalar(
+        select(Membership).where(Membership.user_id == user.id, Membership.workspace_id == workspace_id)
+    )
+    if exists is None:
+        session.add(
+            Membership(
+                user_id=user.id, organization_id=org_id, workspace_id=workspace_id, role=Role.CLIENT_MEMBER
+            )
+        )
+
+
+def _confine_demo_consultant(session: Session) -> None:
+    """Anciennes installations : le consultant de démo était membre de l'organisation GSMS, ce qui, depuis que
+    l'équipe GSMS voit toutes les prestations, lui ouvrirait les vrais clients. On retire ce rattachement."""
+    user = session.scalar(select(User).where(User.email == "consultant@gsms.example"))
+    if user is None:
+        return
+    for membership in session.scalars(
+        select(Membership)
+        .join(Organization, Organization.id == Membership.organization_id)
+        .where(Membership.user_id == user.id, Organization.kind == OrganizationKind.GSMS)
+    ):
+        session.delete(membership)
+    session.flush()
