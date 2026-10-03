@@ -10,7 +10,6 @@ from sqlalchemy import text
 
 from gsms_core import __version__
 from gsms_core.communications.router import router as communications_router
-from gsms_core.communications.sender import SmtpSender
 from gsms_core.context.router import router as context_router
 from gsms_core.db import Database, import_all_models
 from gsms_core.digest.router import router as digest_router
@@ -22,6 +21,7 @@ from gsms_core.events.router import router as events_router
 from gsms_core.identity.router import router as identity_router
 from gsms_core.intake.router import router as intake_router
 from gsms_core.missions.router import router as missions_router
+from gsms_core.platform.router import router as platform_router
 from gsms_core.settings import Settings, get_settings
 from gsms_core.tenders.router import router as tenders_router
 from gsms_core.vault.router import router as vault_router
@@ -50,8 +50,10 @@ def create_app(
     app.state.storage = storage or build_storage(settings)
     # Coffre-fort : chiffrement par workspace au-dessus du stockage objet (gsms_core.vault).
     app.state.vault = Vault.from_settings(app.state.storage, settings)
-    # Messagerie (SMTP de GSMS) ; remplacée par un faux en test.
-    app.state.mail_sender = SmtpSender(settings)
+    # Messagerie : réglages lus à chaque envoi (portail, sinon .env) ; un faux expéditeur en test.
+    app.state.mail_sender = None
+    # Client HTTP du test de clé LLM (remplacé en test).
+    app.state.llm_http = None
     # Moteur de parsing derrière l'interface DocumentParser (Docling par défaut, import paresseux).
     app.state.document_parser = document_parser or DoclingAdapter()
     app.state.workflows = build_engine(settings, bus)
@@ -86,6 +88,7 @@ def create_app(
         digest_router,
         vault_router,
         communications_router,
+        platform_router,
         work_router,
         events_router,
     ):

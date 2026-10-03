@@ -1,0 +1,7 @@
+{% extends "_base.html" %}
+{% from "_macros.html" import infos, liste %}
+{% block contenu %}
+<p>Le client a déposé {{ pieces|length }} nouvelle{{ 's' if pieces|length > 1 }} pièce{{ 's' if pieces|length > 1 }} le {{ jour }} :</p>
+{{ liste(pieces) }}
+{{ infos([("Prestation", prestation), ("Client", client), ("Site", site)]) }}
+{% endblock %}

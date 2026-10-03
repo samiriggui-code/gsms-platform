@@ -104,9 +104,22 @@ export const ENDPOINTS = {
     upload: (workspaceId: string) => `${ws(workspaceId)}/documents`,
   },
 
-  /** Messagerie (équipe) : messages d'une prestation, validation avant envoi, relance des pièces manquantes. */
-  communications: {
-    list: (workspaceId: string) => `${ws(workspaceId)}/communications`,
+  /** Administration de la plateforme (super admin / admin d'équipe). */
+  admin: {
+    /** GET / PUT {enabled, host, port, ssl, starttls, user, from, from_name, password?} */
+    mail: () => "/admin/settings/mail",
+    /** POST {to?} → Check */
+    mailTest: () => "/admin/settings/mail/test",
+    /** GET / PUT {provider, model, base_url, api_key?} */
+    llm: () => "/admin/settings/llm",
+    /** POST → Check */
+    llmTest: () => "/admin/settings/llm/test",
+    /** GET → Check[] (base, stockage chiffré, audit, Docling, SMTP, LLM, connecteurs) */
+    diagnostics: () => "/admin/diagnostics",
+    /** GET / PUT {actif, validation_externe, adresse_reponse, rattrapage_jours, regles_desactivees} */
+    relances: () => "/admin/settings/relances",
+    /** GET → Rule[] (catalogue des règles de relance, avec « active ») */
+    relanceRules: () => "/communications/regles",
   },
 
   /** GET → Audit[] (assessments synchronisés depuis l'outil d'audit terrain, avec external_url) */

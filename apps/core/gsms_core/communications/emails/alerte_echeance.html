@@ -1,0 +1,7 @@
+{% extends "_base.html" %}
+{% from "_macros.html" import infos, echeance %}
+{% block contenu %}
+<p>La date limite de remise des offres approche pour la prestation <strong>{{ prestation }}</strong>.</p>
+{{ echeance(date_limite ~ (" à " ~ heure if heure else "") ~ " — dans " ~ jours ~ " jour" ~ ("s" if jours > 1 else "")) }}
+{{ infos([("Client", client), ("Site", site), ("Pièces analysées", nb_pieces), ("Conflits ouverts", nb_conflits), ("Pièces manquantes", nb_manquantes)]) }}
+{% endblock %}

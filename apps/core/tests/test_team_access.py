@@ -82,3 +82,28 @@ def test_demo_is_client_side_only_and_idempotent(db, settings, session):
     again = run_demo(session, vault, parser, "demo-password-change-me")
     assert again["pieces"] == [] and again["prestation_appel_offres"] == first["prestation_appel_offres"]
     assert session.scalar(select(func.count()).select_from(Document)) == 3
+
+
+def test_bootstrap_access_creates_accounts_once(db, settings, capsys):
+    import argparse
+
+    from sqlalchemy import select
+
+    from gsms_core import cli
+    from gsms_core.identity.models import User
+
+    args = argparse.Namespace(
+        super_admin="samir.iggui@gsms-security.com",
+        super_admin_name="Samir",
+        domain="gsms-security.com",
+        reset=False,
+        no_demo=True,
+    )
+    assert cli._bootstrap(settings, db, args) == 0
+    out = capsys.readouterr().out
+    assert "samir.iggui@gsms-security.com          owner" in out and "lecteur@gsms-security.com" in out
+    assert cli._bootstrap(settings, db, args) == 0
+    assert out.count("inchangé") == 0 and capsys.readouterr().out.count("inchangé") == 5
+    with db.session_factory() as s:
+        emails = set(s.scalars(select(User.email)))
+    assert {"admin@gsms-security.com", "analyste@gsms-security.com", "relecteur@gsms-security.com"} <= emails

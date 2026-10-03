@@ -1,0 +1,9 @@
+{% extends "_base.html" %}
+{% from "_macros.html" import infos, liste %}
+{% block contenu %}
+<p>Bonjour{% if destinataire %} {{ destinataire }}{% endif %},</p>
+<p>Pour avancer sur votre prestation, il nous manque encore {{ pieces|length }} pièce{{ 's' if pieces|length > 1 }} :</p>
+{{ liste(pieces) }}
+{{ infos([("Prestation", prestation), ("Client", client), ("Site", site)]) }}
+<p>Vous pouvez les déposer directement dans votre espace sécurisé : chaque fichier y est chiffré et seuls vous et l'équipe GSMS y avez accès.</p>
+{% endblock %}

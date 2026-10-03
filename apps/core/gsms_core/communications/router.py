@@ -1,65 +1,60 @@
-"""API messagerie : liste et aperçu des messages d'une prestation, validation / annulation / renvoi (équipe),
-préparation de la relance « pièces manquantes » à partir du Digest. Les comptes client n'y ont pas accès."""
+"""API des communications (équipe GSMS) : boîte des messages par statut, lecture du contenu exact,
+valider / annuler (avec motif) / réessayer, planifier à la demande, catalogue des règles.
+Les comptes client n'y ont pas accès. Repris de gsms-qualiopi (``app/relances/router.py``)."""
 
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
+from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from gsms_core.communications import service
 from gsms_core.communications.models import Message, MessageStatus
-from gsms_core.deps import WorkspaceContext, get_db, require_roles, require_workspace
-from gsms_core.digest.completeness import _LABELS as PIECE_LABELS
-from gsms_core.digest.service import latest_digest, load_digest
-from gsms_core.identity.models import MANAGE_ROLES, Role
+from gsms_core.communications.planner import plan
+from gsms_core.communications.rules import load_rules
+from gsms_core.communications.sender import SmtpSender
+from gsms_core.deps import Principal, get_current_principal, get_db
+from gsms_core.identity.models import Role
+from gsms_core.identity.service import staff_role
+from gsms_core.platform.service import mail_config
 
-router = APIRouter(prefix="/api/v1/workspaces/{ws}/communications", tags=["communications"])
-_CLIENT = {Role.CLIENT_ADMIN, Role.CLIENT_MEMBER}
-
-
-class MessageOut(BaseModel):
-    id: uuid.UUID
-    reference: str
-    template: str
-    template_version: int
-    external: bool
-    recipient_email: str
-    recipient_name: str | None
-    subject: str
-    body_text: str
-    status: MessageStatus
-    created_by: str
-    created_at: datetime
-    validated_by: str | None
-    sent_at: datetime | None
-    attempts: int
-    last_error: str | None
-    cancel_reason: str | None
-
-    model_config = {"from_attributes": True}
+router = APIRouter(prefix="/api/v1/communications", tags=["communications"])
+READ_ROLES = frozenset({Role.OWNER, Role.ADMIN, Role.MANAGER, Role.CONSULTANT, Role.AUDITOR, Role.VIEWER})
+MANAGE_ROLES = frozenset({Role.OWNER, Role.ADMIN, Role.MANAGER, Role.CONSULTANT})
 
 
-class CancelIn(BaseModel):
-    reason: str = Field(min_length=1, max_length=1000)
+def _staff(roles: frozenset[Role]):
+    def check(
+        principal: Principal = Depends(get_current_principal), db: Session = Depends(get_db)
+    ) -> Principal:
+        if staff_role(db, principal.user.id) not in roles:
+            raise HTTPException(status.HTTP_403_FORBIDDEN, "réservé à l'équipe GSMS")
+        return principal
+
+    return check
 
 
-class MissingIn(BaseModel):
-    pieces: list[str] | None = Field(default=None, max_length=50)
+Reader = Depends(_staff(READ_ROLES))
+Manager = Depends(_staff(MANAGE_ROLES))
 
 
-def _team(ctx: WorkspaceContext) -> None:
-    if ctx.role in _CLIENT:
-        raise HTTPException(status.HTTP_403_FORBIDDEN, "réservé à l'équipe GSMS")
+def sender_for(request: Request, db: Session):
+    """Réglages effectifs (portail, sinon .env) ; ``app.state.mail_sender`` remplace l'envoi réel en test."""
+    cfg = mail_config(db, request.app.state.settings, request.app.state.vault)
+    return request.app.state.mail_sender or SmtpSender(cfg), cfg.mail_enabled
 
 
-def _message(db: Session, ctx: WorkspaceContext, message_id: uuid.UUID) -> Message:
-    msg = db.scalar(select(Message).where(Message.id == message_id, Message.workspace_id == ctx.workspace_id))
+def _actor(p: Principal) -> str:
+    return f"{p.user.name} <{p.user.email}>"
+
+
+def _get(db: Session, message_id: uuid.UUID) -> Message:
+    msg = db.get(Message, message_id)
     if msg is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "message introuvable")
     return msg
@@ -72,95 +67,90 @@ def _errors(fn):
         raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
 
 
-@router.get("", response_model=list[MessageOut])
-def list_messages(ctx: WorkspaceContext = Depends(require_workspace), db: Session = Depends(get_db)):
-    _team(ctx)
-    return list(
-        db.scalars(
-            select(Message)
-            .where(Message.workspace_id == ctx.workspace_id)
-            .order_by(Message.created_at.desc())
-        )
-    )
+@router.get("")
+def list_messages(
+    statut: MessageStatus | None = None,
+    workspace_id: uuid.UUID | None = None,
+    limite: int = 300,
+    user: Principal = Reader,
+    db: Session = Depends(get_db),
+) -> dict:
+    q = select(Message).order_by(Message.due_on.desc(), Message.created_at.desc())
+    counts_q = select(Message.status, func.count()).group_by(Message.status)
+    if statut:
+        q = q.where(Message.status == statut)
+    if workspace_id:
+        q = q.where(Message.workspace_id == workspace_id)
+        counts_q = counts_q.where(Message.workspace_id == workspace_id)
+    counts = {s.value: n for s, n in db.execute(counts_q).all()}
+    return {
+        "compteurs": counts,
+        "peut_gerer": staff_role(db, user.user.id) in MANAGE_ROLES,
+        "messages": [service.message_view(db, m) for m in db.scalars(q.limit(min(limite, 1000)))],
+    }
+
+
+@router.get("/regles")
+def rules(_: Principal = Reader, db: Session = Depends(get_db)) -> list[dict]:
+    disabled = set(service.relance_settings(db)["regles_desactivees"])
+    return [r.model_dump() | {"active": r.cle not in disabled} for r in load_rules()]
+
+
+@router.get("/{message_id}")
+def get_message(message_id: uuid.UUID, _: Principal = Reader, db: Session = Depends(get_db)) -> dict:
+    return service.message_view(db, _get(db, message_id), full=True)
 
 
 @router.get("/{message_id}/apercu", response_class=HTMLResponse)
-def preview(
-    message_id: uuid.UUID, ctx: WorkspaceContext = Depends(require_workspace), db: Session = Depends(get_db)
-):
-    _team(ctx)
+def preview(message_id: uuid.UUID, _: Principal = Reader, db: Session = Depends(get_db)) -> HTMLResponse:
+    """Le message exactement tel qu'il part (ou est parti), sans script ni ressource externe."""
     return HTMLResponse(
-        _message(db, ctx, message_id).body_html,
-        headers={"Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'"},
+        _get(db, message_id).body_html,
+        headers={"Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; img-src data:"},
     )
 
 
-@router.post("/{message_id}/valider", response_model=MessageOut)
+@router.post("/{message_id}/valider")
 def validate(
-    message_id: uuid.UUID,
-    request: Request,
-    ctx: WorkspaceContext = Depends(require_roles(MANAGE_ROLES)),
-    db: Session = Depends(get_db),
-):
-    msg = _message(db, ctx, message_id)
-    _errors(
-        lambda: service.validate(
-            db, msg, request.app.state.mail_sender, request.app.state.settings, ctx.actor
-        )
-    )
+    message_id: uuid.UUID, request: Request, user: Principal = Manager, db: Session = Depends(get_db)
+) -> dict:
+    msg = _get(db, message_id)
+    _errors(lambda: service.validate(db, msg, *sender_for(request, db), _actor(user)))
     db.commit()
-    return msg
+    return service.message_view(db, msg)
 
 
-@router.post("/{message_id}/renvoyer", response_model=MessageOut)
-def resend(
-    message_id: uuid.UUID,
-    request: Request,
-    ctx: WorkspaceContext = Depends(require_roles(MANAGE_ROLES)),
-    db: Session = Depends(get_db),
-):
-    msg = _message(db, ctx, message_id)
-    _errors(
-        lambda: service.send(db, msg, request.app.state.mail_sender, request.app.state.settings, ctx.actor)
-    )
-    db.commit()
-    return msg
+class CancelIn(BaseModel):
+    motif: str = Field(min_length=1, max_length=1000)
 
 
-@router.post("/{message_id}/annuler", response_model=MessageOut)
+@router.post("/{message_id}/annuler")
 def cancel(
-    message_id: uuid.UUID,
-    body: CancelIn,
-    ctx: WorkspaceContext = Depends(require_roles(MANAGE_ROLES)),
-    db: Session = Depends(get_db),
-):
-    msg = _message(db, ctx, message_id)
-    _errors(lambda: service.cancel(db, msg, body.reason, ctx.actor))
+    message_id: uuid.UUID, body: CancelIn, user: Principal = Manager, db: Session = Depends(get_db)
+) -> dict:
+    msg = _get(db, message_id)
+    _errors(lambda: service.cancel(db, msg, body.motif.strip(), _actor(user)))
     db.commit()
-    return msg
+    return service.message_view(db, msg)
 
 
-@router.post("/relance-pieces", response_model=list[MessageOut], status_code=status.HTTP_201_CREATED)
-def missing_pieces(
-    request: Request,
-    body: MissingIn | None = None,
-    ctx: WorkspaceContext = Depends(require_roles(MANAGE_ROLES)),
-    db: Session = Depends(get_db),
-):
-    """Prépare la relance des pièces manquantes (liste fournie, sinon celle du Digest) : à valider ensuite."""
-    pieces = [p.strip() for p in (body.pieces if body and body.pieces else []) if p.strip()]
-    if not pieces:
-        record = latest_digest(db, ctx.workspace_id)
-        if record is not None:
-            pieces = [
-                " ou ".join(PIECE_LABELS.get(k, k) for k in m.key.split("|"))
-                for m in load_digest(record).missing_information
-                if m.code == "MISSING_DOCUMENT"
-            ]
-    messages = _errors(
-        lambda: service.prepare_missing_pieces(
-            db, ctx.workspace, pieces, request.app.state.settings, ctx.actor
-        )
-    )
+@router.post("/{message_id}/renvoyer")
+def retry(
+    message_id: uuid.UUID, request: Request, user: Principal = Manager, db: Session = Depends(get_db)
+) -> dict:
+    msg = _get(db, message_id)
+    _errors(lambda: service.retry(db, msg, *sender_for(request, db), _actor(user)))
     db.commit()
-    return messages
+    return service.message_view(db, msg)
+
+
+@router.post("/planifier")
+def run_now(
+    request: Request, le: date | None = None, _: Principal = Manager, db: Session = Depends(get_db)
+) -> dict:
+    """Passage immédiat du planificateur et de l'envoi (le worker le fait aussi à chaque passage)."""
+    result = plan(db, request.app.state.settings, le)
+    if not result.get("inactif"):
+        result |= service.dispatch(db, *sender_for(request, db), le)
+    db.commit()
+    return result

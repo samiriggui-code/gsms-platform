@@ -23,7 +23,7 @@ services:
       timeout: 5s
       retries: 20
 
-  core:
+  core: &core
     build:
       context: ./apps/core
       additional_contexts:
@@ -69,6 +69,17 @@ services:
     # Local uniquement (exploitation / débogage), jamais exposé sur Internet.
     ports:
       - "127.0.0.1:${CORE_PORT:-8100}:8000"
+
+  # Relances et e-mails (module Communications) : planificateur + envoi toutes les 10 minutes.
+  worker:
+    <<: *core
+    command: ["python", "-m", "gsms_core.cli", "worker", "--interval", "600"]
+    ports: []
+    healthcheck:
+      disable: true
+    depends_on:
+      core:
+        condition: service_healthy
 
   web:
     build: ./apps/web

@@ -1,0 +1,12 @@
+{% extends "_base.html" %}
+{% from "_macros.html" import infos %}
+{% block contenu %}
+<p>Synthèse de la semaine au {{ date }} :</p>
+{{ infos([("Prestations actives", nb_prestations), ("Pièces déposées cette semaine", nb_depots), ("Conflits ouverts", nb_conflits), ("Pièces manquantes", nb_manquantes), ("Messages à valider", nb_a_valider), ("Envois en échec", nb_echecs)]) }}
+{% if echeances %}
+<p><strong>Remises d'offres des 14 prochains jours :</strong></p>
+<ul style="margin:8px 0 16px;padding-left:20px;">
+{% for e in echeances %}<li style="margin:4px 0;">{{ e }}</li>{% endfor %}
+</ul>
+{% endif %}
+{% endblock %}
