@@ -1,5 +1,17 @@
 # Handoff Cursor → Claude
 
+## 2026-10-03 — Audit workspace/context architecture (lecture seule)
+
+Branche `cursor/unify-gsms-security-deploy-map-74cc`. Pas de code changé.
+
+**Verdict Phase 1 :** le Core possède déjà `identity_workspace` (site) + `mission` (prestation), mais **personne ne crée de workspace hors seed** ; DocuLens n’a pas de table Workspace (scope JSONB + `default_workspace_id`) ; CRM/QAtrial/GRACE ont des modèles « workspace » incompatibles ; le header `X-GSMS-Workspace-Id` est exigé par DocuLens et émis par web/connecteurs, **mais le Core ne le lit pas** (scope = path `{ws}`).
+
+**Gaps vs Tenant→Client→Contact→Site→Engagement→Workspace→Apps :** pas de Tenant, Contact, Engagement ; Site≠Workspace fusionnés en pratique ; registries (`ClientRegistry`, `SiteRegistry`, `EngagementManager`, `WorkspaceManager`, `ApplicationRegistry`, `ContextResolver`) absents — seuls `EventBus` + `WorkflowEngine` existent dans Core.
+
+**Docs absents :** `WORKSPACE_ID_CONTRACT.md`, `GSMS_INTEGRATION_MAP.md`, `DOCTRINE.md`, `HANDOFF-CLAUDE.md` (retirés / jamais poussés ; canon = `docs/architecture/GSMS-PLATFORM-CORE-V2.md`).
+
+---
+
 ## 2026-10-03 — DocuLens workspace + prestations GSMS
 
 Branche `cursor/doculens-server-gsms-74cc`.
