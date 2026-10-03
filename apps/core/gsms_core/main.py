@@ -9,6 +9,7 @@ from sqlalchemy import text
 
 from gsms_core import __version__
 from gsms_core.db import Database, import_all_models
+from gsms_core.context.router import router as context_router
 from gsms_core.documents.router import router as documents_router
 from gsms_core.documents.storage import Storage, build_storage
 from gsms_core.events.bus import bus
@@ -46,6 +47,13 @@ def create_app(
             db_ok = False
         return {"status": "ok" if db_ok else "degraded", "version": __version__, "database": db_ok}
 
-    for router in (identity_router, missions_router, documents_router, work_router, events_router):
+    for router in (
+        identity_router,
+        context_router,
+        missions_router,
+        documents_router,
+        work_router,
+        events_router,
+    ):
         app.include_router(router)
     return app
