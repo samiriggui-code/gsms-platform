@@ -224,3 +224,11 @@ is sent. No client is constructed, so there is no queue waiting to flush later.
 - **Redis** — optional; without `REDIS_URL` the cache is per-instance in-memory, which
   is wrong for multi-instance.
 - **Sign-in method** — Google and Microsoft are in code; an IdP is a row (SSO, in `api.md`).
+
+## GSMS Core (pont CRM ↔ Core)
+
+`GSMS_CORE_URL` (portail GSMS, ex. `https://gsms-security.com`) et `GSMS_CORE_WEBHOOK_SECRET` (entrée `crm` de
+`GSMS_WEBHOOK_SECRETS` côté Core) sont lus par l'agent (`apps/agent/agent/lib/gsms-core.ts`). Chaque événement
+CRM (société, contact, affaire) est envoyé au Core, signé `X-GSMS-Signature`. Une affaire gagnée ouvre la
+prestation dans le Core ; son lien revient dans le champ « Prestation GSMS ». Sans ces variables, rien n'est envoyé.
+Première synchronisation : `bun run gsms:sync` dans `apps/agent`.

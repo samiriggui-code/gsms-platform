@@ -760,6 +760,9 @@ export class DealsService {
 		const owner = ownerFilter<Prisma.DealWhereInput>(input.owner);
 		if (owner) and.push(owner);
 
+		if (input.sourceSystem) and.push({ sourceSystem: input.sourceSystem });
+		if (input.externalId) and.push({ externalId: input.externalId });
+
 		if (input.status === "open") {
 			and.push({ stage: { in: [...OPEN_DEAL_STAGES] } });
 		} else if (input.status === "closed") {

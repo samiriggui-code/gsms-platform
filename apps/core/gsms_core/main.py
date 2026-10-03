@@ -11,6 +11,7 @@ from sqlalchemy import text
 from gsms_core import __version__
 from gsms_core.communications.router import router as communications_router
 from gsms_core.context.router import router as context_router
+from gsms_core.crm_sync.router import router as crm_sync_router
 from gsms_core.db import Database, import_all_models
 from gsms_core.digest.router import router as digest_router
 from gsms_core.documents.parsers import DoclingAdapter, DocumentParser
@@ -86,6 +87,7 @@ def create_app(
         oidc_router,
         intake_router,
         context_router,
+        crm_sync_router,
         workspaces_router,
         missions_router,
         tender_dossiers_router,
