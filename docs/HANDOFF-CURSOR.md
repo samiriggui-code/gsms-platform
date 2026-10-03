@@ -1,5 +1,25 @@
 # Handoff Cursor → Claude
 
+## 2026-10-03 — Mise en ligne de DocuLens sur `doculens.gsms-security.com`
+
+Branche `cursor/doculens-deploy` (après PR #3 et #4, fusionnées).
+
+- **Stack :** service `doculens` dans `docker-compose.yml` (image `apps/doculens/docker/Dockerfile.gsms`).
+  - nginx sert l'interface et relaie `/api/v1/auth/*` + `/api/v1/workspaces/*` au Core, sur le même domaine : pas de CORS.
+  - Le reste de `/api/` répond 404.
+  - Les Dockerfile upstream de DocuLens sont inchangés.
+- **Traefik :** routeur `gsms-platform-doculens` sur `Host(doculens.${DOMAIN})`, en mode host et en mode réseau, avec la redirection HTTP.
+- **`deploy.sh` :**
+  - avertissement si le DNS de `doculens.<domaine>` est absent ;
+  - arrêt si un autre conteneur sert déjà ce nom ;
+  - nouveau port local `DOCULENS_PORT=3110`.
+- **Core :** l'image installe désormais Docling (PyTorch CPU) et télécharge ses modèles au build. Sans cela, l'analyse échouait en production (`docling_unavailable`).
+  - `DOCLING_ARTIFACTS_PATH` est fixé par l'entrypoint si les modèles sont présents.
+- **Vérifié en local :**
+  - image DocuLens + vrai Core (Docling 2.132) derrière nginx : connexion, liste, dépôt, analyse, fichier d'origine identique à l'octet ;
+  - recherche ⌘K avec provenance (`BPU!B4`), dans Chromium ;
+  - aucune erreur d'API.
+
 ## 2026-10-03 — Chantier DocuLens branché sur le Core
 
 Branche `cursor/doculens-core-bridge`, empilée sur la PR #3 (fusionnée). Chaîne visée :
@@ -20,7 +40,6 @@ DocuLens → Core → Docling → Digest.
 `apps/doculens/GSMS-PROVENANCE.md` § Adaptations GSMS. Typecheck, lint et build verts.
 
 **DEFERRED / CHANTIER SUIVANT :**
-- Déploiement de DocuLens en mode Core sur `doculens.gsms-security.com` (build avec `VITE_GSMS_CORE_URL`, CORS du Core).
 - Recherche sémantique (chunks + embeddings) et questions-réponses citées servies par le Core, derrière `/search`.
 - Écran de provenance dédié (aller à la page / cellule dans le fichier d'origine).
 - Choix du workspace dans DocuLens (aujourd'hui : celui du jeton ou `VITE_GSMS_WORKSPACE_ID`).

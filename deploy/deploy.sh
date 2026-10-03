@@ -35,6 +35,12 @@ if [[ "${SKIP_DNS_CHECK:-}" != "1" ]]; then
     echo "(SKIP_DNS_CHECK=1 pour passer outre, par exemple derrière un proxy DNS.)" >&2
     exit 1
   fi
+  # DocuLens sur doculens.DOMAIN : sans DNS, seul son certificat échoue ; on prévient sans bloquer.
+  doculens_ip="$(getent ahostsv4 "doculens.$DOMAIN" | awk 'NR==1 {print $1}' || true)"
+  if [[ -n "$server_ip" && "$doculens_ip" != "$server_ip" ]]; then
+    echo "Attention : doculens.$DOMAIN pointe vers « ${doculens_ip:-rien} » (ce serveur : $server_ip)." >&2
+    echo "Créez l'enregistrement DNS A pour que DocuLens obtienne son certificat HTTPS." >&2
+  fi
 fi
 
 secret() { openssl rand -base64 48 | tr -d '/+=\n' | cut -c1-48; }
@@ -69,18 +75,20 @@ GSMS_TENDERAI_MCP_TOKEN=
 # Ports locaux (127.0.0.1 seulement), distincts de ceux des autres applications du serveur.
 CORE_PORT=8100
 WEB_PORT=3100
+DOCULENS_PORT=3110
 ENV
   echo ".env créé (secrets générés, lisible par vous seul)."
 fi
 set_env DOMAIN "$DOMAIN"
+grep -q "^DOCULENS_PORT=" .env || set_env DOCULENS_PORT 3110  # .env créé avant l'arrivée de DocuLens
 
 # Les ports locaux ne doivent pas déjà être pris par une autre application (ex. gsms-qualiopi : 3000 / 8000).
 env_value() { sed -nE "s/^$1=//p" .env | tail -1; }
-for port in "$(env_value CORE_PORT)" "$(env_value WEB_PORT)"; do
+for port in "$(env_value CORE_PORT)" "$(env_value WEB_PORT)" "$(env_value DOCULENS_PORT)"; do
   [[ -n "$port" ]] || continue
   if ss -ltn 2>/dev/null | awk '{print $4}' | grep -qE "[:.]${port}$" \
      && ! docker compose ps -q 2>/dev/null | grep -q .; then
-    echo "Le port local $port est déjà utilisé. Changez CORE_PORT / WEB_PORT dans .env puis relancez." >&2
+    echo "Le port local $port est déjà utilisé. Changez CORE_PORT / WEB_PORT / DOCULENS_PORT dans .env puis relancez." >&2
     exit 1
   fi
 done
@@ -156,6 +164,19 @@ if [[ -n "$others" ]]; then
   exit 1
 fi
 
+# Un autre site qui sert déjà doculens.DOMAIN sur ce Traefik se disputerait l'adresse avec DocuLens.
+doculens_host="doculens.$DOMAIN"
+taken="$(docker ps --format '{{.Names}} {{.Label "com.docker.compose.project"}}' | while read -r name project; do
+  [[ "$project" == "gsms-platform" ]] && continue
+  docker inspect -f '{{range $k, $v := .Config.Labels}}{{$k}}={{$v}}{{"\n"}}{{end}}' "$name" \
+    | grep -qiE "^traefik\.http\.routers\.[^.]+\.rule=.*\`${doculens_host//./\\.}\`" && echo "$name"
+done || true)"
+if [[ -n "$taken" ]]; then
+  echo "doculens.$DOMAIN est déjà servi par un autre conteneur : $taken" >&2
+  echo "Rien n'a été modifié. Arrêtez-le (ou changez son adresse), puis relancez." >&2
+  exit 1
+fi
+
 docker compose up -d --build --remove-orphans
 
 echo "Attente du Core (migrations)…"
@@ -179,3 +200,4 @@ fi
 
 echo
 echo "GSMS Platform : https://$DOMAIN (le certificat HTTPS peut prendre une minute la première fois)."
+echo "DocuLens      : https://doculens.$DOMAIN (mêmes comptes que la plateforme)."

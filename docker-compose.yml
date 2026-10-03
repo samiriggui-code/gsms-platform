@@ -1,4 +1,4 @@
-# GSMS Platform — base PostgreSQL, Core (FastAPI), Web (Next.js).
+# GSMS Platform — base PostgreSQL, Core (FastAPI), Web (Next.js), DocuLens (interface documentaire).
 # Sur le VPS : ./deploy/deploy.sh gsms-security.com (ajoute deploy/docker-compose.prod.yml + le branchement Traefik).
 # Secrets obligatoires (pas de valeur par défaut) : POSTGRES_PASSWORD, GSMS_JWT_SECRET. Voir deploy/README.md.
 #
@@ -66,6 +66,19 @@ services:
       CORE_TIMEOUT_MS: ${CORE_TIMEOUT_MS:-5000}
     ports:
       - "127.0.0.1:${WEB_PORT:-3100}:3000"
+
+  doculens:
+    # Interface documentaire (DocuLens) branchée sur le Core : nginx sert l'interface et relaie l'API du
+    # Core sur le même domaine (doculens.DOMAIN). Analyse Docling et Digest restent dans le Core.
+    build:
+      context: ./apps/doculens
+      dockerfile: docker/Dockerfile.gsms
+    restart: unless-stopped
+    depends_on:
+      core:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${DOCULENS_PORT:-3110}:80"
 
 volumes:
   gsms-postgres:

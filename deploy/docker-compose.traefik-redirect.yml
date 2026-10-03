@@ -10,3 +10,10 @@ services:
       traefik.http.routers.gsms-platform-http.service: gsms-platform
       traefik.http.middlewares.gsms-platform-https.redirectscheme.scheme: https
       traefik.http.middlewares.gsms-platform-https.redirectscheme.permanent: "true"
+
+  doculens:
+    labels:
+      traefik.http.routers.gsms-platform-doculens-http.rule: Host(`doculens.${DOMAIN}`)
+      traefik.http.routers.gsms-platform-doculens-http.entrypoints: ${TRAEFIK_HTTP_ENTRYPOINT}
+      traefik.http.routers.gsms-platform-doculens-http.middlewares: gsms-platform-https
+      traefik.http.routers.gsms-platform-doculens-http.service: gsms-platform-doculens

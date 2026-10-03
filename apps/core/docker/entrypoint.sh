@@ -22,6 +22,11 @@ else:
     sys.exit("PostgreSQL injoignable après 120 s")
 PY
 
+# Modèles Docling embarqués dans l'image (voir Dockerfile) : utilisés s'ils sont présents.
+if [ -z "${DOCLING_ARTIFACTS_PATH:-}" ] && [ -n "$(ls -A /opt/docling-models 2>/dev/null)" ]; then
+  export DOCLING_ARTIFACTS_PATH=/opt/docling-models
+fi
+
 if [ "${RUN_MIGRATIONS:-true}" = "true" ]; then
   alembic upgrade head
 fi

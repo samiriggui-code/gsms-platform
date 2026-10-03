@@ -1,7 +1,8 @@
 /**
  * Mode « GSMS Core » : DocuLens devient l'interface documentaire du Core.
  *
- * Activé par `VITE_GSMS_CORE_URL`. Les documents, le parsing (Docling) et la recherche vivent alors
+ * Activé par `VITE_GSMS_CORE_URL` (URL du Core, ou `/` quand nginx relaie l'API sur le même domaine,
+ * cas du déploiement GSMS). Les documents, le parsing (Docling) et la recherche vivent alors
  * dans le Core, toujours dans le workspace canonique (`workspace_id` du jeton Core, ou
  * `VITE_GSMS_WORKSPACE_ID`). Ce module traduit les réponses du Core vers les types de DocuLens pour
  * que les écrans existants restent inchangés.
@@ -54,7 +55,8 @@ export function notInCoreMode(feature: string): never {
 }
 
 function url(path: string, params?: Record<string, string | number | undefined>): string {
-  const target = new URL(`/api/v1${path}`, coreUrl);
+  // `VITE_GSMS_CORE_URL=/` : le Core est servi sur le même domaine que DocuLens (relais nginx).
+  const target = new URL(`/api/v1${path}`, new URL(coreUrl ?? '/', window.location.origin));
   Object.entries(params ?? {}).forEach(([key, value]) => {
     if (value !== undefined && value !== '') target.searchParams.set(key, String(value));
   });

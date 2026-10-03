@@ -58,3 +58,10 @@ Masqué ou refusé proprement (erreur 501 lisible) tant que le Core ne le sert p
 et résumés IA (page « Ask DocuLens » redirigée vers Documents), classification IA, libellés,
 archivage / suppression / restauration. Le backend Python et le worker Celery de DocuLens ne sont
 plus utilisés dans ce mode (non supprimés).
+
+### 2026-10-03 — Image de déploiement GSMS
+
+`docker/Dockerfile.gsms` + `docker/nginx.gsms.conf` : interface construite avec `VITE_GSMS_CORE_URL=/`,
+servie par nginx qui relaie `/api/v1/auth/*` et `/api/v1/workspaces/*` au Core (service `core` du
+`docker-compose.yml` de la racine). Publiée sur `doculens.<domaine>` par `deploy/deploy.sh`.
+Les fichiers `docker/Dockerfile.*` et `docker/nginx.conf` d'origine sont inchangés.
