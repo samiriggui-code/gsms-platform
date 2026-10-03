@@ -32,6 +32,12 @@ export const DISPATCH = {
 		leaseMs: 10 * MINUTE_MS,
 	},
 
+	gsmsCore: {
+		attempts: 3,
+		timeoutMs: 15_000,
+		backoffMs: 1_000,
+	},
+
 	reconcile: {
 		scan: 200,
 		retire: 100,
