@@ -1,4 +1,7 @@
-FROM oven/bun:1.2-debian AS build
+# Bun 1.3 (= packageManager du dépôt) : l'installeur isolé garde la version de Next propre à apps/app.
+# Avec Bun 1.2, une seconde version de Next remontée à la racine fait échouer la vérification de
+# next.config.ts (« NextConfig is not assignable … »).
+FROM oven/bun:1.3-debian AS build
 
 # Debian 12's `nodejs` apt package is v18 — too old for prisma's CLI, which
 # needs Node's require(esm) support (>=20) for its @prisma/dev dependency.
@@ -33,7 +36,7 @@ RUN bun install
 # Node for `next start` so the compiled output actually runs.
 RUN cd apps/app && bun run build
 
-FROM oven/bun:1.2-debian
+FROM oven/bun:1.3-debian
 
 # Same Node 22 as the build stage — `next start` must run under Node, not
 # Bun: Bun's CJS interop can't load Next's compiled proxy/middleware chunk
