@@ -19,6 +19,7 @@ class DocumentOut(BaseModel):
     status: DocumentStatus
     source: DocumentSource
     current_version_id: uuid.UUID | None
+    folder_id: uuid.UUID | None = None
     created_at: datetime
     # Dernier parsing de la version courante (renseigné par la liste ; ``None`` = jamais parsé).
     parse_status: ParseStatus | None = None

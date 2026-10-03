@@ -1,5 +1,47 @@
 # Handoff Cursor → Claude
 
+## 2026-10-03 — Coffre-fort documentaire (Core + portail)
+
+Branche `cursor/core-vault`. Demande : un stockage unique, sécurisé, partagé par toutes les applications,
+consultable dans le Core avec un menu dédié, classé en arborescence, isolé par prestation et trié par site.
+
+- **Constat :**
+  - DocuLens ne prévoit rien : simple dossier `data/ingestion`, sans hash, sans chiffrement, sans séparation par client.
+  - Le CRM n'a un stockage S3 que pour les images.
+  - Le Core avait déjà des empreintes SHA-256, des versions et le cloisonnement par workspace.
+- **Core (`gsms_core/vault/`) :**
+  - chiffrement AES-256-GCM par blocs ; une clé par workspace, enveloppée par `GSMS_STORAGE_MASTER_KEY` (obligatoire en production) ;
+  - blobs par workspace (`ws/<id>/…`) ; lecture déchiffrée en flux ; Docling analyse une copie temporaire.
+- **Dossiers :**
+  - quatre dossiers système : Pièces client, Dossier de consultation, Travail GSMS (masqué aux clients), Livrables ;
+  - sous-dossiers ; classement automatique par type après le Digest ;
+  - un compte client ne voit et n'écrit que dans ses dossiers.
+- **API :**
+  - `GET /api/v1/vault/tree` (client → site → prestation) ;
+  - `…/vault/folders[/{id}]` (arbre, contenu, création, renommage, suppression) ;
+  - `…/vault/documents/{id}/move|verify|access-log` ;
+  - dépôt : `POST …/documents` avec `folder_id` et `analyze`.
+- **Journal :** dépôt, téléchargement, déplacement et vérification sont inscrits au journal d'audit chaîné.
+- **Migration :** `0005_vault` ; commande `python -m gsms_core.cli vault-migrate`, lancée par `deploy.sh`.
+- **Portail :** menu « Coffre-fort » (`/app/coffre-fort`) avec :
+  - l'arbre et le fil d'Ariane ;
+  - le dépôt par glisser-déposer ;
+  - les badges Chiffré / Analysé ;
+  - les versions, le téléchargement, la vérification d'intégrité et le journal des accès (équipe).
+  - Les fichiers transitent par les routes `/api/vault/…`.
+- **MinIO écarté :** plus d'images Docker maintenues depuis octobre 2025. Les fichiers chiffrés restent sur le volume Docker ; une bascule vers un stockage S3 est possible par configuration.
+- **Vérifié :**
+  - 136 tests Core ;
+  - migration 0004 → 0005 + `vault-migrate` sur PostgreSQL 16 (idempotente, aller-retour) ;
+  - web : lint, typecheck et build ;
+  - parcours réel dans Chromium (équipe + client) : dépôt DOCX/XLSX, analyse Docling, classement CCTP/BPU, vérification d'intégrité, « Travail GSMS » invisible côté client.
+- **DEFERRED :**
+  - rotation de la clé maître (ré-enveloppement des clés) ;
+  - aperçu intégré dans la page ;
+  - déplacement par glisser-déposer ;
+  - suppression et corbeille ;
+  - DocuLens branché sur les dossiers du coffre.
+
 ## 2026-10-03 — Mise en ligne de DocuLens sur `doculens.gsms-security.com`
 
 Branche `cursor/doculens-deploy` (après PR #3 et #4, fusionnées).

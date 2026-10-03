@@ -81,6 +81,29 @@ export const ENDPOINTS = {
     ask: (workspaceId: string) => `${ws(workspaceId)}/documents/ask`,
   },
 
+  /** Coffre-fort documentaire (fichiers chiffrés par prestation, dossiers, journal d'accès). */
+  vault: {
+    /** GET → VaultClient[] : Client → Site → Prestation accessibles */
+    tree: () => "/vault/tree",
+    /** GET → VaultFolder[] (arbre) · POST {name, parent_id} → VaultFolder */
+    folders: (workspaceId: string) => `${ws(workspaceId)}/vault/folders`,
+    /** GET → VaultFolderContent · PATCH {name} · DELETE (vide, non système) */
+    folder: (workspaceId: string, folderId: string) => `${ws(workspaceId)}/vault/folders/${enc(folderId)}`,
+    /** POST {folder_id} */
+    move: (workspaceId: string, documentId: string) => `${ws(workspaceId)}/vault/documents/${enc(documentId)}/move`,
+    /** POST → VaultVerify[] (équipe) */
+    verify: (workspaceId: string, documentId: string) => `${ws(workspaceId)}/vault/documents/${enc(documentId)}/verify`,
+    /** GET → VaultAccess[] (équipe) */
+    accessLog: (workspaceId: string, documentId: string) =>
+      `${ws(workspaceId)}/vault/documents/${enc(documentId)}/access-log`,
+    /** GET → Version[] */
+    versions: (workspaceId: string, documentId: string) => `${ws(workspaceId)}/documents/${enc(documentId)}/versions`,
+    /** GET → fichier déchiffré (journalisé) ; relayé par /api/vault/… côté navigateur */
+    content: (workspaceId: string, documentId: string) => `${ws(workspaceId)}/documents/${enc(documentId)}/content`,
+    /** POST multipart {file, folder_id?, analyze?} ; relayé par /api/vault/… côté navigateur */
+    upload: (workspaceId: string) => `${ws(workspaceId)}/documents`,
+  },
+
   /** GET → Audit[] (assessments synchronisés depuis l'outil d'audit terrain, avec external_url) */
   audits: (workspaceId: string) => `${ws(workspaceId)}/audits`,
   /** GET → Finding[] (constats normalisés) */

@@ -1,4 +1,5 @@
-"""Dépôt de pièces : hachage sha256 en flux, déduplication des blobs, versionnement (§15).
+"""Dépôt de pièces : hachage sha256 en flux, rangement chiffré dans le coffre-fort du workspace
+(déduplication à l'intérieur du workspace), versionnement (§15), dossier du coffre-fort.
 Toutes les lectures filtrent par ``workspace_id`` dans le repository, pas dans la route."""
 
 from __future__ import annotations
@@ -17,11 +18,11 @@ from sqlalchemy.orm import Session
 from gsms_core.audit.service import record
 from gsms_core.documents.dossier import DEFAULT_TEMPLATES, Completeness, compute_completeness
 from gsms_core.documents.models import Blob, Document, DocumentStatus, DocumentVersion, DossierTemplate
-from gsms_core.documents.storage import Storage, object_key_for
 from gsms_core.events.bus import publish
 from gsms_core.events.envelope import EventEnvelope
 from gsms_core.missions.models import Mission
 from gsms_core.missions.uri import core_uri
+from gsms_core.vault.storage import Vault
 
 CHUNK_SIZE = 1024 * 1024
 
@@ -98,7 +99,7 @@ def _mission_in_ws(session: Session, workspace_id: uuid.UUID, mission_id: uuid.U
 
 def upload_document(
     session: Session,
-    storage: Storage,
+    vault: Vault,
     *,
     workspace_id: uuid.UUID,
     actor: str,
@@ -111,6 +112,7 @@ def upload_document(
     mission_id: uuid.UUID | None = None,
     document_id: uuid.UUID | None = None,
     note: str | None = None,
+    folder_id: uuid.UUID | None = None,
 ) -> UploadResult:
     if mission_id is not None:
         _mission_in_ws(session, workspace_id, mission_id)
@@ -119,17 +121,9 @@ def upload_document(
     hashed = hash_to_tempfile(stream, max_bytes)
     try:
         mime = content_type or mimetypes.guess_type(filename)[0] or "application/octet-stream"
-        blob = session.scalar(select(Blob).where(Blob.sha256 == hashed.sha256))
-        deduplicated = blob is not None
-        if blob is None:
-            key = object_key_for(hashed.sha256)
-            if not storage.exists(key):
-                storage.put_file(key, hashed.path, mime)
-            blob = Blob(
-                sha256=hashed.sha256, size=hashed.size, mime=mime, bucket=storage.bucket, object_key=key
-            )
-            session.add(blob)
-            session.flush()
+        blob, deduplicated = vault.store(
+            session, workspace_id, hashed.path, sha256=hashed.sha256, size=hashed.size, mime=mime
+        )
     finally:
         hashed.path.unlink(missing_ok=True)
 
@@ -145,6 +139,7 @@ def upload_document(
             mission_id=mission_id,
             title=title or filename,
             doc_type=doc_type,
+            folder_id=folder_id,
         )
         session.add(doc)
         session.flush()
@@ -168,7 +163,13 @@ def upload_document(
         action="document.upload",
         subject_uri=uri,
         workspace_id=workspace_id,
-        after={"version": n, "sha256": blob.sha256, "size": blob.size, "doc_type": doc.doc_type},
+        after={
+            "version": n,
+            "sha256": blob.sha256,
+            "size": blob.size,
+            "doc_type": doc.doc_type,
+            "folder_id": str(doc.folder_id) if doc.folder_id else None,
+        },
     )
     publish(
         session,

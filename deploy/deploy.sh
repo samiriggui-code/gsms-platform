@@ -62,6 +62,9 @@ DOMAIN=$DOMAIN
 APP_URL=https://$DOMAIN
 POSTGRES_PASSWORD=$(secret)
 GSMS_JWT_SECRET=$(secret)
+# Coffre-fort documentaire : clé maître (chiffre les clés de chaque workspace). À SAUVEGARDER hors du
+# serveur : sans elle, les documents sont définitivement illisibles.
+GSMS_STORAGE_MASTER_KEY=$(openssl rand -base64 32)
 # Secrets HMAC des webhooks entrants (GRACE, QAtrial, CRM → Core), à recopier dans chaque application.
 GSMS_WEBHOOK_SECRETS='{"grace":"$(secret)","qatrial":"$(secret)","crm":"$(secret)"}'
 # Connecteurs (URL internes des services spécialisés, jetons de service). Vides = connecteur inactif.
@@ -83,6 +86,10 @@ fi
 set_env DOMAIN "$DOMAIN"
 set_env APP_URL "https://$DOMAIN"
 grep -q "^DOCULENS_PORT=" .env || set_env DOCULENS_PORT 3110  # .env créé avant l'arrivée de DocuLens
+if ! grep -q "^GSMS_STORAGE_MASTER_KEY=" .env; then  # .env créé avant le coffre-fort
+  set_env GSMS_STORAGE_MASTER_KEY "$(openssl rand -base64 32)"
+  echo "Clé maître du coffre-fort créée dans .env : SAUVEGARDEZ ce fichier hors du serveur."
+fi
 
 # Les ports locaux ne doivent pas déjà être pris par une autre application (ex. gsms-qualiopi : 3000 / 8000).
 env_value() { sed -nE "s/^$1=//p" .env | tail -1; }
@@ -188,6 +195,10 @@ for _ in $(seq 1 60); do
   fi
   sleep 2
 done
+
+# Coffre-fort : chiffre et range les fichiers d'avant le coffre-fort (ne refait rien s'il n'y en a plus).
+docker compose exec -T core python -m gsms_core.cli vault-migrate || \
+  echo "Attention : migration du coffre-fort incomplète, voir le message ci-dessus." >&2
 
 # Première mise en service (une seule fois).
 if [[ ! -f .gsms-initialise ]]; then
