@@ -42,12 +42,8 @@ export function AddConnectionDialog({
 		>
 			<DialogContent className="max-w-(--container-narrow) gap-0 p-0 md:left-[calc(50%+calc((56px+213px)/2))]">
 				<DialogHeader className="gap-2 px-(--spacing-block-inline) pt-5 pb-4">
-					<DialogTitle className="text-base">
-						{t("dialogTitle")}
-					</DialogTitle>
-					<DialogDescription>
-						{t("dialogDescription")}
-					</DialogDescription>
+					<DialogTitle className="text-base">{t("dialogTitle")}</DialogTitle>
+					<DialogDescription>{t("dialogDescription")}</DialogDescription>
 				</DialogHeader>
 				<div className="flex flex-col border-y px-2 py-2">
 					{!connected.includes("Google Workspace") ? (

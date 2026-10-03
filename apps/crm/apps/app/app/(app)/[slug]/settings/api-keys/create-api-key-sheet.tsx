@@ -135,9 +135,7 @@ function CreateApiKeyForm() {
 									spellCheck={false}
 									required
 								/>
-								<FieldDescription>
-									{t("nameDescription")}
-								</FieldDescription>
+								<FieldDescription>{t("nameDescription")}</FieldDescription>
 							</Field>
 
 							<Field>

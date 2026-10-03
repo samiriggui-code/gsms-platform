@@ -32,9 +32,7 @@ async function IntakeConnectionPageContent({
 			</header>
 			<div>
 				<Button asChild variant="outline">
-					<Link href={`/${slug}/settings/connections`}>
-						{t("back")}
-					</Link>
+					<Link href={`/${slug}/settings/connections`}>{t("back")}</Link>
 				</Button>
 			</div>
 		</ConnectionPage>

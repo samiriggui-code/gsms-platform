@@ -81,9 +81,7 @@ function columns(
 			sortable: true,
 			width: "w-[14%]",
 			cell: (row) => (
-				<span className="text-muted-foreground">
-					{t(`roles.${row.role}`)}
-				</span>
+				<span className="text-muted-foreground">{t(`roles.${row.role}`)}</span>
 			),
 		},
 		{

@@ -55,9 +55,7 @@ export function ResearchKey() {
 		<Card>
 			<CardHeader>
 				<CardTitle>{t("researchTitle")}</CardTitle>
-				<CardDescription>
-					{t("researchDescription")}
-				</CardDescription>
+				<CardDescription>{t("researchDescription")}</CardDescription>
 
 				<CardAction>
 					<Button
@@ -87,7 +85,9 @@ export function ResearchKey() {
 									size="sm"
 									tone={configured ? "success" : "warning"}
 									label={
-										configured ? t("researchConnected") : t("researchNotConnected")
+										configured
+											? t("researchConnected")
+											: t("researchNotConnected")
 									}
 								/>
 							</div>

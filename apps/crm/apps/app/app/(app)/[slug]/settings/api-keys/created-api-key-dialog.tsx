@@ -38,9 +38,7 @@ export function CreatedApiKeyDialog({
 							? t("createdNamed", { name: apiKey.name })
 							: t("createdUnnamed")}
 					</DialogTitle>
-					<DialogDescription>
-						{t("createdDescription")}
-					</DialogDescription>
+					<DialogDescription>{t("createdDescription")}</DialogDescription>
 				</DialogHeader>
 
 				<InputGroup>

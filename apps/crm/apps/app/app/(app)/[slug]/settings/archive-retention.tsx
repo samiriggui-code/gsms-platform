@@ -56,9 +56,7 @@ export function ArchiveRetention() {
 		<Card>
 			<CardHeader>
 				<CardTitle>{t("retentionTitle")}</CardTitle>
-				<CardDescription>
-					{t("retentionDescription")}
-				</CardDescription>
+				<CardDescription>{t("retentionDescription")}</CardDescription>
 
 				<CardAction>
 					<Button
@@ -91,9 +89,7 @@ export function ArchiveRetention() {
 				>
 					<FieldGroup>
 						<Field>
-							<FieldLabel htmlFor={daysId}>
-								{t("retentionLabel")}
-							</FieldLabel>
+							<FieldLabel htmlFor={daysId}>{t("retentionLabel")}</FieldLabel>
 							<Input
 								id={daysId}
 								inputMode="numeric"

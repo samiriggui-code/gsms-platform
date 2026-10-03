@@ -57,9 +57,7 @@ function MicrosoftUnavailable() {
 						/>
 					</div>
 				</CardTitle>
-				<CardDescription>
-					{t("unavailableDescription")}
-				</CardDescription>
+				<CardDescription>{t("unavailableDescription")}</CardDescription>
 			</CardHeader>
 		</Card>
 	);
@@ -100,9 +98,7 @@ function ConnectMicrosoft({
 						/>
 					</div>
 				</CardTitle>
-				<CardDescription>
-					{t("connectDescription")}
-				</CardDescription>
+				<CardDescription>{t("connectDescription")}</CardDescription>
 
 				<CardAction>
 					<Button
@@ -223,9 +219,7 @@ export function MicrosoftConnection({
 						/>
 					</div>
 				</CardTitle>
-				<CardDescription>
-					{t("linkedDescription")}
-				</CardDescription>
+				<CardDescription>{t("linkedDescription")}</CardDescription>
 
 				<CardAction>
 					<Button
@@ -258,15 +252,11 @@ export function MicrosoftConnection({
 					))
 				) : (
 					<p className="text-muted-foreground text-xs">
-						{lastSyncedAt ? (
-							<>
-								{t.rich("lastChecked", {
+						{lastSyncedAt
+							? t.rich("lastChecked", {
 									time: () => <LocalRelativeTime date={lastSyncedAt} />,
-								})}
-							</>
-						) : (
-							t("waitingFirstCheck")
-						)}
+								})
+							: t("waitingFirstCheck")}
 					</p>
 				)}
 

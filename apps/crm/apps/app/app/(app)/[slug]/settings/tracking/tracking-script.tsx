@@ -50,11 +50,7 @@ export function TrackingScript() {
 		trpc.tracking.setFlag.mutationOptions({
 			onSuccess: async (_result, input) => {
 				await cache.tracking();
-				toast.success(
-					input.enabled
-						? t("pausedToast")
-						: t("resumedToast"),
-				);
+				toast.success(input.enabled ? t("pausedToast") : t("resumedToast"));
 			},
 			onError: (error) => toast.error(error.message),
 		}),
@@ -108,16 +104,14 @@ export function TrackingScript() {
 							label={
 								paused
 									? t("statusPaused")
-								: receivingSince
-									? t("statusReceiving")
-									: t("statusNone")
+									: receivingSince
+										? t("statusReceiving")
+										: t("statusNone")
 							}
 						/>
 					</div>
 				</CardTitle>
-				<CardDescription>
-					{t("scriptDescription")}
-				</CardDescription>
+				<CardDescription>{t("scriptDescription")}</CardDescription>
 
 				<CardAction>
 					<Button
@@ -180,7 +174,9 @@ export function TrackingScript() {
 									{t.rich("gtmStep3", {
 										url: scriptUrl ?? "",
 										mono: (chunks) => (
-											<span className="font-mono text-foreground">{chunks}</span>
+											<span className="font-mono text-foreground">
+												{chunks}
+											</span>
 										),
 									})}
 								</li>

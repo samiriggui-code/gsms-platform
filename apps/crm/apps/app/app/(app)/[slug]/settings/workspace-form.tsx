@@ -78,9 +78,7 @@ export function WorkspaceForm() {
 		<Card>
 			<CardHeader>
 				<CardTitle>{t("workspaceTitle")}</CardTitle>
-				<CardDescription>
-					{t("workspaceDescription")}
-				</CardDescription>
+				<CardDescription>{t("workspaceDescription")}</CardDescription>
 
 				<CardAction>
 					<Button
@@ -123,9 +121,7 @@ export function WorkspaceForm() {
 								disabled={!canRename || save.isPending}
 								required
 							/>
-							<FieldDescription>
-								{t("nameDescription")}
-							</FieldDescription>
+							<FieldDescription>{t("nameDescription")}</FieldDescription>
 						</Field>
 
 						<Field>
@@ -153,9 +149,7 @@ export function WorkspaceForm() {
 				</form>
 
 				{canRename ? null : (
-					<p className="text-muted-foreground text-xs">
-						{t("ownerOnly")}
-					</p>
+					<p className="text-muted-foreground text-xs">{t("ownerOnly")}</p>
 				)}
 			</CardContent>
 		</Card>

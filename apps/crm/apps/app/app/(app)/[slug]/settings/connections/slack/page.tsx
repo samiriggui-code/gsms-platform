@@ -106,15 +106,11 @@ async function SlackConnectionPageContent({
 					configured={status.configured}
 					connectError={connectErrorOf(query, "slack")}
 				/>
-				<p className="text-muted-foreground text-xs">
-					{t("approveHint")}
-				</p>
+				<p className="text-muted-foreground text-xs">{t("approveHint")}</p>
 			</div>
 			<section className="flex flex-col gap-3 px-(--spacing-block-inline)">
 				<div>
-					<h2 className="font-medium text-sm">
-						{t("suggestionsTitle")}
-					</h2>
+					<h2 className="font-medium text-sm">{t("suggestionsTitle")}</h2>
 					<p className="text-muted-foreground text-xs">
 						{t("suggestionsHint")}
 					</p>
@@ -202,9 +198,7 @@ function ConnectedSlack({
 					/>
 				</div>
 				<p className="text-muted-foreground text-sm">
-					{status.canManage
-						? t("grantedManage")
-						: t("grantedReadOnly")}
+					{status.canManage ? t("grantedManage") : t("grantedReadOnly")}
 				</p>
 			</header>
 			<MissingGrant missing={missing} slug={slug} />
@@ -218,9 +212,7 @@ function ConnectedSlack({
 				<div className="flex items-end justify-between gap-4">
 					<div>
 						<h2 className="font-medium text-sm">{t("agentsTitle")}</h2>
-						<p className="text-muted-foreground text-xs">
-							{t("agentsHint")}
-						</p>
+						<p className="text-muted-foreground text-xs">{t("agentsHint")}</p>
 					</div>
 					<NewAgentDialog>
 						<Button size="sm">{t("newAgent")}</Button>

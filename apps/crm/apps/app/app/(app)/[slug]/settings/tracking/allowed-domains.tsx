@@ -90,9 +90,7 @@ export function AllowedDomains() {
 		<Card>
 			<CardHeader>
 				<CardTitle>{t("domainsTitle")}</CardTitle>
-				<CardDescription>
-					{t("domainsDescription")}
-				</CardDescription>
+				<CardDescription>{t("domainsDescription")}</CardDescription>
 
 				<CardAction>
 					<AddDomain disabled={!canManage} />
@@ -100,9 +98,7 @@ export function AllowedDomains() {
 			</CardHeader>
 
 			{domains.length === 0 ? (
-				<CardTableEmpty>
-					{t("domainsEmpty")}
-				</CardTableEmpty>
+				<CardTableEmpty>{t("domainsEmpty")}</CardTableEmpty>
 			) : (
 				<SimpleTable columns={columns}>
 					{domains.map((domain) => (

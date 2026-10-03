@@ -61,9 +61,7 @@ export function VerifyInstallation() {
 						{result ? <Indicator result={result} /> : null}
 					</div>
 				</CardTitle>
-				<CardDescription>
-					{t("verifyDescription")}
-				</CardDescription>
+				<CardDescription>{t("verifyDescription")}</CardDescription>
 
 				<CardAction>
 					<Button
@@ -109,9 +107,7 @@ export function VerifyInstallation() {
 								disabled={!canManage || verify.isPending}
 							/>
 						</InputGroup>
-						<FieldDescription>
-							{t("verifyHint")}
-						</FieldDescription>
+						<FieldDescription>{t("verifyHint")}</FieldDescription>
 					</Field>
 				</form>
 
@@ -132,11 +128,7 @@ function Indicator({ result }: { result: Result }) {
 
 	if (result.status === "found" && result.container?.carriesSiteId === false) {
 		return (
-			<StatusIndicator
-				size="sm"
-				tone="warning"
-				label={t("gtmNeedsFix")}
-			/>
+			<StatusIndicator size="sm" tone="warning" label={t("gtmNeedsFix")} />
 		);
 	}
 
@@ -144,9 +136,7 @@ function Indicator({ result }: { result: Result }) {
 		<StatusIndicator
 			size="sm"
 			tone="warning"
-			label={
-				result.status === "found" ? t("noPageViewYet") : t("notDetected")
-			}
+			label={result.status === "found" ? t("noPageViewYet") : t("notDetected")}
 		/>
 	);
 }
@@ -210,7 +200,9 @@ function Outcome({ result, siteId }: { result: Result; siteId: string }) {
 					? t("foundAllowed", { ms: result.responseMs, siteId })
 					: t("foundNotAllowed", { ms: result.responseMs, siteId })}
 				{result.container ? ` ${t("foundViaContainer")}` : ""}
-				{result.pageView ? ` ${t("foundPageView")}` : ` ${t("foundNoPageView")}`}
+				{result.pageView
+					? ` ${t("foundPageView")}`
+					: ` ${t("foundNoPageView")}`}
 			</AlertDescription>
 		</Alert>
 	);

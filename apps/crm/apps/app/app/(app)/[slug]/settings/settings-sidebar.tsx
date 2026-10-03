@@ -132,10 +132,7 @@ export function SettingsSidebar() {
 	return (
 		<>
 			<aside className="hidden w-56 shrink-0 border-r md:block [view-transition-name:settings-sidebar]">
-				<nav
-					aria-label={t("ariaLabel")}
-					className="flex flex-col gap-0.5 p-3"
-				>
+				<nav aria-label={t("ariaLabel")} className="flex flex-col gap-0.5 p-3">
 					{items.map((item) => (
 						<NavLink
 							key={item.href}

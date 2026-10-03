@@ -120,9 +120,7 @@ export function AgentModel() {
 		<Card>
 			<CardHeader>
 				<CardTitle>{t("modelTitle")}</CardTitle>
-				<CardDescription>
-					{t("modelDescription")}
-				</CardDescription>
+				<CardDescription>{t("modelDescription")}</CardDescription>
 			</CardHeader>
 
 			<CardContent>
@@ -152,7 +150,9 @@ export function AgentModel() {
 										data-checked={current === FOLLOW_DEFAULT}
 										onSelect={() => choose(FOLLOW_DEFAULT)}
 									>
-										{t("modelDefault", { name: defaultModel?.name ?? defaultId })}
+										{t("modelDefault", {
+											name: defaultModel?.name ?? defaultId,
+										})}
 									</CommandItem>
 								</CommandGroup>
 

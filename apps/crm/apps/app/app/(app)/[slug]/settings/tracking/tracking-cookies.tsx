@@ -18,8 +18,8 @@ import {
 } from "@crm/ui/components/select";
 import { Switch } from "@crm/ui/components/switch";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useId } from "react";
 import { useTranslations } from "next-intl";
+import { useId } from "react";
 import { toast } from "sonner";
 import { useCrmCache } from "@/lib/trpc/cache";
 import { useTRPC } from "@/lib/trpc/client";
@@ -60,17 +60,12 @@ export function TrackingCookies() {
 		<Card>
 			<CardHeader>
 				<CardTitle>{t("cookiesTitle")}</CardTitle>
-				<CardDescription>
-					{t("cookiesDescription")}
-				</CardDescription>
+				<CardDescription>{t("cookiesDescription")}</CardDescription>
 			</CardHeader>
 
 			<CardContent>
 				{TOGGLES.map((flag) => (
-					<div
-						key={flag}
-						className="flex items-center justify-between gap-6"
-					>
+					<div key={flag} className="flex items-center justify-between gap-6">
 						<Label
 							htmlFor={`tracking-${flag}`}
 							className="flex flex-col items-start gap-1"
@@ -85,9 +80,7 @@ export function TrackingCookies() {
 							id={`tracking-${flag}`}
 							checked={tracking.data[flag]}
 							disabled={busy}
-							onCheckedChange={(enabled) =>
-								setFlag.mutate({ flag, enabled })
-							}
+							onCheckedChange={(enabled) => setFlag.mutate({ flag, enabled })}
 						/>
 					</div>
 				))}
@@ -114,9 +107,7 @@ export function TrackingCookies() {
 							))}
 						</SelectContent>
 					</Select>
-					<FieldDescription>
-						{t("lifetimeDescription")}
-					</FieldDescription>
+					<FieldDescription>{t("lifetimeDescription")}</FieldDescription>
 				</Field>
 			</CardContent>
 		</Card>

@@ -148,9 +148,7 @@ function AddSsoProviderForm() {
 								spellCheck={false}
 								required
 							/>
-							<FieldDescription>
-								{t("nameDescription")}
-							</FieldDescription>
+							<FieldDescription>{t("nameDescription")}</FieldDescription>
 						</Field>
 
 						<Field>
@@ -213,7 +211,9 @@ function AddSsoProviderForm() {
 								autoComplete="off"
 								required
 							/>
-							<FieldDescription>{t("clientSecretDescription")}</FieldDescription>
+							<FieldDescription>
+								{t("clientSecretDescription")}
+							</FieldDescription>
 						</Field>
 
 						<Field>
@@ -224,9 +224,7 @@ function AddSsoProviderForm() {
 									<CopyValue value={callbackURL} label={t("redirectLabel")} />
 								</InputGroupAddon>
 							</InputGroup>
-							<FieldDescription>
-								{t("redirectDescription")}
-							</FieldDescription>
+							<FieldDescription>{t("redirectDescription")}</FieldDescription>
 						</Field>
 					</FieldGroup>
 				</form>

@@ -39,17 +39,12 @@ export function TrackingRules() {
 		<Card>
 			<CardHeader>
 				<CardTitle>{t("rulesTitle")}</CardTitle>
-				<CardDescription>
-					{t("rulesDescription")}
-				</CardDescription>
+				<CardDescription>{t("rulesDescription")}</CardDescription>
 			</CardHeader>
 
 			<CardContent>
 				{RULES.map((flag) => (
-					<div
-						key={flag}
-						className="flex items-center justify-between gap-6"
-					>
+					<div key={flag} className="flex items-center justify-between gap-6">
 						<Label
 							htmlFor={`tracking-${flag}`}
 							className="flex flex-col items-start gap-1"
@@ -64,9 +59,7 @@ export function TrackingRules() {
 							id={`tracking-${flag}`}
 							checked={tracking.data[flag]}
 							disabled={!canManage || setFlag.isPending}
-							onCheckedChange={(enabled) =>
-								setFlag.mutate({ flag, enabled })
-							}
+							onCheckedChange={(enabled) => setFlag.mutate({ flag, enabled })}
 						/>
 					</div>
 				))}

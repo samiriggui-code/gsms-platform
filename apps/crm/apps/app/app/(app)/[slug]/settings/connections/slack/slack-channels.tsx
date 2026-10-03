@@ -78,9 +78,7 @@ export function SlackChannels() {
 			<div className="flex items-end justify-between gap-4">
 				<div>
 					<h2 className="font-medium text-sm">{t("channelsTitle")}</h2>
-					<p className="text-muted-foreground text-xs">
-						{t("channelsHint")}
-					</p>
+					<p className="text-muted-foreground text-xs">{t("channelsHint")}</p>
 				</div>
 				<Button
 					disabled={refreshing}
@@ -93,9 +91,7 @@ export function SlackChannels() {
 			</div>
 
 			{channels.stalled ? (
-				<p className="text-warning text-xs">
-					{t("stalledChannels")}
-				</p>
+				<p className="text-warning text-xs">{t("stalledChannels")}</p>
 			) : null}
 
 			{rows.length > 0 || query ? (
@@ -204,7 +200,7 @@ function AskDialog({
 				<AlertDialogFooter>
 					<AlertDialogCancel disabled={status === "pending"}>
 						{t("cancel")}
-						</AlertDialogCancel>
+					</AlertDialogCancel>
 					<Button
 						disabled={status === "pending"}
 						onClick={canInviteItself ? onConfirm : () => void copyThenConfirm()}

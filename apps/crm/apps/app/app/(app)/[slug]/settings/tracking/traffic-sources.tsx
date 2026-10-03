@@ -43,15 +43,11 @@ export function TrafficSources() {
 		<Card>
 			<CardHeader>
 				<CardTitle>{t("sourcesTitle")}</CardTitle>
-				<CardDescription>
-					{t("sourcesDescription")}
-				</CardDescription>
+				<CardDescription>{t("sourcesDescription")}</CardDescription>
 			</CardHeader>
 
 			{sources.data.length === 0 ? (
-				<CardTableEmpty>
-					{t("sourcesEmpty")}
-				</CardTableEmpty>
+				<CardTableEmpty>{t("sourcesEmpty")}</CardTableEmpty>
 			) : (
 				<SimpleTable columns={columns}>
 					{sources.data.map((row) => (

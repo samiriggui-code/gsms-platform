@@ -40,9 +40,7 @@ export function SlackScopeGroups({
 		<section className="flex flex-col gap-3 px-(--spacing-block-inline)">
 			<div>
 				<h2 className="font-medium text-sm">{title}</h2>
-				<p className="text-muted-foreground text-xs">
-					{t("scopesHint")}
-				</p>
+				<p className="text-muted-foreground text-xs">{t("scopesHint")}</p>
 			</div>
 
 			<Accordion className="rounded-lg border px-4" type="multiple">

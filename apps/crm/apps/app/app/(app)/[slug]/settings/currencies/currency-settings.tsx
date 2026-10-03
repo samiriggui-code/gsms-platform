@@ -89,9 +89,7 @@ export function CurrencySettings() {
 		trpc.currency.setReportingCurrency.mutationOptions({
 			onSuccess: async (next) => {
 				await invalidate();
-				toast.success(
-					t("baseSaved", { currency: next.reportingCurrency }),
-				);
+				toast.success(t("baseSaved", { currency: next.reportingCurrency }));
 			},
 			onError: (error) => toast.error(error.message),
 		}),
@@ -152,9 +150,7 @@ export function CurrencySettings() {
 			<Card>
 				<CardHeader>
 					<CardTitle>{t("reportingTitle")}</CardTitle>
-					<CardDescription>
-						{t("reportingDescription")}
-					</CardDescription>
+					<CardDescription>{t("reportingDescription")}</CardDescription>
 				</CardHeader>
 
 				<CardContent>
@@ -170,16 +166,14 @@ export function CurrencySettings() {
 							</SelectTrigger>
 							<SelectContent>
 								{CURRENCIES.map((entry) => (
-								<SelectItem key={entry.code} value={entry.code}>
-									{entry.code} · {currencyName(entry.code, entry.name)}
-								</SelectItem>
-							))}
+									<SelectItem key={entry.code} value={entry.code}>
+										{entry.code} · {currencyName(entry.code, entry.name)}
+									</SelectItem>
+								))}
 							</SelectContent>
 						</Select>
 						<FieldDescription>
-							{canManage
-								? t("reportingHint")
-								: t("reportingOwnerOnly")}
+							{canManage ? t("reportingHint") : t("reportingOwnerOnly")}
 						</FieldDescription>
 					</Field>
 				</CardContent>
@@ -231,7 +225,7 @@ export function CurrencySettings() {
 									{CURRENCIES.filter(
 										(entry) => entry.code !== reportingCurrency,
 									).map((entry) => (
-<SelectItem key={entry.code} value={entry.code}>
+										<SelectItem key={entry.code} value={entry.code}>
 											{entry.code} · {currencyName(entry.code, entry.name)}
 										</SelectItem>
 									))}
@@ -267,9 +261,7 @@ export function CurrencySettings() {
 				</CardContent>
 
 				{rates.length === 0 ? (
-					<CardTableEmpty>
-						{t("ratesEmpty")}
-					</CardTableEmpty>
+					<CardTableEmpty>{t("ratesEmpty")}</CardTableEmpty>
 				) : (
 					<SimpleTable columns={rateColumns}>
 						{rates.map((rate) => (
@@ -290,8 +282,10 @@ export function CurrencySettings() {
 										size="sm"
 										tone={rate.source === "MANUAL" ? "warning" : "success"}
 										label={
-										rate.source === "MANUAL" ? t("sourceManual") : t("sourceFetched")
-									}
+											rate.source === "MANUAL"
+												? t("sourceManual")
+												: t("sourceFetched")
+										}
 									/>
 								</TableCell>
 								<TableCell
@@ -362,9 +356,17 @@ export function CurrencySettings() {
 								</TableCell>
 								<TableCell className={`${CELL} text-right`}>
 									{row.convertible ? (
-										<StatusIndicator size="sm" tone="success" label={t("yes")} />
+										<StatusIndicator
+											size="sm"
+											tone="success"
+											label={t("yes")}
+										/>
 									) : (
-										<StatusIndicator size="sm" tone="error" label={t("noRate")} />
+										<StatusIndicator
+											size="sm"
+											tone="error"
+											label={t("noRate")}
+										/>
 									)}
 								</TableCell>
 							</SimpleTableRow>

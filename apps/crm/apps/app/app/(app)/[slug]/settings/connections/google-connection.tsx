@@ -108,9 +108,7 @@ function GoogleUnavailable() {
 						/>
 					</div>
 				</CardTitle>
-				<CardDescription>
-					{t("unavailableDescription")}
-				</CardDescription>
+				<CardDescription>{t("unavailableDescription")}</CardDescription>
 			</CardHeader>
 		</Card>
 	);
@@ -153,9 +151,7 @@ function ConnectGoogle({
 						/>
 					</div>
 				</CardTitle>
-				<CardDescription>
-					{t("connectDescription")}
-				</CardDescription>
+				<CardDescription>{t("connectDescription")}</CardDescription>
 
 				<CardAction>
 					<Button
@@ -287,9 +283,7 @@ export function GoogleConnection({
 						/>
 					</div>
 				</CardTitle>
-				<CardDescription>
-					{t("linkedDescription")}
-				</CardDescription>
+				<CardDescription>{t("linkedDescription")}</CardDescription>
 
 				<CardAction>
 					<Button
@@ -345,15 +339,11 @@ export function GoogleConnection({
 					})
 				) : (
 					<p className="text-muted-foreground text-xs">
-						{lastSyncedAt ? (
-							<>
-								{t.rich("lastChecked", {
+						{lastSyncedAt
+							? t.rich("lastChecked", {
 									time: () => <LocalRelativeTime date={lastSyncedAt} />,
-								})}
-							</>
-						) : (
-							t("waitingFirstCheck")
-						)}
+								})
+							: t("waitingFirstCheck")}
 					</p>
 				)}
 
@@ -427,9 +417,7 @@ export function GoogleConnection({
 								<AlertDialogHeader>
 									<AlertDialogTitle>{t("revokeTitle")}</AlertDialogTitle>
 									<AlertDialogDescription>
-										{required
-											? t("revokeRequired")
-											: t("revokeOptional")}
+										{required ? t("revokeRequired") : t("revokeOptional")}
 									</AlertDialogDescription>
 								</AlertDialogHeader>
 
