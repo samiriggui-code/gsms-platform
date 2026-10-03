@@ -30,7 +30,7 @@ type UserRow = {
   avatarPath?: string | null;
 };
 
-function publicUser(user: UserRow) {
+export function publicUser(user: UserRow) {
   return {
     id: user.id,
     email: user.email,

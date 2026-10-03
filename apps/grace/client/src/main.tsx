@@ -4,6 +4,7 @@ import { RouterProvider } from '@tanstack/react-router';
 import { registerSW } from 'virtual:pwa-register';
 import { router } from './routes/router';
 import { useAuthStore } from './stores/auth';
+import { consumeSsoRedirect } from './lib/sso';
 import { useI18nStore, useT } from './i18n';
 import { useThemeStore } from './stores/theme';
 import './styles/index.css';
@@ -37,7 +38,12 @@ function Boot() {
   }, [theme]);
 
   useEffect(() => {
-    refresh().finally(() => setReady(true));
+    // "Se connecter avec GSMS": a `#sso_token=` fragment from the SSO callback
+    // is exchanged for a session before the router renders; otherwise just
+    // revalidate the persisted session.
+    consumeSsoRedirect()
+      .then((handled) => (handled ? undefined : refresh()))
+      .finally(() => setReady(true));
   }, [refresh]);
 
   if (!ready) {

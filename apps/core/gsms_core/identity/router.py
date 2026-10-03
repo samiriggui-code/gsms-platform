@@ -3,6 +3,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from gsms_core.db import utcnow
 from gsms_core.deps import Principal, get_current_principal, get_db, get_settings_dep
 from gsms_core.identity import service
 from gsms_core.identity.models import Organization
@@ -32,6 +33,8 @@ def login(
     user = service.authenticate(db, body.email, body.password)
     if user is None:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "identifiants invalides")
+    user.last_login_at = utcnow()
+    db.commit()
     if body.workspace_id is not None:
         access = service.get_workspace_access(db, user.id, body.workspace_id)
         if access is None:

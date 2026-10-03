@@ -37,6 +37,7 @@
     "croner": "^10.0.1",
     "fastify": "^4.28.1",
     "fastify-type-provider-zod": "^2.0.0",
+    "jose": "^5.9.6",
     "nodemailer": "^6.9.16",
     "pg": "^8.13.1",
     "pino": "^9.5.0",

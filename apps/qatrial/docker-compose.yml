@@ -10,6 +10,15 @@ services:
       - AI_PROVIDER_URL=${AI_PROVIDER_URL:-}
       - AI_PROVIDER_KEY=${AI_PROVIDER_KEY:-}
       - AI_PROVIDER_MODEL=${AI_PROVIDER_MODEL:-}
+      - SSO_ENABLED=${SSO_ENABLED:-false}
+      - SSO_ISSUER_URL=${SSO_ISSUER_URL:-}
+      - SSO_CLIENT_ID=${SSO_CLIENT_ID:-}
+      - SSO_CLIENT_SECRET=${SSO_CLIENT_SECRET:-}
+      - SSO_CALLBACK_URL=${SSO_CALLBACK_URL:-http://localhost:3001/api/auth/sso/callback}
+      - SSO_ROLE_CLAIM=${SSO_ROLE_CLAIM:-gsms_role}
+      - SSO_ORG_NAME=${SSO_ORG_NAME:-GSMS}
+      - SSO_PROVIDER_NAME=${SSO_PROVIDER_NAME:-GSMS}
+      - REGISTRATION_ENABLED=${REGISTRATION_ENABLED:-true}
     depends_on:
       db:
         condition: service_healthy

@@ -71,6 +71,8 @@ export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   const [ssoEnabled, setSsoEnabled] = useState(false);
+  const [ssoProviderName, setSsoProviderName] = useState<string | null>(null);
+  const [registrationEnabled, setRegistrationEnabled] = useState(true);
   const [ssoLoading, setSsoLoading] = useState(true);
   const [ssoExchanging, setSsoExchanging] = useState(false);
 
@@ -95,8 +97,10 @@ export function LoginPage() {
   useEffect(() => {
     fetch(`${getApiBase()}/auth/sso/config`)
       .then((res) => res.json())
-      .then((data: { enabled: boolean }) => {
+      .then((data: { enabled: boolean; providerName?: string | null; registrationEnabled?: boolean }) => {
         setSsoEnabled(data.enabled);
+        setSsoProviderName(data.providerName ?? null);
+        setRegistrationEnabled(data.registrationEnabled !== false);
       })
       .catch(() => {
         setSsoEnabled(false);
@@ -139,7 +143,8 @@ export function LoginPage() {
     const params = new URLSearchParams(window.location.search);
     const ssoError = params.get('sso_error');
     if (ssoError) {
-      setError(decodeURIComponent(ssoError));
+      // URLSearchParams.get already decodes the value.
+      setError(ssoError);
       window.history.replaceState(null, '', window.location.pathname);
     }
   }, []);
@@ -232,7 +237,9 @@ export function LoginPage() {
           <>
             <Button type="button" variant="secondary" className="w-full" onClick={handleSsoLogin}>
               <Shield className="size-3.5 text-accent" />
-              {t('sso.signInWithSso')}
+              {ssoProviderName
+                ? t('sso.signInWithProvider', { name: ssoProviderName })
+                : t('sso.signInWithSso')}
             </Button>
             <div className="flex items-center gap-3">
               <div className="h-px flex-1 bg-border" />
@@ -323,6 +330,7 @@ export function LoginPage() {
           </Button>
         </form>
 
+        {(registrationEnabled || mode === 'register') && (
         <p className="text-center text-[12.5px] text-text-tertiary">
           <button
             type="button"
@@ -332,6 +340,7 @@ export function LoginPage() {
             {mode === 'login' ? t('auth.noAccount') : t('auth.hasAccount')}
           </button>
         </p>
+        )}
       </div>
     </AuthBrandedLayout>
   );

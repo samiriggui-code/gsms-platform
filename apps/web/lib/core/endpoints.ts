@@ -120,6 +120,12 @@ export const ENDPOINTS = {
     relances: () => "/admin/settings/relances",
     /** GET → Rule[] (catalogue des règles de relance, avec « active ») */
     relanceRules: () => "/communications/regles",
+    /** GET → {me, my_role, members[]} ; POST {email, name, role, send_email} ; PATCH /{id} ; PUT /{id}/apps/{app} */
+    team: () => "/admin/team",
+    /** GET → {roles[], apps[]} : rôles de l'équipe et traduction par application (toute l'équipe) */
+    roles: () => "/admin/roles",
+    /** GET → {issuer, clients[]} : applications connectées (OIDC) ; PUT /{app} ; POST /{app}/secret */
+    ssoClients: () => "/admin/sso/clients",
   },
 
   /** GET → Audit[] (assessments synchronisés depuis l'outil d'audit terrain, avec external_url) */

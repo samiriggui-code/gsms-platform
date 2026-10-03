@@ -19,8 +19,10 @@ from gsms_core.documents.storage import Storage, build_storage
 from gsms_core.events.bus import bus
 from gsms_core.events.router import router as events_router
 from gsms_core.identity.router import router as identity_router
+from gsms_core.identity.team_router import router as team_router
 from gsms_core.intake.router import router as intake_router
 from gsms_core.missions.router import router as missions_router
+from gsms_core.oidc.router import router as oidc_router
 from gsms_core.platform.router import router as platform_router
 from gsms_core.settings import Settings, get_settings
 from gsms_core.tenders.router import router as tenders_router
@@ -79,6 +81,8 @@ def create_app(
 
     for router in (
         identity_router,
+        team_router,
+        oidc_router,
         intake_router,
         context_router,
         workspaces_router,

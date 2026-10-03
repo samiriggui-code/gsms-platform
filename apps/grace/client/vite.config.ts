@@ -73,8 +73,11 @@ export default defineConfig({
           {
             // GET requests to our API — NetworkFirst with 7-day cache fallback
             // so read-only pages still work when offline.
+            // SSO endpoints (redirects, one-time codes) are never cached.
             urlPattern: ({ url, request }) =>
-              request.method === 'GET' && url.pathname.startsWith('/api/'),
+              request.method === 'GET' &&
+              url.pathname.startsWith('/api/') &&
+              !url.pathname.startsWith('/api/auth/sso/'),
             handler: 'NetworkFirst',
             options: {
               cacheName: 'csmp-api',

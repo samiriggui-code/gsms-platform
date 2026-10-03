@@ -55,6 +55,11 @@ list, read by the sign-in guard *and* the sync's "which side is external" decisi
 if they drifted a colleague would be refused at the door or filed as a lead. **An empty
 list fails closed.** Parsed on demand. `packages/auth/src/workspace.ts`.
 
+**`GSMS_SSO_ISSUER` + `GSMS_SSO_CLIENT_SECRET`** (et `GSMS_SSO_CLIENT_ID`, `crm` par
+défaut) activent la connexion GSMS (OpenID Connect). Facultatifs : sans eux, le bouton
+« Se connecter avec GSMS » n'existe pas. `ALLOWED_SIGN_IN` ne filtre pas ces connexions.
+Voir la section « Connexion GSMS (SSO) » du README. `packages/auth/src/gsms-sso.ts`.
+
 ## Where things are
 
 - **`APP_URL`** (`:3000`) mints session cookies (NextAuth) and is also the

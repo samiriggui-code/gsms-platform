@@ -116,6 +116,35 @@ docker compose exec core python -m gsms_core.cli bootstrap-access
 Un membre supplémentaire de l'équipe :
 `docker compose exec core python -m gsms_core.cli create-member prenom@gsms-security.com "Prénom Nom" --role analyst`.
 
+## Équipe et connexion unique (GSMS, GRACE, QAtrial, CRM)
+
+Le Core est la **seule source** des comptes de l'équipe. Chaque application garde sa base ; un membre a le
+même e-mail et le même mot de passe partout. Référence : `docs/architecture/IDENTITE-SSO.md`.
+
+**Gérer l'équipe** : portail → **Paramètres → Équipe GSMS** (super admin et administrateurs).
+- **Inviter** : nom, e-mail, rôle. Le membre reçoit un e-mail avec un lien personnel (7 jours, usage unique)
+  pour choisir son mot de passe. Le lien s'affiche aussi une fois à l'écran si la messagerie n'est pas prête.
+- **Rôle** : un seul rôle, traduit pour chaque application (tableau « Rôles et droits par application »).
+- **Applications** : par membre, couper l'accès à une application ou y donner un autre rôle.
+- **Nouveau mot de passe**, **Désactiver** : un compte désactivé ne se connecte plus nulle part.
+
+**Brancher GRACE, QAtrial et le CRM** (une fois) :
+
+```bash
+# 1. Déclarer les trois applications ; les variables à copier s'affichent (secret montré une seule fois)
+docker compose exec core python -m gsms_core.cli sso-client all
+```
+
+2. Coller les variables dans le `.env` de chaque application, sur le VPS :
+   - GRACE : `SSO_ENABLED=true`, `SSO_ISSUER_URL`, `SSO_CLIENT_ID`, `SSO_CLIENT_SECRET`, `SSO_CALLBACK_URL` ;
+   - QAtrial : les mêmes, plus `SSO_ORG_NAME=GSMS` (et `REGISTRATION_ENABLED=false` pour fermer l'inscription libre) ;
+   - CRM : `GSMS_SSO_ISSUER`, `GSMS_SSO_CLIENT_ID`, `GSMS_SSO_CLIENT_SECRET`.
+3. Reconstruire chaque application (`docker compose up -d --build` dans son dossier).
+
+Les pages de connexion affichent alors **« Se connecter avec GSMS »**. Déjà connecté au portail, un clic suffit.
+Secret perdu ou divulgué : `sso-client <app> --rotate`, ou **Paramètres → Applications connectées → Nouveau
+secret**.
+
 ## Paramétrage (portail)
 
 **Paramètres → Plateforme**, réservé au super admin et aux administrateurs :

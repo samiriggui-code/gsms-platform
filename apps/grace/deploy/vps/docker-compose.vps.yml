@@ -38,6 +38,16 @@ services:
       PORT: '3001'
       HOST: '0.0.0.0'
       CORS_ORIGIN: ${CORS_ORIGIN:-https://grace.gsms-security.com}
+      # « Se connecter avec GSMS » (OIDC, GSMS Core) — docs/architecture/IDENTITE-SSO.md
+      # /api/* is proxied by the web container (client/nginx.conf) to this service,
+      # so the callback lives on the public GRACE host.
+      SSO_ENABLED: ${SSO_ENABLED:-false}
+      SSO_ISSUER_URL: ${SSO_ISSUER_URL:-https://gsms-security.com}
+      SSO_CLIENT_ID: ${SSO_CLIENT_ID:-grace}
+      SSO_CLIENT_SECRET: ${SSO_CLIENT_SECRET:-}
+      SSO_CALLBACK_URL: ${SSO_CALLBACK_URL:-https://grace.gsms-security.com/api/auth/sso/callback}
+      SSO_ROLE_CLAIM: ${SSO_ROLE_CLAIM:-gsms_role}
+      SSO_PROVIDER_NAME: ${SSO_PROVIDER_NAME:-GSMS}
     networks:
       - grace
 

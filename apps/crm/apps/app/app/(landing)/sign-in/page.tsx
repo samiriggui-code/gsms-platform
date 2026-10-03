@@ -1,3 +1,4 @@
+import { isGsmsSsoConfigured } from "@crm/auth";
 import type { Metadata } from "next";
 import { connection } from "next/server";
 import { redirect, unstable_rethrow } from "next/navigation";
@@ -53,7 +54,7 @@ async function SignIn() {
 				description="Accédez à votre espace GSMS CRM."
 			/>
 
-			<SignInForm />
+			<SignInForm gsmsEnabled={isGsmsSsoConfigured()} />
 		</>
 	);
 }

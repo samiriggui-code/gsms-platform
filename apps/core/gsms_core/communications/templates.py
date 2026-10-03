@@ -46,6 +46,16 @@ TEMPLATES: dict[str, Template] = {
         1, "Synthèse hebdomadaire des prestations — {{ date }}", "Vous administrez la plateforme GSMS."
     ),
     "test_smtp": Template(1, "Test d'envoi — GSMS Sécurité", "Message technique."),
+    "invitation_equipe": Template(
+        1,
+        "Votre accès à la plateforme GSMS",
+        "Un administrateur de GSMS vous a ajouté à l'équipe.",
+    ),
+    "reinitialisation_mot_de_passe": Template(
+        1,
+        "Nouveau mot de passe — plateforme GSMS",
+        "Un administrateur de GSMS a demandé la réinitialisation de votre mot de passe.",
+    ),
 }
 
 _env = Environment(

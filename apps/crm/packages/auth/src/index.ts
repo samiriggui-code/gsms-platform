@@ -18,7 +18,9 @@ export {
 	apiUrl,
 	appUrl,
 	googleCredentials,
+	gsmsSsoCredentials,
 	isGoogleConfigured,
+	isGsmsSsoConfigured,
 	isMicrosoftConfigured,
 	isSlackConfigured,
 	microsoftCredentials,
@@ -40,6 +42,12 @@ export {
 	type WorkspaceRole,
 	workspaceRoleOf,
 } from "./organization";
+export {
+	GSMS_PROVIDER_ID,
+	gsmsSignInDecision,
+	gsmsWellKnownUrl,
+} from "./gsms-sso";
+export { syncGsmsUser } from "./gsms-sso-sync";
 export {
 	CALENDAR_SCOPE,
 	GMAIL_SCOPE,

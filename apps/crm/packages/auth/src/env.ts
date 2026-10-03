@@ -46,6 +46,34 @@ export const slackCredentials = ():
 	| { clientId: string; clientSecret: string }
 	| undefined => pair("SLACK_CLIENT_ID", "SLACK_CLIENT_SECRET");
 
+const GSMS_DEFAULT_CLIENT_ID = "crm";
+
+type EnvSource = Record<string, string | undefined>;
+
+const fromSource = (source: EnvSource, key: string): string | undefined => {
+	const value = source[key]?.trim();
+	return value ? value : undefined;
+};
+
+export const gsmsSsoCredentials = (
+	source: EnvSource = process.env,
+): { issuer: string; clientId: string; clientSecret: string } | undefined => {
+	const issuer = fromSource(source, "GSMS_SSO_ISSUER")?.replace(/\/+$/, "");
+	const clientSecret = fromSource(source, "GSMS_SSO_CLIENT_SECRET");
+
+	if (!issuer || !clientSecret) return undefined;
+
+	return {
+		issuer,
+		clientId: fromSource(source, "GSMS_SSO_CLIENT_ID") ?? GSMS_DEFAULT_CLIENT_ID,
+		clientSecret,
+	};
+};
+
+export function isGsmsSsoConfigured(source: EnvSource = process.env): boolean {
+	return gsmsSsoCredentials(source) !== undefined;
+}
+
 const apiUrl =
 	optional("API_URL") ?? optional("BETTER_AUTH_URL") ?? DEFAULT_API_URL;
 
