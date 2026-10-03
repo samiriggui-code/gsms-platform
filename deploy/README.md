@@ -128,7 +128,19 @@ même e-mail et le même mot de passe partout. Référence : `docs/architecture/
 - **Applications** : par membre, couper l'accès à une application ou y donner un autre rôle.
 - **Nouveau mot de passe**, **Désactiver** : un compte désactivé ne se connecte plus nulle part.
 
-**Brancher GRACE, QAtrial et le CRM** (une fois) :
+**Tout mettre à jour d'un coup** (plateforme, puis GRACE, QAtrial et le CRM avec la connexion GSMS) :
+
+```bash
+cd /opt/gsms-platform && git pull && ./deploy/deploy-all.sh gsms-security.com
+# première fois seulement, pour créer aussi les comptes : ajouter --bootstrap
+```
+
+Le script retrouve d'où tourne chaque application (étiquettes Docker), met son code à jour (ancien code
+sauvegardé dans `.deploy-backups/`), écrit les variables SSO dans son `.env` sans afficher le secret, ferme
+l'inscription libre de QAtrial, reconstruit seulement les services applicatifs (bases intactes) et vérifie que
+chaque application joint le Core. Une application absente du serveur est simplement ignorée.
+
+**Brancher GRACE, QAtrial et le CRM à la main** (si besoin) :
 
 ```bash
 # 1. Déclarer les trois applications ; les variables à copier s'affichent (secret montré une seule fois)
