@@ -102,7 +102,9 @@ export function WebsiteActivity({
 				) : null}
 
 				{campaign ? (
-					<DetailSheetProperty label={t("campaign")}>{campaign}</DetailSheetProperty>
+					<DetailSheetProperty label={t("campaign")}>
+						{campaign}
+					</DetailSheetProperty>
 				) : null}
 			</DetailSheetProperties>
 		</DetailSheetSection>

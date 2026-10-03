@@ -35,8 +35,8 @@ import { StatusIndicator } from "@crm/ui/components/status-indicator";
 import { Switch } from "@crm/ui/components/switch";
 import { Textarea } from "@crm/ui/components/textarea";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useId, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useId, useState } from "react";
 import { toast } from "sonner";
 import { useCrmCache } from "@/lib/trpc/cache";
 import { useTRPC } from "@/lib/trpc/client";
@@ -109,7 +109,10 @@ function Coverage({ field }: { field: FieldRecord }) {
 					<StatusIndicator
 						tone="primary"
 						className="font-medium text-foreground"
-						label={t(`coverage.${field.entity as FieldEntity}`, { filled, total })}
+						label={t(`coverage.${field.entity as FieldEntity}`, {
+							filled,
+							total,
+						})}
 					/>
 					<span className="pl-4 text-muted-foreground text-xs">
 						{covered
@@ -402,8 +405,8 @@ export function FieldEditor({
 					<AlertDialogContent>
 						<AlertDialogHeader>
 							<AlertDialogTitle>
-							{t("archiveTitle", { label: field.label })}
-						</AlertDialogTitle>
+								{t("archiveTitle", { label: field.label })}
+							</AlertDialogTitle>
 							<AlertDialogDescription>
 								{t("archiveBody")}
 							</AlertDialogDescription>

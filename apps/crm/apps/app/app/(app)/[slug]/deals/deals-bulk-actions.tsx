@@ -24,8 +24,8 @@ import { Field, FieldLabel } from "@crm/ui/components/field";
 import { Spinner } from "@crm/ui/components/spinner";
 import { Textarea } from "@crm/ui/components/textarea";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useId, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useId, useState } from "react";
 import { toast } from "sonner";
 import {
 	BulkActionsMenu,

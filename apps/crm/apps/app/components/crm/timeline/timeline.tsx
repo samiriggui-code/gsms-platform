@@ -82,7 +82,11 @@ function byDay(
 		if (group) {
 			group.entries.push(entry);
 		} else {
-			groups.set(day, { day, label: dayLabel(day, local, labels), entries: [entry] });
+			groups.set(day, {
+				day,
+				label: dayLabel(day, local, labels),
+				entries: [entry],
+			});
 		}
 	}
 

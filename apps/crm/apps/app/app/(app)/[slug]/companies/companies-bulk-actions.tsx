@@ -9,8 +9,8 @@ import {
 	DropdownMenuSeparator,
 } from "@crm/ui/components/dropdown-menu";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { useState } from "react";
 import { toast } from "sonner";
 import {
 	BulkActionsMenu,
@@ -54,10 +54,7 @@ export function CompaniesBulkActions({
 		trpc.companies.bulkEnrich.mutationOptions({
 			onSuccess: async (result) => {
 				await cache.company();
-				reportBulk(
-					result,
-					(count) => t("companies.enriching", { count }),
-				);
+				reportBulk(result, (count) => t("companies.enriching", { count }));
 				onDone();
 			},
 			onError,

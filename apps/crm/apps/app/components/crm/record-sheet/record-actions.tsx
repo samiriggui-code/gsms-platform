@@ -23,8 +23,8 @@ import {
 } from "@crm/ui/components/dropdown-menu";
 import { Icon } from "@crm/ui/components/icon";
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { useState } from "react";
 import { toast } from "sonner";
 import { useCrmCache } from "@/lib/trpc/cache";
 import { useTRPC } from "@/lib/trpc/client";
@@ -47,11 +47,11 @@ function useArchiveRecord(record: RecordRef) {
 
 	const handlers = {
 		onSuccess: (archived: { name: string }) => {
-				toast.success(
-					t("archivedToast", {
-						name: archived.name || t(`theRecord.${record.kind}`),
-					}),
-				);
+			toast.success(
+				t("archivedToast", {
+					name: archived.name || t(`theRecord.${record.kind}`),
+				}),
+			);
 			void cache[record.kind](record.id);
 		},
 		onError: (error: { message: string }) => toast.error(error.message),
@@ -69,11 +69,11 @@ function useRestoreRecord(record: RecordRef) {
 
 	const handlers = {
 		onSuccess: (restored: { name: string }) => {
-				toast.success(
-					t("restoredToast", {
-						name: restored.name || t(`theRecord.${record.kind}`),
-					}),
-				);
+			toast.success(
+				t("restoredToast", {
+					name: restored.name || t(`theRecord.${record.kind}`),
+				}),
+			);
 			void cache[record.kind](record.id);
 		},
 		onError: (error: { message: string }) => toast.error(error.message),
@@ -92,11 +92,11 @@ function usePurgeRecord(record: RecordRef) {
 
 	const handlers = {
 		onSuccess: (purged: { name: string }) => {
-				toast.success(
-					t("purgedToast", {
-						name: purged.name || t(`theRecord.${record.kind}`),
-					}),
-				);
+			toast.success(
+				t("purgedToast", {
+					name: purged.name || t(`theRecord.${record.kind}`),
+				}),
+			);
 			void cache.removed(record);
 			close();
 		},

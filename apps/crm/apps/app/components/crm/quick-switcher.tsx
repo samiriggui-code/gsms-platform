@@ -82,9 +82,7 @@ export function QuickSwitcher() {
 				/>
 				<CommandList>
 					<CommandEmpty>
-						{query.trim().length < 2
-							? t("typeTwoChars")
-							: t("nothingMatches")}
+						{query.trim().length < 2 ? t("typeTwoChars") : t("nothingMatches")}
 					</CommandEmpty>
 
 					{KINDS.map((kind) => {

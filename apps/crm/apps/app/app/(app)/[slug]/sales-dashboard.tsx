@@ -8,6 +8,7 @@ import {
 	formatPercent,
 } from "@crm/ui/lib/format";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import { AreaTrend, DonutStat } from "@/components/dashboard-charts";
 import { DeskPulseBand } from "@/components/desk-ui/desk-pulse-band";
@@ -15,7 +16,6 @@ import { SoftPanel } from "@/components/desk-ui/soft-panel";
 import { DEAL_STAGE_NAMESPACE, dealStageColor } from "@/lib/deal-stage";
 import type { RouterOutputs } from "@/lib/trpc/types";
 import { useWorkspaceUrl } from "@/lib/use-workspace-url";
-import { useTranslations } from "next-intl";
 
 type Summary = RouterOutputs["dashboard"]["summary"];
 

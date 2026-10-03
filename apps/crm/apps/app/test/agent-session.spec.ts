@@ -156,7 +156,11 @@ describe("the panel", () => {
 	});
 
 	it("offers a way out of a thread that has ended", () => {
-		expect(source()).toContain("Start a new conversation");
+		expect(source()).toContain('{t("startNew")}');
+		const messages = JSON.parse(
+			readFileSync(new URL("../messages/en/crm.json", import.meta.url), "utf8"),
+		);
+		expect(messages.crmAgent.startNew).toBe("Start a new conversation");
 		expect(source()).toContain("onClick={onNewThread}");
 	});
 });

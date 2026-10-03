@@ -140,199 +140,196 @@ export function DashboardSummary() {
 			<div className="grid gap-6 @3xl/page-content:grid-cols-2">
 				<SoftPanel flush className="min-w-0">
 					<Card className="min-w-0">
-					<CardHeader className="border-border border-b px-5 py-4 sm:px-6">
-						<CardTitle>{t("inProgressTitle")}</CardTitle>
-						<CardDescription>
-							{t("inProgressDescription")}
-						</CardDescription>
-						<CardAction>
-							<Button asChild variant="contrast" size="sm">
-								<Link href={workspaceUrl("/deals")}>{t("openDeals")}</Link>
-							</Button>
-						</CardAction>
-					</CardHeader>
-					<CardPanel className="h-auto rounded-none border-0">
-						{biggestOpen.length === 0 ? (
-							<CardPanelEmpty>
-									{t("inProgressEmpty")}
-							</CardPanelEmpty>
-						) : (
-							<SimpleTable
-								variant="panel"
-								surface="page"
-								columns={openColumns(t)}
-							>
-								{biggestOpen.map((deal) => (
-									<SimpleTableRow
-										key={deal.id}
-										clickable
-										onClick={() => openRecord({ kind: "deal", id: deal.id })}
-									>
-										<TableCell className={CELL}>
-											<DealCell
-												name={deal.name}
-												company={deal.company}
-												meta={<LocalRelativeTime date={deal.stageChangedAt} />}
-											/>
-										</TableCell>
-										<TableCell className={`${CELL} hidden lg:table-cell`}>
-											<DealStageIndicator stage={deal.stage} />
-										</TableCell>
-										<TableCell className={`${CELL} hidden sm:table-cell`}>
-											<ValueMeter
-												share={
-													largestOpenCents > 0
-														? ((deal.baseAmountCents ?? 0) / largestOpenCents) *
-															100
-														: 0
-												}
-												color={dealStageColor(deal.stage)}
-											/>
-										</TableCell>
-										<TableCell className={`${CELL} text-right tabular-nums`}>
-											{deal.amountCents === null ? (
-												<EmptyCellValue />
-											) : (
-												formatMoneyCompact(deal.amountCents, deal.currency)
-											)}
-										</TableCell>
-									</SimpleTableRow>
-								))}
-							</SimpleTable>
-						)}
-					</CardPanel>
-				</Card>
+						<CardHeader className="border-border border-b px-5 py-4 sm:px-6">
+							<CardTitle>{t("inProgressTitle")}</CardTitle>
+							<CardDescription>{t("inProgressDescription")}</CardDescription>
+							<CardAction>
+								<Button asChild variant="contrast" size="sm">
+									<Link href={workspaceUrl("/deals")}>{t("openDeals")}</Link>
+								</Button>
+							</CardAction>
+						</CardHeader>
+						<CardPanel className="h-auto rounded-none border-0">
+							{biggestOpen.length === 0 ? (
+								<CardPanelEmpty>{t("inProgressEmpty")}</CardPanelEmpty>
+							) : (
+								<SimpleTable
+									variant="panel"
+									surface="page"
+									columns={openColumns(t)}
+								>
+									{biggestOpen.map((deal) => (
+										<SimpleTableRow
+											key={deal.id}
+											clickable
+											onClick={() => openRecord({ kind: "deal", id: deal.id })}
+										>
+											<TableCell className={CELL}>
+												<DealCell
+													name={deal.name}
+													company={deal.company}
+													meta={
+														<LocalRelativeTime date={deal.stageChangedAt} />
+													}
+												/>
+											</TableCell>
+											<TableCell className={`${CELL} hidden lg:table-cell`}>
+												<DealStageIndicator stage={deal.stage} />
+											</TableCell>
+											<TableCell className={`${CELL} hidden sm:table-cell`}>
+												<ValueMeter
+													share={
+														largestOpenCents > 0
+															? ((deal.baseAmountCents ?? 0) /
+																	largestOpenCents) *
+																100
+															: 0
+													}
+													color={dealStageColor(deal.stage)}
+												/>
+											</TableCell>
+											<TableCell className={`${CELL} text-right tabular-nums`}>
+												{deal.amountCents === null ? (
+													<EmptyCellValue />
+												) : (
+													formatMoneyCompact(deal.amountCents, deal.currency)
+												)}
+											</TableCell>
+										</SimpleTableRow>
+									))}
+								</SimpleTable>
+							)}
+						</CardPanel>
+					</Card>
 				</SoftPanel>
 
 				<SoftPanel flush className="min-w-0">
 					<Card className="min-w-0">
-					<CardHeader className="border-border border-b px-5 py-4 sm:px-6">
-						<CardTitle>{t("overdueTitle")}</CardTitle>
-						<CardDescription>
-							{overdueTasks.length === 0
-								? t("overdueNone")
-								: t("overdueCount", { count: overdueTasks.length })}
-						</CardDescription>
-					</CardHeader>
-					<CardPanel className="h-auto rounded-none border-0">
-						{overdueTasks.length === 0 ? (
-							<CardPanelEmpty>{t("overdueEmpty")}</CardPanelEmpty>
-						) : (
-							<SimpleTable
-								variant="panel"
-								surface="page"
-								columns={taskColumns(t)}
-							>
-								{overdueTasks.map((task) => (
-									<SimpleTableRow key={task.id}>
-										<TableCell className={CELL}>
-											<Checkbox
-												checked={false}
-												disabled={complete.isPending}
-												aria-label={t("markDone")}
-												onCheckedChange={() =>
-													complete.mutate({ id: task.id, completed: true })
-												}
-											/>
-										</TableCell>
-										<TableCell className={CELL}>
-											<span className="flex min-w-0 flex-col">
-												<span className="truncate">{task.subject}</span>
-												<span className="flex min-w-0 text-muted-foreground">
-													{task.deal ? (
-														<RecordLink kind="deal" id={task.deal.id}>
-															{task.deal.name}
-														</RecordLink>
-													) : task.company ? (
-														<RecordLink kind="company" id={task.company.id}>
-															{task.company.name}
-														</RecordLink>
-													) : null}
+						<CardHeader className="border-border border-b px-5 py-4 sm:px-6">
+							<CardTitle>{t("overdueTitle")}</CardTitle>
+							<CardDescription>
+								{overdueTasks.length === 0
+									? t("overdueNone")
+									: t("overdueCount", { count: overdueTasks.length })}
+							</CardDescription>
+						</CardHeader>
+						<CardPanel className="h-auto rounded-none border-0">
+							{overdueTasks.length === 0 ? (
+								<CardPanelEmpty>{t("overdueEmpty")}</CardPanelEmpty>
+							) : (
+								<SimpleTable
+									variant="panel"
+									surface="page"
+									columns={taskColumns(t)}
+								>
+									{overdueTasks.map((task) => (
+										<SimpleTableRow key={task.id}>
+											<TableCell className={CELL}>
+												<Checkbox
+													checked={false}
+													disabled={complete.isPending}
+													aria-label={t("markDone")}
+													onCheckedChange={() =>
+														complete.mutate({ id: task.id, completed: true })
+													}
+												/>
+											</TableCell>
+											<TableCell className={CELL}>
+												<span className="flex min-w-0 flex-col">
+													<span className="truncate">{task.subject}</span>
+													<span className="flex min-w-0 text-muted-foreground">
+														{task.deal ? (
+															<RecordLink kind="deal" id={task.deal.id}>
+																{task.deal.name}
+															</RecordLink>
+														) : task.company ? (
+															<RecordLink kind="company" id={task.company.id}>
+																{task.company.name}
+															</RecordLink>
+														) : null}
+													</span>
 												</span>
-											</span>
-										</TableCell>
-										<TableCell className={`${CELL} text-right`}>
-											<StatusIndicator
-												tone="error"
-												label={
-													task.dueAt ? (
-														<LocalRelativeTime date={task.dueAt} />
-													) : (
-														t("noDueDate")
-													)
-												}
-											/>
-										</TableCell>
-									</SimpleTableRow>
-								))}
-							</SimpleTable>
-						)}
-					</CardPanel>
-				</Card>
+											</TableCell>
+											<TableCell className={`${CELL} text-right`}>
+												<StatusIndicator
+													tone="error"
+													label={
+														task.dueAt ? (
+															<LocalRelativeTime date={task.dueAt} />
+														) : (
+															t("noDueDate")
+														)
+													}
+												/>
+											</TableCell>
+										</SimpleTableRow>
+									))}
+								</SimpleTable>
+							)}
+						</CardPanel>
+					</Card>
 				</SoftPanel>
 			</div>
 
 			<SoftPanel flush className="min-w-0">
-			<Card className="min-w-0">
-				<CardHeader className="border-border border-b px-5 py-4 sm:px-6">
-					<CardTitle>
-						{mine ? t("recentMine") : t("recentAll")}
-					</CardTitle>
-					<CardDescription>
-						{mine
-							? t("recentMineDescription")
-							: t("recentAllDescription")}
-					</CardDescription>
-					<CardAction>
-						<Button asChild variant="contrast" size="sm">
-							<Link href={workspaceUrl("/companies")}>{t("allCompanies")}</Link>
-						</Button>
-					</CardAction>
-				</CardHeader>
-				{recentActivity.length === 0 ? (
-					<CardTableEmpty>{t("recentEmpty")}</CardTableEmpty>
-				) : (
-					<SimpleTable columns={activityColumns(t)}>
-						{recentActivity.map((entry) => (
-							<SimpleTableRow key={entry.id}>
-								<TableCell className={CELL}>
-									<span className="truncate">
-										{entry.subject ?? tActivity(entry.type)}
-									</span>
-								</TableCell>
-								<TableCell className={`${CELL} hidden md:table-cell`}>
-									{entry.company ? (
-										<RecordLink kind="company" id={entry.company.id}>
-											{entry.company.name}
-										</RecordLink>
-									) : (
-										<EmptyCellValue />
-									)}
-								</TableCell>
-								<TableCell className={`${CELL} hidden lg:table-cell`}>
-									{entry.deal ? (
-										<RecordLink kind="deal" id={entry.deal.id}>
-											{entry.deal.name}
-										</RecordLink>
-									) : (
-										<EmptyCellValue />
-									)}
-								</TableCell>
-								<TableCell
-									className={`${CELL} hidden truncate text-muted-foreground md:table-cell`}
-								>
-									{entry.createdBy.name}
-								</TableCell>
-								<TableCell
-									className={`${CELL} text-right text-muted-foreground`}
-								>
-									<LocalRelativeTime date={entry.createdAt} />
-								</TableCell>
-							</SimpleTableRow>
-						))}
-					</SimpleTable>
-				)}
-			</Card>
+				<Card className="min-w-0">
+					<CardHeader className="border-border border-b px-5 py-4 sm:px-6">
+						<CardTitle>{mine ? t("recentMine") : t("recentAll")}</CardTitle>
+						<CardDescription>
+							{mine ? t("recentMineDescription") : t("recentAllDescription")}
+						</CardDescription>
+						<CardAction>
+							<Button asChild variant="contrast" size="sm">
+								<Link href={workspaceUrl("/companies")}>
+									{t("allCompanies")}
+								</Link>
+							</Button>
+						</CardAction>
+					</CardHeader>
+					{recentActivity.length === 0 ? (
+						<CardTableEmpty>{t("recentEmpty")}</CardTableEmpty>
+					) : (
+						<SimpleTable columns={activityColumns(t)}>
+							{recentActivity.map((entry) => (
+								<SimpleTableRow key={entry.id}>
+									<TableCell className={CELL}>
+										<span className="truncate">
+											{entry.subject ?? tActivity(entry.type)}
+										</span>
+									</TableCell>
+									<TableCell className={`${CELL} hidden md:table-cell`}>
+										{entry.company ? (
+											<RecordLink kind="company" id={entry.company.id}>
+												{entry.company.name}
+											</RecordLink>
+										) : (
+											<EmptyCellValue />
+										)}
+									</TableCell>
+									<TableCell className={`${CELL} hidden lg:table-cell`}>
+										{entry.deal ? (
+											<RecordLink kind="deal" id={entry.deal.id}>
+												{entry.deal.name}
+											</RecordLink>
+										) : (
+											<EmptyCellValue />
+										)}
+									</TableCell>
+									<TableCell
+										className={`${CELL} hidden truncate text-muted-foreground md:table-cell`}
+									>
+										{entry.createdBy.name}
+									</TableCell>
+									<TableCell
+										className={`${CELL} text-right text-muted-foreground`}
+									>
+										<LocalRelativeTime date={entry.createdAt} />
+									</TableCell>
+								</SimpleTableRow>
+							))}
+						</SimpleTable>
+					)}
+				</Card>
 			</SoftPanel>
 		</div>
 	);

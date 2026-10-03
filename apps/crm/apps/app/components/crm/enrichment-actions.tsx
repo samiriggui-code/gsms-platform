@@ -26,11 +26,7 @@ export function EnrichmentActions({
 		trpc.companies.enrich.mutationOptions({
 			onSuccess: async (result) => {
 				await cache.company(companyId);
-				toast.success(
-					result.queued
-						? t("enrichQueued")
-						: t("alreadyRunning"),
-				);
+				toast.success(result.queued ? t("enrichQueued") : t("alreadyRunning"));
 			},
 			onError: (error) => toast.error(error.message),
 		}),
@@ -41,9 +37,7 @@ export function EnrichmentActions({
 			onSuccess: async (result) => {
 				await cache.activity();
 				toast.success(
-					result.queued
-						? t("researchQueued")
-						: t("alreadyResearching"),
+					result.queued ? t("researchQueued") : t("alreadyResearching"),
 				);
 			},
 			onError: (error) => toast.error(error.message),
@@ -92,9 +86,7 @@ export function ContactEnrichmentAction({ contactId }: { contactId: string }) {
 			onSuccess: async (result) => {
 				await cache.contact(contactId);
 				toast.success(
-					result.queued
-						? t("contactEnrichQueued")
-						: t("alreadyRunning"),
+					result.queued ? t("contactEnrichQueued") : t("alreadyRunning"),
 				);
 			},
 			onError: (error) => toast.error(error.message),

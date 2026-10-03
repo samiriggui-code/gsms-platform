@@ -91,15 +91,9 @@ function companyConsequence(company: Company, t: Translate): string {
 	const deals = company.deals.length;
 	const contacts = company.contacts.length;
 
-	const gone =
-		deals > 0
-			? t("goneDeals", { count: deals })
-			: t("goneNothing");
+	const gone = deals > 0 ? t("goneDeals", { count: deals }) : t("goneNothing");
 
-	const kept =
-		contacts > 0
-			? ` ${t("keptContacts", { count: contacts })}`
-			: "";
+	const kept = contacts > 0 ? ` ${t("keptContacts", { count: contacts })}` : "";
 
 	return gone + kept;
 }
@@ -553,11 +547,7 @@ function CompanyContacts({
 					);
 				})}
 
-				<AddRow
-					label={ts("addContact")}
-					columns={5}
-					onClick={onAdd}
-				/>
+				<AddRow label={ts("addContact")} columns={5} onClick={onAdd} />
 			</SimpleTable>
 		</>
 	);
@@ -643,11 +633,7 @@ function CompanyDeals({
 					</SimpleTableRow>
 				))}
 
-				<AddRow
-					label={ts("newDeal")}
-					columns={5}
-					onClick={onAdd}
-				/>
+				<AddRow label={ts("newDeal")} columns={5} onClick={onAdd} />
 			</SimpleTable>
 		</>
 	);

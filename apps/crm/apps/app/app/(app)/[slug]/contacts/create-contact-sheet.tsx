@@ -109,9 +109,7 @@ function CreateContactForm({ companyId }: { companyId?: string }) {
 			<SheetContent side="right">
 				<SheetHeader>
 					<SheetTitle>{tNew("new")}</SheetTitle>
-					<SheetDescription>
-						{t("contactDescription")}
-					</SheetDescription>
+					<SheetDescription>{t("contactDescription")}</SheetDescription>
 				</SheetHeader>
 
 				<form
@@ -174,7 +172,9 @@ function CreateContactForm({ companyId }: { companyId?: string }) {
 						</Field>
 
 						<Field>
-							<FieldLabel htmlFor="create-contact-company">{t("company")}</FieldLabel>
+							<FieldLabel htmlFor="create-contact-company">
+								{t("company")}
+							</FieldLabel>
 							<CompanyPicker
 								id="create-contact-company"
 								value={company}
@@ -184,7 +184,9 @@ function CreateContactForm({ companyId }: { companyId?: string }) {
 						</Field>
 
 						<Field>
-							<FieldLabel htmlFor="create-contact-owner">{t("owner")}</FieldLabel>
+							<FieldLabel htmlFor="create-contact-owner">
+								{t("owner")}
+							</FieldLabel>
 							<Select value={ownerId} onValueChange={setOwnerId}>
 								<SelectTrigger id="create-contact-owner">
 									<SelectValue />

@@ -12,8 +12,8 @@ import {
 	DropdownMenuSubTrigger,
 } from "@crm/ui/components/dropdown-menu";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 import {
 	BulkActionsMenu,
@@ -71,10 +71,7 @@ export function ContactsBulkActions({
 		trpc.contacts.bulkEnrich.mutationOptions({
 			onSuccess: async (result) => {
 				await cache.contact();
-				reportBulk(
-					result,
-					(count) => t("contacts.enriching", { count }),
-				);
+				reportBulk(result, (count) => t("contacts.enriching", { count }));
 				onDone();
 			},
 			onError,

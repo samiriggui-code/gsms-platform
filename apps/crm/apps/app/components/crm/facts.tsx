@@ -40,9 +40,7 @@ export function FactSuggestion({
 	const decide = useMutation(
 		trpc.contacts.decideFact.mutationOptions({
 			onSuccess: (result) => {
-				toast.success(
-					result.applied ? t("factAdded") : t("factDismissed"),
-				);
+				toast.success(result.applied ? t("factAdded") : t("factDismissed"));
 				return cache.contact(contactId, { settle: "record" });
 			},
 			onError: (error) => toast.error(error.message),

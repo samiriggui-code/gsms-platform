@@ -526,7 +526,18 @@
 			"next-month": "Closing next month",
 			"later": "Later",
 			"none": "No close date"
-		}
+		},
+		"viewSaved": "View saved.",
+		"viewDeleted": "View deleted.",
+		"views": "Views",
+		"saveCurrentView": "Save current view…",
+		"myViews": "My views",
+		"sharedViews": "Shared with the team",
+		"saveViewTitle": "Save this view",
+		"shareWithTeam": "Share with the team",
+		"cancel": "Cancel",
+		"save": "Save",
+		"deleteView": "Delete {name}"
 	},
 	"crmTimeline": {
 		"placeholder": {

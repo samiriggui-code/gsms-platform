@@ -12,7 +12,5 @@ export function DealStageIndicator({
 }) {
 	const t = useTranslations(DEAL_STAGE_NAMESPACE);
 	const { tone } = dealStagePresentation(stage);
-	return (
-		<StatusIndicator tone={tone} label={t(stage)} className={className} />
-	);
+	return <StatusIndicator tone={tone} label={t(stage)} className={className} />;
 }

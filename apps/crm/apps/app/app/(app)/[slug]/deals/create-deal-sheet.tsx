@@ -121,9 +121,7 @@ function CreateDealForm({ companyId }: { companyId?: string }) {
 			<SheetContent side="right">
 				<SheetHeader>
 					<SheetTitle>{tNew("new")}</SheetTitle>
-					<SheetDescription>
-						{t("dealDescription")}
-					</SheetDescription>
+					<SheetDescription>{t("dealDescription")}</SheetDescription>
 				</SheetHeader>
 
 				<form
@@ -159,7 +157,9 @@ function CreateDealForm({ companyId }: { companyId?: string }) {
 						</Field>
 
 						<Field>
-							<FieldLabel htmlFor="create-deal-company">{t("company")}</FieldLabel>
+							<FieldLabel htmlFor="create-deal-company">
+								{t("company")}
+							</FieldLabel>
 							<CompanyPicker
 								id="create-deal-company"
 								value={company}
@@ -197,9 +197,7 @@ function CreateDealForm({ companyId }: { companyId?: string }) {
 									))}
 								</SelectContent>
 							</Select>
-							<FieldDescription>
-								{t("stageHint")}
-							</FieldDescription>
+							<FieldDescription>{t("stageHint")}</FieldDescription>
 						</Field>
 
 						<Field>

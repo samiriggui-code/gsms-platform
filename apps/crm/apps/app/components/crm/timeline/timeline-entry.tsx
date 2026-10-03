@@ -136,9 +136,7 @@ export function TimelineEntry({
 						) : null}
 
 						{!headline && !entry.body ? (
-							<p className="text-muted-foreground">
-								{tActivity(entry.type)}
-							</p>
+							<p className="text-muted-foreground">{tActivity(entry.type)}</p>
 						) : null}
 					</div>
 

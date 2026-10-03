@@ -84,7 +84,7 @@ export function EmailThreadEntry({
 												rel="noreferrer"
 												className="text-muted-foreground underline underline-offset-3 hover:text-foreground"
 											>
-												{t("openIn", { mailbox: message.mailboxName })}
+												{t("openIn", { mailbox: message.mailboxName ?? "" })}
 											</a>
 										) : null
 									}

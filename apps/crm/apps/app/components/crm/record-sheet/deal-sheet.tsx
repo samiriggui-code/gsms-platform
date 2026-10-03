@@ -80,10 +80,7 @@ function currencyOptions(currency: string, unsupported: string) {
 		return CURRENCY_OPTIONS;
 	}
 
-	return [
-		{ value: currency, label: unsupported },
-		...CURRENCY_OPTIONS,
-	];
+	return [{ value: currency, label: unsupported }, ...CURRENCY_OPTIONS];
 }
 
 function ReportedValue({ deal }: { deal: Deal }) {
@@ -94,7 +91,9 @@ function ReportedValue({ deal }: { deal: Deal }) {
 	if (deal.amountCents === null) return null;
 
 	return (
-		<DetailSheetProperty label={t("inCurrency", { currency: deal.reportingCurrency })}>
+		<DetailSheetProperty
+			label={t("inCurrency", { currency: deal.reportingCurrency })}
+		>
 			{deal.baseAmountCents === null ? (
 				<span className="text-muted-foreground">
 					{t("noRate", { currency })}
@@ -582,11 +581,7 @@ function DealContacts({
 					</SimpleTableRow>
 				))}
 
-				<AddRow
-					label={ts("addContact")}
-					columns={5}
-					onClick={onAdd}
-				/>
+				<AddRow label={ts("addContact")} columns={5} onClick={onAdd} />
 			</SimpleTable>
 		</>
 	);

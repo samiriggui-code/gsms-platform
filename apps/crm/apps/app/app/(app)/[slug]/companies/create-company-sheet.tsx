@@ -101,9 +101,7 @@ function CreateCompanyForm() {
 			<SheetContent side="right">
 				<SheetHeader>
 					<SheetTitle>{tNew("new")}</SheetTitle>
-					<SheetDescription>
-						{t("companyDescription")}
-					</SheetDescription>
+					<SheetDescription>{t("companyDescription")}</SheetDescription>
 				</SheetHeader>
 
 				<form
@@ -141,13 +139,13 @@ function CreateCompanyForm() {
 								autoComplete="off"
 								inputMode="url"
 							/>
-							<FieldDescription>
-								{t("domainHint")}
-							</FieldDescription>
+							<FieldDescription>{t("domainHint")}</FieldDescription>
 						</Field>
 
 						<Field>
-							<FieldLabel htmlFor="create-company-owner">{t("owner")}</FieldLabel>
+							<FieldLabel htmlFor="create-company-owner">
+								{t("owner")}
+							</FieldLabel>
 							<Select value={ownerId} onValueChange={setOwnerId}>
 								<SelectTrigger id="create-company-owner">
 									<SelectValue />
