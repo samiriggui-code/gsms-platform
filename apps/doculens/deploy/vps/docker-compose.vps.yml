@@ -1,0 +1,157 @@
+# GSMS Documents (DocuLens) — VPS Hostinger + Traefik
+# Host: doculens.gsms-security.com
+# Prérequis: réseau Traefik externe (souvent `proxy` / `traefik`), DNS A → VPS.
+name: gsms-doculens
+
+services:
+  database:
+    image: timescale/timescaledb-ha:pg16
+    container_name: gsms-doculens-database
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME:-doculens}
+      POSTGRES_USER: ${DATABASE_USER:-doculens}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:?set DATABASE_PASSWORD in .env}
+    volumes:
+      - gsms_doculens_pg:/home/postgres/pgdata
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - doculens
+
+  redis:
+    image: redis:7-alpine
+    container_name: gsms-doculens-redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - gsms_doculens_redis:/data
+    networks:
+      - doculens
+
+  api:
+    build:
+      context: ../..
+      dockerfile: docker/Dockerfile.api
+    container_name: gsms-doculens-api
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      DOCULENS_ENVIRONMENT: production
+      DOCULENS_APP_NAME: GSMS Documents
+      DOCULENS_INITIALIZE_DATABASE: "true"
+      DOCULENS_SEED_FR_LABELS: "true"
+      DOCULENS_SEED_DEMO_USERS: "false"
+      DOCULENS_SEED_DEMO_WORKSPACE: "false"
+      DATABASE_HOST: database
+      DATABASE_PORT: "5432"
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+    volumes:
+      - gsms_doculens_ingestion:/workspace/data/ingestion
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health/live"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    networks:
+      - doculens
+      - traefik
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=${TRAEFIK_NETWORK:-proxy}
+      - traefik.http.routers.doculens-api.entrypoints=${TRAEFIK_ENTRYPOINT:-websecure}
+      - traefik.http.routers.doculens-api.rule=Host(`doculens.gsms-security.com`) && (PathPrefix(`/api`) || PathPrefix(`/auth`) || PathPrefix(`/events`) || PathPrefix(`/health`) || PathPrefix(`/docs`) || PathPrefix(`/openapi.json`))
+      - traefik.http.routers.doculens-api.tls=true
+      - traefik.http.routers.doculens-api.tls.certresolver=${TRAEFIK_CERTRESOLVER:-letsencrypt}
+      - traefik.http.routers.doculens-api.priority=100
+      - traefik.http.routers.doculens-api.service=doculens-api
+      - traefik.http.services.doculens-api.loadbalancer.server.port=8080
+      - traefik.http.routers.doculens-api-http.entrypoints=${TRAEFIK_HTTP_ENTRYPOINT:-web}
+      - traefik.http.routers.doculens-api-http.rule=Host(`doculens.gsms-security.com`) && (PathPrefix(`/api`) || PathPrefix(`/auth`) || PathPrefix(`/events`) || PathPrefix(`/health`) || PathPrefix(`/docs`) || PathPrefix(`/openapi.json`))
+      - traefik.http.routers.doculens-api-http.middlewares=doculens-https
+      - traefik.http.routers.doculens-api-http.priority=100
+      - traefik.http.middlewares.doculens-https.redirectscheme.scheme=https
+      - traefik.http.middlewares.doculens-https.redirectscheme.permanent=true
+
+  celery_worker:
+    build:
+      context: ../..
+      dockerfile: docker/Dockerfile.celery
+    container_name: gsms-doculens-celery
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      DOCULENS_ENVIRONMENT: production
+      DOCULENS_APP_NAME: GSMS Documents
+      DATABASE_HOST: database
+      DATABASE_PORT: "5432"
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      EASYOCR_HOME: /home/celery/.EasyOCR
+      DOCLING_CACHE_DIR: /home/celery/.cache/docling
+    volumes:
+      - gsms_doculens_ingestion:/workspace/data/ingestion
+      - gsms_doculens_easyocr:/home/celery/.EasyOCR
+      - gsms_doculens_docling:/home/celery/.cache/docling
+    networks:
+      - doculens
+
+  frontend:
+    build:
+      context: ../..
+      dockerfile: docker/Dockerfile.frontend
+    container_name: gsms-doculens-frontend
+    restart: unless-stopped
+    depends_on:
+      - api
+    networks:
+      - doculens
+      - traefik
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=${TRAEFIK_NETWORK:-proxy}
+      - traefik.http.routers.doculens-web.entrypoints=${TRAEFIK_ENTRYPOINT:-websecure}
+      - traefik.http.routers.doculens-web.rule=Host(`doculens.gsms-security.com`)
+      - traefik.http.routers.doculens-web.tls=true
+      - traefik.http.routers.doculens-web.tls.certresolver=${TRAEFIK_CERTRESOLVER:-letsencrypt}
+      - traefik.http.routers.doculens-web.priority=1
+      - traefik.http.routers.doculens-web.service=doculens-web
+      - traefik.http.services.doculens-web.loadbalancer.server.port=80
+      - traefik.http.routers.doculens-web-http.entrypoints=${TRAEFIK_HTTP_ENTRYPOINT:-web}
+      - traefik.http.routers.doculens-web-http.rule=Host(`doculens.gsms-security.com`)
+      - traefik.http.routers.doculens-web-http.middlewares=doculens-https
+      - traefik.http.routers.doculens-web-http.priority=1
+
+volumes:
+  gsms_doculens_pg:
+  gsms_doculens_redis:
+  gsms_doculens_ingestion:
+  gsms_doculens_easyocr:
+  gsms_doculens_docling:
+
+networks:
+  doculens:
+    name: gsms-doculens
+  traefik:
+    external: true
+    name: ${TRAEFIK_NETWORK:-proxy}
