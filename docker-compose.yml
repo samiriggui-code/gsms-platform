@@ -43,6 +43,17 @@ services:
       GSMS_STORAGE_MASTER_KEY: ${GSMS_STORAGE_MASTER_KEY:?GSMS_STORAGE_MASTER_KEY est obligatoire}
       # Fichiers d'avant le coffre-fort (en clair), chiffrés par « gsms_core.cli vault-migrate ».
       GSMS_LEGACY_STORAGE_ROOT: /app/var/blobs
+      # Messagerie (SMTP de GSMS, Hostinger). Rien ne part tant que GSMS_MAIL_ENABLED=false.
+      GSMS_MAIL_ENABLED: ${GSMS_MAIL_ENABLED:-false}
+      GSMS_SMTP_HOST: ${GSMS_SMTP_HOST:-smtp.hostinger.com}
+      GSMS_SMTP_PORT: ${GSMS_SMTP_PORT:-465}
+      GSMS_SMTP_SSL: ${GSMS_SMTP_SSL:-true}
+      GSMS_SMTP_STARTTLS: ${GSMS_SMTP_STARTTLS:-false}
+      GSMS_SMTP_USER: ${GSMS_SMTP_USER:-}
+      GSMS_SMTP_PASSWORD: ${GSMS_SMTP_PASSWORD:-}
+      GSMS_SMTP_FROM: ${GSMS_SMTP_FROM:-no-reply@gsms-security.com}
+      GSMS_SMTP_FROM_NAME: ${GSMS_SMTP_FROM_NAME:-GSMS Sécurité}
+      GSMS_APP_URL: ${APP_URL:-https://gsms-security.com}
       # JSON {"grace": "...", "qatrial": "...", "crm": "..."} — généré par deploy/deploy.sh.
       GSMS_WEBHOOK_SECRETS: ${GSMS_WEBHOOK_SECRETS:?GSMS_WEBHOOK_SECRETS est obligatoire}
       GSMS_CRM_URL: ${GSMS_CRM_URL:-}

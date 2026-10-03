@@ -67,6 +67,14 @@ GSMS_JWT_SECRET=$(secret)
 GSMS_STORAGE_MASTER_KEY=$(openssl rand -base64 32)
 # Secrets HMAC des webhooks entrants (GRACE, QAtrial, CRM → Core), à recopier dans chaque application.
 GSMS_WEBHOOK_SECRETS='{"grace":"$(secret)","qatrial":"$(secret)","crm":"$(secret)"}'
+# Messagerie (Hostinger). Renseigner GSMS_SMTP_PASSWORD puis passer GSMS_MAIL_ENABLED à true.
+GSMS_MAIL_ENABLED=false
+GSMS_SMTP_HOST=smtp.hostinger.com
+GSMS_SMTP_PORT=465
+GSMS_SMTP_SSL=true
+GSMS_SMTP_USER=
+GSMS_SMTP_PASSWORD=
+GSMS_SMTP_FROM=no-reply@$DOMAIN
 # Connecteurs (URL internes des services spécialisés, jetons de service). Vides = connecteur inactif.
 GSMS_CRM_URL=
 GSMS_CRM_TOKEN=
