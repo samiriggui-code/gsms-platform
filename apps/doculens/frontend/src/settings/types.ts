@@ -7,6 +7,8 @@ export const DEFAULT_PERSONAS: Persona[] = ['analyst', 'manager', 'reviewer', 'd
 export interface AppSettings {
   apiBaseUrl: string;
   apiKey: string;
+  /** Site GSMS courant (envoyé en X-GSMS-Workspace-Id). */
+  workspaceId: string;
   chunkPreviewLimit: number;
   summaryChunkLimit: number;
   qaTopK: number;

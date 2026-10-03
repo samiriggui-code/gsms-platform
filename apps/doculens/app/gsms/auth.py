@@ -76,6 +76,14 @@ def _decode_local_or_platform(
             return _decode_platform_token(token), None
 
     user = decode_access_token(token, session)
+    # workspace_id peut être dans le JWT local (posé à la connexion).
+    try:
+        claims = jwt.get_unverified_claims(token)
+    except JWTError:
+        claims = {}
+    claim_ws = claims.get("workspace_id")
+    settings = get_settings()
+    workspace_id = str(claim_ws) if claim_ws else settings.default_workspace_id
     return (
         PlatformPrincipal(
             subject=str(user.id),
@@ -83,6 +91,7 @@ def _decode_local_or_platform(
             source="local",
             email=user.email,
             user_id=user.id if isinstance(user.id, UUID) else UUID(str(user.id)),
+            workspace_id=workspace_id,
         ),
         user,
     )
@@ -118,6 +127,8 @@ def resolve_workspace_id(
             )
 
     workspace_id = header_ws or claim_ws
+    if not workspace_id and principal.source in {"local", "api_key"}:
+        workspace_id = get_settings().default_workspace_id
     if not workspace_id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -156,7 +167,7 @@ def require_auth_or_legacy_api_key(
 
     if settings.api_key:
         require_api_key(request)
-        workspace_id = (x_gsms_workspace_id or "").strip()
+        workspace_id = (x_gsms_workspace_id or "").strip() or settings.default_workspace_id
         if not workspace_id:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,

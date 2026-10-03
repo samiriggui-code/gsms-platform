@@ -28,6 +28,7 @@ interface ApiConfig {
   apiKey?: string;
   apiKeyHeader: string;
   accessToken?: string;
+  workspaceId?: string;
 }
 
 const defaultBaseUrl =
@@ -81,6 +82,10 @@ function buildHeaders(extra?: HeadersInit, includeContentType = false): Headers 
 
   if (apiConfig.accessToken) {
     headers.set('Authorization', `Bearer ${apiConfig.accessToken}`);
+  }
+
+  if (apiConfig.workspaceId) {
+    headers.set('X-GSMS-Workspace-Id', apiConfig.workspaceId);
   }
 
   return headers;

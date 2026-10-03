@@ -156,6 +156,20 @@ export function SettingsPage() {
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="workspace-id">Site (workspace)</Label>
+            <Input
+              id="workspace-id"
+              value={settings.workspaceId}
+              onChange={(event) => updateSettings({ workspaceId: event.target.value.trim() })}
+              placeholder="a0000000-0000-4000-8000-000000000001"
+            />
+            <p className="text-xs text-muted-foreground">
+              Identifiant du site GSMS (header {serverConfig?.workspace_header ?? 'X-GSMS-Workspace-Id'}).
+              Défaut serveur : {serverConfig?.default_workspace_id ?? '—'}
+            </p>
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="api-key">API key (sent via {serverConfig?.api_key_header ?? 'X-API-Key'})</Label>
             <div className="flex gap-2">
               <Input

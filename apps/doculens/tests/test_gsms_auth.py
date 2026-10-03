@@ -7,12 +7,14 @@ from typing import Any, Dict, Optional
 from uuid import uuid4
 
 import pytest
+from fastapi import Depends, Request
 from fastapi.testclient import TestClient
 from jose import jwt
 
 from app.api import endpoint as endpoint_module
 from app.api.dependencies import db_session
 from app.config.settings import get_settings
+from app.gsms.auth import get_workspace_id, require_auth_or_legacy_api_key
 from app.main import app
 
 WORKSPACE_A = "11111111-1111-1111-1111-111111111111"
@@ -63,15 +65,45 @@ def test_secured_route_rejects_unauthenticated(client, auth_env):
     assert response.status_code == 401
 
 
-def test_api_key_requires_workspace_header(client, auth_env):
+def test_api_key_without_workspace_uses_default(client, auth_env):
+    """Sans header workspace, la clé API retombe sur DOCULENS_DEFAULT_WORKSPACE_ID (plus de 400)."""
     settings = get_settings()
+
+    def fake_session():
+        yield None
+
+    app.dependency_overrides[db_session] = fake_session
+
+    @app.get("/__test_ws")
+    def _probe(
+        request: Request,
+        principal=Depends(require_auth_or_legacy_api_key),
+        workspace_id: str = Depends(get_workspace_id),
+    ):
+        return {"workspace_id": workspace_id, "role": principal.role}
+
+    try:
+        response = client.get(
+            "/__test_ws",
+            headers={settings.api_key_header: "test-api-key"},
+        )
+        assert response.status_code == 200
+        assert response.json()["workspace_id"] == settings.default_workspace_id
+    finally:
+        app.dependency_overrides.pop(db_session, None)
+        app.router.routes = [
+            r for r in app.router.routes if getattr(r, "path", None) != "/__test_ws"
+        ]
+
+
+def test_platform_jwt_without_workspace_still_requires_header(client, auth_env):
+    token = _platform_token(workspace_id=None)
     response = client.get(
         "/events/documents",
-        headers={settings.api_key_header: "test-api-key"},
+        headers={"Authorization": f"Bearer {token}"},
     )
     assert response.status_code == 400
-    assert "Workspace" in response.json()["detail"] or "workspace" in response.json()["detail"].lower()
-
+    assert "workspace" in response.json()["detail"].lower()
 
 def test_api_key_with_workspace_accepted_for_upload(monkeypatch, tmp_path, client, auth_env):
     stored: Dict[str, Any] = {}

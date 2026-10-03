@@ -212,6 +212,8 @@ export interface RuntimeConfig {
   auth_required: boolean;
   showcase_read_only: boolean;
   api_key_header: string;
+  workspace_header?: string;
+  default_workspace_id?: string;
   persona_options?: string[];
   role_definitions?: Record<string, RoleDefinition>;
 }

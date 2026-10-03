@@ -346,6 +346,7 @@ def get_runtime_config() -> Dict[str, Any]:
         "chunk_preview_limit": settings.chunk_preview_limit,
         "auth_required": True,
         "workspace_header": "X-GSMS-Workspace-Id",
+        "default_workspace_id": settings.default_workspace_id,
         "showcase_read_only": settings.showcase_read_only,
         "api_key_header": settings.api_key_header,
         "llm": _llm_runtime_status(settings),

@@ -158,6 +158,7 @@ def create_access_token(*, user: User) -> str:
         "email": user.email,
         "role": user.role,
         "persona": user.persona,
+        "workspace_id": settings.default_workspace_id,
         "exp": expire_at,
     }
     return jwt.encode(payload, settings.auth_secret_key, algorithm=settings.auth_algorithm)

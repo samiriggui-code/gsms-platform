@@ -56,6 +56,11 @@ class Settings(BaseSettings):
     auth_secret_key: str = Field(default="doculens-dev-secret", alias="DOCULENS_AUTH_SECRET")
     auth_algorithm: str = Field(default="HS256", alias="DOCULENS_AUTH_ALGORITHM")
     auth_token_exp_minutes: int = Field(default=120, ge=5, alias="DOCULENS_AUTH_TOKEN_EXP_MINUTES")
+    # Site par défaut quand le header / claim workspace est absent (comptes locaux UI).
+    default_workspace_id: str = Field(
+        default="a0000000-0000-4000-8000-000000000001",
+        alias="DOCULENS_DEFAULT_WORKSPACE_ID",
+    )
 
     # Pont plateforme GSMS (JWT Core + webhook ingest).
     gsms_platform_jwt_secret: Optional[str] = Field(

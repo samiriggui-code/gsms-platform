@@ -14,6 +14,7 @@ const defaultApiBaseUrl =
 const defaultSettings: AppSettings = {
   apiBaseUrl: defaultApiBaseUrl,
   apiKey: '',
+  workspaceId: 'a0000000-0000-4000-8000-000000000001',
   chunkPreviewLimit: 25,
   summaryChunkLimit: 12,
   qaTopK: 5,
@@ -78,8 +79,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     setApiConfig({
       baseUrl: settings.apiBaseUrl,
       apiKey: settings.apiKey || undefined,
+      workspaceId: settings.workspaceId || undefined,
     });
-  }, [settings.apiBaseUrl, settings.apiKey]);
+  }, [settings.apiBaseUrl, settings.apiKey, settings.workspaceId]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
@@ -105,11 +107,19 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
             summaryChunkLimit: config.summary_chunk_limit,
             qaTopK: config.qa_top_k,
             searchResultLimit: config.search_result_limit,
+            workspaceId:
+              current.workspaceId ||
+              config.default_workspace_id ||
+              defaultSettings.workspaceId,
             persona: normalisePersona(current.persona, derivePersonaOptions(config)),
           }));
         } else {
           setSettings((current) => ({
             ...current,
+            workspaceId:
+              current.workspaceId ||
+              config.default_workspace_id ||
+              defaultSettings.workspaceId,
             persona: normalisePersona(current.persona, derivePersonaOptions(config)),
           }));
         }
