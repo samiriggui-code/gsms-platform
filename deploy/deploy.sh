@@ -59,6 +59,7 @@ if [[ ! -f .env ]]; then
   cat > .env <<ENV
 # Généré par deploy/deploy.sh le $(date -u +%Y-%m-%d). Ne jamais committer ce fichier.
 DOMAIN=$DOMAIN
+APP_URL=https://$DOMAIN
 POSTGRES_PASSWORD=$(secret)
 GSMS_JWT_SECRET=$(secret)
 # Secrets HMAC des webhooks entrants (GRACE, QAtrial, CRM → Core), à recopier dans chaque application.
@@ -80,6 +81,7 @@ ENV
   echo ".env créé (secrets générés, lisible par vous seul)."
 fi
 set_env DOMAIN "$DOMAIN"
+set_env APP_URL "https://$DOMAIN"
 grep -q "^DOCULENS_PORT=" .env || set_env DOCULENS_PORT 3110  # .env créé avant l'arrivée de DocuLens
 
 # Les ports locaux ne doivent pas déjà être pris par une autre application (ex. gsms-qualiopi : 3000 / 8000).

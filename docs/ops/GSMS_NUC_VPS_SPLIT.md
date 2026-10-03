@@ -7,7 +7,7 @@
 
 | Accès | Comment | Usage |
 |-------|---------|--------|
-| **VPS** | FQDN `*.global-it-ss.com` | prod / smoke public |
+| **VPS** | FQDN `*.gsms-security.com` | prod / smoke public |
 | **NUC** | IP locale `http://192.168.1.37:<port>` | lab, itération portable → NUC |
 
 Ne pas mélanger : après bascule DNS d’une app, le FQDN = VPS uniquement. Le NUC reste joignable en LAN.
@@ -24,15 +24,15 @@ Ne pas mélanger : après bascule DNS d’une app, le FQDN = VPS uniquement. Le 
 
 | App | NUC (lab IP) | FQDN (VPS) | État |
 |-----|--------------|------------|------|
-| Comp AI | `:3030` / API `:3333` | `comp.global-it-ss.com` | VPS + DNS |
-| Comp CRM / Eve | Caddy / ports | `crm.global-it-ss.com` | VPS + DNS |
-| TenderAI MCP | `:8090` | `mcp.global-it-ss.com` | VPS + DNS |
-| QAtrial | `:3001` | `qatrial.global-it-ss.com` | VPS + DNS |
-| GRACE | `:3020` | `grace.global-it-ss.com` | VPS + DNS |
-| MinIO console | `:9001` | `minio.global-it-ss.com` | à brancher Traefik VPS |
-| Memory Hub | `:8125` | `hub.global-it-ss.com` | **VPS + DNS** (copie ; NUC lab LAN) |
-| Memory Proxy | `:8096` | `memory.global-it-ss.com` | **VPS + DNS** (copie ; NUC lab LAN) |
-| Admin sondes | Caddy | `admin.global-it-ss.com` | à revoir post-bascule |
+| Comp AI | `:3030` / API `:3333` | `comp.gsms-security.com` | VPS + DNS |
+| Comp CRM / Eve | Caddy / ports | `crm.gsms-security.com` | VPS + DNS |
+| TenderAI MCP | `:8090` | `mcp.gsms-security.com` | VPS + DNS |
+| QAtrial | `:3001` | `qatrial.gsms-security.com` | VPS + DNS |
+| GRACE | `:3020` | `grace.gsms-security.com` | VPS + DNS |
+| MinIO console | `:9001` | `minio.gsms-security.com` | à brancher Traefik VPS |
+| Memory Hub | `:8125` | `hub.gsms-security.com` | **VPS + DNS** (copie ; NUC lab LAN) |
+| Memory Proxy | `:8096` | `memory.gsms-security.com` | **VPS + DNS** (copie ; NUC lab LAN) |
+| Admin sondes | Caddy | `admin.gsms-security.com` | à revoir post-bascule |
 
 **VPS :** `187.77.166.124` · KVM 8 · 32 Go · Ubuntu 24.04 · Traefik host network.
 

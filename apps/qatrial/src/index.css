@@ -11,7 +11,7 @@
   /* Une seule typo app = landing InvoicePilot / Inter */
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   --font-mono: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-  --font-serif: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-serif: Georgia, "Times New Roman", serif;
   --radius-r1: 4px;
   --radius-r2: 6px;
   --radius-r3: 8px;

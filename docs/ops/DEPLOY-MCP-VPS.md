@@ -1,6 +1,6 @@
 # TenderAI MCP — déploiement VPS
 
-**FQDN :** `mcp.global-it-ss.com` (A encore NUC).  
+**FQDN :** `mcp.gsms-security.com` (A encore NUC).  
 **Smoke :** `http://187.77.166.124:8090/mcp`
 
 ## Commandes

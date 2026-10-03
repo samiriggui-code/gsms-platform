@@ -1,6 +1,6 @@
 # QAtrial — déploiement VPS
 
-**FQDN :** `qatrial.global-it-ss.com` (A → VPS)  
+**FQDN :** `qatrial.gsms-security.com` (A → VPS)  
 **Smoke :** `http://187.77.166.124:3051` → 200
 
 ## Setup

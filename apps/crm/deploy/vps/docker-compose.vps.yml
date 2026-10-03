@@ -55,7 +55,7 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:?set MINIO_ROOT_USER in .env}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?set MINIO_ROOT_PASSWORD in .env}
       MINIO_SERVER_URL: http://minio:9000
-      MINIO_BROWSER_REDIRECT_URL: https://minio.global-it-ss.com
+      MINIO_BROWSER_REDIRECT_URL: https://minio.gsms-security.com
     volumes:
       - gsms_crm_minio:/data
     command: ['server', '/data', '--console-address', ':9001']
@@ -72,14 +72,14 @@ services:
       - traefik.enable=true
       - traefik.http.middlewares.crm-blob-strip.stripprefix.prefixes=/blob
       - traefik.http.routers.crm-blob.entrypoints=websecure
-      - traefik.http.routers.crm-blob.rule=Host(`crm.global-it-ss.com`) && PathPrefix(`/blob`)
+      - traefik.http.routers.crm-blob.rule=Host(`crm.gsms-security.com`) && PathPrefix(`/blob`)
       - traefik.http.routers.crm-blob.middlewares=crm-blob-strip
       - traefik.http.routers.crm-blob.tls=true
       - traefik.http.routers.crm-blob.priority=90
       - traefik.http.routers.crm-blob.service=crm-blob
       - traefik.http.services.crm-blob.loadbalancer.server.port=9000
       - traefik.http.routers.minio-console.entrypoints=websecure
-      - traefik.http.routers.minio-console.rule=Host(`minio.global-it-ss.com`)
+      - traefik.http.routers.minio-console.rule=Host(`minio.gsms-security.com`)
       - traefik.http.routers.minio-console.tls.certresolver=letsencrypt
       - traefik.http.routers.minio-console.service=minio-console
       - traefik.http.services.minio-console.loadbalancer.server.port=9001
@@ -138,7 +138,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.crm-api.entrypoints=websecure
-      - traefik.http.routers.crm-api.rule=Host(`crm.global-it-ss.com`) && (PathPrefix(`/api/trpc`) || PathPrefix(`/api/t`) || PathPrefix(`/api/conversations`) || PathPrefix(`/api/public`) || PathPrefix(`/auth`) || PathPrefix(`/health`))
+      - traefik.http.routers.crm-api.rule=Host(`crm.gsms-security.com`) && (PathPrefix(`/api/trpc`) || PathPrefix(`/api/t`) || PathPrefix(`/api/conversations`) || PathPrefix(`/api/public`) || PathPrefix(`/auth`) || PathPrefix(`/health`))
       - traefik.http.routers.crm-api.tls=true
       - traefik.http.routers.crm-api.priority=100
       - traefik.http.services.crm-api.loadbalancer.server.port=3001
@@ -206,7 +206,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.crm-app.entrypoints=websecure
-      - traefik.http.routers.crm-app.rule=Host(`crm.global-it-ss.com`)
+      - traefik.http.routers.crm-app.rule=Host(`crm.gsms-security.com`)
       - traefik.http.routers.crm-app.tls.certresolver=letsencrypt
       - traefik.http.routers.crm-app.priority=10
       - traefik.http.services.crm-app.loadbalancer.server.port=3000

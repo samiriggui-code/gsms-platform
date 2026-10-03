@@ -98,7 +98,8 @@ class BaseConnector:
         start = time.perf_counter()
         status: int | None = None
         try:
-            resp = self._client.request(method, path, headers=ctx.headers(), **kwargs)
+            headers = {**ctx.headers(), **(kwargs.pop("headers", None) or {})}
+            resp = self._client.request(method, path, headers=headers, **kwargs)
             status = resp.status_code
             if resp.status_code >= 400:
                 raise ConnectorError(

@@ -3,13 +3,28 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
-import { Eye, EyeOff, Loader2, Shield } from 'lucide-react';
+import {
+  CalendarClock,
+  ClipboardList,
+  Eye,
+  EyeOff,
+  FileText,
+  Loader2,
+  Shield,
+} from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { apiFetch, getApiBase } from '../../lib/apiClient';
+import { ThemeToggle } from '../shell/ThemeToggle';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Button } from '../ui/button';
 import { AuthBrandedLayout } from './AuthBrandedLayout';
+
+const PANEL_ITEMS = [
+  { icon: ClipboardList, label: 'Vos CAPA et leur avancement' },
+  { icon: FileText, label: 'Vos preuves et rapports, au même endroit' },
+  { icon: CalendarClock, label: 'Vos échéances réglementaires suivies' },
+] as const;
 
 const authSchema = z
   .object({
@@ -170,10 +185,13 @@ export function LoginPage() {
   if (ssoExchanging) {
     return (
       <AuthBrandedLayout
-        brandName="QAtrial"
-        mark="Q"
-        panelTitle="Connexion SSO"
-        panelBody="Finalisation de l’authentification…"
+        product="QAtrial"
+        eyebrow="Connexion SSO"
+        titleLead="Authentification"
+        titleEmph="en cours."
+        body="Finalisation de l’authentification sécurisée…"
+        items={[...PANEL_ITEMS]}
+        controls={<ThemeToggle />}
       >
         <div className="py-10 text-center">
           <Loader2 className="mx-auto mb-3 size-8 animate-spin text-accent" />
@@ -185,26 +203,22 @@ export function LoginPage() {
 
   return (
     <AuthBrandedLayout
-      brandName="QAtrial"
-      mark="Q"
-      panelTitle="Accès sécurisé à QAtrial"
-      panelBody={
-        <>
-          CAPA, audit trail et preuves réglementaires —
-          <br />
-          <span className="font-semibold text-text-primary">un même fil</span> pour
-          traiter et tracer les Findings.
-        </>
-      }
+      product="QAtrial"
+      eyebrow="Espace qualité"
+      titleLead="Votre conformité,"
+      titleEmph="suivie au quotidien."
+      body="Retrouvez vos CAPA, votre audit trail, vos preuves réglementaires et vos prochaines échéances."
+      items={[...PANEL_ITEMS]}
+      controls={<ThemeToggle />}
     >
-      <div className="space-y-5">
-        <div className="space-y-1 pb-1 text-center">
-          <h1 className="text-[22px] font-semibold tracking-[-0.02em] text-text-primary">
-            {mode === 'login' ? t('auth.login') : t('auth.register')}
+      <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-1.5">
+          <h1 className="text-[22px]/[1.2] font-[650] tracking-[-0.03em] text-text-primary">
+            {mode === 'login' ? 'Connexion' : t('auth.register')}
           </h1>
-          <p className="text-[12.5px] text-text-tertiary">
+          <p className="text-[13.5px]/[1.55] text-text-tertiary">
             {mode === 'login'
-              ? 'Bienvenue — connectez-vous avec vos identifiants.'
+              ? 'Accédez à votre espace GSMS QAtrial.'
               : t('auth.register')}
           </p>
           {import.meta.env.DEV && mode === 'login' && Boolean(devCreds.email) && (
@@ -303,21 +317,21 @@ export function LoginPage() {
           <Button
             type="submit"
             loading={loading}
-            className="w-full bg-accent text-white hover:bg-accent-hover"
+            className="h-11 w-full bg-[#111721] text-white hover:bg-[#111721]/90"
           >
-            {mode === 'login' ? t('auth.login') : t('auth.register')}
+            {mode === 'login' ? 'Se connecter' : t('auth.register')}
           </Button>
         </form>
 
-        <div className="text-center">
+        <p className="text-center text-[12.5px] text-text-tertiary">
           <button
             type="button"
             onClick={toggleMode}
-            className="text-[12px] font-semibold text-accent-text hover:underline"
+            className="font-medium text-text-primary underline-offset-4 hover:underline"
           >
             {mode === 'login' ? t('auth.noAccount') : t('auth.hasAccount')}
           </button>
-        </div>
+        </p>
       </div>
     </AuthBrandedLayout>
   );

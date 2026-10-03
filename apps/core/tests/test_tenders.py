@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import json
 import uuid
 
+import httpx
 import pytest
 from sqlalchemy import select
 
@@ -9,6 +11,7 @@ from gsms_core.events.bus import pending_outbox
 from gsms_core.events.models import Event
 from gsms_core.missions.models import Mission, MissionType
 from gsms_core.tenders.models import GoNoGo
+from gsms_core.tenders.opportunities import normalize_opportunities
 from gsms_core.tenders.scoring import Criterion, compute_score, evaluate
 from gsms_core.tenders.service import TenderError, decide, open_case, score_case
 
@@ -67,3 +70,114 @@ def test_case_lifecycle(session, demo):
     assert [o.destination for o in pending_outbox(session)] == ["crm"]
     with pytest.raises(TenderError, match="déjà"):
         decide(session, case, GoNoGo.GO, decided_by="user:1", rationale="revirement")
+
+
+def test_tenders_http_list_summary_go_no_go(client, auth, demo, session):
+    ws = uuid.UUID(demo.lyon)
+    ao = Mission(workspace_id=ws, type=MissionType.APPEL_OFFRES, title="AO HTTP")
+    session.add(ao)
+    session.flush()
+    case = open_case(session, ao, title="Marché gardiennage", actor="user:1", buyer="Ville")
+    score_case(session, case, CRITERIA, actor="user:1")
+    session.commit()
+
+    h = auth("consultant")
+    listed = client.get(f"/api/v1/workspaces/{demo.lyon}/tenders", headers=h)
+    assert listed.status_code == 200
+    assert any(i["id"] == str(ao.id) for i in listed.json())
+
+    summary = client.get(f"/api/v1/workspaces/{demo.lyon}/tenders/{ao.id}", headers=h)
+    assert summary.status_code == 200
+    assert summary.json()["buyer"] == "Ville"
+    assert summary.json()["title"] == "Marché gardiennage"
+
+    gng = client.get(f"/api/v1/workspaces/{demo.lyon}/tenders/{ao.id}/go-no-go", headers=h)
+    assert gng.status_code == 200
+    body = gng.json()
+    assert body["score"] == 67.5
+    assert body["recommendation"] == "GO"
+    assert body["decision"] is None
+    assert len(body["criteria"]) == 4
+
+    decided = client.post(
+        f"/api/v1/workspaces/{demo.lyon}/tenders/{ao.id}/go-no-go/decision",
+        headers=h,
+        json={"decision": "GO", "rationale": "Capacité et marge OK pour Q4"},
+    )
+    assert decided.status_code == 200, decided.text
+    assert decided.json()["decision"]["value"] == "GO"
+
+    forbidden = client.get(f"/api/v1/workspaces/{demo.paris}/tenders/{ao.id}", headers=auth("lyon"))
+    assert forbidden.status_code == 403
+
+
+def test_tenders_opportunities_via_lexsocket_mcp(client, auth, demo, app, settings):
+    settings.lexsocket_mcp_token = "mcp-token"
+    settings.lexsocket_mcp_url = "http://lexsocket.test/mcp"
+    app.state.settings = settings
+
+    class LexServer:
+        def __call__(self, req: httpx.Request) -> httpx.Response:
+            msg = json.loads(req.content)
+            if "id" not in msg:
+                return httpx.Response(202)
+            if msg["method"] == "initialize":
+                return httpx.Response(
+                    200,
+                    json={
+                        "jsonrpc": "2.0",
+                        "id": msg["id"],
+                        "result": {"protocolVersion": "2025-06-18", "serverInfo": {"name": "lex"}},
+                    },
+                    headers={"Mcp-Session-Id": "lex-1"},
+                )
+            assert msg["params"]["name"] == "get_open_opportunities"
+            payload = {
+                "items": [
+                    {
+                        "id": "ted-1",
+                        "title": "Gardiennage ERP Lyon",
+                        "buyer": "Métropole",
+                        "cpv": "79710000",
+                        "nuts": "FRK2",
+                        "amount": 120000,
+                        "deadline": "2026-11-01",
+                    }
+                ]
+            }
+            return httpx.Response(
+                200,
+                json={
+                    "jsonrpc": "2.0",
+                    "id": msg["id"],
+                    "result": {"content": [{"type": "text", "text": json.dumps(payload)}]},
+                },
+            )
+
+    app.state.mcp_transport = httpx.MockTransport(LexServer())
+    r = client.get(f"/api/v1/workspaces/{demo.lyon}/tenders/opportunities", headers=auth("lyon"))
+    assert r.status_code == 200, r.text
+    assert r.json()[0]["title"] == "Gardiennage ERP Lyon"
+    assert r.json()[0]["cpv"] == "79710000"
+
+
+def test_tenders_opportunities_empty_without_token(client, auth, demo):
+    r = client.get(f"/api/v1/workspaces/{demo.lyon}/tenders/opportunities", headers=auth("lyon"))
+    assert r.status_code == 200
+    assert r.json() == []
+
+
+def test_normalize_opportunities_from_content_block():
+    raw = {
+        "content": [
+            {
+                "type": "text",
+                "text": json.dumps(
+                    {"opportunities": [{"id": "1", "title": "SSIAP", "buyer": {"name": "CHU"}}]}
+                ),
+            }
+        ]
+    }
+    rows = normalize_opportunities(raw)
+    assert len(rows) == 1
+    assert rows[0].buyer == "CHU"

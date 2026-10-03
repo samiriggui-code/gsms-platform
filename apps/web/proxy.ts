@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { SESSION_COOKIE } from "@/lib/session";
+import { SESSION_COOKIE, publicAbsoluteUrl } from "@/lib/session";
 
 /**
  * Protection de /app/* (Next.js 16 : « proxy », ex-« middleware »).
@@ -9,9 +9,7 @@ import { SESSION_COOKIE } from "@/lib/session";
 export function proxy(request: NextRequest) {
   if (request.cookies.get(SESSION_COOKIE)?.value) return NextResponse.next();
 
-  const url = request.nextUrl.clone();
-  url.pathname = "/login";
-  url.search = "";
+  const url = publicAbsoluteUrl(request, "/login");
   url.searchParams.set("next", `${request.nextUrl.pathname}${request.nextUrl.search}`);
   return NextResponse.redirect(url);
 }

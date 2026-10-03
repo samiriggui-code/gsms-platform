@@ -25,3 +25,39 @@ export function safeNextPath(raw: string | null | undefined, fallback = "/app"):
   if (!raw || !raw.startsWith("/") || raw.startsWith("//") || raw.startsWith("/\\")) return fallback;
   return raw;
 }
+
+/**
+ * Base URL navigateur pour les redirects (VPS derrière Traefik).
+ * Next bindé sur HOSTNAME=0.0.0.0 → request.url vaut 0.0.0.0:3000 ;
+ * on privilégie APP_URL, puis Host / X-Forwarded-*.
+ */
+export function publicAbsoluteUrl(request: { nextUrl: URL; headers: Headers }, path: string): URL {
+  const configured = (process.env.APP_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "").trim();
+  if (configured) {
+    return new URL(path, configured.endsWith("/") ? configured : `${configured}/`);
+  }
+
+  const forwardedProto = request.headers.get("x-forwarded-proto");
+  const proto =
+    forwardedProto === "http" || forwardedProto === "https"
+      ? forwardedProto
+      : request.nextUrl.protocol === "https:"
+        ? "https"
+        : "http";
+
+  const rawHost =
+    request.headers.get("x-forwarded-host")?.split(",")[0]?.trim() ||
+    request.headers.get("host")?.trim() ||
+    "";
+
+  let host = rawHost;
+  if (!host || host.startsWith("0.0.0.0") || host.startsWith("[::]") || host === "::") {
+    const fallbackHost = request.nextUrl.host;
+    host =
+      !fallbackHost || fallbackHost.startsWith("0.0.0.0") || fallbackHost.startsWith("[::]")
+        ? "localhost"
+        : fallbackHost;
+  }
+
+  return new URL(path, `${proto}://${host}`);
+}

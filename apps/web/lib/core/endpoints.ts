@@ -11,8 +11,8 @@
  * Erreurs : format FastAPI `{ detail: string | [{ msg }] }`.
  *
  * Ce fichier est la source de vérité côté front : tout endpoint utilisé par
- * l'UI doit y être déclaré. Les endpoints marqués « à implémenter » n'existent
- * pas encore côté Core (apps/core n'est pas encore dans le dépôt).
+ * l'UI doit y être déclaré. Les endpoints sans route Core correspondante
+ * renvoient encore 404 (dashboard ✓ · intake ✓ · tenders spine ✓).
  */
 
 const enc = encodeURIComponent;

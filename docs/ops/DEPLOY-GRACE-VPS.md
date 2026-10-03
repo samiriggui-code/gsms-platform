@@ -1,13 +1,13 @@
 # Grace (CSMP) — déploiement VPS
 
-**FQDN :** `grace.global-it-ss.com` (A → VPS)  
+**FQDN :** `grace.gsms-security.com` (A → VPS)  
 **Smoke :** `http://187.77.166.124:3052` → 200 · `/healthz` → 200
 
 ## Setup
 
 ```bash
 cd /opt/gsms/grace
-# .env : POSTGRES_PASSWORD, JWT_SECRET, CORS_ORIGIN=https://grace.global-it-ss.com
+# .env : POSTGRES_PASSWORD, JWT_SECRET, CORS_ORIGIN=https://grace.gsms-security.com
 docker compose --env-file .env -f deploy/vps/docker-compose.vps.yml up -d --build
 ```
 

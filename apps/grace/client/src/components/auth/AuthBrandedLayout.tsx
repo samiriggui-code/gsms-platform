@@ -1,138 +1,146 @@
+import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
 
-type AuthBrandedLayoutProps = {
-  children: ReactNode;
-  /** Short product name in chrome */
-  brandName: string;
-  /** Panel headline (right column desktop) */
-  panelTitle: string;
-  /** Panel supporting lines */
-  panelBody: ReactNode;
-  /** Single letter / short mark in the gradient tile */
-  mark?: string;
-  /** Theme / locale controls (top-right of form column) */
-  controls?: ReactNode;
-  homeHref?: string;
+export type AuthPanelItem = {
+  icon: LucideIcon;
+  label: string;
 };
 
-/**
- * Metronic-style branded auth shell (same pattern as InvoicePilot AuthBrandedLayout).
- * Split: form card left · brand panel right. Tokens = Grace design system.
- */
+type AuthBrandedLayoutProps = {
+  children: ReactNode;
+  /** Sous-marque à côté de GSMS (ex. Grace). */
+  product?: string;
+  eyebrow: string;
+  titleLead: string;
+  titleEmph: string;
+  body: string;
+  items: AuthPanelItem[];
+  siteHref?: string;
+  controls?: ReactNode;
+};
+
+/** Pattern auth GSMS (apps/web) — split form + panneau #111721. */
 export function AuthBrandedLayout({
   children,
-  brandName,
-  panelTitle,
-  panelBody,
-  mark = 'G',
+  product,
+  eyebrow,
+  titleLead,
+  titleEmph,
+  body,
+  items,
+  siteHref = 'https://gsms-security.com',
   controls,
-  homeHref = '/',
 }: AuthBrandedLayoutProps) {
   return (
-    <div className="grid min-h-screen w-full grow bg-background lg:grid-cols-2">
-      {/* Form column */}
+    <div className="grid min-h-svh w-full grow bg-background lg:grid-cols-2">
       <div className="order-2 flex flex-col lg:order-1">
-        <div className="flex h-14 items-center justify-between border-b border-border px-4 sm:px-6 lg:hidden">
-          <BrandMark name={brandName} mark={mark} href={homeHref} />
+        <header className="flex h-14 items-center justify-between border-b border-border/70 px-4 sm:px-6 lg:hidden">
+          <BrandMark product={product} />
           {controls}
-        </div>
+        </header>
 
-        <div className="relative flex flex-1 items-center justify-center p-6 sm:p-8 lg:p-10">
-          {controls ? (
-            <div className="absolute end-6 top-6 hidden rounded-r2 border border-border bg-card px-0.5 py-0.5 shadow-sh1 lg:block">
-              {controls}
-            </div>
-          ) : null}
-          <div className="w-full max-w-[400px] rounded-r4 border border-border bg-card p-6 shadow-sh2">
+        <div className="relative flex flex-1 items-center justify-center p-5 sm:p-8 lg:p-10">
+          <div className="absolute end-6 top-6 hidden items-center gap-2 lg:flex">
+            <a
+              href={siteHref}
+              className="text-[13px] text-muted-foreground no-underline hover:text-foreground"
+            >
+              Retour au site
+            </a>
+            {controls}
+          </div>
+          <div className="w-full max-w-[420px] rounded-2xl border border-border/70 bg-card p-6 shadow-[0_1px_2px_rgba(20,18,30,0.03),0_12px_32px_rgba(20,18,30,0.035)] sm:p-7">
             {children}
           </div>
         </div>
       </div>
 
-      {/* Brand panel */}
-      <div className="order-1 flex flex-col overflow-hidden bg-muted lg:order-2 lg:m-5 lg:rounded-r4 lg:border lg:border-border">
-        <div className="flex flex-col gap-4 p-8 lg:px-12 lg:pb-6 lg:pt-12">
-          <div className="hidden w-fit lg:block">
-            <BrandMark name={brandName} mark={mark} href={homeHref} />
+      <aside
+        aria-label="GSMS"
+        className="order-1 flex flex-col overflow-hidden bg-[#111721] text-white lg:order-2 lg:m-5 lg:rounded-[28px] lg:border lg:border-white/10"
+      >
+        <div className="flex flex-col gap-5 p-8 lg:px-12 lg:pb-6 lg:pt-12">
+          <div className="hidden lg:block">
+            <BrandMark product={product} inverted />
           </div>
           <div className="flex flex-col gap-3">
-            <h2 className="text-2xl font-semibold tracking-[-0.02em] text-foreground">
-              {panelTitle}
+            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/55">
+              {eyebrow}
+            </p>
+            <h2 className="text-balance text-2xl font-semibold tracking-[-0.035em] md:text-[30px]/[1.15]">
+              {titleLead}{' '}
+              <span className="font-serif font-normal italic text-white/60">{titleEmph}</span>
             </h2>
-            <div className="text-[15px] font-medium leading-relaxed text-muted-foreground">
-              {panelBody}
-            </div>
+            <p className="max-w-md text-sm leading-6 text-white/60">{body}</p>
           </div>
         </div>
 
-        <div className="relative flex flex-1 items-end justify-center px-6 pb-8 sm:px-10 lg:pb-10">
-          <AuthHeroArt mark={mark} />
-        </div>
-      </div>
+        <ul className="relative mt-auto hidden flex-1 flex-col justify-end gap-3 px-8 pb-8 sm:flex lg:px-12 lg:pb-12">
+          {items.map(({ icon: Icon, label }) => (
+            <li
+              key={label}
+              className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3"
+            >
+              <span className="grid size-9 place-items-center rounded-xl bg-white/10">
+                <Icon className="size-4" strokeWidth={2} aria-hidden />
+              </span>
+              <span className="text-sm font-medium text-white/85">{label}</span>
+            </li>
+          ))}
+        </ul>
+      </aside>
     </div>
+  );
+}
+
+function LogoMark({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden className={className ?? 'size-[17px]'}>
+      <path
+        d="M12 2.5 4 5.6v6.1c0 4.6 3.2 8.6 8 9.8 4.8-1.2 8-5.2 8-9.8V5.6L12 2.5Z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      <path
+        d="m8.5 12 2.4 2.4 4.6-4.8"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }
 
 function BrandMark({
-  name,
-  mark,
-  href,
+  product,
+  inverted,
 }: {
-  name: string;
-  mark: string;
-  href: string;
+  product?: string;
+  inverted?: boolean;
 }) {
   return (
-    <Link to={href} className="inline-flex items-center gap-2.5 no-underline">
+    <Link to="/" className="inline-flex items-center gap-2.5 no-underline text-inherit">
       <span
-        className="flex size-7 shrink-0 items-center justify-center rounded-[4px] text-[12px] font-bold text-white"
-        style={{ background: 'linear-gradient(135deg, #4f56e5 0%, #3436a4 100%)' }}
+        className={
+          inverted
+            ? 'grid size-8 place-items-center rounded-[10px] bg-white text-[#111721] shadow-sm'
+            : 'grid size-8 place-items-center rounded-[10px] bg-foreground text-background shadow-sm'
+        }
       >
-        {mark}
+        <LogoMark />
       </span>
-      <span className="text-[14px] font-semibold tracking-[-0.2px] text-foreground">{name}</span>
+      <span className="text-[15px] font-semibold tracking-[-0.025em]">
+        GSMS
+        {product ? (
+          <span className={inverted ? 'text-white/55' : 'text-muted-foreground'}>
+            {' '}
+            {product}
+          </span>
+        ) : null}
+      </span>
     </Link>
-  );
-}
-
-/** Decorative stand-in for Metronic auth-screen.png — same indigo family. */
-function AuthHeroArt({ mark }: { mark: string }) {
-  return (
-    <div
-      className="relative w-full max-w-[480px] overflow-hidden rounded-r4 border border-border shadow-sh2"
-      style={{
-        aspectRatio: '4 / 3',
-        background:
-          'linear-gradient(145deg, var(--a-50) 0%, var(--card) 42%, var(--a-100) 100%)',
-      }}
-    >
-      <div
-        className="absolute -right-10 -top-10 size-40 rounded-full opacity-40"
-        style={{ background: 'radial-gradient(circle, var(--a-300), transparent 70%)' }}
-      />
-      <div
-        className="absolute -bottom-8 -left-8 size-48 rounded-full opacity-30"
-        style={{ background: 'radial-gradient(circle, var(--a-400), transparent 70%)' }}
-      />
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-8">
-        <span
-          className="flex size-16 items-center justify-center rounded-r3 text-[28px] font-bold text-white shadow-sh2"
-          style={{ background: 'linear-gradient(135deg, #4f56e5 0%, #3436a4 100%)' }}
-        >
-          {mark}
-        </span>
-        <div className="h-2 w-32 rounded-full bg-a-200/80" />
-        <div className="h-2 w-24 rounded-full bg-n-200/80" />
-        <div className="mt-4 grid w-full max-w-[280px] grid-cols-3 gap-2">
-          {[0, 1, 2].map((i) => (
-            <div
-              key={i}
-              className="h-16 rounded-r2 border border-border/80 bg-card/80 shadow-sh1"
-            />
-          ))}
-        </div>
-      </div>
-    </div>
   );
 }

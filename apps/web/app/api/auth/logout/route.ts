@@ -1,7 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { coreFetch } from "@/lib/core/client";
 import { ENDPOINTS } from "@/lib/core/endpoints";
-import { SESSION_COOKIE, WORKSPACE_COOKIE, safeNextPath } from "@/lib/session";
+import {
+  SESSION_COOKIE,
+  WORKSPACE_COOKIE,
+  publicAbsoluteUrl,
+  safeNextPath,
+} from "@/lib/session";
 
 function clear(response: NextResponse) {
   response.cookies.delete(SESSION_COOKIE);
@@ -9,11 +14,11 @@ function clear(response: NextResponse) {
   return response;
 }
 
-/** POST /api/auth/logout — révoque côté Core (best effort) puis efface les cookies. */
+/** POST /api/auth/logout — révoque côté Core (best effort), cookies off, landing. */
 export async function POST(request: NextRequest) {
   const token = request.cookies.get(SESSION_COOKIE)?.value;
   if (token) await coreFetch(ENDPOINTS.auth.logout(), { method: "POST", token, timeoutMs: 2000 });
-  return clear(NextResponse.redirect(new URL("/login", request.url), 303));
+  return clear(NextResponse.redirect(publicAbsoluteUrl(request, "/"), 303));
 }
 
 /**
@@ -22,7 +27,7 @@ export async function POST(request: NextRequest) {
  */
 export async function GET(request: NextRequest) {
   const next = safeNextPath(request.nextUrl.searchParams.get("next"));
-  const url = new URL("/login", request.url);
+  const url = publicAbsoluteUrl(request, "/login");
   url.searchParams.set("next", next);
   url.searchParams.set("reason", "expired");
   return clear(NextResponse.redirect(url, 303));
