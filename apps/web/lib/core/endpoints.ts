@@ -104,6 +104,11 @@ export const ENDPOINTS = {
     upload: (workspaceId: string) => `${ws(workspaceId)}/documents`,
   },
 
+  /** Messagerie (équipe) : messages d'une prestation, validation avant envoi, relance des pièces manquantes. */
+  communications: {
+    list: (workspaceId: string) => `${ws(workspaceId)}/communications`,
+  },
+
   /** GET → Audit[] (assessments synchronisés depuis l'outil d'audit terrain, avec external_url) */
   audits: (workspaceId: string) => `${ws(workspaceId)}/audits`,
   /** GET → Finding[] (constats normalisés) */

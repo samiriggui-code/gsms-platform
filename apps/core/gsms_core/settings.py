@@ -41,6 +41,20 @@ class Settings(BaseSettings):
     # Vide = aucune (les apps passent par le même domaine ou côté serveur).
     cors_origins: list[str] = Field(default_factory=list)
 
+    # Messagerie (gsms_core.communications) : serveur SMTP de GSMS (Hostinger : smtp.hostinger.com, 465, SSL).
+    # mail_enabled=false : les messages sont préparés et journalisés, rien ne part.
+    mail_enabled: bool = False
+    smtp_host: str = "localhost"
+    smtp_port: int = 1025
+    smtp_user: str = ""
+    smtp_password: str = ""
+    smtp_ssl: bool = False
+    smtp_starttls: bool = False
+    smtp_from: str = "no-reply@gsms.local"
+    smtp_from_name: str = "GSMS Sécurité"
+    # Adresse publique du portail : liens dans les e-mails.
+    app_url: str = "http://localhost:3100"
+
     # Secrets HMAC des webhooks entrants, indexés par source (crm, grace, qatrial...).
     webhook_secrets: dict[str, str] = Field(default_factory=dict)
 

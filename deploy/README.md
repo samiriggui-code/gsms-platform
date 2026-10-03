@@ -100,6 +100,33 @@ chiffrés. Le Core sait aussi écrire dans un stockage compatible S3 (`GSMS_STOR
 MinIO n'est **pas** utilisé : depuis octobre 2025, MinIO ne publie plus d'images Docker maintenues. Si un
 stockage S3 devient nécessaire, préférer une solution maintenue comme Garage ou SeaweedFS.
 
+## Messagerie (e-mails)
+
+Le Core envoie les e-mails de la plateforme. Le module est repris de gsms-qualiopi.
+- **Relances des pièces manquantes :** préparées à partir du Digest, puis validées par l'équipe dans le menu **Messagerie**.
+- **Règle de validation :** rien ne part chez un client sans validation.
+- **Traçabilité :** chaque message porte une référence `MSG-000001`, un statut et un historique, et figure au journal d'audit.
+
+Serveur : Hostinger (`smtp.hostinger.com`, port 465, SSL). Tant que `GSMS_MAIL_ENABLED=false`, les messages
+sont préparés et journalisés, mais rien ne part.
+
+```bash
+cd /opt/gsms-platform
+read -rsp "Mot de passe de la boîte : " P && echo
+cat >> .env <<ENV
+GSMS_MAIL_ENABLED=true
+GSMS_SMTP_USER=admin@gsms-security.com
+GSMS_SMTP_FROM=admin@gsms-security.com
+GSMS_SMTP_PASSWORD=$P
+ENV
+unset P
+docker compose up -d core
+docker compose exec core python -m gsms_core.cli mail-test vous@exemple.fr
+```
+
+Plus tard, pour passer à `no-reply@gsms-security.com`, remplacer `GSMS_SMTP_USER`, `GSMS_SMTP_FROM` et
+`GSMS_SMTP_PASSWORD` dans `.env`, puis relancer `docker compose up -d core`.
+
 ## Mettre à jour
 
 ```bash

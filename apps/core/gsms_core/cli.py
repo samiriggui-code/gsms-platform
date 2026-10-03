@@ -113,6 +113,29 @@ def _vault_migrate(settings, db: Database) -> int:
     return 1 if report.errors else 0
 
 
+def _mail_test(settings, db: Database, to: str) -> int:
+    from gsms_core.communications import service, templates
+    from gsms_core.communications.models import MessageStatus
+    from gsms_core.communications.sender import SmtpSender
+
+    print(
+        f"SMTP {settings.smtp_host}:{settings.smtp_port} ssl={settings.smtp_ssl} "
+        f"starttls={settings.smtp_starttls} compte={settings.smtp_user or '(aucun)'} "
+        f"expéditeur={settings.smtp_from} actif={settings.mail_enabled}"
+    )
+    with db.session_factory() as session:
+        msg = service.create_message(
+            session, templates.smtp_test(sent_by="cli"), to=to, to_name=None, actor="cli", external=False
+        )
+        service.send(session, msg, SmtpSender(settings), settings, "cli")
+        session.commit()
+        if msg.status == MessageStatus.SENT:
+            print(f"Envoyé à {to} ({msg.reference}).")
+            return 0
+        print(f"Échec ({msg.reference}) : {msg.last_error}", file=sys.stderr)
+        return 1
+
+
 def _demo(settings, db: Database) -> int:
     from gsms_core.documents.parsers import DoclingAdapter
     from gsms_core.documents.storage import build_storage
@@ -153,6 +176,8 @@ def main(argv: list[str] | None = None) -> int:
     member.add_argument("name")
     member.add_argument("--role", required=True, choices=sorted(TEAM_ROLES), help="rôle DocuLens")
     sub.add_parser("seed-demo", help="installer l'organisation de démonstration")
+    mail = sub.add_parser("mail-test", help="envoyer un e-mail de test avec le SMTP configuré")
+    mail.add_argument("to")
     sub.add_parser("vault-migrate", help="chiffrer les fichiers existants et les ranger dans le coffre-fort")
     sub.add_parser("demo", help="client de démonstration : prestation appel d'offres et pièces analysées")
     args = parser.parse_args(argv)
@@ -167,6 +192,8 @@ def main(argv: list[str] | None = None) -> int:
             print(seed(session, password))
         return 0
 
+    if args.command == "mail-test":
+        return _mail_test(settings, db, args.to)
     if args.command == "vault-migrate":
         return _vault_migrate(settings, db)
     if args.command == "demo":
