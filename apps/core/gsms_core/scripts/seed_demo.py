@@ -35,9 +35,13 @@ def seed(session: Session, password: str) -> dict[str, object]:
     if session.scalar(select(Organization).where(Organization.name == ORG_NAME)):
         return {"status": "déjà présent"}
 
-    gsms = Organization(name="GSMS", kind=OrganizationKind.GSMS)
+    # Réutilise l'organisation GSMS existante (créée par create-admin) : jamais de doublon.
+    gsms = session.scalar(select(Organization).where(Organization.kind == OrganizationKind.GSMS).limit(1))
+    if gsms is None:
+        gsms = Organization(name="GSMS", kind=OrganizationKind.GSMS)
+        session.add(gsms)
     org = Organization(name=ORG_NAME, kind=OrganizationKind.CLIENT, crm_company_ref="crm://company/demo-abc")
-    session.add_all([gsms, org])
+    session.add(org)
     session.flush()
 
     sites = {

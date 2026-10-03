@@ -94,6 +94,37 @@ def _vault_migrate(settings, db: Database) -> int:
     return 1 if report.errors else 0
 
 
+def _demo(settings, db: Database) -> int:
+    from gsms_core.documents.parsers import DoclingAdapter
+    from gsms_core.documents.storage import build_storage
+    from gsms_core.scripts.demo import run_demo
+    from gsms_core.vault.storage import Vault
+
+    password = os.environ.get("GSMS_SEED_PASSWORD", "")
+    if settings.env == "prod" and len(password) < MIN_PASSWORD_LENGTH:
+        print(
+            f"Erreur : en production, définir GSMS_SEED_PASSWORD ({MIN_PASSWORD_LENGTH} caractères minimum) "
+            "pour les comptes de démonstration.",
+            file=sys.stderr,
+        )
+        return 1
+    password = password or "demo-password-change-me"
+    vault = Vault.from_settings(build_storage(settings), settings)
+    with db.session_factory() as session:
+        result = run_demo(session, vault, DoclingAdapter(), password)
+    print("Comptes équipe (rôle DocuLens → rôle Core) :")
+    for account in result["equipe"]:
+        print(f"  {account['email']:<28} {account['doculens_role']:<9} → {account['core_role']}")
+    print(
+        "Comptes client : direction@abc-retail.example (client_admin), responsable.lyon@abc-retail.example,"
+    )
+    print("                 responsable.paris@abc-retail.example (client_member)")
+    print(f"Prestation appel d'offres : {result['prestation_appel_offres']}")
+    for piece in result["pieces"]:
+        print(f"  pièce {piece['piece']} : {piece['analyse']} {piece['erreur']}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="gsms_core.cli")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -102,6 +133,9 @@ def main(argv: list[str] | None = None) -> int:
     admin.add_argument("name")
     sub.add_parser("seed-demo", help="installer l'organisation de démonstration")
     sub.add_parser("vault-migrate", help="chiffrer les fichiers existants et les ranger dans le coffre-fort")
+    sub.add_parser(
+        "demo", help="démonstration : comptes par rôle, prestation appel d'offres, pièces analysées"
+    )
     args = parser.parse_args(argv)
 
     settings = get_settings()
@@ -116,6 +150,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "vault-migrate":
         return _vault_migrate(settings, db)
+    if args.command == "demo":
+        return _demo(settings, db)
 
     try:
         password = _read_password()
