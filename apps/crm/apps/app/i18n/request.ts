@@ -10,9 +10,9 @@ import {
 async function loadMessages(locale: AppLocale) {
 	switch (locale) {
 		case "fr":
-			return (await import("../messages/fr.json")).default;
+			return (await import("../messages/fr")).default;
 		case "en":
-			return (await import("../messages/en.json")).default;
+			return (await import("../messages/en")).default;
 		default: {
 			const _exhaustive: never = locale;
 			return _exhaustive;
