@@ -79,23 +79,22 @@ Aucun routeur ne les sert plus ; seuls les enregistrements DNS restent.
 
 ### 1. Conteneurs (sur le VPS, en root)
 
-```bash
-cd /opt/gsms-platform && git pull
-bash scripts/vps-cleanup-global-it-ss.sh             # inventaire seul : rien n'est modifié
-bash scripts/vps-cleanup-global-it-ss.sh --apply     # retire les anciennes stacks (volumes conservés)
-bash scripts/vps-cleanup-global-it-ss.sh --apply --prune-images   # + libère l'espace des images inutilisées
-```
+D'autres applications tournent encore sous `global-it-ss.com` : **rien n'est retiré automatiquement**.
 
-Le script retire une stack seulement si :
-- un de ses routeurs Traefik vise encore `global-it-ss.com` et aucun ne vise `gsms-security.com` ;
-- ou c'est un projet retiré : Comp AI, Xacta, SimpleRisk, TenderAI legacy ;
-- ou tous ses conteneurs sont arrêtés.
-
-Il ne touche jamais à Traefik, à `gsms-platform`, ni à une stack qui sert `*.gsms-security.com`. Les stacks qui tournent sans servir de domaine sont signalées « à vérifier » (`?`), jamais retirées automatiquement. Les **volumes** (bases, fichiers) sont conservés.
+1. **Inventaire en lecture seule** (aucune modification, aucun secret affiché) :
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/samiriggui-code/gsms-platform/main/scripts/vps-inventory.sh | bash > inventaire-vps.txt 2>&1
+   ```
+2. **Tri** projet par projet, à partir de cet inventaire.
+3. **Retrait des seules stacks validées**, nommées explicitement. Les volumes sont conservés, et le script refuse Traefik, `gsms-platform` et toute stack sur `*.gsms-security.com` :
+   ```bash
+   bash scripts/vps-cleanup-global-it-ss.sh <projet> …            # aperçu
+   bash scripts/vps-cleanup-global-it-ss.sh --apply <projet> …    # retrait
+   ```
 
 ### 2. DNS (Hostinger → zone `global-it-ss.com`)
 
-Supprimer les enregistrements **A** `crm`, `grace`, `qatrial`, `mcp`, `minio`, `comp`, `admin`, `hub`. Ne garder que ce qui sert encore autre chose.
+Supprimer les enregistrements **A** de `global-it-ss.com` **seulement** pour les sous-domaines dont l'app a été déplacée sur `gsms-security.com` ou retirée, d'après le tri : a priori `crm`, `grace`, `qatrial`, `mcp`, `minio`, `admin`. Les autres sous-domaines (apps encore en service) restent.
 
 **Ne pas toucher** aux enregistrements **MX / TXT / SPF / DKIM** si des boîtes mail `@global-it-ss.com` existent.
 
