@@ -72,6 +72,79 @@ Plan : `docs/chantiers/AO-MCP-AUDIT.md` §8, une PR par étape, branches `cursor
 | 5 à 10. Chiffrage, BPU/DPGF/DQE, mémoire, GRACE et plan de prévention, QAtrial et checklist, dossier final | à faire | — |
 | 11. CRM / Eve | à faire, avec la session A | — |
 
+**Étape 4 — MCP Appel d'offres remis à niveau (prochain travail de la session B, en local)**
+
+Branche `cursor/ao-mcp-serveur`, une PR. Référence : `docs/chantiers/AO-MCP-AUDIT.md`, §1.1 (inventaire des 18 outils
+et défauts relevés), §3 (regroupement `ao_*`) et §8.
+
+*But :* le Core appelle réellement le MCP, sur le dossier WS-AO, de façon sécurisée et testée. Pas encore de chiffrage :
+il arrive à l'étape 5, avec `ao_engine`.
+
+**1. Serveur MCP (`apps/tenderai-mcp-server-max`)**
+- **Accès protégé en HTTP.** Refuser de démarrer en `TRANSPORT=http` sans `MCP_API_KEY` ni OAuth (aujourd'hui : simple
+  warning, `app/server.py` ~l.176). Comparer le jeton à temps constant avec `hmac.compare_digest` (`app/middleware/auth.py:47`).
+- **`workspace_id`.** Ajouter `workspace_id` et la référence `WS-AO-…` aux outils utilisés par le Core, et une colonne
+  `workspace_id` sur la table `rfp`. Aucun mélange entre dossiers.
+- **Échange de fichiers en base64**, plafond 20 Mo par fichier, à la place des chemins locaux au serveur. Le MCP ne garde
+  rien pour les nouveaux outils : le Core reste le stockage de référence.
+- **Nouvel outil `ao_workspace_load(workspace_id, reference, documents[])`.** Il renvoie l'identifiant de l'espace côté
+  MCP et la liste des capacités disponibles. C'est le premier outil vraiment appelé par le Core.
+- **Modèle LLM.** Lu dans `LLM_MODEL`. Supprimer l'identifiant par défaut invalide (`app/config.py:30`) et vérifier un
+  identifiant valide au moment du travail.
+- **Prompts en français, orientés sûreté et sécurité incendie** (`app/services/llm.py`, `PROMPT_TEMPLATES`) au lieu de
+  l'intégrateur IT d'Oman.
+- **Défauts de l'audit à corriger :**
+  - `ingest_vendor_quote` ne garde pas les lignes du devis ;
+  - « TenderAI » est écrit en dur comme nom de société dans `generate_financial_proposal` (lire `COMPANY_NAME`, valeur
+    par défaut GSMS) ;
+  - `generate_compliance_matrix` met « Compliant » partout : renvoyer « À vérifier ».
+- **Tests et CI.**
+  - Premiers tests pytest dans `tests/` : authentification, base64, `ao_workspace_load`, cloisonnement par `workspace_id`.
+  - Nouveau workflow `.github/workflows/mcp-ao.yml` (ruff + pytest), filtré sur `apps/tenderai-mcp-server-max/**`.
+
+**2. Core (`apps/core`)**
+- **Liste blanche** : mettre à jour `mcp_gateway/registry.py` avec `ao_workspace_load`. `generate_financial_proposal` est
+  inutilisable sans `build_bom` : le retirer ou le justifier.
+- **URL** : corriger la valeur par défaut de `settings.tenderai_mcp_url`. Elle vaut `localhost:8765`, alors que le serveur
+  écoute sur 8000 (8090 sur le VPS). Prendre l'URL interne du service Docker. Le jeton va dans le `.env` du VPS ; Samir
+  le saisit lui-même.
+- **Nouveau `tenders/engine.py`** : appel de `ao_workspace_load` via le client `mcp_gateway`, avec `workspace_id`,
+  référence et pièces du coffre-fort, puis passage de la liaison d'application `tender` de `pending:…` à ACTIVE
+  (`WorkspaceManager.attach_application`).
+- **Route** `GET|POST /workspaces/{ws}/tenders/{mission}/engine` : état « connecté / indisponible » et dernier appel. Un
+  MCP indisponible ne doit jamais casser les écrans.
+- **Tests** : `httpx.MockTransport`, comme `test_tenders_opportunities_via_lexsocket_mcp` dans `tests/test_tenders.py`.
+
+**3. Portail (`apps/web`)** — afficher l'état du moteur AO (onglet « Agents » ou synthèse), en français, sans le nom
+technique de l'outil.
+
+**4. Déploiement**
+- Ajouter le service MCP AO à `deploy/deploy-all.sh`. Il n'y est pas aujourd'hui ; il a son propre
+  `deploy/vps/docker-compose.vps.yml`, port 8090, `mcp.gsms-security.com`.
+- Documenter dans `deploy/README.md` les variables `MCP_API_KEY` / jeton Core et `LLM_MODEL`, sans valeur.
+
+**5. Vérifier en vrai avant de fusionner**
+- Lancer le MCP en HTTP et le Core sur PostgreSQL 16, puis faire un appel réel de `ao_workspace_load` depuis un dossier WS-AO.
+- Si une migration est ajoutée, la jouer dans les deux sens (upgrade, downgrade, upgrade).
+
+**6. Fin d'étape**
+- Ajouter une entrée en tête de `docs/HANDOFF-CURSOR.md`.
+- Mettre à jour l'« Avancement » dans `AO-MCP-AUDIT.md` §8 et la ligne de l'étape 4 dans ce tableau.
+
+**Repères techniques, valables pour toutes les étapes AO**
+- **Migrations déjà présentes** : 0010, 0011, 0012 (étapes 1 à 3, PR #14, #17, #18, #20).
+- **Fixtures de test** : la fixture `staff` (compte de l'équipe GSMS) est dans `apps/core/tests/conftest.py`. Les fausses
+  pièces de DCE (RC_AO, CCTP_AO) sont dans `tests/test_tender_requirements.py`.
+- **Essais de bout en bout** : Docling n'est pas installé en local. Lancer le Core avec
+  `DoclingAdapter(converter_factory=…)` et le `FakeConverter` de `tests/fake_docling.py`.
+- **Dossiers AO** :
+  - un dossier AO = un workspace TEMPORARY de l'organisation GSMS, URL `/app/tenders/{workspaceId}` ;
+  - création réservée à l'équipe GSMS (`POST /api/v1/tenders`) ;
+  - la matrice d'exigences se resynchronise seule sur `digest.updated` ;
+  - statut du dossier DRAFT → SUBMITTED, toujours décidé par une personne.
+- **Piège shell** : ne pas faire `pkill -f <motif>` quand le motif figure dans la commande elle-même, car cela tue le
+  shell. Utiliser `ps -eo pid,args | grep '[n]ext-server' | awk '{print $1}' | xargs -r kill`.
+
 ### Points de coordination entre A et B
 
 - **Lien dossier AO ↔ affaire CRM** :
