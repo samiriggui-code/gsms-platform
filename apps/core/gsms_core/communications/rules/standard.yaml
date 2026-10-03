@@ -1,0 +1,42 @@
+# Calendrier des relances et alertes de la plateforme GSMS (repris du module Communications de Qualiopi).
+# Chaque règle : qui reçoit quoi, quand, et si le message part vers un client (externe = validation).
+# Les règles se désactivent une par une dans Paramètres > Plateforme > Relances.
+regles:
+  - cle: pieces_manquantes_client
+    libelle: "Pièces manquantes : relance du client"
+    portee: PRESTATION
+    destinataire: CLIENT
+    condition: pieces_manquantes
+    modele: pieces_manquantes
+    frequence_jours: 7
+    externe: true
+
+  - cle: echeance_remise_offres
+    libelle: "Remise des offres : alerte de l'équipe à J-7 et J-2"
+    portee: ECHEANCE
+    destinataire: EQUIPE
+    condition: echeance_remise_offres
+    modele: alerte_echeance
+    decalages: [-7, -2]
+
+  - cle: conflit_pieces
+    libelle: "Conflit détecté entre pièces : alerte de l'équipe"
+    portee: CONFLIT
+    destinataire: EQUIPE
+    condition: conflit_ouvert
+    modele: alerte_conflit
+
+  - cle: depot_client
+    libelle: "Pièces déposées par le client : avis à l'équipe"
+    portee: DEPOT
+    destinataire: EQUIPE
+    condition: depot_client
+    modele: depot_client
+
+  - cle: synthese_hebdo
+    libelle: "Synthèse hebdomadaire aux administrateurs (lundi)"
+    portee: HEBDO
+    destinataire: ADMIN
+    condition: toujours
+    modele: synthese_hebdo
+    jour: lundi

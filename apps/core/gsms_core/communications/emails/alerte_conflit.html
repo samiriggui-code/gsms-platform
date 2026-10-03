@@ -1,0 +1,8 @@
+{% extends "_base.html" %}
+{% from "_macros.html" import infos, liste %}
+{% block contenu %}
+<p>Le Digest a détecté une incohérence entre les pièces de la prestation <strong>{{ prestation }}</strong> :</p>
+<p style="margin:12px 0;padding:10px 12px;background:#fef2f2;border-left:3px solid #b91c1c;font-size:14px;">{{ conflit }}</p>
+{{ liste(valeurs) }}
+{{ infos([("Client", client), ("Site", site)]) }}
+{% endblock %}

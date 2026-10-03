@@ -116,11 +116,10 @@ export const ENDPOINTS = {
     llmTest: () => "/admin/settings/llm/test",
     /** GET → Check[] (base, stockage chiffré, audit, Docling, SMTP, LLM, connecteurs) */
     diagnostics: () => "/admin/diagnostics",
-  },
-
-  /** Messagerie (équipe) : messages d'une prestation, validation avant envoi, relance des pièces manquantes. */
-  communications: {
-    list: (workspaceId: string) => `${ws(workspaceId)}/communications`,
+    /** GET / PUT {actif, validation_externe, adresse_reponse, rattrapage_jours, regles_desactivees} */
+    relances: () => "/admin/settings/relances",
+    /** GET → Rule[] (catalogue des règles de relance, avec « active ») */
+    relanceRules: () => "/communications/regles",
   },
 
   /** GET → Audit[] (assessments synchronisés depuis l'outil d'audit terrain, avec external_url) */

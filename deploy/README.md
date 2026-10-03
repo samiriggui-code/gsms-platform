@@ -126,12 +126,29 @@ Un membre supplémentaire de l'équipe :
 
 Les réglages saisis dans le portail priment sur ceux du `.env`. Les secrets sont chiffrés par la clé maître du coffre-fort.
 
-## Messagerie (e-mails)
+## Messagerie (relances et e-mails)
 
-Le Core envoie les e-mails de la plateforme (module repris de gsms-qualiopi). Les relances des pièces manquantes sont préparées à partir du Digest, puis validées par l'équipe dans **Messagerie**. Rien ne part chez un client sans validation. Chaque message porte une référence `MSG-000001` et figure au journal d'audit.
+Le Core envoie les e-mails de la plateforme. Le module est repris du module Communications de gsms-qualiopi.
 
-Vérification en ligne de commande, avec les réglages du `.env` :
-`docker compose exec core python -m gsms_core.cli mail-test vous@exemple.fr`.
+- **Calendrier de règles** (`apps/core/gsms_core/communications/rules/standard.yaml`) :
+  - relance du client pour les pièces manquantes (tous les 7 jours) ;
+  - alerte de l'équipe à J-7 et J-2 de la remise des offres ;
+  - alerte à chaque conflit détecté entre pièces ;
+  - avis de dépôt de pièces par le client ;
+  - synthèse hebdomadaire aux administrateurs, le lundi.
+- **Service `worker`** : planificateur et envoi toutes les 10 minutes. Le bouton « Planifier maintenant » de la
+  Messagerie lance un passage immédiat. Une même occurrence ne crée jamais deux messages.
+- **Validation** : un message destiné à un client attend que l'équipe le valide (réglage « validation avant envoi »).
+  Les alertes internes partent sans validation. Juste avant l'envoi, un message devenu sans objet (pièce déposée
+  entre-temps, conflit résolu) est annulé avec son motif.
+- **Boîte Messagerie** du portail : dossiers par statut (à valider, prévus, envoyés, échecs, sans adresse,
+  annulés), liste des messages, lecture du contenu exact (aperçu isolé, empreinte SHA-256), boutons
+  « Valider et envoyer », « Réessayer » et « Annuler » (avec motif).
+- **Réglages** dans **Paramètres → Plateforme → Relances et alertes** : relances actives, validation avant envoi,
+  adresse de réponse, rattrapage, activation de chaque règle.
+
+Vérification en ligne de commande : `docker compose exec core python -m gsms_core.cli mail-test vous@exemple.fr`.
+Journal du worker : `docker compose logs -f worker`.
 
 ## Mettre à jour
 

@@ -8,7 +8,7 @@ import { SESSION_COOKIE } from "@/lib/session";
  * CORE_API_URL ni le jeton : on relaie avec le cookie httpOnly.
  * Seuls les préfixes listés sont autorisés.
  */
-const ALLOWED_PREFIXES = ["auth/me", "workspaces/", "vault/tree", "admin/"];
+const ALLOWED_PREFIXES = ["auth/me", "workspaces/", "vault/tree", "admin/", "communications"];
 
 async function handle(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   const token = request.cookies.get(SESSION_COOKIE)?.value;

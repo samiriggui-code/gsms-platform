@@ -210,26 +210,58 @@ def create_member_role_only(session: Session, user: User, role: Role) -> None:
 
 
 def _mail_test(settings, db: Database, to: str) -> int:
-    from gsms_core.communications import service, templates
+    from gsms_core.communications import service
     from gsms_core.communications.models import MessageStatus
     from gsms_core.communications.sender import SmtpSender
+    from gsms_core.documents.storage import build_storage
+    from gsms_core.platform.service import mail_config
+    from gsms_core.vault.storage import Vault
 
-    print(
-        f"SMTP {settings.smtp_host}:{settings.smtp_port} ssl={settings.smtp_ssl} "
-        f"starttls={settings.smtp_starttls} compte={settings.smtp_user or '(aucun)'} "
-        f"expéditeur={settings.smtp_from} actif={settings.mail_enabled}"
-    )
     with db.session_factory() as session:
-        msg = service.create_message(
-            session, templates.smtp_test(sent_by="cli"), to=to, to_name=None, actor="cli", external=False
+        cfg = mail_config(session, settings, Vault.from_settings(build_storage(settings), settings))
+        print(
+            f"SMTP {cfg.smtp_host}:{cfg.smtp_port} ssl={cfg.smtp_ssl} starttls={cfg.smtp_starttls} "
+            f"compte={cfg.smtp_user or '(aucun)'} expéditeur={cfg.smtp_from} actif={cfg.mail_enabled} "
+            f"(réglages : {cfg.source})"
         )
-        service.send(session, msg, SmtpSender(settings), settings.mail_enabled, "cli")
+        msg = service.send_test(session, SmtpSender(cfg), cfg.mail_enabled, to, "cli")
         session.commit()
-        if msg.status == MessageStatus.SENT:
+        if msg.status == MessageStatus.ENVOYE:
             print(f"Envoyé à {to} ({msg.reference}).")
             return 0
         print(f"Échec ({msg.reference}) : {msg.last_error}", file=sys.stderr)
         return 1
+
+
+def _worker(settings, db: Database, interval: int, once: bool) -> int:
+    """Passage périodique du planificateur et de l'envoi des relances (service « worker » du déploiement)."""
+    import logging
+    import time
+
+    from gsms_core.communications import service
+    from gsms_core.communications.planner import plan
+    from gsms_core.communications.sender import SmtpSender
+    from gsms_core.documents.storage import build_storage
+    from gsms_core.platform.service import mail_config
+    from gsms_core.vault.storage import Vault
+
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s worker %(message)s")
+    log = logging.getLogger("gsms.worker")
+    vault = Vault.from_settings(build_storage(settings), settings)
+    while True:
+        try:
+            with db.session_factory() as session:
+                result = plan(session, settings)
+                if not result.get("inactif"):
+                    cfg = mail_config(session, settings, vault)
+                    result |= service.dispatch(session, SmtpSender(cfg), cfg.mail_enabled)
+                session.commit()
+            log.info("passage : %s", result)
+        except Exception:
+            log.exception("passage en erreur")
+        if once:
+            return 0
+        time.sleep(interval)
 
 
 def _demo(settings, db: Database) -> int:
@@ -283,6 +315,9 @@ def main(argv: list[str] | None = None) -> int:
         "--reset", action="store_true", help="régénérer les mots de passe des comptes existants"
     )
     boot.add_argument("--no-demo", action="store_true", help="ne pas créer le client démo")
+    worker = sub.add_parser("worker", help="planifier et envoyer les relances en continu")
+    worker.add_argument("--interval", type=int, default=600, help="secondes entre deux passages")
+    worker.add_argument("--once", action="store_true", help="un seul passage")
     mail = sub.add_parser("mail-test", help="envoyer un e-mail de test avec le SMTP configuré")
     mail.add_argument("to")
     sub.add_parser("vault-migrate", help="chiffrer les fichiers existants et les ranger dans le coffre-fort")
@@ -301,6 +336,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "bootstrap-access":
         return _bootstrap(settings, db, args)
+    if args.command == "worker":
+        return _worker(settings, db, args.interval, args.once)
     if args.command == "mail-test":
         return _mail_test(settings, db, args.to)
     if args.command == "vault-migrate":

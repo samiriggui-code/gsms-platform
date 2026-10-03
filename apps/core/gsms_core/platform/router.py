@@ -10,7 +10,6 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from gsms_core.communications import service as messaging
-from gsms_core.communications import templates
 from gsms_core.communications.models import MessageStatus
 from gsms_core.communications.sender import SmtpSender
 from gsms_core.deps import Principal, get_current_principal, get_db
@@ -143,21 +142,41 @@ def test_mail(
     """Envoie un vrai e-mail de test (par défaut à l'administrateur connecté), réglages enregistrés."""
     cfg = service.mail_config(db, request.app.state.settings, request.app.state.vault)
     to = str(body.to) if body and body.to else admin.user.email
-    msg = messaging.create_message(
-        db,
-        templates.smtp_test(sent_by=admin.user.email),
-        to=to,
-        to_name=None,
-        actor=admin.actor,
-        external=False,
-    )
     sender = request.app.state.mail_sender or SmtpSender(cfg)
-    messaging.send(db, msg, sender, cfg.mail_enabled, admin.actor)
+    msg = messaging.send_test(db, sender, cfg.mail_enabled, to, admin.user.email)
     db.commit()
-    ok = msg.status == MessageStatus.SENT
+    ok = msg.status == MessageStatus.ENVOYE
     return CheckOut(
         name="mail", ok=ok, detail=f"Envoyé à {to} ({msg.reference})" if ok else msg.last_error or "échec"
     )
+
+
+class RelancesIn(BaseModel):
+    actif: bool = True
+    validation_externe: bool = True
+    adresse_reponse: str = Field(default="", max_length=320)
+    rattrapage_jours: int = Field(default=2, ge=0, le=14)
+    regles_desactivees: list[str] = Field(default_factory=list, max_length=50)
+
+
+@router.get("/settings/relances")
+def get_relances(_: Principal = Depends(require_platform_admin), db: Session = Depends(get_db)) -> dict:
+    return messaging.relance_settings(db) | _meta(db, messaging.RELANCES_KEY)
+
+
+@router.put("/settings/relances")
+def put_relances(
+    body: RelancesIn, admin: Principal = Depends(require_platform_admin), db: Session = Depends(get_db)
+) -> dict:
+    from gsms_core.communications.rules import load_rules
+
+    known = {r.cle for r in load_rules()}
+    unknown = set(body.regles_desactivees) - known
+    if unknown:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, f"règles inconnues : {', '.join(sorted(unknown))}")
+    value = messaging.save_relance_settings(db, body.model_dump(), admin.actor)
+    db.commit()
+    return value | _meta(db, messaging.RELANCES_KEY)
 
 
 def _llm_out(db: Session, request: Request) -> LlmOut:

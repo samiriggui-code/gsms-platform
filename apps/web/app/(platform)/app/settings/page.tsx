@@ -1,7 +1,16 @@
 import { Bell, Plug, ShieldCheck, Users } from "lucide-react";
 import type { Metadata } from "next";
 import { StatusBadge } from "@/components/platform/format";
-import { CoreDiagnostics, LlmSettingsForm, MailSettingsForm, type LlmSettings, type MailSettings } from "@/components/platform/admin-settings";
+import {
+  CoreDiagnostics,
+  LlmSettingsForm,
+  MailSettingsForm,
+  RelancesSettingsForm,
+  type LlmSettings,
+  type MailSettings,
+  type RelanceRule,
+  type RelanceSettings,
+} from "@/components/platform/admin-settings";
 import { PageHeader } from "@/components/platform/page-header";
 import { ResourcePanel } from "@/components/platform/resource-panel";
 import { coreFetch, getWorkspaceContext } from "@/lib/core/client";
@@ -20,9 +29,11 @@ export default async function SettingsPage() {
       ])
     : [failure, failure, failure, failure];
   // Réglages plateforme : seulement pour le super admin et les administrateurs de l'équipe (403 sinon).
-  const [mail, llm] = await Promise.all([
+  const [mail, llm, relances, rules] = await Promise.all([
     coreFetch<MailSettings>(ENDPOINTS.admin.mail()),
     coreFetch<LlmSettings>(ENDPOINTS.admin.llm()),
+    coreFetch<RelanceSettings>(ENDPOINTS.admin.relances()),
+    coreFetch<RelanceRule[]>(ENDPOINTS.admin.relanceRules()),
   ]);
   const isPlatformAdmin = mail.ok && llm.ok;
 
@@ -37,6 +48,7 @@ export default async function SettingsPage() {
             <MailSettingsForm initial={mail.data} />
             <LlmSettingsForm initial={llm.data} />
           </div>
+          {relances.ok && rules.ok ? <RelancesSettingsForm initial={relances.data} rules={rules.data} /> : null}
         </div>
       ) : null}
       <div className="grid gap-5 xl:grid-cols-2">

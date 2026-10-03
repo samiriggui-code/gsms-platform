@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, CircleSlash, KeyRound, Loader2, Mail, PlugZap, Send, XCircle } from "lucide-react";
+import { BellRing, CheckCircle2, CircleSlash, KeyRound, Loader2, Mail, PlugZap, Send, XCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type FormEvent, type ReactNode, useState } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -334,6 +334,124 @@ export function CoreDiagnostics() {
           ))}
         </div>
       ) : null}
+    </Section>
+  );
+}
+
+export type RelanceSettings = {
+  actif: boolean;
+  validation_externe: boolean;
+  adresse_reponse: string;
+  rattrapage_jours: number;
+  regles_desactivees: string[];
+};
+
+export type RelanceRule = {
+  cle: string;
+  libelle: string;
+  destinataire: string;
+  externe: boolean;
+  portee: string;
+  decalages: number[];
+  frequence_jours: number | null;
+  jour: string | null;
+};
+
+const WHO: Record<string, string> = { CLIENT: "Client", EQUIPE: "Équipe GSMS", ADMIN: "Administrateurs" };
+
+function when(rule: RelanceRule) {
+  if (rule.portee === "PRESTATION" && rule.frequence_jours) return `tous les ${rule.frequence_jours} jours tant que des pièces manquent`;
+  if (rule.portee === "ECHEANCE") return rule.decalages.map((d) => `J${d}`).join(", ") + " avant la remise des offres";
+  if (rule.portee === "HEBDO" && rule.jour) return `chaque ${rule.jour}`;
+  if (rule.portee === "CONFLIT") return "à la détection d’un conflit";
+  if (rule.portee === "DEPOT") return "le jour du dépôt";
+  return "";
+}
+
+export function RelancesSettingsForm({ initial, rules }: { initial: RelanceSettings; rules: RelanceRule[] }) {
+  const router = useRouter();
+  const [form, setForm] = useState(initial);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const disabled = new Set(form.regles_desactivees);
+
+  function toggleRule(key: string, active: boolean) {
+    setForm((f) => ({
+      ...f,
+      regles_desactivees: active ? f.regles_desactivees.filter((k) => k !== key) : [...f.regles_desactivees, key],
+    }));
+  }
+
+  async function save(event: FormEvent) {
+    event.preventDefault();
+    setSaving(true);
+    setMessage(null);
+    const r = await api<RelanceSettings>("settings/relances", "PUT", {
+      actif: form.actif,
+      validation_externe: form.validation_externe,
+      adresse_reponse: form.adresse_reponse,
+      rattrapage_jours: Number(form.rattrapage_jours),
+      regles_desactivees: form.regles_desactivees,
+    });
+    setSaving(false);
+    if (!r.ok) {
+      setMessage({ ok: false, text: r.error ?? "Enregistrement refusé." });
+      return;
+    }
+    setForm(r.data);
+    setMessage({ ok: true, text: "Réglages des relances enregistrés." });
+    router.refresh();
+  }
+
+  return (
+    <Section icon={BellRing} title="Relances et alertes" description="Calendrier des messages planifiés par le Core (toutes les 10 minutes). Chaque règle peut être désactivée.">
+      <form onSubmit={save} className="flex flex-col gap-4">
+        <div className="flex flex-wrap gap-5">
+          <Toggle id="rel-actif" label="Relances actives" checked={form.actif} onChange={(v) => setForm((f) => ({ ...f, actif: v }))} />
+          <Toggle
+            id="rel-validation"
+            label="Messages aux clients : validation avant envoi"
+            checked={form.validation_externe}
+            onChange={(v) => setForm((f) => ({ ...f, validation_externe: v }))}
+          />
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="rel-reply">Adresse de réponse (vide : aucune)</Label>
+            <Input id="rel-reply" type="email" value={form.adresse_reponse} onChange={(e) => setForm((f) => ({ ...f, adresse_reponse: e.target.value }))} placeholder="contact@gsms-security.com" />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="rel-grace">Rattrapage (jours) : un message en retard part encore</Label>
+            <Input id="rel-grace" type="number" min={0} max={14} value={form.rattrapage_jours} onChange={(e) => setForm((f) => ({ ...f, rattrapage_jours: Number(e.target.value) }))} />
+          </div>
+        </div>
+        <ul className="divide-y divide-border rounded-[12px] border border-border">
+          {rules.map((rule) => (
+            <li key={rule.cle} className="flex items-start gap-3 px-3.5 py-3">
+              <input
+                id={`rule-${rule.cle}`}
+                type="checkbox"
+                className="mt-1 size-4"
+                checked={!disabled.has(rule.cle)}
+                onChange={(e) => toggleRule(rule.cle, e.target.checked)}
+              />
+              <label htmlFor={`rule-${rule.cle}`} className="min-w-0 flex-1">
+                <span className="block text-[13.5px] font-medium">{rule.libelle}</span>
+                <span className="block text-[12px] text-muted-foreground">
+                  {WHO[rule.destinataire] ?? rule.destinataire} · {when(rule)}
+                </span>
+              </label>
+              <Badge tone={rule.externe ? "warning" : "neutral"}>{rule.externe ? "Externe" : "Interne"}</Badge>
+            </li>
+          ))}
+        </ul>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button type="submit" variant="contrast" size="sm" disabled={saving}>
+            {saving ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null} Enregistrer
+          </Button>
+          {message ? <span className={cn("text-[12.5px]", message.ok ? "text-success" : "text-destructive")}>{message.text}</span> : null}
+        </div>
+      </form>
     </Section>
   );
 }

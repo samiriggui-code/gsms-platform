@@ -13,7 +13,9 @@ from gsms_core.settings import Settings
 
 
 class Sender(Protocol):
-    def send(self, *, to: str, to_name: str | None, subject: str, html: str, text: str) -> str: ...
+    def send(
+        self, *, to: str, to_name: str | None, subject: str, html: str, text: str, reply_to: str | None = None
+    ) -> str: ...
 
 
 def _address(name: str | None, email: str, utf8: bool) -> Address | str:
@@ -28,13 +30,17 @@ class SmtpSender:
     def __init__(self, settings: Settings) -> None:
         self.cfg = settings
 
-    def send(self, *, to: str, to_name: str | None, subject: str, html: str, text: str) -> str:
+    def send(
+        self, *, to: str, to_name: str | None, subject: str, html: str, text: str, reply_to: str | None = None
+    ) -> str:
         cfg = self.cfg
         utf8 = not (to + cfg.smtp_from).isascii()
         msg = EmailMessage(policy=policy.SMTPUTF8 if utf8 else policy.SMTP)
         msg["Subject"] = subject
         msg["From"] = _address(cfg.smtp_from_name, cfg.smtp_from, utf8)
         msg["To"] = _address(to_name, to, utf8)
+        if reply_to:
+            msg["Reply-To"] = reply_to
         msg_id = make_msgid(domain=cfg.smtp_from.split("@")[-1] or "gsms.local")
         msg["Message-ID"] = msg_id
         msg.set_content(text)
