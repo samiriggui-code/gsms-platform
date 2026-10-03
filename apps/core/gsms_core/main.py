@@ -25,6 +25,7 @@ from gsms_core.missions.router import router as missions_router
 from gsms_core.oidc.router import router as oidc_router
 from gsms_core.platform.router import router as platform_router
 from gsms_core.settings import Settings, get_settings
+from gsms_core.tenders.router import dossiers_router as tender_dossiers_router
 from gsms_core.tenders.router import router as tenders_router
 from gsms_core.vault.router import router as vault_router
 from gsms_core.vault.storage import Vault
@@ -87,6 +88,7 @@ def create_app(
         context_router,
         workspaces_router,
         missions_router,
+        tender_dossiers_router,
         tenders_router,
         documents_router,
         digest_router,

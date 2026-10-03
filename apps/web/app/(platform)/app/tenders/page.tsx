@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { formatAmount, StatusBadge } from "@/components/platform/format";
 import { PageHeader } from "@/components/platform/page-header";
 import { ResourcePanel } from "@/components/platform/resource-panel";
+import { NewTenderForm } from "@/components/platform/tenders/tender-actions";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/field";
 import { coreFetch, getWorkspaceContext } from "@/lib/core/client";
@@ -32,12 +33,11 @@ export default async function TendersPage({ searchParams }: { searchParams: Prom
   }
 
   const { workspaceId: ws, failure } = await getWorkspaceContext();
-  const [dossiers, opportunities] = ws
-    ? await Promise.all([
-        coreFetch<unknown>(ENDPOINTS.tenders.list(ws), { workspaceId: ws }),
-        coreFetch<unknown>(ENDPOINTS.tenders.opportunities(ws), { workspaceId: ws, query, timeoutMs: 10000 }),
-      ])
-    : [failure, failure];
+  // Les dossiers AO vivent chacun dans leur propre workspace : la liste couvre tous ceux accessibles.
+  const [dossiers, opportunities] = await Promise.all([
+    coreFetch<unknown>(ENDPOINTS.tenders.all()),
+    ws ? coreFetch<unknown>(ENDPOINTS.tenders.opportunities(ws), { workspaceId: ws, query, timeoutMs: 10000 }) : failure,
+  ]);
 
   return (
     <>
@@ -47,19 +47,24 @@ export default async function TendersPage({ searchParams }: { searchParams: Prom
       />
 
       <div className="grid gap-5">
+        <div>
+          <NewTenderForm />
+        </div>
         <ResourcePanel
           title="Dossiers en cours"
-          description="Missions de type appel d'offres sur ce site."
+          description="Chaque dossier a son espace dédié et sa référence (WS-AO-…), partagés avec les outils GSMS."
           result={dossiers}
           columns={[
+            { key: "reference", label: "Référence", render: (row) => <span className="font-mono text-[12px]">{String(row.reference ?? "—")}</span> },
             { key: "title", label: "Marché" },
             { key: "buyer", label: "Acheteur" },
+            { key: "dossier_status", label: "Dossier", render: (row) => <StatusBadge value={row.dossier_status} /> },
+            { key: "status", label: "Go / No-Go", render: (row) => <StatusBadge value={row.status} /> },
             { key: "amount", label: "Montant estimé", render: (row) => formatAmount(row.amount) },
-            { key: "status", label: "Statut", render: (row) => <StatusBadge value={row.status} /> },
             { key: "submission_deadline", label: "Remise" },
           ]}
-          rowHref={(row) => (row.id ? tenderHref(String(row.id)) : null)}
-          empty={{ icon: FileStack, title: "Aucun dossier AO", description: "Qualifiez une opportunité ci-dessous ou créez une mission « appel d'offres » pour ouvrir un dossier." }}
+          rowHref={(row) => (row.workspace_id ? tenderHref(String(row.workspace_id)) : null)}
+          empty={{ icon: FileStack, title: "Aucun dossier AO", description: "Créez un dossier avec « Nouveau dossier AO », puis déposez le DCE." }}
         />
 
         <section aria-labelledby="veille-title" className="surface-card overflow-hidden">

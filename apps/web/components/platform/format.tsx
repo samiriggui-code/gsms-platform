@@ -11,6 +11,7 @@ export function formatDate(value: string) {
 }
 
 export function formatAmount(value: unknown, currency = "EUR") {
+  if (value === null || value === undefined || value === "") return "—";
   const n = typeof value === "number" ? value : Number(value);
   if (!Number.isFinite(n)) return "—";
   return new Intl.NumberFormat("fr-FR", { style: "currency", currency, maximumFractionDigits: 0 }).format(n);
@@ -56,10 +57,43 @@ const STATUS_TONES: Record<string, "neutral" | "primary" | "success" | "warning"
   pending: "warning",
   a_valider: "warning",
   partial: "warning",
+  review: "primary",
+  en_relecture: "primary",
+  ready: "primary",
+  pret: "primary",
+  approved: "success",
+  approuve: "success",
+  submitted: "success",
+  depose: "success",
+  parsed: "success",
+  recue: "success",
+  failed: "danger",
+  manquante: "danger",
+  depassee: "danger",
+  a_venir: "primary",
+  rec_go: "primary",
+  rec_no_go: "warning",
+};
+
+/** Codes renvoyés par le Core affichés en clair. */
+const STATUS_LABELS: Record<string, string> = {
+  draft: "brouillon",
+  review: "en relecture",
+  ready: "prêt",
+  approved: "approuvé",
+  submitted: "déposé",
+  pending: "en attente",
+  parsed: "analysée",
+  failed: "échec",
+  a_venir: "à venir",
+  depassee: "dépassée",
+  rec_go: "recommandé go",
+  rec_no_go: "recommandé no-go",
+  no_go: "no-go",
 };
 
 export function StatusBadge({ value }: { value: unknown }) {
   if (typeof value !== "string" || value === "") return <span className="text-muted-foreground">—</span>;
   const key = value.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[\s-]+/g, "_");
-  return <Badge tone={STATUS_TONES[key] ?? "neutral"}>{value.replace(/_/g, " ")}</Badge>;
+  return <Badge tone={STATUS_TONES[key] ?? "neutral"}>{STATUS_LABELS[key] ?? value.replace(/_/g, " ")}</Badge>;
 }

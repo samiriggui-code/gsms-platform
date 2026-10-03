@@ -45,7 +45,7 @@ export async function MissionsView({ typeSlug }: { typeSlug?: string }) {
           { key: "status", label: "Statut", render: (row) => <StatusBadge value={row.status} /> },
           { key: "next_milestone_at", label: "Prochain jalon" },
         ]}
-        rowHref={(row) => (row.type === "appel_offres" && row.id ? `/app/tenders/${encodeURIComponent(String(row.id))}` : null)}
+        rowHref={(row) => (row.type === "appel_offres" && row.workspace_id ? `/app/tenders/${encodeURIComponent(String(row.workspace_id))}` : null)}
         empty={{ icon: Briefcase, title: type ? `Aucune mission « ${type.label} »` : "Aucune mission", description: "Les missions créées dans le Core (ou issues d'une demande qualifiée) apparaîtront ici." }}
       />
     </>
