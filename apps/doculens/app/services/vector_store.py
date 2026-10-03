@@ -38,12 +38,18 @@ class VectorStore:
             local (bool): If True, overrides .env to use localhost DB for running outside Docker.
         """
         self.settings = get_settings()
-        self.openai_client = OpenAI(
-            api_key=self.settings.llm.openai.api_key,
-            timeout=self.settings.provider_timeout_seconds,
-            max_retries=self.settings.llm.openai.max_retries,
-        )
-        self.embedding_model = self.settings.llm.openai.embedding_model
+        self._embedding_client: Optional[OpenAI] = None
+        self._embedding_provider: Optional[str] = None
+        self.embedding_model: Optional[str] = None
+        try:
+            self._embedding_provider = self.settings.llm.resolve_embedding_provider()
+            self.embedding_model = self.settings.llm.resolve_embedding_model(
+                self._embedding_provider  # type: ignore[arg-type]
+            )
+        except ValueError as exc:
+            logging.getLogger(__name__).warning(
+                "Embeddings unavailable at startup: %s", exc
+            )
         self.vector_settings = self.settings.database.vector_store
         database_url = self.settings.database.service_url_for(local=local)
         self.database_url = database_url
@@ -53,6 +59,27 @@ class VectorStore:
             self.vector_settings.embedding_dimensions,
             time_partition_interval=self.vector_settings.time_partition_interval,
         )
+
+    @property
+    def openai_client(self) -> OpenAI:
+        """Lazy OpenAI-compatible client (OpenAI or OpenRouter) for embeddings."""
+        if self._embedding_client is None:
+            provider = self._embedding_provider or self.settings.llm.resolve_embedding_provider()
+            kwargs = self.settings.llm.openai_compatible_client_kwargs(provider)
+            self._embedding_client = OpenAI(
+                timeout=self.settings.provider_timeout_seconds,
+                **kwargs,
+            )
+            self._embedding_provider = provider
+            if not self.embedding_model:
+                self.embedding_model = self.settings.llm.resolve_embedding_model(provider)
+        return self._embedding_client
+
+    @property
+    def embedding_provider(self) -> str:
+        if not self._embedding_provider:
+            self._embedding_provider = self.settings.llm.resolve_embedding_provider()
+        return self._embedding_provider
 
     def create_keyword_search_index(self):
         """Create a GIN index for keyword search if it doesn't exist."""
@@ -84,7 +111,11 @@ class VectorStore:
 
     def embed_texts(self, texts: List[str], model: Optional[str] = None) -> List[List[float]]:
         """Embed texts in bounded batches with a small process-local LRU cache."""
-        selected_model = model or self.embedding_model
+        selected_model = (
+            model
+            or self.embedding_model
+            or self.settings.llm.resolve_embedding_model()
+        )
         results: List[Optional[List[float]]] = [None] * len(texts)
         missing: List[tuple[int, str, tuple[str, str]]] = []
         with self._cache_lock:

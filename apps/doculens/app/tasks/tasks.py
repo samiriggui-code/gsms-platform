@@ -1,7 +1,9 @@
 import logging
+import uuid as uuid_mod
 from contextlib import contextmanager
 from typing import Any, Dict, List, Optional
 
+from pydantic import TypeAdapter
 from sqlalchemy import and_
 
 from app.api.dependencies import db_session
@@ -11,11 +13,12 @@ from app.config.settings import get_settings
 from app.database.event import Event
 from app.database.models import DocumentClassificationHistory
 from app.database.repository import GenericRepository
+from app.gsms.core_notify import notify_document_classified, notify_document_ingested
+from app.gsms.workspace import attach_workspace, workspace_from_event_data
 from app.pipelines.registry import PipelineRegistry
 from app.services.classification_audit import record_classification_result
 from app.services.classification_service import get_classification_service
 from app.services.label_service import LabelService
-from pydantic import TypeAdapter
 
 """
 Pipeline Task Processing Module
@@ -55,16 +58,45 @@ def process_incoming_event(event_id: str):
         db_event.task_context = task_context.model_dump(mode="json")
         repository.update(obj=db_event)
 
+        workspace_id = workspace_from_event_data(db_event.data if isinstance(db_event.data, dict) else None)
+
         try:
             if event.event_type == "document_upload":
-                _schedule_post_ingestion_jobs(session, task_context)
+                _notify_ingested(workspace_id, task_context, db_event)
+                _schedule_post_ingestion_jobs(session, task_context, workspace_id=workspace_id)
             elif event.event_type == "document_summary":
-                _auto_classify_from_summary(session, task_context)
+                _auto_classify_from_summary(session, task_context, workspace_id=workspace_id)
         except Exception:
             logger.exception("Post-processing hook failed for event %s", event_id)
 
 
-def _schedule_post_ingestion_jobs(session, task_context) -> None:
+def _notify_ingested(workspace_id: Optional[str], task_context, db_event: Event) -> None:
+    if not workspace_id:
+        logger.debug("Skip Core notify: missing workspace_id on upload event %s", db_event.id)
+        return
+    metadata = task_context.metadata or {}
+    document_meta: Dict[str, Any] = metadata.get("document") or {}
+    document_id = document_meta.get("id") or str(db_event.id)
+    data = db_event.data if isinstance(db_event.data, dict) else {}
+    meta = data.get("metadata") if isinstance(data.get("metadata"), dict) else {}
+    notify_document_ingested(
+        workspace_id=workspace_id,
+        document_id=str(document_id),
+        doc_type=document_meta.get("doc_type") or data.get("doc_type"),
+        filename=(
+            document_meta.get("original_filename")
+            or document_meta.get("stored_filename")
+            or meta.get("uploaded_filename")
+        ),
+        mission_id=meta.get("mission_id") or data.get("mission_id"),
+        core_document_id=meta.get("core_document_id"),
+        core_version_id=meta.get("core_version_id"),
+    )
+
+
+def _schedule_post_ingestion_jobs(
+    session, task_context, *, workspace_id: Optional[str] = None
+) -> None:
     metadata = task_context.metadata or {}
     document_meta: Dict[str, Any] = metadata.get("document") or {}
     document_id = document_meta.get("id")
@@ -91,13 +123,15 @@ def _schedule_post_ingestion_jobs(session, task_context) -> None:
         or document_meta.get("ingest_source")
     )
 
-    payload = {
+    payload: Dict[str, Any] = {
         "event_type": "document_summary",
         "document_id": document_id,
         "filename": filename,
         "doc_type": document_meta.get("doc_type"),
         "chunks_limit": settings.summary_chunk_limit,
     }
+    if workspace_id:
+        payload = attach_workspace(payload, workspace_id=workspace_id)
     summary_event = Event(data=payload)
     session.add(summary_event)
     session.commit()
@@ -105,13 +139,22 @@ def _schedule_post_ingestion_jobs(session, task_context) -> None:
     logger.info("Queued automatic summary event %s for document %s", summary_event.id, document_id)
 
 
-def _auto_classify_from_summary(session, task_context) -> None:
+def _auto_classify_from_summary(
+    session, task_context, *, workspace_id: Optional[str] = None
+) -> None:
     metadata = task_context.metadata or {}
     summaries: Dict[str, Any] = metadata.get("document_summaries") or {}
     if not summaries:
         return
 
-    label_service = LabelService(session=session)
+    ws_uuid = None
+    if workspace_id:
+        try:
+            ws_uuid = uuid_mod.UUID(workspace_id)
+        except ValueError:
+            ws_uuid = None
+
+    label_service = LabelService(session=session, workspace_id=ws_uuid)
     candidate_labels = label_service.get_candidate_labels()
     if not candidate_labels:
         logger.info("Skipping auto classification; no candidate labels configured.")
@@ -150,6 +193,14 @@ def _auto_classify_from_summary(session, task_context) -> None:
             metadata_extra={"auto_classified": True},
         )
         logger.info("Stored automatic classification for document %s label=%s", document_id, result.label)
+
+        if workspace_id:
+            notify_document_classified(
+                workspace_id=workspace_id,
+                document_id=str(document_id),
+                doc_type=result.label,
+                confidence=result.confidence,
+            )
 
 
 def _render_summary_for_classification(summary_payload: Dict[str, Any]) -> Optional[str]:

@@ -14,6 +14,7 @@ from app.core.observability import configure_logging, request_context_middleware
 from app.database import event as _event_model  # noqa: F401
 from app.database import user as _user_model  # noqa: F401
 from app.database.session import Base, SessionLocal, engine
+from app.gsms.fr_labels import ensure_fr_labels
 from app.services.auth_service import AuthService
 from app.services.demo_workspace import seed_demo_workspace
 from app.services.vector_store import VectorStore
@@ -47,6 +48,24 @@ def initialize_dependencies(settings: Settings) -> None:
     if settings.seed_demo_users:
         with session_scope() as session:
             AuthService(session).ensure_seed_users(DEMO_USERS)
+    if settings.seed_fr_labels:
+        with session_scope() as session:
+            created = ensure_fr_labels(session)
+            if created:
+                logger.info("Seeded %s French document taxonomy labels", created)
+    try:
+        chat = settings.llm.resolve_chat_provider()
+        chat_model = settings.llm.resolve_chat_model(chat)
+        logger.info("LLM chat provider=%s model=%s", chat, chat_model)
+    except ValueError as exc:
+        logger.warning("LLM chat provider not configured: %s", exc)
+    try:
+        emb = settings.llm.resolve_embedding_provider()
+        emb_model = settings.llm.resolve_embedding_model(emb)
+        logger.info("LLM embedding provider=%s model=%s", emb, emb_model)
+    except ValueError as exc:
+        logger.warning("LLM embedding provider not configured: %s", exc)
+
     store = VectorStore()
     store.create_tables()
     store.create_keyword_search_index()
@@ -77,7 +96,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application = FastAPI(
         title=runtime.app_name,
         version="1.0.0",
-        description="Asynchronous document intelligence and retrieval API.",
+        description="GSMS Documents — intelligence documentaire (registres, PV, DCE) et pont Core.",
         lifespan=lifespan,
     )
     application.middleware("http")(request_context_middleware)
@@ -86,7 +105,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         allow_origins=runtime.cors_origins,
         allow_credentials=True,
         allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-        allow_headers=["Authorization", "Content-Type", runtime.api_key_header, "X-Request-ID"],
+        allow_headers=[
+            "Authorization",
+            "Content-Type",
+            runtime.api_key_header,
+            "X-Request-ID",
+            "X-GSMS-Workspace-Id",
+        ],
     )
     application.include_router(api_router)
     application.include_router(api_router, prefix="/api/v1")

@@ -8,6 +8,13 @@ import { DocumentList } from '../components/DocumentList';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { derivePipelineStages } from '../lib/pipeline';
+import {
+  isPrestationId,
+  prestationForDocType,
+  prestationMeta,
+  PRESTATIONS,
+  type PrestationId,
+} from '../lib/prestations';
 import { inferStatus } from '../lib/routing';
 import { cn } from '../lib/utils';
 
@@ -16,8 +23,12 @@ export function PipelinePage() {
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [view, setView] = useState<'active' | 'archived'>('active');
+  const prestationParam = searchParams.get('prestation');
+  const prestationFilter: PrestationId | null = isPrestationId(prestationParam)
+    ? prestationParam
+    : null;
 
   const loadDocuments = (preferredId?: string, preferredView?: 'active' | 'archived') => {
     setIsLoading(true);
@@ -67,7 +78,23 @@ export function PipelinePage() {
     [documents],
   );
 
-  const visibleDocuments = view === 'archived' ? archivedDocuments : activeDocuments;
+  const scopedDocuments = useMemo(() => {
+    const base = view === 'archived' ? archivedDocuments : activeDocuments;
+    if (!prestationFilter) return base;
+    return base.filter((doc) => prestationForDocType(doc.doc_type) === prestationFilter);
+  }, [view, archivedDocuments, activeDocuments, prestationFilter]);
+
+  const visibleDocuments = scopedDocuments;
+
+  const prestationCounts = useMemo(() => {
+    const pool = view === 'archived' ? archivedDocuments : activeDocuments;
+    const counts = new Map<PrestationId, number>();
+    for (const doc of pool) {
+      const id = prestationForDocType(doc.doc_type);
+      counts.set(id, (counts.get(id) ?? 0) + 1);
+    }
+    return counts;
+  }, [view, archivedDocuments, activeDocuments]);
 
   useEffect(() => {
     if (!visibleDocuments.length) {
@@ -79,12 +106,22 @@ export function PipelinePage() {
     }
     setSelectedId(visibleDocuments[0].document_id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [view, visibleDocuments.map((doc) => doc.document_id).join(',')]);
+  }, [view, prestationFilter, visibleDocuments.map((doc) => doc.document_id).join(',')]);
 
   const selectedDocument = useMemo(
     () => visibleDocuments.find((doc) => doc.document_id === selectedId) ?? documents.find((doc) => doc.document_id === selectedId),
     [visibleDocuments, documents, selectedId],
   );
+
+  const setPrestationFilter = (id: PrestationId | null) => {
+    const next = new URLSearchParams(searchParams);
+    if (id) {
+      next.set('prestation', id);
+    } else {
+      next.delete('prestation');
+    }
+    setSearchParams(next, { replace: true });
+  };
 
   const handleEventQueued = (eventType: string, documentId?: string) => {
     if (eventType === 'document_restored') {
@@ -151,26 +188,70 @@ export function PipelinePage() {
 
         <Card className="shadow-none">
           <CardHeader className="flex flex-col gap-1">
-            <CardTitle className="text-sm font-semibold text-foreground">All documents</CardTitle>
-            <CardDescription>Select a document to review its summary, classification, and sources.</CardDescription>
-            <div className="flex gap-2 pt-2">
+            <CardTitle className="text-sm font-semibold text-foreground">
+              {prestationFilter
+                ? prestationMeta(prestationFilter).label
+                : 'Documents par prestation'}
+            </CardTitle>
+            <CardDescription>
+              {prestationFilter
+                ? prestationMeta(prestationFilter).description
+                : 'Classés selon les prestations GSMS (commission, audit, AO…).'}
+            </CardDescription>
+            <div className="flex flex-wrap gap-2 pt-2">
               <Button size="sm" variant={view === 'active' ? 'default' : 'outline'} onClick={() => setView('active')}>
-                Active ({activeDocuments.length})
+                Actifs ({activeDocuments.length})
               </Button>
               <Button size="sm" variant={view === 'archived' ? 'default' : 'outline'} onClick={() => setView('archived')}>
-                Archived ({archivedDocuments.length})
+                Archives ({archivedDocuments.length})
               </Button>
+            </div>
+            <div className="flex flex-wrap gap-2 pt-2">
+              <Button
+                size="sm"
+                variant={!prestationFilter ? 'accent' : 'outline'}
+                onClick={() => setPrestationFilter(null)}
+              >
+                Toutes
+              </Button>
+              {PRESTATIONS.map((prestation) => (
+                <Button
+                  key={prestation.id}
+                  size="sm"
+                  variant={prestationFilter === prestation.id ? 'accent' : 'outline'}
+                  onClick={() => setPrestationFilter(prestation.id)}
+                >
+                  {prestation.shortLabel}
+                  {(prestationCounts.get(prestation.id) ?? 0) > 0
+                    ? ` (${prestationCounts.get(prestation.id)})`
+                    : ''}
+                </Button>
+              ))}
+              {(prestationCounts.get('non_classe') ?? 0) > 0 ? (
+                <Button
+                  size="sm"
+                  variant={prestationFilter === 'non_classe' ? 'accent' : 'outline'}
+                  onClick={() => setPrestationFilter('non_classe')}
+                >
+                  Non classés ({prestationCounts.get('non_classe')})
+                </Button>
+              ) : null}
             </div>
           </CardHeader>
           <CardContent>
             {isLoading ? (
-              <p className="text-sm text-muted-foreground">Loading documents…</p>
+              <p className="text-sm text-muted-foreground">Chargement des documents…</p>
             ) : error ? (
               <p className="text-sm text-destructive">{error}</p>
             ) : visibleDocuments.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No documents in this view.</p>
+              <p className="text-sm text-muted-foreground">Aucun document dans cette vue.</p>
             ) : (
-              <DocumentList documents={visibleDocuments} selectedId={selectedId} onSelect={(doc) => setSelectedId(doc.document_id)} />
+              <DocumentList
+                documents={visibleDocuments}
+                selectedId={selectedId}
+                prestationFilter={prestationFilter}
+                onSelect={(doc) => setSelectedId(doc.document_id)}
+              />
             )}
           </CardContent>
         </Card>

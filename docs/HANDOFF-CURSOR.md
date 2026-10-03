@@ -1,5 +1,86 @@
 # Handoff Cursor → Claude
 
+## 2026-10-03 — DocuLens workspace + prestations GSMS
+
+Branche `cursor/doculens-server-gsms-74cc`.
+
+**Demande :** mode workspace ; docs/classement organisés par prestations (pas en vrac) ; clarifier Settings « Classification taxonomy » / « Role directory ».
+
+**Ce que renvoient ces settings :**
+- **Taxonomie** (`/events/labels`) = domaines (= prestations GSMS) + types de pièces pour le classifieur. Pas un réglage d’accès.
+- **Répertoire des rôles** = catalogue statique des personas (admin/analyste…) — lecture seule, pas les users du site.
+
+**Fait UI :**
+- Sidebar « Prestations » → filtre `/app/pipeline?prestation=…`
+- Liste documents groupée par commission / audit / AO / autres
+- Libellés FR (plus de snake_case brut)
+- Settings FR avec explication prestations vs rôles
+- `fr_labels.py` réparé (import circulaire) + descriptions domaines = noms de prestations
+
+---
+
+## 2026-10-03 — DocuLens multi-provider LLM (OpenRouter / Anthropic / OpenAI)
+
+Branche `cursor/doculens-server-gsms-74cc`.
+
+**Pourquoi le warning OpenAI :** classif + embeddings appelaient `OpenAI()` en dur ; le factory supportait déjà OpenRouter/Anthropic mais n’était pas branché sur le chemin prod. De plus le VPS avait `OPENROUTER_API_KEY` dans `/opt/gsms/.env` alors que DocuLens ne lisait que `OPEN_ROUTER_API_KEY`.
+
+**Fait :**
+- `DOCULENS_LLM_PROVIDER=auto|openrouter|anthropic|openai|llama` (+ alias `codex`/`claude`)
+- `DOCULENS_EMBEDDING_PROVIDER=auto|openrouter|openai`
+- Clés multiples OK ; auto = OpenRouter → Anthropic → OpenAI (chat) ; OpenRouter → OpenAI (embeddings)
+- Classif via `LLMFactory` ; pipeline nodes / vector store suivent la résolution
+- `/events/config` expose `llm` (provider actif + keys_configured, sans secrets)
+
+---
+
+## 2026-10-03 — DocuLens live sur VPS (psycopg2 + Traefik)
+
+Branche `cursor/doculens-server-gsms-74cc` (commit `212eecf`).
+
+**Fix prod :** SQLAlchemy 2.1 mappe `postgresql://` → psycopg v3 ; image n’a que `psycopg2-binary`. Dialecte forcé `postgresql+psycopg2://` dans `database_utils.py`.
+
+**Live vérifié (VPS `187.77.166.124`) :**
+- Stack `gsms-doculens` healthy (api / celery / db / redis / frontend)
+- `http://127.0.0.1:3053/health/live` → 200
+- Auth : documents sans clé → **401** ; clé sans workspace → **400** ; clé + `X-GSMS-Workspace-Id` → **200** `[]`
+- HTTPS Traefik : `https://doculens.gsms-security.com/health/live` → **200** ; `/` → **200** ; `/events/documents` → **401**
+- `ANTHROPIC_API_KEY` présent ; **pas** d’`OPENAI_API_KEY` → warning OpenAI au boot (classif embedding peut échouer tant que non fourni)
+
+**Ops :** checkout ciblé `git checkout origin/cursor/doculens-server-gsms-74cc -- apps/doculens` puis `docker compose -f apps/doculens/deploy/vps/docker-compose.vps.yml up -d --build`.
+
+---
+
+## 2026-10-03 — Chantier 1 DocuLens serveur (auth / sites / Core / FR / Traefik)
+
+Branche `cursor/doculens-server-gsms-74cc`. Uniquement le serveur DocuLens (pas UI i18n).
+
+**Fait :**
+- Auth réelle sur routes `/events/*` : Bearer JWT Core (`iss=gsms-core` + `GSMS_PLATFORM_JWT_SECRET`) ou compte local, ou `X-API-Key` + `X-GSMS-Workspace-Id` (service).
+- Isolation par site : `workspace_id` injecté dans les events JSONB ; listes/get filtrés ; `request.state` (pas ContextVar — threadpool FastAPI).
+- Notify Core HMAC : `document.ingested` / `document.classified` → `POST {GSMS_CORE_URL}/api/v1/events/ingest/doculens`.
+- Taxonomie FR seedée au boot (`registre_securite`, `pv_commission_precedente`, `dce`, …) + prompt classifieur FR.
+- Deploy Traefik : `apps/doculens/deploy/vps/docker-compose.vps.yml` → `doculens.gsms-security.com`.
+- App renommée côté settings : **GSMS Documents**.
+- Tests : `tests/test_gsms_*.py` + endpoints auth (25 passent).
+
+**Pour Claude / ops :**
+- DNS A `doculens` + secrets Core alignés (`jwt_secret`, `webhook_secrets.doculens`).
+- Chantiers 2–5 (UI i18n, vitrine, CRM, GRACE/QAtrial) non touchés.
+
+---
+
+## 2026-10-03 — Cartographie DocuLens (auth / lifecycle / Core HMAC)
+
+Exploration lecture seule de `apps/doculens` + ingest Core. Points utiles pour le chantier serveur :
+
+- **JWT DocuLens** (`get_current_user`) ne protège que `GET /auth/me`. Routes documents/events = `require_api_key` (no-op si `DOCULENS_API_KEY` vide) + showcase write-guard. Pas de scoping user/workspace sur les docs.
+- **Documents** = events JSONB (`document_upload` + `task_context.metadata.document`), pas de table Document. `workspace_id` n’existe que sur `document_labels` (nullable) et n’est jamais passé depuis les endpoints.
+- **Hook notify Core** : après `pipeline.run` dans `app/tasks/tasks.py` (`document_upload` → ingested ; `_auto_classify_from_summary` / `record_classification_result` → classified). Core attend `POST /api/v1/events/ingest/{source}` + `X-GSMS-Signature: sha256=<hmac>` ; taxonomie FR déjà dans `gsms_core/documents/dossier.py`.
+- Doctrine rappelée : ne pas déployer DocuLens tel quel ; extraction vers Core P2 (`documents/ingestion/README.md`).
+
+---
+
 ## 2026-10-02 — Clarification : Core = pont, pas CRM ; sous-domaines `*.gsms-security.com`
 
 **Intention user (reformulée) :**

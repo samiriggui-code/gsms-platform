@@ -18,6 +18,9 @@ from app.config.celery_config import celery_app
 from app.config.settings import get_settings
 from app.database.event import Event
 from app.database.repository import GenericRepository
+from app.gsms.auth import get_workspace_id
+from app.gsms.core_notify import notify_document_classified
+from app.gsms.workspace import assert_event_workspace, attach_workspace
 from app.services.vector_store import VectorStore
 from app.services.classification_service import (
     ClassificationResult,
@@ -28,6 +31,7 @@ from app.services.classification_audit import record_classification_result
 from app.services.document_lifecycle import (
     archive_document as archive_document_service,
     delete_document as delete_document_service,
+    get_upload_event_for_document,
     restore_document as restore_document_service,
 )
 from app.services.label_service import LabelConflictError, LabelService
@@ -71,10 +75,13 @@ def _strip_ingestion_prefix(filename: str) -> str:
     return candidate
 
 
-def _store_event_and_dispatch(session: Session, payload: Dict[str, Any]) -> Tuple[Event, str]:
+def _store_event_and_dispatch(
+    session: Session, payload: Dict[str, Any], *, workspace_id: str
+) -> Tuple[Event, str]:
     """Persist an event and enqueue the Celery worker."""
+    scoped_payload = attach_workspace(payload, workspace_id=workspace_id)
     repository = GenericRepository(session=session, model=Event)
-    event = Event(data=payload)
+    event = Event(data=scoped_payload)
     repository.create(obj=event)
     task_result = celery_app.send_task(
         "process_incoming_event",
@@ -82,6 +89,20 @@ def _store_event_and_dispatch(session: Session, payload: Dict[str, Any]) -> Tupl
     )
     task_id = getattr(task_result, "id", str(task_result))
     return event, task_id
+
+
+def _label_service(session: Session, workspace_id: str) -> LabelService:
+    return LabelService(session=session, workspace_id=UUID(workspace_id))
+
+
+def _assert_document_in_workspace(session: Session, document_id: str, workspace_id: str) -> None:
+    upload = get_upload_event_for_document(session, document_id)
+    if upload is None:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Document not found")
+    assert_event_workspace(
+        upload.data if isinstance(upload.data, dict) else None,
+        workspace_id=workspace_id,
+    )
 
 
 public_router = APIRouter()
@@ -281,6 +302,37 @@ def _convert_tree_nodes(nodes: List[Dict[str, Any]]) -> List[LabelTreeNode]:
 
 
 
+def _llm_runtime_status(settings) -> Dict[str, Any]:
+    """Public LLM status (no secrets) for ops / frontend."""
+    keys = {
+        "openai": settings.llm.has_key("openai"),
+        "anthropic": settings.llm.has_key("anthropic"),
+        "openrouter": settings.llm.has_key("openrouter"),
+    }
+    chat_provider = None
+    chat_model = None
+    embedding_provider = None
+    embedding_model = None
+    try:
+        chat_provider = settings.llm.resolve_chat_provider()
+        chat_model = settings.llm.resolve_chat_model(chat_provider)
+    except ValueError:
+        pass
+    try:
+        embedding_provider = settings.llm.resolve_embedding_provider()
+        embedding_model = settings.llm.resolve_embedding_model(embedding_provider)
+    except ValueError:
+        pass
+    return {
+        "provider_setting": settings.llm.provider,
+        "chat_provider": chat_provider,
+        "chat_model": chat_model,
+        "embedding_provider": embedding_provider,
+        "embedding_model": embedding_model,
+        "keys_configured": keys,
+    }
+
+
 @public_router.get("/config")
 def get_runtime_config() -> Dict[str, Any]:
     """Expose runtime configuration defaults for frontend clients."""
@@ -292,9 +344,12 @@ def get_runtime_config() -> Dict[str, Any]:
         "search_result_limit": settings.search_result_limit,
         "search_preview_limit": settings.search_preview_limit,
         "chunk_preview_limit": settings.chunk_preview_limit,
-        "auth_required": bool(settings.api_key),
+        "auth_required": True,
+        "workspace_header": "X-GSMS-Workspace-Id",
+        "default_workspace_id": settings.default_workspace_id,
         "showcase_read_only": settings.showcase_read_only,
         "api_key_header": settings.api_key_header,
+        "llm": _llm_runtime_status(settings),
         "persona_options": PERSONA_OPTIONS,
         "role_definitions": ROLE_DEFINITIONS,
     }
@@ -397,6 +452,7 @@ def _resolve_due_at(
 @router.get("/insights/dashboard")
 def get_dashboard_insights(
     session: Session = Depends(db_session),
+    workspace_id: str = Depends(get_workspace_id),
 ) -> Dict[str, Any]:
     """Return aggregate metrics for the operations dashboard."""
 
@@ -408,8 +464,10 @@ def get_dashboard_insights(
             SELECT id, data, task_context, created_at
             FROM events
             WHERE data->>'event_type' = 'document_upload'
+              AND data->>'workspace_id' = :workspace_id
             """
-        )
+        ),
+        {"workspace_id": workspace_id},
     ).mappings()
 
     summaries_rows = session.execute(
@@ -418,8 +476,10 @@ def get_dashboard_insights(
             SELECT id, data, task_context, created_at
             FROM events
             WHERE data->>'event_type' = 'document_summary'
+              AND data->>'workspace_id' = :workspace_id
             """
-        )
+        ),
+        {"workspace_id": workspace_id},
     ).mappings()
 
     doc_records: Dict[str, Dict[str, Any]] = {}
@@ -648,9 +708,16 @@ def get_dashboard_insights(
 def list_events(
     limit: int = Query(default=20, ge=1, le=200),
     session: Session = Depends(db_session),
+    workspace_id: str = Depends(get_workspace_id),
 ):
     """Return the most recent events and their processing context."""
-    events = session.query(Event).order_by(Event.created_at.desc()).limit(limit).all()
+    events = (
+        session.query(Event)
+        .filter(Event.data["workspace_id"].astext == workspace_id)
+        .order_by(Event.created_at.desc())
+        .limit(limit)
+        .all()
+    )
     return [
         {
             "id": str(event.id),
@@ -667,6 +734,7 @@ def list_events(
 def list_documents(
     limit: int = Query(default=20, ge=1, le=200),
     session: Session = Depends(db_session),
+    workspace_id: str = Depends(get_workspace_id),
 ):
     """Return recent ingested documents with metadata and latest summary."""
 
@@ -676,11 +744,12 @@ def list_documents(
             SELECT id, data, task_context, created_at
             FROM events
             WHERE data->>'event_type' = 'document_upload'
+              AND data->>'workspace_id' = :workspace_id
             ORDER BY created_at DESC
             LIMIT :limit
             """
         ),
-        {"limit": limit},
+        {"limit": limit, "workspace_id": workspace_id},
     ).mappings()
 
     summary_rows = session.execute(
@@ -689,9 +758,11 @@ def list_documents(
             SELECT task_context, created_at
             FROM events
             WHERE data->>'event_type' = 'document_summary'
+              AND data->>'workspace_id' = :workspace_id
             ORDER BY created_at DESC
             """
-        )
+        ),
+        {"workspace_id": workspace_id},
     ).mappings()
 
     summary_by_doc: Dict[str, Dict[str, Any]] = {}
@@ -792,8 +863,11 @@ def get_document_chunks(
     document_id: str,
     limit: Optional[int] = Query(default=None, ge=1, le=500),
     filename: Optional[str] = Query(default=None),
+    session: Session = Depends(db_session),
+    workspace_id: str = Depends(get_workspace_id),
 ):
     """Return chunk previews for a given document."""
+    _assert_document_in_workspace(session, document_id, workspace_id)
     vector_store = VectorStore()
     settings = get_settings()
     chunk_limit = limit or settings.chunk_preview_limit
@@ -817,12 +891,14 @@ def classify_document(
     document_id: str,
     payload: ClassificationRequest = Body(default_factory=ClassificationRequest),
     session: Session = Depends(db_session),
+    workspace_id: str = Depends(get_workspace_id),
 ):
     """Classify a document using a local zero-shot transformer."""
+    _assert_document_in_workspace(session, document_id, workspace_id)
     text_source = payload.text_override or _build_document_text(session, document_id)
     combined_text = _stitch_examples_and_text(payload.examples, text_source)
 
-    label_service = LabelService(session=session)
+    label_service = _label_service(session, workspace_id)
     candidate_labels = payload.candidate_labels or label_service.get_candidate_labels()
     if not candidate_labels:
         raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail="No candidate labels available for classification.")
@@ -844,6 +920,12 @@ def classify_document(
         classifier_version=getattr(classifier, "version", None),
         metadata_extra={"reasoning": result.reasoning} if result.reasoning else None,
     )
+    notify_document_classified(
+        workspace_id=workspace_id,
+        document_id=document_id,
+        doc_type=result.label,
+        confidence=result.confidence,
+    )
 
     used_preview = result.used_text[:500]
     return ClassificationResponse(
@@ -862,7 +944,9 @@ def archive_document_endpoint(
     document_id: str,
     payload: Optional[DocumentArchiveRequest] = Body(default=None),
     session: Session = Depends(db_session),
+    workspace_id: str = Depends(get_workspace_id),
 ) -> DocumentLifecycleResponse:
+    _assert_document_in_workspace(session, document_id, workspace_id)
     try:
         result = archive_document_service(
             session,
@@ -880,7 +964,9 @@ def delete_document_endpoint(
     reason: Optional[str] = Query(default=None),
     purge_vectors: bool = Query(default=True),
     session: Session = Depends(db_session),
+    workspace_id: str = Depends(get_workspace_id),
 ) -> DocumentLifecycleResponse:
+    _assert_document_in_workspace(session, document_id, workspace_id)
     try:
         result = delete_document_service(
             session,
@@ -898,7 +984,9 @@ def restore_document_endpoint(
     document_id: str,
     payload: Optional[DocumentArchiveRequest] = Body(default=None),
     session: Session = Depends(db_session),
+    workspace_id: str = Depends(get_workspace_id),
 ) -> DocumentLifecycleResponse:
+    _assert_document_in_workspace(session, document_id, workspace_id)
     try:
         result = restore_document_service(
             session,
@@ -911,17 +999,24 @@ def restore_document_endpoint(
 
 
 @router.get("/labels", response_model=LabelsResponse)
-def list_labels(session: Session = Depends(db_session)) -> LabelsResponse:
-    label_service = LabelService(session=session)
+def list_labels(
+    session: Session = Depends(db_session),
+    workspace_id: str = Depends(get_workspace_id),
+) -> LabelsResponse:
+    label_service = _label_service(session, workspace_id)
     tree = _convert_tree_nodes(label_service.get_label_tree())
     candidate_labels = label_service.get_candidate_labels()
     return LabelsResponse(tree=tree, candidate_labels=candidate_labels)
 
 
 @router.post("/labels", response_model=LabelResponse, status_code=HTTPStatus.CREATED)
-def create_label(payload: LabelCreateRequest, session: Session = Depends(db_session)) -> LabelResponse:
+def create_label(
+    payload: LabelCreateRequest,
+    session: Session = Depends(db_session),
+    workspace_id: str = Depends(get_workspace_id),
+) -> LabelResponse:
     parent_id = uuid.UUID(payload.parent_label_id) if payload.parent_label_id else None
-    label_service = LabelService(session=session)
+    label_service = _label_service(session, workspace_id)
     try:
         label = label_service.create_label(
             label_name=payload.label_name,
@@ -935,8 +1030,13 @@ def create_label(payload: LabelCreateRequest, session: Session = Depends(db_sess
 
 
 @router.patch("/labels/{label_id}", response_model=LabelResponse)
-def update_label(label_id: str, payload: LabelUpdateRequest, session: Session = Depends(db_session)) -> LabelResponse:
-    label_service = LabelService(session=session)
+def update_label(
+    label_id: str,
+    payload: LabelUpdateRequest,
+    session: Session = Depends(db_session),
+    workspace_id: str = Depends(get_workspace_id),
+) -> LabelResponse:
+    label_service = _label_service(session, workspace_id)
     try:
         label = label_service.update_label(
             uuid.UUID(label_id),
@@ -954,8 +1054,13 @@ def update_label(label_id: str, payload: LabelUpdateRequest, session: Session = 
 
 
 @router.delete("/labels/{label_id}", status_code=HTTPStatus.NO_CONTENT)
-def delete_label(label_id: str, force: bool = Query(default=False), session: Session = Depends(db_session)) -> Response:
-    label_service = LabelService(session=session)
+def delete_label(
+    label_id: str,
+    force: bool = Query(default=False),
+    session: Session = Depends(db_session),
+    workspace_id: str = Depends(get_workspace_id),
+) -> Response:
+    label_service = _label_service(session, workspace_id)
     try:
         label_service.delete_label(uuid.UUID(label_id), force=force)
     except ValueError as exc:
@@ -969,7 +1074,12 @@ def delete_label(label_id: str, force: bool = Query(default=False), session: Ses
     "/documents/{document_id}/classification-history",
     response_model=List[ClassificationHistoryEntry],
 )
-def get_classification_history(document_id: str, session: Session = Depends(db_session)) -> List[ClassificationHistoryEntry]:
+def get_classification_history(
+    document_id: str,
+    session: Session = Depends(db_session),
+    workspace_id: str = Depends(get_workspace_id),
+) -> List[ClassificationHistoryEntry]:
+    _assert_document_in_workspace(session, document_id, workspace_id)
     query = (
         select(DocumentClassificationHistory)
         .where(DocumentClassificationHistory.document_id == document_id)
@@ -1007,7 +1117,9 @@ def override_classification(
     document_id: str,
     payload: ClassificationOverrideRequest,
     session: Session = Depends(db_session),
+    workspace_id: str = Depends(get_workspace_id),
 ) -> ClassificationHistoryEntry:
+    _assert_document_in_workspace(session, document_id, workspace_id)
     confidence = payload.confidence if payload.confidence is not None else 1.0
     manual_result = ClassificationResult(
         label=payload.label_name,
@@ -1025,6 +1137,12 @@ def override_classification(
         user_id=None,
         metadata_extra={"notes": payload.notes} if payload.notes else None,
         notes=payload.notes,
+    )
+    notify_document_classified(
+        workspace_id=workspace_id,
+        document_id=document_id,
+        doc_type=payload.label_name,
+        confidence=confidence,
     )
     return ClassificationHistoryEntry(
         id=str(history.id),
@@ -1046,6 +1164,7 @@ async def upload_document(
     doc_type: Optional[str] = Form(default=None),
     metadata: Optional[str] = Form(default=None),
     session: Session = Depends(db_session),
+    workspace_id: str = Depends(get_workspace_id),
 ) -> Dict[str, Any]:
     """Accept a document file upload and queue ingestion."""
     if not file.filename:
@@ -1107,7 +1226,7 @@ async def upload_document(
         "metadata": metadata_dict,
     }
 
-    event, task_id = _store_event_and_dispatch(session, event_payload)
+    event, task_id = _store_event_and_dispatch(session, event_payload, workspace_id=workspace_id)
     return {
         "message": "Document upload accepted",
         "event_id": str(event.id),
@@ -1115,6 +1234,7 @@ async def upload_document(
         "original_filename": original_name,
         "stored_path": str(stored_path),
         "size_bytes": bytes_written,
+        "workspace_id": workspace_id,
     }
 
 
@@ -1122,6 +1242,7 @@ async def upload_document(
 def list_qa_history(
     limit: int = Query(default=20, ge=1, le=200),
     session: Session = Depends(db_session),
+    workspace_id: str = Depends(get_workspace_id),
 ):
     """Return the latest QA query results with answers and citations."""
 
@@ -1131,11 +1252,12 @@ def list_qa_history(
             SELECT id, data, task_context, created_at
             FROM events
             WHERE data->>'event_type' = 'qa_query'
+              AND data->>'workspace_id' = :workspace_id
             ORDER BY created_at DESC
             LIMIT :limit
             """
         ),
-        {"limit": limit},
+        {"limit": limit, "workspace_id": workspace_id},
     ).mappings()
 
     history: List[Dict[str, Any]] = []
@@ -1168,6 +1290,7 @@ def list_qa_history(
 def list_search_history(
     limit: int = Query(default=20, ge=1, le=200),
     session: Session = Depends(db_session),
+    workspace_id: str = Depends(get_workspace_id),
 ):
     """Return prior semantic search requests with preview results."""
     settings = get_settings()
@@ -1177,11 +1300,12 @@ def list_search_history(
             SELECT id, data, task_context, created_at
             FROM events
             WHERE data->>'event_type' = 'search_query'
+              AND data->>'workspace_id' = :workspace_id
             ORDER BY created_at DESC
             LIMIT :limit
             """
         ),
-        {"limit": limit},
+        {"limit": limit, "workspace_id": workspace_id},
     ).mappings()
 
     history: List[Dict[str, Any]] = []
@@ -1218,12 +1342,17 @@ def list_search_history(
 def get_event(
     event_id: UUID,
     session: Session = Depends(db_session),
+    workspace_id: str = Depends(get_workspace_id),
 ):
     """Fetch a single event and its stored task context."""
     repository = GenericRepository(session=session, model=Event)
     event = repository.get(id=str(event_id))
     if event is None:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Event not found")
+    assert_event_workspace(
+        event.data if isinstance(event.data, dict) else None,
+        workspace_id=workspace_id,
+    )
     return {
         "id": str(event.id),
         "created_at": event.created_at,
@@ -1237,6 +1366,7 @@ def get_event(
 def handle_event(
     data: EventSchema,
     session: Session = Depends(db_session),
+    workspace_id: str = Depends(get_workspace_id),
 ) -> Dict[str, Any]:
     """Handles incoming event submissions.
 
@@ -1256,11 +1386,12 @@ def handle_event(
         Use the task ID in the response to check processing status.
     """
     event_payload = data.model_dump(mode="json")
-    event, task_id = _store_event_and_dispatch(session, event_payload)
+    event, task_id = _store_event_and_dispatch(session, event_payload, workspace_id=workspace_id)
 
     return {
         "message": "process_incoming_event started",
         "event_id": str(event.id),
         "task_id": task_id,
         "event_type": event_payload.get("event_type"),
+        "workspace_id": workspace_id,
     }

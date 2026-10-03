@@ -13,6 +13,8 @@ class StrictEvent(BaseModel):
     """Base contract that rejects misspelled or unsupported event fields."""
 
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+    # Isolation GSMS par site (injecté à l'ingest, propagé aux jobs Celery).
+    workspace_id: Optional[str] = None
 
 
 class DocumentUploadEvent(StrictEvent):

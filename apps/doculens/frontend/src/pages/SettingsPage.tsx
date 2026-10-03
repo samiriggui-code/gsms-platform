@@ -13,6 +13,7 @@ import { PERSONA_CONFIG } from '../components/dashboard/personaConfig';
 import { useNotificationStore } from '../stores/notificationStore';
 import { createLabel, deleteLabel, fetchLabels } from '../api/client';
 import type { LabelRequestPayload, LabelsResponse } from '../api/types';
+import { displayLabelName } from '../lib/prestations';
 
 export function SettingsPage() {
   const {
@@ -156,6 +157,20 @@ export function SettingsPage() {
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="workspace-id">Site (workspace)</Label>
+            <Input
+              id="workspace-id"
+              value={settings.workspaceId}
+              onChange={(event) => updateSettings({ workspaceId: event.target.value.trim() })}
+              placeholder="a0000000-0000-4000-8000-000000000001"
+            />
+            <p className="text-xs text-muted-foreground">
+              Identifiant du site GSMS (header {serverConfig?.workspace_header ?? 'X-GSMS-Workspace-Id'}).
+              Défaut serveur : {serverConfig?.default_workspace_id ?? '—'}
+            </p>
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="api-key">API key (sent via {serverConfig?.api_key_header ?? 'X-API-Key'})</Label>
             <div className="flex gap-2">
               <Input
@@ -256,56 +271,65 @@ export function SettingsPage() {
         <CardHeader className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-5 w-5 text-primary" />
-            <CardTitle className="text-lg font-semibold">Classification taxonomy</CardTitle>
+            <CardTitle className="text-lg font-semibold">Taxonomie par prestation</CardTitle>
           </div>
-          <CardDescription>Manage the label set used by the classification service.</CardDescription>
+          <CardDescription>
+            Domaines = prestations GSMS (commission de sécurité, audit de sûreté, appels d’offres…).
+            Les libellés enfants sont les types de pièces utilisés pour classer les documents analysés.
+            Ce n’est pas un réglage d’accès : ça alimente le classement automatique et les filtres Documents.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 text-sm text-muted-foreground">
           {isLabelsLoading ? (
-            <p>Loading labels…</p>
+            <p>Chargement de la taxonomie…</p>
           ) : labelsData?.tree?.length ? (
             <div className="space-y-4">
               {labelsData.tree.map((domain) => {
                 const children = domain.children ?? [];
+                const domainLabel = displayLabelName(domain.name, domain.description);
                 return (
                   <div key={domain.id ?? domain.name} className="space-y-2">
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-2">
-                        <p className="text-sm font-semibold text-foreground">{domain.name}</p>
+                        <p className="text-sm font-semibold text-foreground">{domainLabel}</p>
+                        <span className="font-mono text-[10px] text-muted-foreground/70">{domain.name}</span>
                         {domain.id && !isShowcaseReadOnly ? (
                           <button
                             type="button"
                             className="rounded-full border border-transparent p-1 text-muted-foreground transition hover:border-destructive/40 hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive/40"
                             onClick={() => handleDeleteLabel(domain.id)}
                             disabled={deleteLabelMutation.isPending}
-                            aria-label={`Delete ${domain.name}`}
+                            aria-label={`Supprimer ${domainLabel}`}
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                           </button>
                         ) : null}
                       </div>
                       <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                        {children.length} label{children.length === 1 ? '' : 's'}
+                        {children.length} type{children.length === 1 ? '' : 's'}
                       </span>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      {children.map((label) => (
-                        <Badge key={label.id ?? label.name} variant="outline" className="flex items-center gap-2 px-2 py-1 text-xs">
-                          {label.name}
-                          {deleteLabelMutation.isPending || isShowcaseReadOnly ? null : (
-                            <button
-                              type="button"
-                              className="text-muted-foreground transition hover:text-destructive"
-                              onClick={() => handleDeleteLabel(label.id)}
-                              aria-label={`Delete ${label.name}`}
-                            >
-                              ×
-                            </button>
-                          )}
-                        </Badge>
-                      ))}
+                      {children.map((label) => {
+                        const childLabel = displayLabelName(label.name, label.description);
+                        return (
+                          <Badge key={label.id ?? label.name} variant="outline" className="flex items-center gap-2 px-2 py-1 text-xs">
+                            {childLabel}
+                            {deleteLabelMutation.isPending || isShowcaseReadOnly ? null : (
+                              <button
+                                type="button"
+                                className="text-muted-foreground transition hover:text-destructive"
+                                onClick={() => handleDeleteLabel(label.id)}
+                                aria-label={`Supprimer ${childLabel}`}
+                              >
+                                ×
+                              </button>
+                            )}
+                          </Badge>
+                        );
+                      })}
                       {!children.length ? (
-                        <span className="text-xs text-muted-foreground">No labels yet.</span>
+                        <span className="text-xs text-muted-foreground">Aucun type de pièce pour cette prestation.</span>
                       ) : null}
                     </div>
                   </div>
@@ -313,16 +337,19 @@ export function SettingsPage() {
               })}
             </div>
           ) : (
-            <p>No labels defined yet. Add your first label below.</p>
+            <p>
+              Aucune taxonomie chargée. Les domaines GSMS (commission, audit, AO) devraient apparaître ici après
+              initialisation serveur — utilisez le formulaire ci-dessous pour ajouter une prestation ou un type de pièce.
+            </p>
           )}
 
           {!isShowcaseReadOnly ? <form onSubmit={handleAddLabel} className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Add label</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Ajouter un libellé</p>
             <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr),minmax(0,220px)]">
               <Input
                 value={newLabelName}
                 onChange={(event) => setNewLabelName(event.target.value)}
-                placeholder={isDomainLabel ? 'e.g. Compliance' : 'e.g. Insurance Claim'}
+                placeholder={isDomainLabel ? 'ex. prevention_incendie' : 'ex. registre_securite'}
               />
               {!isDomainLabel ? (
                 <select
@@ -330,23 +357,25 @@ export function SettingsPage() {
                   onChange={(event) => setSelectedDomainId(event.target.value)}
                   className="h-10 rounded-md border border-border bg-background px-3 text-sm"
                 >
-                  <option value="">Ungrouped</option>
+                  <option value="">Sans prestation</option>
                   {domainNodes
                     .filter((node) => node.id)
                     .map((domain) => (
                       <option key={domain.id} value={domain.id ?? ''}>
-                        {domain.name}
+                        {displayLabelName(domain.name, domain.description)}
                       </option>
                     ))}
                 </select>
               ) : (
                 <div className="flex h-10 items-center rounded-md border border-dashed border-border/60 bg-muted/10 px-3 text-xs text-muted-foreground">
-                  Label will be created as a new domain
+                  Créé comme prestation (domaine racine)
                 </div>
               )}
             </div>
             <p className="text-[11px] text-muted-foreground">
-              Tip: separate multiple labels with commas (e.g. <span className="font-medium text-foreground">Invoice, Receipt, Purchase Order</span>).
+              Astuce : plusieurs types séparés par des virgules (ex.{' '}
+              <span className="font-medium text-foreground">registre_securite, notice_securite</span>).
+              Codes snake_case recommandés pour le moteur de classement.
             </p>
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <label className="inline-flex items-center gap-2">
@@ -355,13 +384,13 @@ export function SettingsPage() {
                   checked={isDomainLabel}
                   onChange={(event) => setIsDomainLabel(event.target.checked)}
                 />
-                Create as top-level domain
+                Créer comme prestation (domaine racine)
               </label>
               <Button type="submit" size="sm" disabled={!newLabelName.trim() || createLabelMutation.isPending}>
-                {createLabelMutation.isPending ? 'Saving…' : 'Add label'}
+                {createLabelMutation.isPending ? 'Enregistrement…' : 'Ajouter'}
               </Button>
             </div>
-          </form> : <div className="flex items-center justify-between gap-4 rounded-lg border border-border/60 bg-muted/20 p-4 text-xs"><span>This taxonomy is part of the curated portfolio dataset.</span><Badge variant="outline" className="shrink-0 rounded-full text-[9px] uppercase tracking-[0.12em]">Read only</Badge></div>}
+          </form> : <div className="flex items-center justify-between gap-4 rounded-lg border border-border/60 bg-muted/20 p-4 text-xs"><span>Taxonomie du jeu de démo (lecture seule).</span><Badge variant="outline" className="shrink-0 rounded-full text-[9px] uppercase tracking-[0.12em]">Lecture seule</Badge></div>}
         </CardContent>
       </Card>
 
@@ -370,9 +399,12 @@ export function SettingsPage() {
           <CardHeader className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
               <ShieldCheck className="h-5 w-5 text-primary" />
-              <CardTitle className="text-lg font-semibold">Role directory</CardTitle>
+              <CardTitle className="text-lg font-semibold">Répertoire des rôles</CardTitle>
             </div>
-            <CardDescription>Understand what each persona can access inside DocuLens.</CardDescription>
+            <CardDescription>
+              Catalogue des personas DocuLens (admin, analyste…). Lecture seule : ce n’est pas la liste des
+              utilisateurs du site, ni un éditeur de droits — juste une vue de ce que chaque rôle peut faire.
+            </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-3 text-sm text-muted-foreground">
             {Object.entries(roleDefinitions).map(([key, role]) => (

@@ -99,11 +99,14 @@ def _require_qa_query_event(event: EventSchema) -> QAQueryEvent:
 class DoculensLLMNode(LLMNode):
     """Base class for DocuLens LLM-powered nodes."""
 
-    provider: str = "openai"
+    provider: Optional[str] = None
     model: Optional[str] = None
     prompt_template: Optional[str] = None
 
     def __init__(self):
+        settings = get_settings()
+        self.provider = self.provider or settings.llm.resolve_chat_provider()
+        self.model = self.model or settings.llm.resolve_chat_model(self.provider)
         self._llm = LLMFactory(self.provider)
 
     def build_messages(self, context: BaseModel) -> List[Dict[str, str]]:

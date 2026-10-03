@@ -21,6 +21,7 @@ import {
 
 import { fetchDocuments } from '../../api/client';
 import type { DocumentEntry } from '../../api/types';
+import { PRESTATIONS } from '../../lib/prestations';
 import { cn } from '../../lib/utils';
 import { useUIStore } from '../../stores/uiStore';
 import { Logo } from '../brand/Logo';
@@ -51,11 +52,11 @@ const SECONDARY_NAV = [
 ];
 
 const PAGE_META: Record<string, { title: string; description: string }> = {
-  '/app': { title: 'Workspace', description: 'Your documents, decisions, and active work in one place.' },
-  '/app/qa': { title: 'Ask DocuLens', description: 'Explore your documents with answers grounded in source evidence.' },
-  '/app/pipeline': { title: 'Documents', description: 'Review summaries, classifications, source content, and processing status.' },
-  '/app/work-queues': { title: 'Work queues', description: 'Route documents to the right team and keep decisions moving.' },
-  '/app/settings': { title: 'Workspace settings', description: 'Configure models, retrieval, access, and preferences.' },
+  '/app': { title: 'Espace de travail', description: 'Documents, décisions et missions en cours pour votre site GSMS.' },
+  '/app/qa': { title: 'Interroger DocuLens', description: 'Posez des questions sur vos pièces, avec citations sources.' },
+  '/app/pipeline': { title: 'Documents', description: 'Pièces classées par prestation : commission, audit, appels d’offres.' },
+  '/app/work-queues': { title: 'Files de travail', description: 'Orientez les documents vers la bonne équipe et suivez les décisions.' },
+  '/app/settings': { title: 'Paramètres du site', description: 'Taxonomie des prestations, accès et préférences du workspace.' },
 };
 
 export function AppShell({ headerAction, children, onLaunchUpload }: AppShellProps) {
@@ -137,9 +138,9 @@ export function AppShell({ headerAction, children, onLaunchUpload }: AppShellPro
             {isSidebarCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
           </Button>
         </div>
-        <button title="Acme workspace" className={cn('mt-3 flex w-full items-center gap-3 rounded-xl border border-border/70 bg-background px-3 py-2.5 text-left shadow-sm transition hover:border-muted-foreground/30', isSidebarCollapsed && 'lg:justify-center lg:px-2')}>
-          <span className="grid h-7 w-7 place-items-center rounded-lg bg-foreground text-[10px] font-semibold text-background">AC</span>
-          <span className={cn('min-w-0 flex-1', isSidebarCollapsed && 'lg:hidden')}><span className="block truncate text-xs font-semibold">Acme workspace</span><span className="block text-[10px] text-muted-foreground">Production</span></span>
+        <button title="GSMS workspace" className={cn('mt-3 flex w-full items-center gap-3 rounded-xl border border-border/70 bg-background px-3 py-2.5 text-left shadow-sm transition hover:border-muted-foreground/30', isSidebarCollapsed && 'lg:justify-center lg:px-2')}>
+          <span className="grid h-7 w-7 place-items-center rounded-lg bg-foreground text-[10px] font-semibold text-background">GS</span>
+          <span className={cn('min-w-0 flex-1', isSidebarCollapsed && 'lg:hidden')}><span className="block truncate text-xs font-semibold">GSMS workspace</span><span className="block text-[10px] text-muted-foreground">Site documentaire</span></span>
           <ChevronsUpDown className={cn('h-3.5 w-3.5 text-muted-foreground', isSidebarCollapsed && 'lg:hidden')} />
         </button>
         {onLaunchUpload ? <Button onClick={onLaunchUpload} title="Add documents" className={cn('mt-3 w-full justify-start gap-2 rounded-xl', isSidebarCollapsed && 'lg:justify-center lg:px-0')}><Plus className="h-4 w-4" /><span className={cn(isSidebarCollapsed && 'lg:hidden')}>Add documents</span></Button> : <div className={cn('mt-3 flex items-center gap-2 rounded-xl border border-border/70 bg-background px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground', isSidebarCollapsed && 'lg:justify-center lg:px-0')}><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /><span className={cn(isSidebarCollapsed && 'lg:hidden')}>Public showcase</span></div>}
@@ -148,11 +149,21 @@ export function AppShell({ headerAction, children, onLaunchUpload }: AppShellPro
           {PRIMARY_NAV.map((item) => <SidebarLink key={item.label} {...item} collapsed={isSidebarCollapsed} onClick={() => toggleSidebar(false)} />)}
         </nav>
 
-        <div className={cn('mt-7 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground/60', isSidebarCollapsed && 'lg:hidden')}>Collections</div>
-        <nav className="mt-2 space-y-0.5">
-          {['Board materials', 'Customer research', 'Compliance'].map((label, index) => (
-            <button key={label} title={label} className={cn('flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-xs text-muted-foreground transition hover:bg-background hover:text-foreground', isSidebarCollapsed && 'lg:justify-center lg:px-2')}>
-              <span className={cn('h-2 w-2 rounded-[3px]', index === 0 ? 'bg-blue-500' : index === 1 ? 'bg-emerald-500' : 'bg-amber-400')} /><span className={cn(isSidebarCollapsed && 'lg:hidden')}>{label}</span>
+        <div className={cn('mt-7 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground/60', isSidebarCollapsed && 'lg:hidden')}>Prestations</div>
+        <nav className="mt-2 space-y-0.5" aria-label="Prestations GSMS">
+          {PRESTATIONS.map((prestation, index) => (
+            <button
+              key={prestation.id}
+              type="button"
+              title={prestation.label}
+              onClick={() => {
+                navigate(`/app/pipeline?prestation=${prestation.id}`);
+                toggleSidebar(false);
+              }}
+              className={cn('flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-xs text-muted-foreground transition hover:bg-background hover:text-foreground', isSidebarCollapsed && 'lg:justify-center lg:px-2')}
+            >
+              <span className={cn('h-2 w-2 rounded-[3px]', index === 0 ? 'bg-blue-500' : index === 1 ? 'bg-emerald-500' : index === 2 ? 'bg-amber-400' : 'bg-slate-400')} />
+              <span className={cn(isSidebarCollapsed && 'lg:hidden')}>{prestation.shortLabel}</span>
             </button>
           ))}
         </nav>

@@ -39,8 +39,12 @@ class OpenRouterProvider(LLMProvider):
         self.client = self._initialize_client()
 
     def _initialize_client(self) -> Any:
-        return instructor.from_openai(OpenAI(api_key=self.settings.api_key, base_url=self.settings.base_url))
-    
+        if not self.settings.api_key:
+            raise ValueError("OPENROUTER_API_KEY (or OPEN_ROUTER_API_KEY) is not set")
+        return instructor.from_openai(
+            OpenAI(api_key=self.settings.api_key, base_url=self.settings.base_url)
+        )
+
     def create_completion(
         self, response_model: Type[BaseModel], messages: List[Dict[str, str]], **kwargs
     ) -> Any:
@@ -62,7 +66,13 @@ class OpenAIProvider(LLMProvider):
         self.client = self._initialize_client()
 
     def _initialize_client(self) -> Any:
-        return instructor.from_openai(OpenAI(api_key=self.settings.api_key))
+        if not self.settings.api_key:
+            raise ValueError("OPENAI_API_KEY is not set")
+        kwargs = {"api_key": self.settings.api_key}
+        base_url = getattr(self.settings, "base_url", None)
+        if base_url:
+            kwargs["base_url"] = base_url
+        return instructor.from_openai(OpenAI(**kwargs))
 
     def create_completion(
         self, response_model: Type[BaseModel], messages: List[Dict[str, str]], **kwargs
@@ -86,6 +96,8 @@ class AnthropicProvider(LLMProvider):
         self.client = self._initialize_client()
 
     def _initialize_client(self) -> Any:
+        if not self.settings.api_key:
+            raise ValueError("ANTHROPIC_API_KEY is not set")
         return instructor.from_anthropic(Anthropic(api_key=self.settings.api_key))
 
     def create_completion(

@@ -21,4 +21,5 @@ class DatabaseUtils:
         db_user = os.getenv("DATABASE_USER", "postgres")
         db_password = os.getenv("DATABASE_PASSWORD", "postgres")
 
-        return f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+        # Explicit psycopg2 dialect: SQLAlchemy 2.1 maps bare postgresql:// to psycopg v3.
+        return f"postgresql+psycopg2://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
