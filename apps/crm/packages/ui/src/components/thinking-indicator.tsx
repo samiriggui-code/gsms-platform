@@ -3,7 +3,7 @@ import { Shimmer } from "@crm/ui/components/shimmer";
 import { cn } from "@crm/ui/lib/utils";
 
 export function ThinkingIndicator({
-	label = "Thinking",
+	label = "Réflexion",
 	className,
 }: {
 	label?: string;

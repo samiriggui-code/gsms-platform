@@ -2,15 +2,16 @@ import Building from "@carbon/icons-react/es/Building";
 import Catalog from "@carbon/icons-react/es/Catalog";
 import Partnership from "@carbon/icons-react/es/Partnership";
 import { cn } from "@crm/ui/lib/utils";
+import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import { ThemeToggle } from "@/components/landing/theme-toggle";
 
 const SITE_HREF = "https://gsms-security.com";
 
 const PANEL_ITEMS = [
-	{ icon: Building, label: "Vos sociétés et leur pipeline" },
-	{ icon: Catalog, label: "Vos pièces et dossiers, au même endroit" },
-	{ icon: Partnership, label: "Vos affaires et échéances suivies" },
+	{ icon: Building, key: "panelCompanies" },
+	{ icon: Catalog, key: "panelDocuments" },
+	{ icon: Partnership, key: "panelDeals" },
 ] as const;
 
 function LogoMark({ className }: { className?: string }) {
@@ -66,6 +67,7 @@ function BrandMark({ tone = "light" }: { tone?: "light" | "dark" }) {
 }
 
 export function AuthShell({ children }: { children: ReactNode }) {
+	const t = useTranslations("shellAuth");
 	return (
 		<main className="grid min-h-svh w-full grow bg-background text-foreground lg:grid-cols-2">
 			<section className="order-2 flex flex-col lg:order-1">
@@ -80,7 +82,7 @@ export function AuthShell({ children }: { children: ReactNode }) {
 							href={SITE_HREF}
 							className="text-[13px] text-muted-foreground no-underline hover:text-foreground"
 						>
-							Retour au site
+							{t("backToSite")}
 						</a>
 						<ThemeToggle />
 					</div>
@@ -101,31 +103,32 @@ export function AuthShell({ children }: { children: ReactNode }) {
 
 					<div className="flex flex-col gap-3">
 						<p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/55">
-							Espace commercial
+							{t("eyebrow")}
 						</p>
 						<h1 className="text-balance text-2xl font-semibold tracking-[-0.035em] md:text-[30px]/[1.15]">
-							Votre pipeline,{" "}
+							{t("headline")}{" "}
 							<span className="font-serif font-normal italic text-white/60">
-								suivi au quotidien.
+								{t("headlineAccent")}
 							</span>
 						</h1>
 						<p className="max-w-md text-sm leading-6 text-white/60">
-							Retrouvez vos sociétés, vos affaires, vos pièces compliance et vos
-							prochaines échéances.
+							{t("body")}
 						</p>
 					</div>
 				</div>
 
 				<ul className="relative mt-auto hidden flex-1 flex-col justify-end gap-3 px-8 pb-8 sm:flex lg:px-12 lg:pb-12">
-					{PANEL_ITEMS.map(({ icon: Icon, label }) => (
+					{PANEL_ITEMS.map(({ icon: Icon, key }) => (
 						<li
-							key={label}
+							key={key}
 							className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3"
 						>
 							<span className="grid size-9 place-items-center rounded-xl bg-white/10 text-white">
 								<Icon size={16} />
 							</span>
-							<span className="text-sm font-medium text-white/85">{label}</span>
+							<span className="text-sm font-medium text-white/85">
+								{t(key)}
+							</span>
 						</li>
 					))}
 				</ul>

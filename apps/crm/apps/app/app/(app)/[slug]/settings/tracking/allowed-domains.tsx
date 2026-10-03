@@ -33,6 +33,7 @@ import {
 import { Spinner } from "@crm/ui/components/spinner";
 import { TableCell } from "@crm/ui/components/table";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useLocale, useTranslations } from "next-intl";
 import { useId, useState } from "react";
 import { toast } from "sonner";
 import { LocalRelativeTime } from "@/components/local-date-time";
@@ -41,20 +42,13 @@ import { useTRPC } from "@/lib/trpc/client";
 
 const CELL = "px-3 py-2.5 align-middle";
 
-const COLUMNS: SimpleTableColumn[] = [
-	{ id: "domain", header: "Domain" },
-	{ id: "scope", header: "Scope", width: "w-40" },
-	{ id: "pageViews", header: "Page views", width: "w-28", align: "right" },
-	{ id: "lastSeen", header: "Last seen", width: "w-28", align: "right" },
-	{ id: "actions", srLabel: "Actions", width: "w-24" },
-];
+const SCOPES = ["SITE_AND_SUBDOMAINS", "EXACT_HOST"] as const;
 
-const SCOPES = {
-	SITE_AND_SUBDOMAINS: "Site + subdomains",
-	EXACT_HOST: "Exact host",
-} as const;
+type Scope = (typeof SCOPES)[number];
 
 export function AllowedDomains() {
+	const t = useTranslations("settingsTracking");
+	const locale = useLocale();
 	const trpc = useTRPC();
 	const cache = useCrmCache();
 
@@ -64,7 +58,7 @@ export function AllowedDomains() {
 		trpc.tracking.removeDomain.mutationOptions({
 			onSuccess: async () => {
 				await cache.tracking();
-				toast.success("Domain removed.");
+				toast.success(t("domainRemoved"));
 			},
 			onError: (error) => toast.error(error.message),
 		}),
@@ -74,12 +68,30 @@ export function AllowedDomains() {
 
 	const { domains, canManage } = tracking.data;
 
+	const columns: SimpleTableColumn[] = [
+		{ id: "domain", header: t("domainColumn") },
+		{ id: "scope", header: t("scopeColumn"), width: "w-40" },
+		{
+			id: "pageViews",
+			header: t("viewsColumn"),
+			width: "w-28",
+			align: "right",
+		},
+		{
+			id: "lastSeen",
+			header: t("lastSeenColumn"),
+			width: "w-28",
+			align: "right",
+		},
+		{ id: "actions", srLabel: t("actions"), width: "w-24" },
+	];
+
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Allowed domains</CardTitle>
+				<CardTitle>{t("domainsTitle")}</CardTitle>
 				<CardDescription>
-					The script records page views on these hosts only.
+					{t("domainsDescription")}
 				</CardDescription>
 
 				<CardAction>
@@ -89,20 +101,20 @@ export function AllowedDomains() {
 
 			{domains.length === 0 ? (
 				<CardTableEmpty>
-					Add the domain your website runs on to get your tracking script.
+					{t("domainsEmpty")}
 				</CardTableEmpty>
 			) : (
-				<SimpleTable columns={COLUMNS}>
+				<SimpleTable columns={columns}>
 					{domains.map((domain) => (
 						<SimpleTableRow key={domain.id}>
 							<TableCell className={CELL}>
 								<span className="font-mono">{domain.host}</span>
 							</TableCell>
 							<TableCell className={`${CELL} text-muted-foreground`}>
-								{SCOPES[domain.scope]}
+								{t(`scopes.${domain.scope}`)}
 							</TableCell>
 							<TableCell className={`${CELL} text-right tabular-nums`}>
-								{domain.pageViews.toLocaleString("fr-FR")}
+								{domain.pageViews.toLocaleString(locale)}
 							</TableCell>
 							<TableCell className={`${CELL} text-right text-muted-foreground`}>
 								{domain.lastSeenAt ? (
@@ -119,7 +131,7 @@ export function AllowedDomains() {
 										disabled={remove.isPending}
 										onClick={() => remove.mutate({ id: domain.id })}
 									>
-										Remove
+										{t("remove")}
 									</Button>
 								) : null}
 							</TableCell>
@@ -132,6 +144,7 @@ export function AllowedDomains() {
 }
 
 function AddDomain({ disabled }: { disabled: boolean }) {
+	const t = useTranslations("settingsTracking");
 	const trpc = useTRPC();
 	const cache = useCrmCache();
 
@@ -140,9 +153,7 @@ function AddDomain({ disabled }: { disabled: boolean }) {
 
 	const [open, setOpen] = useState(false);
 	const [host, setHost] = useState("");
-	const [scope, setScope] = useState<keyof typeof SCOPES>(
-		"SITE_AND_SUBDOMAINS",
-	);
+	const [scope, setScope] = useState<Scope>("SITE_AND_SUBDOMAINS");
 
 	const add = useMutation(
 		trpc.tracking.addDomain.mutationOptions({
@@ -150,7 +161,7 @@ function AddDomain({ disabled }: { disabled: boolean }) {
 				await cache.tracking();
 				setOpen(false);
 				setHost("");
-				toast.success("Domain added.");
+				toast.success(t("domainAdded"));
 			},
 			onError: (error) => toast.error(error.message),
 		}),
@@ -161,7 +172,7 @@ function AddDomain({ disabled }: { disabled: boolean }) {
 			<PopoverTrigger asChild>
 				<Button size="sm" disabled={disabled}>
 					<Icon icon={Add} data-icon="inline-start" />
-					Add domain
+					{t("addDomain")}
 				</Button>
 			</PopoverTrigger>
 
@@ -174,7 +185,7 @@ function AddDomain({ disabled }: { disabled: boolean }) {
 					}}
 				>
 					<Field>
-						<FieldLabel htmlFor={hostId}>Domain</FieldLabel>
+						<FieldLabel htmlFor={hostId}>{t("domainColumn")}</FieldLabel>
 						<Input
 							id={hostId}
 							value={host}
@@ -188,18 +199,18 @@ function AddDomain({ disabled }: { disabled: boolean }) {
 					</Field>
 
 					<Field>
-						<FieldLabel htmlFor={scopeId}>Scope</FieldLabel>
+						<FieldLabel htmlFor={scopeId}>{t("scopeColumn")}</FieldLabel>
 						<Select
 							value={scope}
-							onValueChange={(next) => setScope(next as keyof typeof SCOPES)}
+							onValueChange={(next) => setScope(next as Scope)}
 						>
 							<SelectTrigger id={scopeId} className="w-full">
 								<SelectValue />
 							</SelectTrigger>
 							<SelectContent>
-								{Object.entries(SCOPES).map(([value, label]) => (
+								{SCOPES.map((value) => (
 									<SelectItem key={value} value={value}>
-										{label}
+										{t(`scopes.${value}`)}
 									</SelectItem>
 								))}
 							</SelectContent>
@@ -208,7 +219,7 @@ function AddDomain({ disabled }: { disabled: boolean }) {
 
 					<Button type="submit" disabled={add.isPending || host.trim() === ""}>
 						{add.isPending ? <Spinner data-icon="inline-start" /> : null}
-						Add domain
+						{t("addDomain")}
 					</Button>
 				</form>
 			</PopoverContent>

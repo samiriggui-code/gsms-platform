@@ -220,7 +220,7 @@ export class DealsService {
 		});
 
 		if (!deal) {
-			throw new NotFoundException(`No deal with id ${id}.`);
+			throw new NotFoundException("Affaire introuvable.");
 		}
 
 		const {
@@ -338,7 +338,7 @@ export class DealsService {
 			});
 
 			if (!current) {
-				throw new NotFoundException(`No deal with id ${id}.`);
+				throw new NotFoundException("Affaire introuvable.");
 			}
 
 			const amount =
@@ -366,7 +366,7 @@ export class DealsService {
 				});
 			});
 		} catch (error) {
-			throw this.translate(error, id);
+			throw this.translate(error);
 		}
 	}
 
@@ -382,7 +382,7 @@ export class DealsService {
 
 			return { id, name: deal.name };
 		} catch (error) {
-			throw this.translate(error, id);
+			throw this.translate(error);
 		}
 	}
 
@@ -398,7 +398,7 @@ export class DealsService {
 
 			return { id, name: deal.name };
 		} catch (error) {
-			throw this.translate(error, id);
+			throw this.translate(error);
 		}
 	}
 
@@ -421,7 +421,7 @@ export class DealsService {
 
 				if (!row) {
 					if (guard) return null;
-					throw new NotFoundException(`No deal with id ${id}.`);
+					throw new NotFoundException("Affaire introuvable.");
 				}
 				if (
 					guard &&
@@ -441,7 +441,7 @@ export class DealsService {
 				return { targets, name: deal.name };
 			});
 		} catch (error) {
-			throw this.translate(error, id);
+			throw this.translate(error);
 		}
 
 		if (!deleted) return null;
@@ -484,7 +484,7 @@ export class DealsService {
 			`;
 
 			if (!deal) {
-				throw new NotFoundException(`No deal with id ${input.id}.`);
+				throw new NotFoundException("Affaire introuvable.");
 			}
 
 			if (deal.stage === input.stage) {
@@ -497,7 +497,7 @@ export class DealsService {
 			}
 			if (LOSING.has(input.stage) && !closedReason) {
 				throw new BadRequestException(
-					"Say why it was lost — a closed-lost deal with no reason teaches nobody anything.",
+					"Indiquez pourquoi l’affaire a été perdue — une affaire perdue sans motif n’apprend rien à personne.",
 				);
 			}
 
@@ -583,7 +583,7 @@ export class DealsService {
 		});
 
 		if (!deal) {
-			throw new NotFoundException(`No deal with id ${dealId}.`);
+			throw new NotFoundException("Affaire introuvable.");
 		}
 
 		return this.db.contact.findMany({
@@ -605,12 +605,12 @@ export class DealsService {
 		});
 
 		if (!contact) {
-			throw new NotFoundException(`No contact with id ${input.contactId}.`);
+			throw new NotFoundException("Contact introuvable.");
 		}
 
 		if (contact.companyId !== company.id) {
 			throw new BadRequestException(
-				`That contact does not work at ${company.name}.`,
+				`Ce contact ne travaille pas chez ${company.name}.`,
 			);
 		}
 
@@ -642,7 +642,9 @@ export class DealsService {
 		});
 
 		if (count === 0) {
-			throw new NotFoundException("That contact is not on this deal.");
+			throw new NotFoundException(
+				"Ce contact n’est pas associé à cette affaire.",
+			);
 		}
 
 		this.logger.log({
@@ -663,7 +665,9 @@ export class DealsService {
 		});
 
 		if (count === 0) {
-			throw new NotFoundException("That contact is not on this deal.");
+			throw new NotFoundException(
+				"Ce contact n’est pas associé à cette affaire.",
+			);
 		}
 
 		return { dealId: input.dealId, contactId: input.contactId, role };
@@ -701,7 +705,7 @@ export class DealsService {
 
 		if (LOSING.has(input.stage) && !closedReason) {
 			throw new BadRequestException(
-				"Say why they were lost — a closed-lost deal with no reason teaches nobody anything.",
+				"Indiquez pourquoi ces affaires ont été perdues — une affaire perdue sans motif n’apprend rien à personne.",
 			);
 		}
 
@@ -729,7 +733,7 @@ export class DealsService {
 		});
 
 		if (!deal) {
-			throw new NotFoundException(`No deal with id ${dealId}.`);
+			throw new NotFoundException("Affaire introuvable.");
 		}
 
 		return deal.company;
@@ -830,12 +834,12 @@ export class DealsService {
 		};
 	}
 
-	private translate(cause: unknown, id: string): never {
+	private translate(cause: unknown): never {
 		if (
 			cause instanceof PrismaNamespace.PrismaClientKnownRequestError &&
 			cause.code === "P2025"
 		) {
-			throw new NotFoundException(`No deal with id ${id}.`);
+			throw new NotFoundException("Affaire introuvable.");
 		}
 		return this.translateRelations(cause);
 	}
@@ -846,7 +850,7 @@ export class DealsService {
 			(cause.code === "P2003" || cause.code === "P2025")
 		) {
 			throw new BadRequestException(
-				"That company or owner does not exist any more.",
+				"Cette société ou ce responsable n’existe plus.",
 			);
 		}
 		throw cause;
@@ -888,7 +892,7 @@ function parseDate(value: string | null | undefined): Date | null {
 	if (value === null || value === undefined || value === "") return null;
 	const date = new Date(value);
 	if (Number.isNaN(date.getTime())) {
-		throw new BadRequestException(`"${value}" is not a date.`);
+		throw new BadRequestException(`« ${value} » n’est pas une date valide.`);
 	}
 	return date;
 }

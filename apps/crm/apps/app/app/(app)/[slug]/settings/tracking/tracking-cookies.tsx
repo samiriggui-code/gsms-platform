@@ -19,29 +19,15 @@ import {
 import { Switch } from "@crm/ui/components/switch";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useId } from "react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { useCrmCache } from "@/lib/trpc/cache";
 import { useTRPC } from "@/lib/trpc/client";
 
-const TOGGLES = [
-	{
-		flag: "cookieSubdomains",
-		label: "Limit cookies to subdomains",
-		hint: "Set the cookie on the exact host that served the page, never on the parent domain",
-	},
-	{
-		flag: "secureCookies",
-		label: "Use secure cookies only",
-		hint: "Send the cookie over HTTPS and drop it on plain HTTP",
-	},
-	{
-		flag: "honourDnt",
-		label: "Honour Do Not Track",
-		hint: "Record nothing at all when the browser asks not to be tracked",
-	},
-] as const;
+const TOGGLES = ["cookieSubdomains", "secureCookies", "honourDnt"] as const;
 
 export function TrackingCookies() {
+	const t = useTranslations("settingsTracking");
 	const trpc = useTRPC();
 	const cache = useCrmCache();
 	const lifetimeId = useId();
@@ -59,7 +45,7 @@ export function TrackingCookies() {
 		trpc.tracking.setCookieLifetime.mutationOptions({
 			onSuccess: async () => {
 				await cache.tracking();
-				toast.success("Cookie lifetime saved.");
+				toast.success(t("lifetimeSaved"));
 			},
 			onError: (error) => toast.error(error.message),
 		}),
@@ -73,41 +59,41 @@ export function TrackingCookies() {
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Cookies</CardTitle>
+				<CardTitle>{t("cookiesTitle")}</CardTitle>
 				<CardDescription>
-					How a returning visitor is recognised.
+					{t("cookiesDescription")}
 				</CardDescription>
 			</CardHeader>
 
 			<CardContent>
-				{TOGGLES.map((toggle) => (
+				{TOGGLES.map((flag) => (
 					<div
-						key={toggle.flag}
+						key={flag}
 						className="flex items-center justify-between gap-6"
 					>
 						<Label
-							htmlFor={`tracking-${toggle.flag}`}
+							htmlFor={`tracking-${flag}`}
 							className="flex flex-col items-start gap-1"
 						>
-							<span className="text-sm">{toggle.label}</span>
+							<span className="text-sm">{t(`flags.${flag}.label`)}</span>
 							<span className="font-normal text-muted-foreground text-xs">
-								{toggle.hint}
+								{t(`flags.${flag}.hint`)}
 							</span>
 						</Label>
 
 						<Switch
-							id={`tracking-${toggle.flag}`}
-							checked={tracking.data[toggle.flag]}
+							id={`tracking-${flag}`}
+							checked={tracking.data[flag]}
 							disabled={busy}
 							onCheckedChange={(enabled) =>
-								setFlag.mutate({ flag: toggle.flag, enabled })
+								setFlag.mutate({ flag, enabled })
 							}
 						/>
 					</div>
 				))}
 
 				<Field>
-					<FieldLabel htmlFor={lifetimeId}>Cookie lifetime</FieldLabel>
+					<FieldLabel htmlFor={lifetimeId}>{t("lifetimeLabel")}</FieldLabel>
 					<Select
 						value={String(cookieDays)}
 						disabled={busy}
@@ -121,14 +107,15 @@ export function TrackingCookies() {
 						<SelectContent>
 							{cookieLifetimes.map((lifetime) => (
 								<SelectItem key={lifetime.days} value={String(lifetime.days)}>
-									{lifetime.label}
+									{t.has(`lifetimes.${lifetime.days}`)
+										? t(`lifetimes.${lifetime.days}`)
+										: lifetime.label}
 								</SelectItem>
 							))}
 						</SelectContent>
 					</Select>
 					<FieldDescription>
-						After this a returning visitor counts as somebody new. Shorten it if
-						your policy asks you to.
+						{t("lifetimeDescription")}
 					</FieldDescription>
 				</Field>
 			</CardContent>

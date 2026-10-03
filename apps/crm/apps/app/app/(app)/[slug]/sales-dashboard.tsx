@@ -3,7 +3,6 @@
 import type { ChartConfig } from "@crm/ui/components/chart";
 import { DashboardRow } from "@crm/ui/components/dashboard";
 import {
-	formatCount,
 	formatMoney,
 	formatMoneyCompact,
 	formatPercent,
@@ -20,13 +19,13 @@ import { useTranslations } from "next-intl";
 
 type Summary = RouterOutputs["dashboard"]["summary"];
 
-const TREND_CONFIG: ChartConfig = {
-	won: { label: "Closed won", color: "var(--success)" },
-	created: { label: "New pipeline", color: "var(--chart-1)" },
-};
-
 export function SalesDashboard({ summary }: { summary: Summary }) {
 	const t = useTranslations("overview");
+	const tc = useTranslations("crmDashboard");
+	const trendConfig: ChartConfig = {
+		won: { label: tc("trendWon"), color: "var(--success)" },
+		created: { label: tc("trendCreated"), color: "var(--chart-1)" },
+	};
 	const workspaceUrl = useWorkspaceUrl();
 
 	const {
@@ -83,7 +82,7 @@ export function SalesDashboard({ summary }: { summary: Summary }) {
 							})
 				}
 				body={t("pulseBody", {
-					deals: formatCount(pipeline.totalDeals, "deal"),
+					deals: tc("dealCount", { count: pipeline.totalDeals }),
 					due: money(closingThisMonthTotal.valueCents),
 				})}
 				panelTitle={t("panelTitle")}
@@ -104,7 +103,7 @@ export function SalesDashboard({ summary }: { summary: Summary }) {
 					},
 					{
 						label: t("wonThisMonth"),
-						value: formatCount(wonThisMonth.count, "deal"),
+						value: tc("dealCount", { count: wonThisMonth.count }),
 					},
 				]}
 				stats={[
@@ -116,7 +115,7 @@ export function SalesDashboard({ summary }: { summary: Summary }) {
 					{
 						label: t("statOpenPipeline"),
 						value: money(pipeline.totalCents),
-						helper: formatCount(pipeline.totalDeals, "deal"),
+						helper: tc("dealCount", { count: pipeline.totalDeals }),
 					},
 					{
 						label: t("winRate"),
@@ -124,14 +123,14 @@ export function SalesDashboard({ summary }: { summary: Summary }) {
 							performance.winRate === null
 								? "—"
 								: formatPercent(performance.winRate),
-						helper: `${performance.windowDays}d`,
+						helper: tc("days", { count: performance.windowDays }),
 					},
 					{
 						label: t("statAvgCycle"),
 						value:
 							performance.avgCycleDays === null
 								? "—"
-								: `${performance.avgCycleDays}d`,
+								: tc("days", { count: performance.avgCycleDays }),
 						helper: t("statClosedWonHelper"),
 					},
 				]}
@@ -139,32 +138,30 @@ export function SalesDashboard({ summary }: { summary: Summary }) {
 
 			{unconverted.count > 0 ? (
 				<p className="text-muted-foreground text-xs">
-					Every figure above is in {reportingCurrency}.{" "}
-					{formatCount(unconverted.count, "deal")} in{" "}
-					{unconverted.currencies.join(", ")}{" "}
-					{unconverted.count === 1 ? "is" : "are"} not included — there is no
-					rate to convert {unconverted.currencies.length === 1 ? "it" : "them"}{" "}
-					with.{" "}
+					{tc("unconverted", {
+						currency: reportingCurrency,
+						count: unconverted.count,
+						currencies: unconverted.currencies.join(", "),
+					})}{" "}
 					<Link
 						href={workspaceUrl("/settings/currencies")}
 						className="underline hover:no-underline"
 					>
-						Set one
+						{tc("setRate")}
 					</Link>
-					.
 				</p>
 			) : null}
 
 			<DashboardRow split="hero">
 				<ChartPanel
-					title="Closed won vs. new pipeline"
-					description="Last six months, by the month a deal closed or was created"
+					title={tc("trendTitle")}
+					description={tc("trendDescription")}
 				>
 					{hasTrend ? (
 						<div className="flex flex-1 flex-col justify-center py-4">
 							<AreaTrend
 								data={trend}
-								config={TREND_CONFIG}
+								config={trendConfig}
 								xKey="month"
 								height={196}
 								variant="gradient"
@@ -174,13 +171,13 @@ export function SalesDashboard({ summary }: { summary: Summary }) {
 							/>
 						</div>
 					) : (
-						<EmptyChart label="No deals closed or created yet" />
+						<EmptyChart label={tc("trendEmpty")} />
 					)}
 				</ChartPanel>
 
 				<ChartPanel
-					title="Open pipeline by stage"
-					description="Where the value sits right now"
+					title={tc("stageTitle")}
+					description={tc("stageDescription")}
 				>
 					{stageSlices.length > 0 ? (
 						<div className="flex flex-1 flex-col justify-between gap-1 pt-4">
@@ -188,7 +185,7 @@ export function SalesDashboard({ summary }: { summary: Summary }) {
 								data={stageSlices}
 								height={168}
 								centerValue={money(pipeline.totalCents)}
-								centerLabel="open"
+								centerLabel={tc("stageCenter")}
 								formatValue={exact}
 							/>
 							<ul className="flex flex-col px-5 pb-1 md:px-6">
@@ -218,7 +215,7 @@ export function SalesDashboard({ summary }: { summary: Summary }) {
 							</ul>
 						</div>
 					) : (
-						<EmptyChart label="Nothing open" />
+						<EmptyChart label={tc("stageEmpty")} />
 					)}
 				</ChartPanel>
 			</DashboardRow>

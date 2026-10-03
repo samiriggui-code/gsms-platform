@@ -215,9 +215,7 @@ describe("agent lifecycle", () => {
 		} catch (error) {
 			privateDraftError = error;
 		}
-		expect((privateDraftError as Error).message).toBe(
-			`No agent with id ${agentId}.`,
-		);
+		expect((privateDraftError as Error).message).toBe("Agent introuvable.");
 
 		await agents.deploy(
 			{ id: agentId, versionId, clientRequestId: crypto.randomUUID() },
@@ -339,8 +337,8 @@ describe("agent lifecycle", () => {
 			}
 		}
 		expect(errors.map((error) => error.message)).toEqual([
-			"Only a live agent can be paused.",
-			"Only a live or paused agent can be archived.",
+			"Seul un agent actif peut être mis en pause.",
+			"Seul un agent actif ou en pause peut être archivé.",
 		]);
 
 		const [definition, teamAgents] = await Promise.all([
@@ -668,7 +666,7 @@ describe("agent lifecycle", () => {
 		}
 
 		expect((refusal as Error).message).toBe(
-			"None of this agent's actions post to a channel, so its channel cannot be changed.",
+			"Aucune action de cet agent ne publie dans un canal : son canal ne peut pas être modifié.",
 		);
 		expect(await db.agentVersion.count({ where: { agentId } })).toBe(1);
 	});

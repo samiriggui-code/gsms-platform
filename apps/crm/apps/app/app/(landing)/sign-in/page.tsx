@@ -1,15 +1,17 @@
 import { isGsmsSsoConfigured } from "@crm/auth";
 import type { Metadata } from "next";
-import { connection } from "next/server";
 import { redirect, unstable_rethrow } from "next/navigation";
+import { connection } from "next/server";
+import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { AuthHeading, AuthShell } from "@/components/auth-shell";
 import { getSession } from "@/lib/session";
 import { SignInForm } from "./sign-in-form";
 
-export const metadata: Metadata = {
-	title: "Connexion",
-};
+export async function generateMetadata(): Promise<Metadata> {
+	const t = await getTranslations("shellSignIn");
+	return { title: t("title") };
+}
 
 async function currentSession() {
 	// Session cookies / NextAuth crypto must run at request time (Next 16 prerender).
@@ -23,15 +25,13 @@ async function currentSession() {
 	}
 }
 
-export default function SignInPage() {
+export default async function SignInPage() {
+	const t = await getTranslations("shellSignIn");
 	return (
 		<AuthShell>
 			<Suspense
 				fallback={
-					<AuthHeading
-						title="Connexion"
-						description="Accédez à votre espace GSMS CRM."
-					/>
+					<AuthHeading title={t("title")} description={t("description")} />
 				}
 			>
 				<SignIn />
@@ -42,6 +42,7 @@ export default function SignInPage() {
 
 async function SignIn() {
 	const session = await currentSession();
+	const t = await getTranslations("shellSignIn");
 
 	if (session) {
 		redirect("/");
@@ -49,10 +50,7 @@ async function SignIn() {
 
 	return (
 		<>
-			<AuthHeading
-				title="Connexion"
-				description="Accédez à votre espace GSMS CRM."
-			/>
+			<AuthHeading title={t("title")} description={t("description")} />
 
 			<SignInForm gsmsEnabled={isGsmsSsoConfigured()} />
 		</>

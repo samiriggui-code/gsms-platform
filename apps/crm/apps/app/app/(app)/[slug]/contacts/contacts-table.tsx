@@ -34,10 +34,12 @@ import { contactsSearchParams } from "./contacts-search-params";
 
 type ContactRow = RouterOutputs["contacts"]["list"]["rows"][number];
 
-const COLUMNS: DataTableColumn<ContactRow>[] = [
+type Translate = ReturnType<typeof useTranslations>;
+
+const columnsFor = (tt: Translate): DataTableColumn<ContactRow>[] => [
 	{
 		id: "name",
-		header: "Name",
+		header: tt("name"),
 		sortable: true,
 		hideable: false,
 		width: "w-[22%]",
@@ -55,7 +57,7 @@ const COLUMNS: DataTableColumn<ContactRow>[] = [
 	},
 	{
 		id: "title",
-		header: "Title",
+		header: tt("title"),
 		sortable: true,
 		width: "w-[20%]",
 		hideBelow: "lg",
@@ -68,7 +70,7 @@ const COLUMNS: DataTableColumn<ContactRow>[] = [
 	},
 	{
 		id: "email",
-		header: "Email",
+		header: tt("email"),
 		sortable: true,
 		width: "w-[24%]",
 		hideBelow: "md",
@@ -81,14 +83,14 @@ const COLUMNS: DataTableColumn<ContactRow>[] = [
 	},
 	{
 		id: "company",
-		header: "Company",
+		header: tt("company"),
 		sortable: true,
 		width: "w-[18%]",
 		cell: (row) => <CompanyCell company={row.company} />,
 	},
 	{
 		id: "owner",
-		header: "Owner",
+		header: tt("owner"),
 		sortable: true,
 		width: "w-[16%]",
 		hideBelow: "md",
@@ -96,8 +98,8 @@ const COLUMNS: DataTableColumn<ContactRow>[] = [
 	},
 	{
 		id: "createdAt",
-		header: "Created",
-		label: "Created date",
+		header: tt("created"),
+		label: tt("createdDate"),
 		sortable: true,
 		align: "right",
 		width: "w-[10%]",
@@ -110,7 +112,7 @@ const COLUMNS: DataTableColumn<ContactRow>[] = [
 	},
 	{
 		id: "lastActivity",
-		header: "Last activity",
+		header: tt("lastActivity"),
 		sortable: true,
 		align: "right",
 		width: "w-[12%]",
@@ -127,10 +129,10 @@ const COLUMNS: DataTableColumn<ContactRow>[] = [
 	},
 ];
 
-const ARCHIVED_COLUMN: DataTableColumn<ContactRow> = {
+const archivedColumn = (tt: Translate): DataTableColumn<ContactRow> => ({
 	id: "archivedAt",
-	header: "Archived",
-	label: "Archived date",
+	header: tt("archived"),
+	label: tt("archivedDate"),
 	sortable: true,
 	align: "right",
 	width: "w-[12%]",
@@ -143,10 +145,11 @@ const ARCHIVED_COLUMN: DataTableColumn<ContactRow> = {
 			)}
 		</span>
 	),
-};
+});
 
 export function ContactsTable() {
 	const t = useTranslations("contacts");
+	const tt = useTranslations("crmTables");
 	const openRecord = useOpenRecord();
 	const trpc = useTRPC();
 	const prefetchRecord = usePrefetchRecord();
@@ -200,9 +203,9 @@ export function ContactsTable() {
 	const facets: DataTableFacet[] = [
 		{
 			id: "owner",
-			label: "Owner",
+			label: tt("owner"),
 			options: [
-				{ value: "unassigned", label: "Unassigned" },
+				{ value: "unassigned", label: tt("unassigned") },
 				...(users.data ?? []).map((user) => ({
 					value: user.id,
 					label: user.name,
@@ -211,16 +214,16 @@ export function ContactsTable() {
 		},
 		{
 			id: "company",
-			label: "Company",
+			label: tt("company"),
 			searchable: true,
 			search: companyText,
 			onSearchChange: setCompanyText,
 			stale: companies.isFetching || companyText.trim() !== companyQuery.trim(),
-			empty: companies.isFetching ? "Searching…" : "No company matches.",
+			empty: companies.isFetching ? tt("searching") : tt("noCompanyMatches"),
 			options: [
 				...(companyQuery.trim()
 					? []
-					: [{ value: "none", label: "No company" }]),
+					: [{ value: "none", label: tt("noCompany") }]),
 				...(companies.data ?? []).map((company) => ({
 					value: company.id,
 					label: company.name,
@@ -229,31 +232,34 @@ export function ContactsTable() {
 		},
 		{
 			id: "title",
-			label: "Title",
+			label: tt("title"),
 			options: Object.keys(facetCounts?.title ?? {})
 				.sort()
 				.map((value) => ({ value, label: value })),
 		},
 		{
 			id: "seniority",
-			label: "Seniority",
+			label: tt("seniority"),
 			options: Object.keys(facetCounts?.seniority ?? {})
 				.sort()
 				.map((value) => ({ value, label: value })),
 		},
 		{
 			id: "persona",
-			label: "Persona",
+			label: tt("persona"),
 			options: Object.keys(facetCounts?.persona ?? {})
 				.sort()
 				.map((value) => ({ value, label: value })),
 		},
 		{
 			id: "activity",
-			label: "Activity",
+			label: tt("activity"),
 			options: ACTIVITY_FACET_OPTIONS.filter(
 				(option) => (facetCounts?.activity?.[option.value] ?? 0) > 0,
-			),
+			).map((option) => ({
+				value: option.value,
+				label: tt("activityWithin", { days: option.value }),
+			})),
 		},
 		...fieldFacets,
 	];
@@ -262,9 +268,9 @@ export function ContactsTable() {
 	const columns = useMemo(
 		() =>
 			input.archived
-				? [...COLUMNS, ARCHIVED_COLUMN, ...fieldColumns]
-				: [...COLUMNS, ...fieldColumns],
-		[fieldColumns, input.archived],
+				? [...columnsFor(tt), archivedColumn(tt), ...fieldColumns]
+				: [...columnsFor(tt), ...fieldColumns],
+		[fieldColumns, input.archived, tt],
 	);
 
 	return (

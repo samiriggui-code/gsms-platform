@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { DeskPulseBand } from "@/components/desk-ui/desk-pulse-band";
 
 type WorkspacePulseProps = {
@@ -20,31 +21,43 @@ export function WorkspacePulse({
 	waitingAnalysis,
 	className,
 }: WorkspacePulseProps) {
+	const t = useTranslations("shellCompliance");
 	return (
 		<DeskPulseBand
 			className={className}
-			eyebrow="Compliance Desk"
-			headline={`${totalDocuments.toLocaleString("fr-FR")} documents dans le workspace.`}
+			eyebrow={t("pulseEyebrow")}
+			headline={t("pulseHeadline", { count: totalDocuments })}
 			subhead={
 				needsReview > 0
-					? `${needsReview} à examiner avant Digest.`
-					: "Rien ne bloque l’équipe."
+					? t("pulseSubheadReview", { count: needsReview })
+					: t("pulseSubheadClear")
 			}
-			body="Upload client ≠ analyse auto. Lancez Ingest puis Digest quand le dossier est prêt."
-			panelTitle="État atelier"
+			body={t("pulseBody")}
+			panelTitle={t("pulsePanelTitle")}
 			panelRows={[
-				{ label: "En attente d’analyse", value: waitingAnalysis },
-				{ label: "Classifiés", value: `${classifiedPct} %` },
-				{ label: "À examiner", value: needsReview },
+				{ label: t("pulseWaiting"), value: waitingAnalysis },
+				{
+					label: t("pulseClassified"),
+					value: t("percent", { value: classifiedPct }),
+				},
+				{ label: t("pulseNeedsReview"), value: needsReview },
 			]}
 			stats={[
 				{
-					label: "Couverture classif.",
-					value: `${classifiedPct} %`,
-					helper: "après Ingest",
+					label: t("statCoverage"),
+					value: t("percent", { value: classifiedPct }),
+					helper: t("statCoverageHelper"),
 				},
-				{ label: "File lourde", value: "MAX 2", helper: "jobs simultanés" },
-				{ label: "Pilotage", value: "Manuel", helper: "Ingest / Digest" },
+				{
+					label: t("statQueue"),
+					value: "MAX 2",
+					helper: t("statQueueHelper"),
+				},
+				{
+					label: t("statControl"),
+					value: t("statControlValue"),
+					helper: "Ingest / Digest",
+				},
 			]}
 		/>
 	);

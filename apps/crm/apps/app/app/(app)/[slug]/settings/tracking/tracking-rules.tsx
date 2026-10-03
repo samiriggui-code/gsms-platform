@@ -10,24 +10,15 @@ import {
 import { Label } from "@crm/ui/components/label";
 import { Switch } from "@crm/ui/components/switch";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { useCrmCache } from "@/lib/trpc/cache";
 import { useTRPC } from "@/lib/trpc/client";
 
-const RULES = [
-	{
-		flag: "crossDomain",
-		label: "Automatic cross-domain linking",
-		hint: "Carry the visitor between the domains below, so one journey is not counted as two people",
-	},
-	{
-		flag: "limitToDomains",
-		label: "Limit tracking to the domains below",
-		hint: "On any other domain the script loads and then does nothing",
-	},
-] as const;
+const RULES = ["crossDomain", "limitToDomains"] as const;
 
 export function TrackingRules() {
+	const t = useTranslations("settingsTracking");
 	const trpc = useTRPC();
 	const cache = useCrmCache();
 
@@ -47,34 +38,34 @@ export function TrackingRules() {
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Tracking rules</CardTitle>
+				<CardTitle>{t("rulesTitle")}</CardTitle>
 				<CardDescription>
-					Where the script may run, and how it follows a visitor.
+					{t("rulesDescription")}
 				</CardDescription>
 			</CardHeader>
 
 			<CardContent>
-				{RULES.map((rule) => (
+				{RULES.map((flag) => (
 					<div
-						key={rule.flag}
+						key={flag}
 						className="flex items-center justify-between gap-6"
 					>
 						<Label
-							htmlFor={`tracking-${rule.flag}`}
+							htmlFor={`tracking-${flag}`}
 							className="flex flex-col items-start gap-1"
 						>
-							<span className="text-sm">{rule.label}</span>
+							<span className="text-sm">{t(`flags.${flag}.label`)}</span>
 							<span className="font-normal text-muted-foreground text-xs">
-								{rule.hint}
+								{t(`flags.${flag}.hint`)}
 							</span>
 						</Label>
 
 						<Switch
-							id={`tracking-${rule.flag}`}
-							checked={tracking.data[rule.flag]}
+							id={`tracking-${flag}`}
+							checked={tracking.data[flag]}
 							disabled={!canManage || setFlag.isPending}
 							onCheckedChange={(enabled) =>
-								setFlag.mutate({ flag: rule.flag, enabled })
+								setFlag.mutate({ flag, enabled })
 							}
 						/>
 					</div>

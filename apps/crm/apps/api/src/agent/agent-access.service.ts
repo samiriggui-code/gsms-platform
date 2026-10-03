@@ -22,7 +22,9 @@ export class AgentAccessService {
 		const role = await workspaceRoleOf(userId);
 
 		if (!role) {
-			throw new ForbiddenException("You are not a member of this workspace.");
+			throw new ForbiddenException(
+				"Vous n’êtes pas membre de cet espace de travail.",
+			);
 		}
 
 		return role;
@@ -42,7 +44,9 @@ export class AgentAccessService {
 		`;
 
 		if (!member) {
-			throw new ForbiddenException("You are not a member of this workspace.");
+			throw new ForbiddenException(
+				"Vous n’êtes pas membre de cet espace de travail.",
+			);
 		}
 
 		const role = toWorkspaceRole(member.role);
@@ -58,16 +62,16 @@ export class AgentAccessService {
 		});
 
 		if (!agent) {
-			throw new NotFoundException(`No agent with id ${agentId}.`);
+			throw new NotFoundException("Agent introuvable.");
 		}
 
 		if (isPrivateAgentDraft(agent.status) && agent.createdById !== userId) {
-			throw new NotFoundException(`No agent with id ${agentId}.`);
+			throw new NotFoundException("Agent introuvable.");
 		}
 
 		if (agent.createdById !== userId && !isWorkspaceAdmin(role)) {
 			throw new ForbiddenException(
-				"Only the creator or a workspace admin can change this agent.",
+				"Seul le créateur ou un administrateur de l’espace de travail peut modifier cet agent.",
 			);
 		}
 
@@ -87,7 +91,7 @@ export class AgentAccessService {
 		});
 
 		if (!agent || !canReadAgent(agent.status, agent.createdById, userId)) {
-			throw new NotFoundException(`No agent with id ${agentId}.`);
+			throw new NotFoundException("Agent introuvable.");
 		}
 
 		return {

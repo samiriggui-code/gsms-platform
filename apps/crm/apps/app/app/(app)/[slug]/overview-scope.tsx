@@ -1,6 +1,7 @@
 "use client";
 
 import { ToggleGroup, ToggleGroupItem } from "@crm/ui/components/toggle-group";
+import { useTranslations } from "next-intl";
 import { useQueryState } from "nuqs";
 import { SEARCH_PARAM } from "@/lib/search-param-keys";
 import {
@@ -9,9 +10,9 @@ import {
 	overviewParsers,
 } from "./overview-search-params";
 
-const LABELS = {
-	me: "Me",
-	everyone: "Everyone",
+const LABEL_KEYS = {
+	me: "scopeMe",
+	everyone: "scopeEveryone",
 } satisfies Record<OverviewScope, string>;
 
 function isScope(value: string): value is OverviewScope {
@@ -19,6 +20,7 @@ function isScope(value: string): value is OverviewScope {
 }
 
 export function OverviewScopeToggleFallback() {
+	const t = useTranslations("crmDashboard");
 	return (
 		<ToggleGroup
 			type="single"
@@ -26,11 +28,11 @@ export function OverviewScopeToggleFallback() {
 			size="sm"
 			spacing={0}
 			disabled
-			aria-label="Whose numbers to show"
+			aria-label={t("scopeLabel")}
 		>
 			{OVERVIEW_SCOPES.map((value) => (
 				<ToggleGroupItem key={value} value={value}>
-					{LABELS[value]}
+					{t(LABEL_KEYS[value])}
 				</ToggleGroupItem>
 			))}
 		</ToggleGroup>
@@ -38,6 +40,7 @@ export function OverviewScopeToggleFallback() {
 }
 
 export function OverviewScopeToggle() {
+	const t = useTranslations("crmDashboard");
 	const [scope, setScope] = useQueryState(
 		SEARCH_PARAM.overview.scope,
 		overviewParsers[SEARCH_PARAM.overview.scope],
@@ -53,11 +56,11 @@ export function OverviewScopeToggle() {
 			onValueChange={(next) => {
 				if (isScope(next)) void setScope(next);
 			}}
-			aria-label="Whose numbers to show"
+			aria-label={t("scopeLabel")}
 		>
 			{OVERVIEW_SCOPES.map((value) => (
 				<ToggleGroupItem key={value} value={value}>
-					{LABELS[value]}
+					{t(LABEL_KEYS[value])}
 				</ToggleGroupItem>
 			))}
 		</ToggleGroup>

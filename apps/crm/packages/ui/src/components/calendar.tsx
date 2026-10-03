@@ -7,6 +7,7 @@ import {
   type DayButton,
   type Locale,
 } from "react-day-picker"
+import { fr } from "react-day-picker/locale"
 
 import { cn } from "@crm/ui/lib/utils"
 import { toDay } from "@crm/ui/lib/format"
@@ -19,7 +20,7 @@ function Calendar({
   showOutsideDays = true,
   captionLayout = "label",
   buttonVariant = "ghost",
-  locale,
+  locale = fr,
   formatters,
   components,
   ...props

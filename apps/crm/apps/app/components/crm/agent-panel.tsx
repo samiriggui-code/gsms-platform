@@ -46,6 +46,7 @@ import {
 import { Spinner } from "@crm/ui/components/spinner";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEveAgent } from "eve/react";
+import { useTranslations } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { AgentClarificationComposer } from "@/components/agent-clarification-composer";
 import {
@@ -55,7 +56,6 @@ import {
 } from "@/components/crm/agent-conversations";
 import {
 	type AgentRecord,
-	recordCopy,
 	recordFilter,
 	recordHeader,
 } from "@/lib/agent-record";
@@ -202,7 +202,7 @@ function Thread({
 	thread: ThreadState | undefined;
 	onNewThread: () => void;
 }) {
-	const copy = recordCopy(record.kind);
+	const t = useTranslations("crmAgent");
 	const agent = useEveAgent({
 		headers: recordHeader(record),
 		...(thread && "session" in thread
@@ -267,18 +267,17 @@ function Thread({
 
 			{thread?.status === "working" && !busy ? (
 				<p className="border-t px-4 py-2 text-pretty text-muted-foreground text-xs sm:px-5">
-					Still working on the last question. Your next one can go in when it
-					finishes.
+					{t("stillWorking")}
 				</p>
 			) : null}
 
 			{ended ? (
 				<div className="flex flex-col items-start gap-3 border-t px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-2">
 					<p className="text-pretty text-muted-foreground text-xs">
-						This conversation has ended.
+						{t("ended")}
 					</p>
 					<Button variant="outline" size="sm" onClick={onNewThread}>
-						Start a new conversation
+						{t("startNew")}
 					</Button>
 				</div>
 			) : null}
@@ -302,7 +301,7 @@ function Thread({
 						<Input
 							value={draft}
 							onChange={(event) => setDraft(event.target.value)}
-							placeholder={copy.placeholder}
+							placeholder={t(`${record.kind}.placeholder`)}
 							disabled={locked}
 						/>
 						<Button
@@ -312,7 +311,7 @@ function Thread({
 							disabled={locked}
 						>
 							{busy ? <Spinner /> : <Icon icon={Send} />}
-							<span className="sr-only">Ask</span>
+							<span className="sr-only">{t("ask")}</span>
 						</Button>
 					</form>
 				)}
@@ -328,7 +327,12 @@ function Idle({
 	kind: AgentRecord["kind"];
 	onAsk: (question: string) => void;
 }) {
-	const copy = recordCopy(kind);
+	const t = useTranslations("crmAgent");
+	const suggestions = [
+		t(`${kind}.s1`),
+		t(`${kind}.s2`),
+		t(`${kind}.s3`),
+	];
 
 	return (
 		<Empty width="wide">
@@ -338,12 +342,12 @@ function Idle({
 						<Logo className="size-4" />
 					</span>
 				</EmptyMedia>
-				<EmptyTitle>{copy.title}</EmptyTitle>
-				<EmptyDescription>{copy.blurb}</EmptyDescription>
+				<EmptyTitle>{t(`${kind}.title`)}</EmptyTitle>
+				<EmptyDescription>{t(`${kind}.blurb`)}</EmptyDescription>
 			</EmptyHeader>
 
 			<EmptyContent layout="row">
-				{copy.suggestions.map((suggestion) => (
+				{suggestions.map((suggestion) => (
 					<Button
 						key={suggestion}
 						variant="outline"
@@ -359,10 +363,11 @@ function Idle({
 }
 
 function Failure({ message }: { message: string }) {
+	const t = useTranslations("crmAgent");
 	const hint = message.includes("not reachable")
-		? "Start it with `bun run dev`, or check AGENT_URL."
+		? t("hintUnreachable")
 		: message.includes("not configured")
-			? "Set AGENT_BRIDGE_SECRET for both the app and the agent."
+			? t("hintUnconfigured")
 			: null;
 
 	return (
@@ -388,6 +393,7 @@ const SOURCE_ICONS = {
 } satisfies Record<Source["network"], CarbonIcon>;
 
 function Item({ item }: { item: TranscriptItem }) {
+	const t = useTranslations("crmAgent");
 	if (item.kind === "said") {
 		return item.mine ? (
 			<Message align="end" className="min-w-0">
@@ -414,7 +420,7 @@ function Item({ item }: { item: TranscriptItem }) {
 	if (item.kind === "asked") {
 		return (
 			<div className="w-full max-w-sm border-ring/50 border-l-2 bg-muted/40 px-3 py-2.5">
-				<p className="font-medium text-xs">Follow-up</p>
+				<p className="font-medium text-xs">{t("followUp")}</p>
 				<Markdown className="mt-1.5 wrap-break-word text-sm leading-5">
 					{item.question.prompt}
 				</Markdown>
@@ -439,6 +445,7 @@ function Item({ item }: { item: TranscriptItem }) {
 }
 
 function Sources({ sources }: { sources: Source[] }) {
+	const t = useTranslations("crmAgent");
 	return (
 		<AttachmentGroup>
 			{sources.map((source) => (
@@ -452,7 +459,9 @@ function Sources({ sources }: { sources: Source[] }) {
 
 					<AttachmentTrigger asChild>
 						<a href={source.url} target="_blank" rel="noreferrer noopener">
-							<span className="sr-only">Open {source.title}</span>
+							<span className="sr-only">
+								{t("openSource", { title: source.title })}
+							</span>
 						</a>
 					</AttachmentTrigger>
 				</Attachment>

@@ -6,6 +6,7 @@ import { Button } from "@crm/ui/components/button";
 import { Icon } from "@crm/ui/components/icon";
 import { Spinner } from "@crm/ui/components/spinner";
 import { useMutation } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { useCrmCache } from "@/lib/trpc/cache";
 import { useTRPC } from "@/lib/trpc/client";
@@ -17,6 +18,7 @@ export function EnrichmentActions({
 	companyId: string;
 	hasDomain: boolean;
 }) {
+	const t = useTranslations("crmCommon");
 	const trpc = useTRPC();
 	const cache = useCrmCache();
 
@@ -26,8 +28,8 @@ export function EnrichmentActions({
 				await cache.company(companyId);
 				toast.success(
 					result.queued
-						? "Looking it up — this page will update when it finishes."
-						: "Already running.",
+						? t("enrichQueued")
+						: t("alreadyRunning"),
 				);
 			},
 			onError: (error) => toast.error(error.message),
@@ -40,8 +42,8 @@ export function EnrichmentActions({
 				await cache.activity();
 				toast.success(
 					result.queued
-						? "Researching — the brief lands on the timeline when it finishes."
-						: "Already researching.",
+						? t("researchQueued")
+						: t("alreadyResearching"),
 				);
 			},
 			onError: (error) => toast.error(error.message),
@@ -61,7 +63,7 @@ export function EnrichmentActions({
 				) : (
 					<Icon icon={Renew} data-icon="inline-start" />
 				)}
-				<span className="hidden sm:inline">Re-enrich</span>
+				<span className="hidden sm:inline">{t("reEnrich")}</span>
 			</Button>
 
 			<Button
@@ -74,13 +76,14 @@ export function EnrichmentActions({
 				) : (
 					<Icon icon={MagicWand} data-icon="inline-start" />
 				)}
-				<span className="hidden sm:inline">Research</span>
+				<span className="hidden sm:inline">{t("research")}</span>
 			</Button>
 		</>
 	);
 }
 
 export function ContactEnrichmentAction({ contactId }: { contactId: string }) {
+	const t = useTranslations("crmCommon");
 	const trpc = useTRPC();
 	const cache = useCrmCache();
 
@@ -90,8 +93,8 @@ export function ContactEnrichmentAction({ contactId }: { contactId: string }) {
 				await cache.contact(contactId);
 				toast.success(
 					result.queued
-						? "Taking another look — this page will update when it finishes."
-						: "Already running.",
+						? t("contactEnrichQueued")
+						: t("alreadyRunning"),
 				);
 			},
 			onError: (error) => toast.error(error.message),
@@ -110,7 +113,7 @@ export function ContactEnrichmentAction({ contactId }: { contactId: string }) {
 			) : (
 				<Icon icon={Renew} data-icon="inline-start" />
 			)}
-			<span className="hidden sm:inline">Re-enrich</span>
+			<span className="hidden sm:inline">{t("reEnrich")}</span>
 		</Button>
 	);
 }

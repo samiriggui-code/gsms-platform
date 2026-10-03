@@ -4,6 +4,7 @@ import ArrowRight from "@carbon/icons-react/es/ArrowRight";
 import { Button } from "@crm/ui/components/button";
 import { Icon } from "@crm/ui/components/icon";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { useWorkspaceUrl } from "@/lib/use-workspace-url";
 import { DocumentRow } from "./document-row";
@@ -52,6 +53,7 @@ const DEMO_DOCS: DeskDocument[] = [
  * Données démo jusqu’au branchement API DocuLens / workspace.
  */
 export function ComplianceDeskOverview() {
+	const t = useTranslations("shellCompliance");
 	const workspaceUrl = useWorkspaceUrl();
 	const [docs, setDocs] = useState(DEMO_DOCS);
 	const [ingestRunning, setIngestRunning] = useState(false);
@@ -89,7 +91,7 @@ export function ComplianceDeskOverview() {
 
 	const runIngest = () => {
 		setIngestRunning(true);
-		flash("Ingest demandé — file cabinet (MAX 2). API DocuLens à brancher.");
+		flash(t("ingestRequested"));
 		window.setTimeout(() => {
 			setDocs((prev) =>
 				prev.map((d) =>
@@ -106,16 +108,16 @@ export function ComplianceDeskOverview() {
 				),
 			);
 			setIngestRunning(false);
-			flash("Ingest simulé terminé.");
+			flash(t("ingestDone"));
 		}, 2200);
 	};
 
 	const runDigest = () => {
 		setDigestRunning(true);
-		flash("Digest demandé — timeline / prescriptions (moteur GSMS à brancher).");
+		flash(t("digestRequested"));
 		window.setTimeout(() => {
 			setDigestRunning(false);
-			flash("Digest simulé — baseline en attente de validation.");
+			flash(t("digestDone"));
 		}, 1800);
 	};
 
@@ -139,14 +141,19 @@ export function ComplianceDeskOverview() {
 					<section className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
 						<div className="flex flex-wrap items-center justify-between gap-3 border-border border-b px-5 py-4 sm:px-6">
 							<div>
-								<h3 className="font-semibold text-sm">Continuer le dossier</h3>
+								<h3 className="font-semibold text-sm">{t("continueTitle")}</h3>
 								<p className="mt-1 text-muted-foreground text-xs">
-									Documents récents du workspace (démo).
+									{t("continueBody")}
 								</p>
 							</div>
-							<Button asChild variant="ghost" size="sm" className="gap-1 text-xs">
+							<Button
+								asChild
+								variant="ghost"
+								size="sm"
+								className="gap-1 text-xs"
+							>
 								<Link href={workspaceUrl("/trust")}>
-									Trust / findings
+									{t("trustLink")}
 									<Icon icon={ArrowRight} className="size-3.5" />
 								</Link>
 							</Button>
@@ -169,7 +176,7 @@ export function ComplianceDeskOverview() {
 								workspaceLabel: "Hôtel Paris",
 							}));
 							setDocs((prev) => [...added, ...prev]);
-							flash(`${files.length} fichier(s) ajoutés — statut Reçu.`);
+							flash(t("filesAdded", { count: files.length }));
 						}}
 					/>
 				</div>
@@ -183,11 +190,10 @@ export function ComplianceDeskOverview() {
 					/>
 					<section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
 						<p className="font-semibold text-[10px] text-muted-foreground uppercase tracking-[0.16em]">
-							UI DocuLens
+							{t("aboutEyebrow")}
 						</p>
 						<p className="mt-2 text-muted-foreground text-sm leading-6">
-							Hero, liste docs, dropzone et actions Ingest/Digest repris du front
-							DocuLens (MIT), stylés avec @crm/ui. Backend Desk = prochaine étape.
+							{t("aboutBody")}
 						</p>
 					</section>
 				</div>

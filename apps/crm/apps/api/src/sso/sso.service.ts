@@ -152,7 +152,7 @@ export class SsoService {
 		// @better-auth/sso plugin) hasn't been rebuilt on NextAuth yet —
 		// this table is config storage only for now.
 		throw new NotImplementedException(
-			"Signing in with SSO isn't available yet — this is being rebuilt.",
+			"La connexion SSO n’est pas encore disponible — elle est en cours de refonte.",
 		);
 	}
 
@@ -163,7 +163,7 @@ export class SsoService {
 		await this.requireConfigurer(userId);
 
 		throw new NotImplementedException(
-			"Signing in with SSO isn't available yet — this is being rebuilt.",
+			"La connexion SSO n’est pas encore disponible — elle est en cours de refonte.",
 		);
 	}
 
@@ -187,7 +187,7 @@ export class SsoService {
 	private async requireConfigurer(userId: string): Promise<void> {
 		if (!canConfigureSso(await workspaceRoleOf(userId, this.db))) {
 			throw new ForbiddenException(
-				"Only an owner or an admin can change how people sign in.",
+				"Seul un propriétaire ou un administrateur peut modifier le mode de connexion.",
 			);
 		}
 	}

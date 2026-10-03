@@ -25,9 +25,10 @@ import {
 import { Spinner } from "@crm/ui/components/spinner";
 import { StatusIndicator } from "@crm/ui/components/status-indicator";
 import { TableCell } from "@crm/ui/components/table";
-import { formatCount, formatMoneyCompact } from "@crm/ui/lib/format";
+import { formatMoneyCompact } from "@crm/ui/lib/format";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useQueryState } from "nuqs";
 import type { CSSProperties, ReactNode } from "react";
 import { toast } from "sonner";
@@ -36,7 +37,6 @@ import { RecordLink } from "@/components/crm/record-sheet/record-link";
 import { useOpenRecord } from "@/components/crm/record-sheet/record-stack";
 import { SoftPanel } from "@/components/desk-ui/soft-panel";
 import { LocalRelativeTime } from "@/components/local-date-time";
-import { activityLabel } from "@/lib/activity-presentation";
 import { dealStageColor } from "@/lib/deal-stage";
 import { SEARCH_PARAM } from "@/lib/search-param-keys";
 import { useCrmCache } from "@/lib/trpc/cache";
@@ -46,51 +46,55 @@ import { overviewParsers } from "./overview-search-params";
 import { SalesDashboard } from "./sales-dashboard";
 
 const CELL = "px-3 py-2.5 align-middle";
-const OPEN_COLUMNS: SimpleTableColumn[] = [
-	{ id: "deal", header: "Deal" },
+type Translate = ReturnType<typeof useTranslations>;
+
+const openColumns = (t: Translate): SimpleTableColumn[] => [
+	{ id: "deal", header: t("colDeal") },
 	{
 		id: "stage",
-		header: "Stage",
+		header: t("colStage"),
 		width: "w-32",
 		className: "hidden lg:table-cell",
 	},
 	{
 		id: "share",
-		srLabel: "Share of the largest",
+		srLabel: t("colShare"),
 		width: "w-24",
 		className: "hidden sm:table-cell",
 	},
-	{ id: "value", header: "Value", width: "w-20", align: "right" },
+	{ id: "value", header: t("colValue"), width: "w-20", align: "right" },
 ];
-const TASK_COLUMNS: SimpleTableColumn[] = [
-	{ id: "done", srLabel: "Done", width: "w-8" },
-	{ id: "task", header: "Task" },
-	{ id: "overdue", header: "Overdue", width: "w-24", align: "right" },
+const taskColumns = (t: Translate): SimpleTableColumn[] => [
+	{ id: "done", srLabel: t("colDone"), width: "w-8" },
+	{ id: "task", header: t("colTask") },
+	{ id: "overdue", header: t("colOverdue"), width: "w-24", align: "right" },
 ];
-const ACTIVITY_COLUMNS: SimpleTableColumn[] = [
-	{ id: "activity", header: "Activity" },
+const activityColumns = (t: Translate): SimpleTableColumn[] => [
+	{ id: "activity", header: t("colActivity") },
 	{
 		id: "company",
-		header: "Company",
+		header: t("colCompany"),
 		width: "w-44",
 		className: "hidden md:table-cell",
 	},
 	{
 		id: "deal",
-		header: "Deal",
+		header: t("colDeal"),
 		width: "w-48",
 		className: "hidden lg:table-cell",
 	},
 	{
 		id: "who",
-		header: "Who",
+		header: t("colWho"),
 		width: "w-32",
 		className: "hidden md:table-cell",
 	},
-	{ id: "when", header: "When", width: "w-20", align: "right" },
+	{ id: "when", header: t("colWhen"), width: "w-20", align: "right" },
 ];
 
 export function DashboardSummary() {
+	const t = useTranslations("crmDashboard");
+	const tActivity = useTranslations("crmActivity");
 	const trpc = useTRPC();
 	const cache = useCrmCache();
 	const openRecord = useOpenRecord();
@@ -136,26 +140,26 @@ export function DashboardSummary() {
 				<SoftPanel flush className="min-w-0">
 					<Card className="min-w-0">
 					<CardHeader className="border-border border-b px-5 py-4 sm:px-6">
-						<CardTitle>Deals in progress</CardTitle>
+						<CardTitle>{t("inProgressTitle")}</CardTitle>
 						<CardDescription>
-							The largest open deals, and how long each has sat in its stage
+							{t("inProgressDescription")}
 						</CardDescription>
 						<CardAction>
 							<Button asChild variant="contrast" size="sm">
-								<Link href={workspaceUrl("/deals")}>Open deals</Link>
+								<Link href={workspaceUrl("/deals")}>{t("openDeals")}</Link>
 							</Button>
 						</CardAction>
 					</CardHeader>
 					<CardPanel className="h-auto rounded-none border-0">
 						{biggestOpen.length === 0 ? (
 							<CardPanelEmpty>
-								Nothing open. Time to fill the pipeline.
+									{t("inProgressEmpty")}
 							</CardPanelEmpty>
 						) : (
 							<SimpleTable
 								variant="panel"
 								surface="page"
-								columns={OPEN_COLUMNS}
+								columns={openColumns(t)}
 							>
 								{biggestOpen.map((deal) => (
 									<SimpleTableRow
@@ -202,21 +206,21 @@ export function DashboardSummary() {
 				<SoftPanel flush className="min-w-0">
 					<Card className="min-w-0">
 					<CardHeader className="border-border border-b px-5 py-4 sm:px-6">
-						<CardTitle>Overdue tasks</CardTitle>
+						<CardTitle>{t("overdueTitle")}</CardTitle>
 						<CardDescription>
 							{overdueTasks.length === 0
-								? "Every task you have logged is either done or still to come"
-								: `${formatCount(overdueTasks.length, "task")} past due`}
+								? t("overdueNone")
+								: t("overdueCount", { count: overdueTasks.length })}
 						</CardDescription>
 					</CardHeader>
 					<CardPanel className="h-auto rounded-none border-0">
 						{overdueTasks.length === 0 ? (
-							<CardPanelEmpty>Nothing overdue. Good.</CardPanelEmpty>
+							<CardPanelEmpty>{t("overdueEmpty")}</CardPanelEmpty>
 						) : (
 							<SimpleTable
 								variant="panel"
 								surface="page"
-								columns={TASK_COLUMNS}
+								columns={taskColumns(t)}
 							>
 								{overdueTasks.map((task) => (
 									<SimpleTableRow key={task.id}>
@@ -224,7 +228,7 @@ export function DashboardSummary() {
 											<Checkbox
 												checked={false}
 												disabled={complete.isPending}
-												aria-label="Mark as done"
+												aria-label={t("markDone")}
 												onCheckedChange={() =>
 													complete.mutate({ id: task.id, completed: true })
 												}
@@ -253,7 +257,7 @@ export function DashboardSummary() {
 													task.dueAt ? (
 														<LocalRelativeTime date={task.dueAt} />
 													) : (
-														"No due date"
+														t("noDueDate")
 													)
 												}
 											/>
@@ -271,28 +275,28 @@ export function DashboardSummary() {
 			<Card className="min-w-0">
 				<CardHeader className="border-border border-b px-5 py-4 sm:px-6">
 					<CardTitle>
-						{mine ? "Your recent activity" : "Recent activity"}
+						{mine ? t("recentMine") : t("recentAll")}
 					</CardTitle>
 					<CardDescription>
 						{mine
-							? "Every note, task and stage change you have logged"
-							: "Every note, task and stage change across the workspace"}
+							? t("recentMineDescription")
+							: t("recentAllDescription")}
 					</CardDescription>
 					<CardAction>
 						<Button asChild variant="contrast" size="sm">
-							<Link href={workspaceUrl("/companies")}>All companies</Link>
+							<Link href={workspaceUrl("/companies")}>{t("allCompanies")}</Link>
 						</Button>
 					</CardAction>
 				</CardHeader>
 				{recentActivity.length === 0 ? (
-					<CardTableEmpty>Nothing has happened yet.</CardTableEmpty>
+					<CardTableEmpty>{t("recentEmpty")}</CardTableEmpty>
 				) : (
-					<SimpleTable columns={ACTIVITY_COLUMNS}>
+					<SimpleTable columns={activityColumns(t)}>
 						{recentActivity.map((entry) => (
 							<SimpleTableRow key={entry.id}>
 								<TableCell className={CELL}>
 									<span className="truncate">
-										{entry.subject ?? activityLabel(entry.type)}
+										{entry.subject ?? tActivity(entry.type)}
 									</span>
 								</TableCell>
 								<TableCell className={`${CELL} hidden md:table-cell`}>

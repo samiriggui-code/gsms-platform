@@ -65,6 +65,8 @@ const COPY: RecordCopyByKind = {
 	},
 };
 
+export const RECORD_COPY_NAMESPACE = "shellAgentRecord";
+
 export function recordCopy(kind: AgentRecordKind): RecordCopy {
 	return COPY[kind];
 }

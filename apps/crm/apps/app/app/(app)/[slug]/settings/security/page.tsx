@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import {
 	PageShell,
@@ -11,9 +13,10 @@ import {
 import { requireSession } from "@/lib/session";
 import { ChangePasswordForm } from "./change-password-form";
 
-export const metadata: Metadata = {
-	title: "Security",
-};
+export async function generateMetadata(): Promise<Metadata> {
+	const t = await getTranslations("settingsSecurity");
+	return { title: t("title") };
+}
 
 export default function SecuritySettingsPage() {
 	return (
@@ -34,14 +37,14 @@ async function SecuritySettingsPageContent() {
 }
 
 function SecuritySettingsShell({ children }: { children?: React.ReactNode }) {
+	const t = useTranslations("settingsSecurity");
+
 	return (
 		<PageShell>
 			<PageShellHeader>
 				<PageShellHeading>
-					<PageShellTitle>Security</PageShellTitle>
-					<PageShellDescription>
-						Change the password for your account.
-					</PageShellDescription>
+					<PageShellTitle>{t("title")}</PageShellTitle>
+					<PageShellDescription>{t("description")}</PageShellDescription>
 				</PageShellHeading>
 			</PageShellHeader>
 

@@ -65,12 +65,13 @@ export const activityCreateInput = z
 		dealId: z.string().optional(),
 	})
 	.refine((input) => input.companyId || input.contactId || input.dealId, {
-		message: "An activity has to be about a company, a contact or a deal.",
+		message:
+			"Une activité doit concerner une société, un contact ou une affaire.",
 	})
 	.refine(
 		(input) => input.type !== ActivityType.TASK || Boolean(input.subject),
 		{
-			message: "A task needs a subject — it is the thing to do.",
+			message: "Une tâche doit avoir un objet — c’est ce qu’il faut faire.",
 			path: ["subject"],
 		},
 	);

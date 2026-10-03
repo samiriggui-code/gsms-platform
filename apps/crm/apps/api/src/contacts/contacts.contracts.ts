@@ -26,9 +26,12 @@ export const contactListInput = listInput.extend({
 export type ContactListInput = z.infer<typeof contactListInput>;
 
 export const contactCreateInput = z.object({
-	firstName: z.string().trim().min(1, "A contact needs a first name."),
+	firstName: z.string().trim().min(1, "Un contact doit avoir un prénom."),
 	lastName: z.string().trim().optional(),
-	email: z.email("That is not an email address.").optional().or(z.literal("")),
+	email: z
+		.email("Cette adresse e-mail n’est pas valide.")
+		.optional()
+		.or(z.literal("")),
 	phone: z.string().trim().optional(),
 	title: z.string().trim().optional(),
 	companyId: z.string().nullable().optional(),

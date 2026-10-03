@@ -69,8 +69,8 @@ export class EnrichmentLogService {
 
 export function describeFilled(fields: readonly string[]): string | null {
 	if (fields.length === 0) return null;
-	if (fields.length === 1) return `Filled in ${fields[0]}.`;
+	if (fields.length === 1) return `Champ renseigné : ${fields[0]}.`;
 
 	const last = fields[fields.length - 1];
-	return `Filled in ${fields.slice(0, -1).join(", ")} and ${last}.`;
+	return `Champs renseignés : ${fields.slice(0, -1).join(", ")} et ${last}.`;
 }

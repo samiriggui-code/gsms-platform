@@ -3,25 +3,25 @@ import { MAX_ATTEMPTS, type TaskKind } from "@crm/db/agent-tasks";
 export type EnrichmentQueueState = "running" | "queued" | "failed";
 
 const STEPS = {
-	brand: "Fetching the logo",
-	portrait: "Finding their photo",
-	"meeting-prep": "Getting ready for your meeting",
-	identify: "Reading their profile",
-	profile: "Reading their profile",
-	recheck: "Checking for anything new",
-	"company-profile": "Reading the company website",
-	"workspace-profile": "Reading your own website",
-	"field-backfill": "Filling in the blank details",
-	"slack-people-match": "Matching people in Slack",
-	"slack-channel-join": "Joining a Slack channel",
-	"agent-event": "Reacting to a change",
+	brand: "Récupération du logo",
+	portrait: "Recherche de la photo",
+	"meeting-prep": "Préparation de votre rendez-vous",
+	identify: "Lecture du profil",
+	profile: "Lecture du profil",
+	recheck: "Recherche de nouveautés",
+	"company-profile": "Lecture du site de la société",
+	"workspace-profile": "Lecture de votre site web",
+	"field-backfill": "Complétion des champs vides",
+	"slack-people-match": "Association des personnes dans Slack",
+	"slack-channel-join": "Ajout à un canal Slack",
+	"agent-event": "Réaction à un changement",
 } satisfies Record<TaskKind, string>;
 
 const STEP_BY_KIND = new Map<string, string>(Object.entries(STEPS));
 
-const UNKNOWN_STEP = "Looking them up";
-const WAITING = "Waiting";
-const GAVE_UP = "Could not look this up";
+const UNKNOWN_STEP = "Recherche en cours";
+const WAITING = "En attente";
+const GAVE_UP = "Recherche impossible";
 
 const SECOND_MS = 1_000;
 const DAY_MS = 24 * 60 * 60 * SECOND_MS;
@@ -30,8 +30,8 @@ const DAYS_IN_MONTH = 30;
 const WEEKS_FROM = 14;
 const MONTHS_FROM = 60;
 
-const TODAY = "Later today";
-const TOMORROW = "Tomorrow";
+const TODAY = "Plus tard aujourd’hui";
+const TOMORROW = "Demain";
 
 export function enrichmentStep(kind: string): string {
 	return STEP_BY_KIND.get(kind) ?? UNKNOWN_STEP;
@@ -65,8 +65,9 @@ export function enrichmentDueLabel(dueAt: Date, now: Date): string {
 
 	const days = Math.floor(ahead / DAY_MS);
 	if (days === 1) return TOMORROW;
-	if (days < WEEKS_FROM) return `In ${days} days`;
-	if (days < MONTHS_FROM) return `In ${Math.round(days / DAYS_IN_WEEK)} weeks`;
+	if (days < WEEKS_FROM) return `Dans ${days} jours`;
+	if (days < MONTHS_FROM)
+		return `Dans ${Math.round(days / DAYS_IN_WEEK)} semaines`;
 
-	return `In ${Math.round(days / DAYS_IN_MONTH)} months`;
+	return `Dans ${Math.round(days / DAYS_IN_MONTH)} mois`;
 }
