@@ -1,5 +1,24 @@
 # Handoff Cursor → Claude
 
+## 2026-10-03 — Chantier 1 DocuLens serveur (auth / sites / Core / FR / Traefik)
+
+Branche `cursor/doculens-server-gsms-74cc`. Uniquement le serveur DocuLens (pas UI i18n).
+
+**Fait :**
+- Auth réelle sur routes `/events/*` : Bearer JWT Core (`iss=gsms-core` + `GSMS_PLATFORM_JWT_SECRET`) ou compte local, ou `X-API-Key` + `X-GSMS-Workspace-Id` (service).
+- Isolation par site : `workspace_id` injecté dans les events JSONB ; listes/get filtrés ; `request.state` (pas ContextVar — threadpool FastAPI).
+- Notify Core HMAC : `document.ingested` / `document.classified` → `POST {GSMS_CORE_URL}/api/v1/events/ingest/doculens`.
+- Taxonomie FR seedée au boot (`registre_securite`, `pv_commission_precedente`, `dce`, …) + prompt classifieur FR.
+- Deploy Traefik : `apps/doculens/deploy/vps/docker-compose.vps.yml` → `doculens.gsms-security.com`.
+- App renommée côté settings : **GSMS Documents**.
+- Tests : `tests/test_gsms_*.py` + endpoints auth (25 passent).
+
+**Pour Claude / ops :**
+- DNS A `doculens` + secrets Core alignés (`jwt_secret`, `webhook_secrets.doculens`).
+- Chantiers 2–5 (UI i18n, vitrine, CRM, GRACE/QAtrial) non touchés.
+
+---
+
 ## 2026-10-03 — Cartographie DocuLens (auth / lifecycle / Core HMAC)
 
 Exploration lecture seule de `apps/doculens` + ingest Core. Points utiles pour le chantier serveur :

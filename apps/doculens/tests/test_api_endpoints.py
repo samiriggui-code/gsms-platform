@@ -11,10 +11,23 @@ from app.api.dependencies import db_session
 from app.main import app
 from app.config.settings import get_settings
 
+WORKSPACE = "11111111-1111-1111-1111-111111111111"
+
 
 @pytest.fixture
 def client():
     return TestClient(app)
+
+
+@pytest.fixture
+def auth_headers(monkeypatch):
+    monkeypatch.setenv("DOCULENS_API_KEY", "test-api-key")
+    get_settings.cache_clear()
+    settings = get_settings()
+    return {
+        settings.api_key_header: "test-api-key",
+        "X-GSMS-Workspace-Id": WORKSPACE,
+    }
 
 
 def test_get_runtime_config_reflects_settings(monkeypatch, client):
@@ -32,15 +45,22 @@ def test_get_runtime_config_reflects_settings(monkeypatch, client):
     assert payload["qa_top_k"] == 7
     assert payload["search_result_limit"] == 9
     assert payload["api_key_header"] == "X-Test-Key"
-    assert "auth_required" in payload
+    assert payload["auth_required"] is True
     assert payload["showcase_read_only"] is False
 
 
-def test_showcase_mode_rejects_mutations_but_keeps_reads_available(monkeypatch, client):
+def test_showcase_mode_rejects_mutations_but_keeps_reads_available(monkeypatch, client, auth_headers):
     monkeypatch.setenv("DOCULENS_SHOWCASE_READ_ONLY", "true")
     get_settings.cache_clear()
 
-    mutation = client.post("/events", json={"event_type": "qa_query", "query": "test"})
+    unauth = client.post("/events", json={"event_type": "qa_query", "query": "test"})
+    assert unauth.status_code == 401
+
+    mutation = client.post(
+        "/events",
+        json={"event_type": "qa_query", "query": "test"},
+        headers=auth_headers,
+    )
     config = client.get("/events/config")
 
     assert mutation.status_code == 403
@@ -49,15 +69,17 @@ def test_showcase_mode_rejects_mutations_but_keeps_reads_available(monkeypatch, 
     assert config.json()["showcase_read_only"] is True
 
 
-def test_upload_document_persists_file_and_dispatches(monkeypatch, tmp_path, client):
+def test_upload_document_persists_file_and_dispatches(monkeypatch, tmp_path, client, auth_headers):
     stored_payload: Dict[str, Any] = {}
 
     class DummyEvent:
         def __init__(self, event_id: Optional[str] = None):
             self.id = event_id or uuid4()
 
-    def fake_store_event(session, payload):
+    def fake_store_event(session, payload, *, workspace_id=None):
         stored_payload.update(payload)
+        if workspace_id:
+            stored_payload["workspace_id"] = workspace_id
         return DummyEvent(), "task-123"
 
     def fake_session():
@@ -71,7 +93,12 @@ def test_upload_document_persists_file_and_dispatches(monkeypatch, tmp_path, cli
         files = {"file": ("example.txt", b"content", "text/plain")}
         data = {"doc_type": "invoice", "metadata": json.dumps({"source": "tests"})}
 
-        response = client.post("/events/documents/upload", files=files, data=data)
+        response = client.post(
+            "/events/documents/upload",
+            files=files,
+            data=data,
+            headers=auth_headers,
+        )
         assert response.status_code == 202
         payload = response.json()
 
@@ -87,10 +114,10 @@ def test_upload_document_persists_file_and_dispatches(monkeypatch, tmp_path, cli
         app.dependency_overrides.pop(db_session, None)
 
 
-def test_upload_document_rejects_invalid_metadata(monkeypatch, tmp_path, client):
+def test_upload_document_rejects_invalid_metadata(monkeypatch, tmp_path, client, auth_headers):
     called = False
 
-    def fake_store_event(session, payload):
+    def fake_store_event(session, payload, *, workspace_id=None):
         nonlocal called
         called = True
         return None, ""
@@ -106,7 +133,12 @@ def test_upload_document_rejects_invalid_metadata(monkeypatch, tmp_path, client)
         files = {"file": ("example.txt", b"content", "text/plain")}
         data = {"metadata": "this-is-not-json"}
 
-        response = client.post("/events/documents/upload", files=files, data=data)
+        response = client.post(
+            "/events/documents/upload",
+            files=files,
+            data=data,
+            headers=auth_headers,
+        )
         assert response.status_code == 400
         assert b"metadata must be valid JSON" in response.content
         assert called is False

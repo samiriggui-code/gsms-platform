@@ -38,6 +38,17 @@ def test_production_allows_seeded_read_only_showcase():
         DOCULENS_SEED_DEMO_WORKSPACE=True,
         DOCULENS_SHOWCASE_READ_ONLY=True,
         DOCULENS_INITIALIZE_DATABASE=True,
+        GSMS_PLATFORM_JWT_SECRET="platform-jwt-secret-min-32-characters",
     )
 
     settings.assert_production_safe()
+
+
+def test_production_requires_platform_jwt_secret():
+    settings = Settings(
+        DOCULENS_ENVIRONMENT="production",
+        DOCULENS_AUTH_SECRET="a-production-safe-secret",
+        DOCULENS_INITIALIZE_DATABASE=False,
+    )
+    with pytest.raises(ValueError, match="GSMS_PLATFORM_JWT_SECRET"):
+        settings.assert_production_safe()

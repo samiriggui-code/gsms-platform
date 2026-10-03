@@ -51,18 +51,26 @@ class OpenAIClassificationService:
 
         formatted_labels = "\n".join(f"- {label}" for label in candidate_labels)
         prompt = f"""
-You are a document router. Select the single best matching label for the document from the list below.
-Labels:
+Tu es un classifieur de documents de sécurité privée et d'établissements (ERP, IGH, écoles, commerces).
+Choisis le seul label le plus pertinent parmi la liste ci-dessous.
+
+Contexte métier (indicatif) :
+- registres / notices / PV de commission / plans d'évacuation → commission_securite
+- procédures de sûreté, contrats de gardiennage, cartes CNAPS → audit_surete
+- RC, CCTP, CCAP, AE, BPU, DC1/DC2, DCE, mémoire technique → appel_offres
+- rapports d'audit, PV de réunion, courriers → autres
+
+Labels candidats (codes stables à renvoyer tels quels) :
 {formatted_labels}
 
-Return a JSON object with this schema:
+Réponds uniquement avec un objet JSON :
 {{
-  "label": "label from list",
+  "label": "code exact de la liste",
   "confidence": 0.0,
-  "reason": "short explanation"
+  "reason": "explication courte en français"
 }}
 
-Document:
+Document :
 {text}
 """
 

@@ -20,17 +20,23 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore", case_sensitive=False)
 
-    app_name: str = "DocuLens AI"
+    app_name: str = Field(default="GSMS Documents", alias="DOCULENS_APP_NAME")
     environment: Literal["development", "test", "staging", "production"] = Field(
         default="development", alias="DOCULENS_ENVIRONMENT"
     )
     log_level: str = Field(default="INFO", alias="DOCULENS_LOG_LEVEL")
     cors_origins: list[str] = Field(
-        default_factory=lambda: ["http://localhost:5173"], alias="DOCULENS_CORS_ORIGINS"
+        default_factory=lambda: [
+            "http://localhost:5173",
+            "https://gsms-security.com",
+            "https://doculens.gsms-security.com",
+        ],
+        alias="DOCULENS_CORS_ORIGINS",
     )
     initialize_database: bool = Field(default=True, alias="DOCULENS_INITIALIZE_DATABASE")
     seed_demo_users: bool = Field(default=False, alias="DOCULENS_SEED_DEMO_USERS")
     seed_demo_workspace: bool = Field(default=False, alias="DOCULENS_SEED_DEMO_WORKSPACE")
+    seed_fr_labels: bool = Field(default=True, alias="DOCULENS_SEED_FR_LABELS")
     showcase_read_only: bool = Field(default=False, alias="DOCULENS_SHOWCASE_READ_ONLY")
 
     llm: LLMConfig = Field(default_factory=LLMConfig)
@@ -50,6 +56,18 @@ class Settings(BaseSettings):
     auth_secret_key: str = Field(default="doculens-dev-secret", alias="DOCULENS_AUTH_SECRET")
     auth_algorithm: str = Field(default="HS256", alias="DOCULENS_AUTH_ALGORITHM")
     auth_token_exp_minutes: int = Field(default=120, ge=5, alias="DOCULENS_AUTH_TOKEN_EXP_MINUTES")
+
+    # Pont plateforme GSMS (JWT Core + webhook ingest).
+    gsms_platform_jwt_secret: Optional[str] = Field(
+        default=None, alias="GSMS_PLATFORM_JWT_SECRET"
+    )
+    gsms_core_url: Optional[str] = Field(default=None, alias="GSMS_CORE_URL")
+    gsms_core_webhook_secret: Optional[str] = Field(
+        default=None, alias="GSMS_CORE_WEBHOOK_SECRET"
+    )
+    gsms_core_timeout_seconds: float = Field(
+        default=10.0, ge=1, le=120, alias="GSMS_CORE_TIMEOUT_SECONDS"
+    )
 
     @field_validator("log_level")
     @classmethod
@@ -73,6 +91,8 @@ class Settings(BaseSettings):
             raise ValueError(
                 "DOCULENS_SEED_DEMO_WORKSPACE requires DOCULENS_SHOWCASE_READ_ONLY=true in production"
             )
+        if self.environment == "production" and not self.gsms_platform_jwt_secret:
+            raise ValueError("GSMS_PLATFORM_JWT_SECRET must be set in production")
 
 
 @lru_cache
