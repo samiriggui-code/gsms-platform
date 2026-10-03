@@ -96,6 +96,61 @@
 		"groupDeal": "Affaires",
 		"none": "Aucun"
 	},
+	"crmCompanySheet": {
+		"pendingIndustry": "secteur",
+		"pendingDescription": "description",
+		"pendingSocials": "réseaux sociaux",
+		"goneDeals": "{count, plural, one {Son affaire et tout ce qui est rattaché au compte disparaissent aussi.} other {Ses # affaires et tout ce qui est rattaché au compte disparaissent aussi.}}",
+		"goneNothing": "Tout ce qui est rattaché au compte disparaît aussi.",
+		"keptContacts": "{count, plural, one {La personne qui y travaille reste dans le CRM, sans société.} other {Les # personnes qui y travaillent restent dans le CRM, sans société.}}",
+		"primary": "Principal",
+		"fallbackTitle": "Société",
+		"openPipeline": "Pipeline ouvert",
+		"unconverted": "+{count} non converti(s)",
+		"openDeals": "Affaires ouvertes",
+		"nextClose": "Prochaine clôture",
+		"about": "À propos",
+		"domain": "Domaine",
+		"website": "Site web",
+		"city": "Ville",
+		"country": "Pays",
+		"noContactsTitle": "Aucun contact pour l’instant",
+		"noContactsDescription": "Toutes vos interlocutrices et tous vos interlocuteurs chez {company} figurent ici : ajoutez la première personne pour y rattacher appels, e-mails et notes.",
+		"primaryContact": "Contact principal",
+		"makePrimary": "Définir comme principal",
+		"noDealsTitle": "Aucune affaire pour l’instant",
+		"noDealsDescription": "Rien n’est en cours de vente auprès de {company}. Ouvrez une affaire pour l’ajouter au pipeline et aux prévisions."
+	},
+	"crmContactSheet": {
+		"primaryUpdated": "Contact principal mis à jour.",
+		"fallbackTitle": "Contact",
+		"primaryAt": "Contact principal chez {company}",
+		"thisCompany": "cette société",
+		"makePrimary": "Définir comme principal",
+		"consequence": "Ses notes, ses conversations avec l’agent et tout ce que l’agent a trouvé disparaissent aussi ; les e-mails et rendez-vous restent rattachés à la société.",
+		"consequenceEmail": "La synchronisation ne recréera pas {email} : seul un ajout manuel le pourra.",
+		"firstName": "Prénom",
+		"lastName": "Nom",
+		"currentRole": "Poste actuel",
+		"tenure": "Ancienneté",
+		"seniority": "Séniorité",
+		"function": "Fonction",
+		"based": "Localisation",
+		"background": "Parcours",
+		"source": "Source",
+		"previously": "Auparavant",
+		"roles": "{count, plural, one {# poste} other {# postes}}",
+		"weKnowThem": "Notre relation",
+		"emails": "E-mails",
+		"lastReply": "dernière réponse",
+		"neverReplied": "{name} n’a jamais répondu",
+		"meetings": "Rendez-vous",
+		"nextMeeting": "Prochain rendez-vous",
+		"meeting": "Rendez-vous",
+		"alsoHere": "Également chez eux",
+		"noDealsTitle": "Sur aucune affaire",
+		"noDealsDescription": "{name} n’est encore rattaché(e) à aucune affaire. Les affaires s’ouvrent sur la société, puis on y ajoute des personnes."
+	},
 	"crmCreate": {
 		"added": "Ajout effectué : {name}.",
 		"name": "Nom",
@@ -173,6 +228,30 @@
 		"stageDescription": "Où se trouve la valeur en ce moment",
 		"stageCenter": "ouvert",
 		"stageEmpty": "Rien d’ouvert"
+	},
+	"crmDealSheet": {
+		"unsupportedCurrency": "{currency} — n’est plus prise en charge",
+		"inCurrency": "En {currency}",
+		"noRate": "Pas de taux {currency} : exclu des totaux",
+		"fallbackTitle": "Affaire",
+		"consequence": "Son historique d’étapes, ses notes et ses conversations avec l’agent disparaissent aussi. {company} et {count, plural, one {la personne rattachée restent} other {les personnes rattachées restent}} dans le CRM.",
+		"expectedClose": "Clôture prévue",
+		"inStage": "Dans l’étape",
+		"stage": "Étape",
+		"closed": "Clôturée",
+		"reason": "Motif",
+		"closeDate": "Date de clôture prévue",
+		"descriptionPlaceholder": "Ce que {company} achète, pourquoi maintenant, et ce qui fait obstacle.",
+		"whereItStands": "Où en est-on",
+		"opened": "Ouverte",
+		"inStageSince": "Dans l’étape depuis",
+		"onIt": "Interlocuteurs",
+		"nobodyAttached": "Personne de {company} n’est encore rattaché.",
+		"noContactsTitle": "Aucun contact sur cette affaire",
+		"noContactsDescription": "Personne de {company} n’est encore rattaché. Ajoutez vos interlocuteurs à l’affaire pour savoir qui relancer.",
+		"roleFor": "Rôle de {name} sur cette affaire",
+		"takeOff": "Retirer {name} de cette affaire",
+		"takeOffShort": "Retirer de cette affaire"
 	},
 	"crmDeals": {
 		"dealClosed": "Affaire clôturée.",
@@ -323,6 +402,95 @@
 		"noMatch": "Aucune société ne correspond.",
 		"company": "Société"
 	},
+	"crmQuickAdd": {
+		"cancel": "Annuler",
+		"added": "Ajout effectué : {name}.",
+		"addContact": "Ajouter le contact",
+		"firstName": "Prénom",
+		"lastName": "Nom",
+		"email": "E-mail",
+		"title": "Fonction",
+		"titlePlaceholder": "Responsable sécurité",
+		"onDeal": "{name} est rattaché(e) à l’affaire.",
+		"addedToDeal": "Ajouté à l’affaire.",
+		"loading": "Chargement…",
+		"everybody": "Tout le monde chez {company} y est déjà rattaché",
+		"chooseSomebody": "Choisir une personne",
+		"addToDeal": "Ajouter à l’affaire",
+		"person": "Personne",
+		"role": "Rôle",
+		"rolePlaceholder": "Sponsor interne",
+		"created": "Création effectuée : {name}.",
+		"noOwner": "Impossible de déterminer le responsable de cette affaire.",
+		"amountNumber": "Le montant doit être un nombre.",
+		"createDeal": "Créer l’affaire",
+		"name": "Nom",
+		"dealPlaceholder": "{company} — audit SSI",
+		"amount": "Montant",
+		"expectedClose": "Clôture prévue",
+		"noDateYet": "Pas encore de date"
+	},
+	"crmSheet": {
+		"loadError": "Impossible de charger cette fiche",
+		"theRecord": {
+			"company": "La société",
+			"contact": "Le contact",
+			"deal": "L’affaire"
+		},
+		"archivedToast": "{name} : archivage effectué.",
+		"restoredToast": "{name} : restauration effectuée.",
+		"purgedToast": "{name} : suppression définitive effectuée.",
+		"moreActions": "Plus d’actions",
+		"restore": {
+			"company": "Restaurer la société",
+			"contact": "Restaurer le contact",
+			"deal": "Restaurer l’affaire"
+		},
+		"deleteForever": {
+			"company": "Supprimer définitivement la société",
+			"contact": "Supprimer définitivement le contact",
+			"deal": "Supprimer définitivement l’affaire"
+		},
+		"archive": {
+			"company": "Archiver la société",
+			"contact": "Archiver le contact",
+			"deal": "Archiver l’affaire"
+		},
+		"deleteTitle": "Supprimer définitivement {name} ?",
+		"cancel": "Annuler",
+		"deleteForeverAction": "Supprimer définitivement",
+		"tabs": {
+			"overview": "Vue d’ensemble",
+			"contacts": "Contacts",
+			"activity": "Activité",
+			"agent": "Agent",
+			"deals": "Affaires"
+		},
+		"name": "Nom",
+		"role": "Rôle",
+		"title": "Fonction",
+		"email": "E-mail",
+		"remove": "Retirer",
+		"amount": "Montant",
+		"owner": "Responsable",
+		"currency": "Devise",
+		"details": "Détails",
+		"description": "Description",
+		"addContact": "Ajouter un contact",
+		"rolePlaceholder": "Sponsor interne",
+		"amountNumber": "Le montant doit être un nombre.",
+		"deal": "Affaire",
+		"stage": "Étape",
+		"company": "Société",
+		"phone": "Téléphone",
+		"links": "Liens",
+		"noCompany": "Aucune société",
+		"unassigned": "Non attribué",
+		"emailAction": "E-mail",
+		"titlePlaceholder": "Responsable sécurité",
+		"closeDate": "Date de clôture prévue",
+		"newDeal": "Nouvelle affaire"
+	},
 	"crmTables": {
 		"name": "Nom",
 		"title": "Fonction",
@@ -359,5 +527,71 @@
 			"later": "Plus tard",
 			"none": "Pas de date de clôture"
 		}
+	},
+	"crmTimeline": {
+		"placeholder": {
+			"NOTE": "Consigner une note, un appel, un e-mail, un rendez-vous ou une tâche…",
+			"CALL": "Qu’est-il ressorti de l’appel ?",
+			"EMAIL": "Qu’est-ce qui a été dit ?",
+			"MEETING": "Qu’est-il ressorti du rendez-vous ?",
+			"TASK": "Que faut-il faire ?"
+		},
+		"log": {
+			"NOTE": "Enregistrer la note",
+			"CALL": "Enregistrer l’appel",
+			"EMAIL": "Enregistrer l’e-mail",
+			"MEETING": "Enregistrer le rendez-vous"
+		},
+		"whatHappened": "Ce qui s’est passé",
+		"dueDate": "Échéance",
+		"addTask": "Ajouter la tâche",
+		"viaGmail": "via Gmail",
+		"viaCalendar": "via Agenda",
+		"markNotDone": "Marquer comme non terminée",
+		"markDone": "Marquer comme terminée",
+		"overdue": "En retard",
+		"due": "Échéance",
+		"tabs": {
+			"all": "Tout",
+			"notes": "Notes",
+			"email": "E-mails",
+			"meetings": "Rendez-vous",
+			"upcoming": "À venir",
+			"done": "Terminées"
+		},
+		"empty": {
+			"all": {
+				"title": "Rien ne s’est encore passé",
+				"description": "Appels, notes, e-mails et rendez-vous arrivent ici. Consignez le premier ci-dessus, ou attendez la synchronisation de Gmail et de l’agenda."
+			},
+			"notes": {
+				"title": "Aucune note",
+				"description": "Les notes servent à transmettre à la personne suivante : ce qui compte pour le client, qui d’autre est impliqué, ce que vous avez promis."
+			},
+			"email": {
+				"title": "Aucun e-mail",
+				"description": "Les fils apparaissent ici au fil de la synchronisation Gmail. Rien d’antérieur à la connexion de cette boîte n’est importé."
+			},
+			"meetings": {
+				"title": "Aucun rendez-vous",
+				"description": "Les événements d’agenda incluant une personne de cette fiche s’affichent ici, passés et à venir."
+			},
+			"upcoming": {
+				"title": "Rien en attente",
+				"description": "Les tâches non terminées apparaissent ici, ainsi qu’en haut de l’onglet Tout jusqu’à leur réalisation."
+			},
+			"done": {
+				"title": "Rien de terminé pour l’instant",
+				"description": "Les tâches arrivent ici une fois cochées."
+			}
+		},
+		"today": "Aujourd’hui",
+		"yesterday": "Hier",
+		"outstanding": "En attente",
+		"showOlder": "Afficher les plus anciens",
+		"allDay": "Toute la journée",
+		"joinCall": "Rejoindre l’appel",
+		"messages": "{count, plural, one {# message} other {# messages}}",
+		"openIn": "Ouvrir dans {mailbox}"
 	}
 }
