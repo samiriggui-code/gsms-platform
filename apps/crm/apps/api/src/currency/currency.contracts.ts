@@ -5,8 +5,8 @@ import { z } from "zod";
 export const currencyCode = z
 	.string()
 	.trim()
-	.length(3, "A currency code is three letters, like USD.")
-	.refine(isCurrencyCode, "That is not a currency this CRM can convert.");
+	.length(3, "Un code devise comporte trois lettres, comme EUR.")
+	.refine(isCurrencyCode, "Ce CRM ne peut pas convertir cette devise.");
 
 export const setReportingCurrencyInput = z.object({
 	currency: currencyCode,
@@ -20,8 +20,8 @@ export const setManualRateInput = z.object({
 	currency: currencyCode,
 	rate: z
 		.number()
-		.positive("A rate has to be greater than zero.")
-		.finite("That is not a rate."),
+		.positive("Un taux doit être supérieur à zéro.")
+		.finite("Ce taux n’est pas valide."),
 });
 
 export type SetManualRateInput = z.infer<typeof setManualRateInput>;

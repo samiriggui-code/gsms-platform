@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import {
 	PageShell,
@@ -14,20 +15,20 @@ import { HydrateClient } from "@/lib/trpc/hydrate";
 import { getServerQueryClient, getServerTrpc } from "@/lib/trpc/server";
 import { CurrencySettings } from "./currency-settings";
 
-export const metadata: Metadata = {
-	title: "Currencies",
-};
+export async function generateMetadata(): Promise<Metadata> {
+	const t = await getTranslations("settingsCurrencies");
+	return { title: t("title") };
+}
 
-export default function CurrenciesSettingsPage() {
+export default async function CurrenciesSettingsPage() {
+	const t = await getTranslations("settingsCurrencies");
+
 	return (
 		<PageShell>
 			<PageShellHeader>
 				<PageShellHeading>
-					<PageShellTitle>Currencies</PageShellTitle>
-					<PageShellDescription>
-						What your numbers are reported in, and how the other currencies get
-						there.
-					</PageShellDescription>
+					<PageShellTitle>{t("title")}</PageShellTitle>
+					<PageShellDescription>{t("description")}</PageShellDescription>
 				</PageShellHeading>
 			</PageShellHeader>
 

@@ -27,9 +27,13 @@ import { SavedViewsMenu } from "@/components/data-table/saved-views-menu";
 import { useTableQuery } from "@/components/data-table/use-table-query";
 import { EntityListShell } from "@/components/desk-ui/entity-list-shell";
 import { LocalRelativeTime } from "@/components/local-date-time";
-import { ACTIVITY_FACET_OPTIONS } from "@/lib/activity-recency";
+import {
+	ACTIVITY_FACET_OPTIONS,
+	ACTIVITY_RECENCY_NAMESPACE,
+} from "@/lib/activity-recency";
 import {
 	ENRICHMENT_FACET_OPTIONS,
+	ENRICHMENT_LABEL_NAMESPACE,
 	ENRICHMENT_POLL_MS,
 	isEnriching,
 } from "@/lib/enrichment-status";
@@ -40,10 +44,12 @@ import { companiesSearchParams } from "./companies-search-params";
 
 type CompanyRow = RouterOutputs["companies"]["list"]["rows"][number];
 
-const COLUMNS: DataTableColumn<CompanyRow>[] = [
+type Translate = ReturnType<typeof useTranslations>;
+
+const columnsFor = (tt: Translate): DataTableColumn<CompanyRow>[] => [
 	{
 		id: "name",
-		header: "Company",
+		header: tt("company"),
 		sortable: true,
 		hideable: false,
 		width: "w-[26%]",
@@ -62,7 +68,7 @@ const COLUMNS: DataTableColumn<CompanyRow>[] = [
 	},
 	{
 		id: "domain",
-		header: "Domain",
+		header: tt("domain"),
 		sortable: true,
 		width: "w-[16%]",
 		hideBelow: "md",
@@ -75,7 +81,7 @@ const COLUMNS: DataTableColumn<CompanyRow>[] = [
 	},
 	{
 		id: "industry",
-		header: "Industry",
+		header: tt("industry"),
 		sortable: true,
 		width: "w-[16%]",
 		hideBelow: "lg",
@@ -88,7 +94,7 @@ const COLUMNS: DataTableColumn<CompanyRow>[] = [
 	},
 	{
 		id: "owner",
-		header: "Owner",
+		header: tt("owner"),
 		sortable: true,
 		width: "w-[16%]",
 		hideBelow: "md",
@@ -96,7 +102,7 @@ const COLUMNS: DataTableColumn<CompanyRow>[] = [
 	},
 	{
 		id: "contacts",
-		header: "Contacts",
+		header: tt("contacts"),
 		sortable: true,
 		align: "right",
 		width: "w-[9%]",
@@ -105,7 +111,7 @@ const COLUMNS: DataTableColumn<CompanyRow>[] = [
 	},
 	{
 		id: "deals",
-		header: "Open deals",
+		header: tt("openDeals"),
 		sortable: true,
 		align: "right",
 		width: "w-[9%]",
@@ -113,8 +119,8 @@ const COLUMNS: DataTableColumn<CompanyRow>[] = [
 	},
 	{
 		id: "createdAt",
-		header: "Created",
-		label: "Created date",
+		header: tt("created"),
+		label: tt("createdDate"),
 		sortable: true,
 		align: "right",
 		width: "w-[10%]",
@@ -127,7 +133,7 @@ const COLUMNS: DataTableColumn<CompanyRow>[] = [
 	},
 	{
 		id: "lastActivity",
-		header: "Last activity",
+		header: tt("lastActivity"),
 		sortable: true,
 		align: "right",
 		width: "w-[12%]",
@@ -144,8 +150,8 @@ const COLUMNS: DataTableColumn<CompanyRow>[] = [
 	},
 	{
 		id: "enrichment",
-		header: "Enrichment",
-		label: "Enrichment status",
+		header: tt("enrichment"),
+		label: tt("enrichmentStatus"),
 		defaultHidden: true,
 		width: "w-[14%]",
 		cell: (row) => (
@@ -154,10 +160,10 @@ const COLUMNS: DataTableColumn<CompanyRow>[] = [
 	},
 ];
 
-const ARCHIVED_COLUMN: DataTableColumn<CompanyRow> = {
+const archivedColumn = (tt: Translate): DataTableColumn<CompanyRow> => ({
 	id: "archivedAt",
-	header: "Archived",
-	label: "Archived date",
+	header: tt("archived"),
+	label: tt("archivedDate"),
 	sortable: true,
 	align: "right",
 	width: "w-[12%]",
@@ -170,10 +176,13 @@ const ARCHIVED_COLUMN: DataTableColumn<CompanyRow> = {
 			)}
 		</span>
 	),
-};
+});
 
 export function CompaniesTable() {
 	const t = useTranslations("companies");
+	const tt = useTranslations("crmTables");
+	const tEnrichment = useTranslations(ENRICHMENT_LABEL_NAMESPACE);
+	const tRecency = useTranslations(ACTIVITY_RECENCY_NAMESPACE);
 	const openRecord = useOpenRecord();
 	const trpc = useTRPC();
 	const prefetchRecord = usePrefetchRecord();
@@ -204,9 +213,9 @@ export function CompaniesTable() {
 	const facets: DataTableFacet[] = [
 		{
 			id: "owner",
-			label: "Owner",
+			label: tt("owner"),
 			options: [
-				{ value: "unassigned", label: "Unassigned" },
+				{ value: "unassigned", label: tt("unassigned") },
 				...(users.data ?? []).map((user) => ({
 					value: user.id,
 					label: user.name,
@@ -215,24 +224,30 @@ export function CompaniesTable() {
 		},
 		{
 			id: "industry",
-			label: "Industry",
+			label: tt("industry"),
 			options: Object.keys(facetCounts?.industry ?? {})
 				.sort()
 				.map((value) => ({ value, label: value })),
 		},
 		{
 			id: "enrichment",
-			label: "Enrichment",
+			label: tt("enrichment"),
 			options: ENRICHMENT_FACET_OPTIONS.filter(
 				(option) => (facetCounts?.enrichment?.[option.value] ?? 0) > 0,
-			),
+			).map((option) => ({
+				value: option.value,
+				label: tEnrichment(option.labelKey),
+			})),
 		},
 		{
 			id: "activity",
-			label: "Activity",
+			label: tt("activity"),
 			options: ACTIVITY_FACET_OPTIONS.filter(
 				(option) => (facetCounts?.activity?.[option.value] ?? 0) > 0,
-			),
+			).map((option) => ({
+				value: option.value,
+				label: tRecency(option.labelKey),
+			})),
 		},
 		...fieldFacets,
 	];
@@ -241,9 +256,9 @@ export function CompaniesTable() {
 	const columns = useMemo(
 		() =>
 			input.archived
-				? [...COLUMNS, ARCHIVED_COLUMN, ...fieldColumns]
-				: [...COLUMNS, ...fieldColumns],
-		[fieldColumns, input.archived],
+				? [...columnsFor(tt), archivedColumn(tt), ...fieldColumns]
+				: [...columnsFor(tt), ...fieldColumns],
+		[fieldColumns, input.archived, tt],
 	);
 
 	return (

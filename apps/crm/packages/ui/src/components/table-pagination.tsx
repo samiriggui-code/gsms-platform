@@ -6,7 +6,7 @@ import { Button } from "@crm/ui/components/button";
 import { Spinner } from "@crm/ui/components/spinner";
 import type { ReactNode } from "react";
 
-const numberFormat = new Intl.NumberFormat();
+const numberFormat = new Intl.NumberFormat("fr-FR");
 
 export function TablePagination({
 	page,
@@ -34,10 +34,10 @@ export function TablePagination({
 				{loading && <Spinner />}
 				{meta ??
 					(total === 0
-						? "No results"
-						: `Showing ${numberFormat.format(rangeStart)}–${numberFormat.format(
+						? "Aucun résultat"
+						: `${numberFormat.format(rangeStart)}–${numberFormat.format(
 								rangeEnd,
-							)} of ${numberFormat.format(total)}`)}
+							)} sur ${numberFormat.format(total)}`)}
 			</span>
 			{totalPages > 1 && (
 				<div className="flex items-center gap-2">
@@ -48,7 +48,7 @@ export function TablePagination({
 						onClick={() => onPageChange(Math.max(1, page - 1))}
 					>
 						<ChevronLeft data-icon="inline-start" />
-						Previous
+						Précédent
 					</Button>
 					<span className="text-muted-foreground text-xs tabular-nums">
 						{page} / {totalPages}
@@ -59,7 +59,7 @@ export function TablePagination({
 						disabled={page >= totalPages}
 						onClick={() => onPageChange(page + 1)}
 					>
-						Next
+						Suivant
 						<ChevronRight data-icon="inline-end" />
 					</Button>
 				</div>

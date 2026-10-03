@@ -4,25 +4,36 @@ import { Button } from "@crm/ui/components/button";
 import { cn } from "@crm/ui/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 import { useWorkspaceUrl } from "@/lib/use-workspace-url";
 
+type SettingsNavKey =
+	| "general"
+	| "security"
+	| "tracking"
+	| "connections"
+	| "currencies"
+	| "members"
+	| "apiKeys"
+	| "sso";
+
 type SettingsNavItem = {
-	title: string;
+	title: SettingsNavKey;
 	href: string;
 };
 
 const ROOT = "/settings";
 
 const ITEMS: SettingsNavItem[] = [
-	{ title: "General", href: ROOT },
-	{ title: "Security", href: `${ROOT}/security` },
-	{ title: "Tracking & Analytics", href: `${ROOT}/tracking` },
-	{ title: "Connections", href: `${ROOT}/connections` },
-	{ title: "Currencies", href: `${ROOT}/currencies` },
-	{ title: "Members", href: `${ROOT}/members` },
-	{ title: "API Keys", href: `${ROOT}/api-keys` },
-	{ title: "SSO", href: `${ROOT}/sso` },
+	{ title: "general", href: ROOT },
+	{ title: "security", href: `${ROOT}/security` },
+	{ title: "tracking", href: `${ROOT}/tracking` },
+	{ title: "connections", href: `${ROOT}/connections` },
+	{ title: "currencies", href: `${ROOT}/currencies` },
+	{ title: "members", href: `${ROOT}/members` },
+	{ title: "apiKeys", href: `${ROOT}/api-keys` },
+	{ title: "sso", href: `${ROOT}/sso` },
 ];
 
 function isActive(href: string, root: string, pathname: string): boolean {
@@ -38,6 +49,8 @@ function NavLink({
 	active: boolean;
 	className: string;
 }) {
+	const t = useTranslations("settingsNav");
+
 	return (
 		<Button
 			asChild
@@ -55,18 +68,20 @@ function NavLink({
 				aria-current={active ? "page" : undefined}
 				transitionTypes={["nav-lateral"]}
 			>
-				{item.title}
+				{t(item.title)}
 			</Link>
 		</Button>
 	);
 }
 
 export function SettingsSidebarFallback() {
+	const t = useTranslations("settingsNav");
+
 	return (
 		<>
 			<aside className="hidden w-56 shrink-0 border-r md:block [view-transition-name:settings-sidebar]">
 				<nav
-					aria-label="Workspace settings"
+					aria-label={t("ariaLabel")}
 					aria-busy="true"
 					className="flex flex-col gap-0.5 p-3"
 				>
@@ -77,14 +92,14 @@ export function SettingsSidebarFallback() {
 							disabled
 							className="w-full justify-start px-3 font-normal text-muted-foreground"
 						>
-							{item.title}
+							{t(item.title)}
 						</Button>
 					))}
 				</nav>
 			</aside>
 
 			<nav
-				aria-label="Workspace settings"
+				aria-label={t("ariaLabel")}
 				aria-busy="true"
 				className="flex gap-1 overflow-x-auto border-b p-2 md:hidden [view-transition-name:settings-sidebar]"
 			>
@@ -95,7 +110,7 @@ export function SettingsSidebarFallback() {
 						disabled
 						className="shrink-0 justify-start px-3 font-normal text-muted-foreground"
 					>
-						{item.title}
+						{t(item.title)}
 					</Button>
 				))}
 			</nav>
@@ -104,6 +119,7 @@ export function SettingsSidebarFallback() {
 }
 
 export function SettingsSidebar() {
+	const t = useTranslations("settingsNav");
 	const pathname = usePathname();
 	const workspaceUrl = useWorkspaceUrl();
 
@@ -116,10 +132,7 @@ export function SettingsSidebar() {
 	return (
 		<>
 			<aside className="hidden w-56 shrink-0 border-r md:block [view-transition-name:settings-sidebar]">
-				<nav
-					aria-label="Workspace settings"
-					className="flex flex-col gap-0.5 p-3"
-				>
+				<nav aria-label={t("ariaLabel")} className="flex flex-col gap-0.5 p-3">
 					{items.map((item) => (
 						<NavLink
 							key={item.href}
@@ -132,7 +145,7 @@ export function SettingsSidebar() {
 			</aside>
 
 			<nav
-				aria-label="Workspace settings"
+				aria-label={t("ariaLabel")}
 				className="flex gap-1 overflow-x-auto border-b p-2 md:hidden [view-transition-name:settings-sidebar]"
 			>
 				{items.map((item) => (

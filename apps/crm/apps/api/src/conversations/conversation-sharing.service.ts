@@ -53,7 +53,7 @@ export class ConversationSharingService {
 
 			return true;
 		});
-		if (!created) this.missingBuilder(conversationId);
+		if (!created) this.missingBuilder();
 
 		return { token };
 	}
@@ -71,7 +71,7 @@ export class ConversationSharingService {
 
 			return true;
 		});
-		if (!revoked) this.missingBuilder(conversationId);
+		if (!revoked) this.missingBuilder();
 
 		return { id: conversationId };
 	}
@@ -136,7 +136,9 @@ export class ConversationSharingService {
 		});
 
 		if (!share) {
-			throw new NotFoundException("That shared conversation is unavailable.");
+			throw new NotFoundException(
+				"Cette conversation partagée n’est plus disponible.",
+			);
 		}
 
 		const { conversation } = share;
@@ -190,7 +192,7 @@ export class ConversationSharingService {
 		});
 
 		if (!conversation) {
-			this.missingBuilder(conversationId);
+			this.missingBuilder();
 		}
 
 		return conversation;
@@ -216,10 +218,8 @@ export class ConversationSharingService {
 		);
 	}
 
-	private missingBuilder(conversationId: string): never {
-		throw new NotFoundException(
-			`No builder conversation with id ${conversationId}.`,
-		);
+	private missingBuilder(): never {
+		throw new NotFoundException("Conversation introuvable.");
 	}
 
 	private async assertWorkspaceMember(userId: string): Promise<void> {
@@ -232,7 +232,7 @@ export class ConversationSharingService {
 
 		if (!member) {
 			throw new ForbiddenException(
-				"This conversation belongs to another team.",
+				"Cette conversation appartient à une autre équipe.",
 			);
 		}
 	}

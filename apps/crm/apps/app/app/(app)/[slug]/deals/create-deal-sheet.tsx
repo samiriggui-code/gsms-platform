@@ -31,12 +31,13 @@ import {
 } from "@crm/ui/components/sheet";
 import { Spinner } from "@crm/ui/components/spinner";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { parseAsBoolean, useQueryState } from "nuqs";
 import { type ComponentProps, Suspense, useId, useState } from "react";
 import { toast } from "sonner";
 import { CompanyPicker } from "@/components/crm/company-picker";
 import { useOpenRecord } from "@/components/crm/record-sheet/record-stack";
-import { dealStageLabel, OPEN_STAGES } from "@/lib/deal-stage";
+import { DEAL_STAGE_NAMESPACE, OPEN_STAGES } from "@/lib/deal-stage";
 import { SEARCH_PARAM } from "@/lib/search-param-keys";
 import { useCrmCache } from "@/lib/trpc/cache";
 import { useTRPC } from "@/lib/trpc/client";
@@ -44,10 +45,11 @@ import { useTRPC } from "@/lib/trpc/client";
 const UNSET = "";
 
 function AddButton(props: ComponentProps<typeof Button>) {
+	const t = useTranslations("deals");
 	return (
 		<Button {...props}>
 			<Icon icon={Add} data-icon="inline-start" />
-			New deal
+			{t("new")}
 		</Button>
 	);
 }
@@ -61,6 +63,9 @@ export function CreateDealSheet({ companyId }: { companyId?: string }) {
 }
 
 function CreateDealForm({ companyId }: { companyId?: string }) {
+	const t = useTranslations("crmCreate");
+	const tNew = useTranslations("deals");
+	const tStage = useTranslations(DEAL_STAGE_NAMESPACE);
 	const openRecord = useOpenRecord();
 	const trpc = useTRPC();
 	const cache = useCrmCache();
@@ -93,7 +98,7 @@ function CreateDealForm({ companyId }: { companyId?: string }) {
 		trpc.deals.create.mutationOptions({
 			onSuccess: async (deal) => {
 				await cache.deal(deal.id);
-				toast.success(`${deal.name} added.`);
+				toast.success(t("added", { name: deal.name }));
 				await setOpen(null);
 				setName("");
 				setAmount("");
@@ -115,10 +120,8 @@ function CreateDealForm({ companyId }: { companyId?: string }) {
 			</SheetTrigger>
 			<SheetContent side="right">
 				<SheetHeader>
-					<SheetTitle>New deal</SheetTitle>
-					<SheetDescription>
-						Every deal belongs to a company and has someone's name against it.
-					</SheetDescription>
+					<SheetTitle>{tNew("new")}</SheetTitle>
+					<SheetDescription>{t("dealDescription")}</SheetDescription>
 				</SheetHeader>
 
 				<form
@@ -142,19 +145,21 @@ function CreateDealForm({ companyId }: { companyId?: string }) {
 				>
 					<FieldGroup>
 						<Field>
-							<FieldLabel htmlFor={nameId}>Name</FieldLabel>
+							<FieldLabel htmlFor={nameId}>{t("name")}</FieldLabel>
 							<Input
 								id={nameId}
 								value={name}
 								onChange={(event) => setName(event.target.value)}
-								placeholder="Stripe — Comp AI"
+								placeholder={t("dealNamePlaceholder")}
 								autoComplete="off"
 								required
 							/>
 						</Field>
 
 						<Field>
-							<FieldLabel htmlFor="create-deal-company">Company</FieldLabel>
+							<FieldLabel htmlFor="create-deal-company">
+								{t("company")}
+							</FieldLabel>
 							<CompanyPicker
 								id="create-deal-company"
 								value={company}
@@ -163,10 +168,10 @@ function CreateDealForm({ companyId }: { companyId?: string }) {
 						</Field>
 
 						<Field>
-							<FieldLabel htmlFor="create-deal-owner">Owner</FieldLabel>
+							<FieldLabel htmlFor="create-deal-owner">{t("owner")}</FieldLabel>
 							<Select value={resolvedOwner} onValueChange={setOwnerId}>
 								<SelectTrigger id="create-deal-owner">
-									<SelectValue placeholder="Choose an owner" />
+									<SelectValue placeholder={t("chooseOwner")} />
 								</SelectTrigger>
 								<SelectContent>
 									{(users.data ?? []).map((user) => (
@@ -179,7 +184,7 @@ function CreateDealForm({ companyId }: { companyId?: string }) {
 						</Field>
 
 						<Field>
-							<FieldLabel htmlFor="create-deal-stage">Stage</FieldLabel>
+							<FieldLabel htmlFor="create-deal-stage">{t("stage")}</FieldLabel>
 							<Select value={stage} onValueChange={setStage}>
 								<SelectTrigger id="create-deal-stage">
 									<SelectValue />
@@ -187,19 +192,16 @@ function CreateDealForm({ companyId }: { companyId?: string }) {
 								<SelectContent>
 									{OPEN_STAGES.map((value) => (
 										<SelectItem key={value} value={value}>
-											{dealStageLabel(value)}
+											{tStage(value)}
 										</SelectItem>
 									))}
 								</SelectContent>
 							</Select>
-							<FieldDescription>
-								A new deal is an open deal — close it from the pipeline once
-								there is an outcome to record.
-							</FieldDescription>
+							<FieldDescription>{t("stageHint")}</FieldDescription>
 						</Field>
 
 						<Field>
-							<FieldLabel htmlFor={amountId}>Amount</FieldLabel>
+							<FieldLabel htmlFor={amountId}>{t("amount")}</FieldLabel>
 							<div className="flex gap-2">
 								<Input
 									id={amountId}
@@ -211,7 +213,7 @@ function CreateDealForm({ companyId }: { companyId?: string }) {
 								/>
 								<Select value={resolvedCurrency} onValueChange={setCurrency}>
 									<SelectTrigger
-										aria-label="Currency"
+										aria-label={t("currency")}
 										className="w-28 shrink-0"
 									>
 										<SelectValue />
@@ -228,12 +230,12 @@ function CreateDealForm({ companyId }: { companyId?: string }) {
 						</Field>
 
 						<Field>
-							<FieldLabel htmlFor={closeDateId}>Expected close date</FieldLabel>
+							<FieldLabel htmlFor={closeDateId}>{t("closeDate")}</FieldLabel>
 							<DatePicker
 								id={closeDateId}
 								value={closeDate}
 								onChange={setCloseDate}
-								placeholder="No date yet"
+								placeholder={t("noDateYet")}
 							/>
 						</Field>
 					</FieldGroup>
@@ -246,10 +248,10 @@ function CreateDealForm({ companyId }: { companyId?: string }) {
 						disabled={create.isPending || !ready}
 					>
 						{create.isPending ? <Spinner /> : null}
-						Add deal
+						{t("addDeal")}
 					</Button>
 					<SheetClose asChild>
-						<Button variant="outline">Cancel</Button>
+						<Button variant="outline">{t("cancel")}</Button>
 					</SheetClose>
 				</SheetFooter>
 			</SheetContent>

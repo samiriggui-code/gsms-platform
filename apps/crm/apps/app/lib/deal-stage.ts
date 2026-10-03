@@ -28,6 +28,8 @@ const PRESENTATION: DealStagePresentation = {
 	NOT_QUALIFIED: { label: "Sans suite", tone: "neutral" },
 };
 
+export const DEAL_STAGE_NAMESPACE = "shellDealStage";
+
 export const OPEN_STAGES = ORDER.slice(0, 5) as readonly DealStage[];
 
 export const LOSING_STAGES: readonly DealStage[] = [

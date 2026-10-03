@@ -244,7 +244,9 @@ describe("manual agent runs", () => {
 		} catch (error) {
 			runError = error;
 		}
-		expect((runError as Error).message).toBe("This agent is not live yet.");
+		expect((runError as Error).message).toBe(
+			"Cet agent n’est pas encore actif.",
+		);
 		expect(pokeCount).toBe(beforePokeCount);
 	});
 
@@ -286,7 +288,7 @@ describe("manual agent runs", () => {
 		}
 
 		expect(error?.message).toBe(
-			"This agent already has an active run. Stop it or wait for it to finish.",
+			"Cet agent a déjà une exécution en cours. Arrêtez-la ou attendez qu’elle se termine.",
 		);
 		expect(
 			await db.agentRun.count({
@@ -311,7 +313,9 @@ describe("manual agent runs", () => {
 		} catch (caught) {
 			error = caught as Error;
 		}
-		expect(error?.message).toBe("You are not a member of this workspace.");
+		expect(error?.message).toBe(
+			"Vous n’êtes pas membre de cet espace de travail.",
+		);
 	});
 
 	it("retries a failed run against the version that run executed", async () => {
@@ -540,7 +544,7 @@ describe("cancelling a run", () => {
 		} catch (caught) {
 			error = caught as Error;
 		}
-		expect(error?.message).toBe(`No run with id ${runId}.`);
+		expect(error?.message).toBe("Exécution introuvable.");
 	});
 
 	it("refuses a caller who is not a workspace member", async () => {
@@ -552,7 +556,9 @@ describe("cancelling a run", () => {
 		} catch (caught) {
 			error = caught as Error;
 		}
-		expect(error?.message).toBe("You are not a member of this workspace.");
+		expect(error?.message).toBe(
+			"Vous n’êtes pas membre de cet espace de travail.",
+		);
 	});
 
 	it("reports cancellable runs to the caller who may stop them", async () => {

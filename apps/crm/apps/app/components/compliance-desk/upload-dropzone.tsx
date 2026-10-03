@@ -3,6 +3,7 @@
 import Upload from "@carbon/icons-react/es/Upload";
 import { Icon } from "@crm/ui/components/icon";
 import { cn } from "@crm/ui/lib/utils";
+import { useTranslations } from "next-intl";
 import { useCallback, useState } from "react";
 
 type UploadDropzoneProps = {
@@ -15,6 +16,7 @@ type UploadDropzoneProps = {
  * Stockage local UI only pour l’instant (pas d’API DocuLens branchée).
  */
 export function UploadDropzone({ onFiles, className }: UploadDropzoneProps) {
+	const t = useTranslations("shellCompliance");
 	const [active, setActive] = useState(false);
 	const [lastNames, setLastNames] = useState<string[]>([]);
 
@@ -36,10 +38,8 @@ export function UploadDropzone({ onFiles, className }: UploadDropzoneProps) {
 			)}
 		>
 			<div className="border-border border-b px-5 py-4 sm:px-6">
-				<h3 className="font-semibold text-sm">Documents reçus</h3>
-				<p className="mt-1 text-muted-foreground text-xs">
-					Dépôt dans le workspace. L’analyse ne démarre qu’avec [Lancer Ingest].
-				</p>
+				<h3 className="font-semibold text-sm">{t("uploadTitle")}</h3>
+				<p className="mt-1 text-muted-foreground text-xs">{t("uploadBody")}</p>
 			</div>
 			<label
 				onDragEnter={(e) => {
@@ -66,10 +66,8 @@ export function UploadDropzone({ onFiles, className }: UploadDropzoneProps) {
 				<span className="grid size-10 place-items-center rounded-xl bg-muted text-muted-foreground">
 					<Icon icon={Upload} className="size-5" />
 				</span>
-				<p className="font-medium text-sm">Glisser des fichiers ou cliquer</p>
-				<p className="text-muted-foreground text-xs">
-					PDF, DOCX, XLSX, images — originaux conservés
-				</p>
+				<p className="font-medium text-sm">{t("uploadDrop")}</p>
+				<p className="text-muted-foreground text-xs">{t("uploadFormats")}</p>
 				<input
 					type="file"
 					multiple
@@ -85,7 +83,7 @@ export function UploadDropzone({ onFiles, className }: UploadDropzoneProps) {
 				<ul className="border-border border-t px-5 py-3 text-muted-foreground text-xs sm:px-6">
 					{lastNames.map((name) => (
 						<li key={name} className="truncate py-0.5">
-							+ {name} (file locale — API Desk à brancher)
+							{t("uploadQueued", { name })}
 						</li>
 					))}
 				</ul>

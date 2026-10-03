@@ -168,7 +168,7 @@ export class SlackConnectionService {
 			orderBy: { updatedAt: "desc" },
 			select: { id: true },
 		});
-		if (!account) throw new NotFoundException("Slack is not connected.");
+		if (!account) throw new NotFoundException("Slack n’est pas connecté.");
 
 		await this.agent.slackPeopleRequested(
 			"Refresh Slack people and channels from the connection page",
@@ -234,7 +234,7 @@ export class SlackConnectionService {
 			where: { id: input.channelId },
 			select: { id: true, name: true, isMember: true, isPrivate: true },
 		});
-		if (!channel) throw new NotFoundException("No such Slack channel.");
+		if (!channel) throw new NotFoundException("Canal Slack introuvable.");
 		if (channel.isMember) return { queued: false, alreadyJoined: true };
 
 		const grant = await this.db.slackWorkspaceGrant.findFirst({
@@ -262,7 +262,7 @@ export class SlackConnectionService {
 			select: { id: true },
 		});
 		if (existing) {
-			throw new BadRequestException("A channel with that name already exists.");
+			throw new BadRequestException("Un canal portant ce nom existe déjà.");
 		}
 
 		return this.slackChannels.create(input.name, input.isPrivate);
@@ -273,7 +273,7 @@ export class SlackConnectionService {
 
 		if (!canManageConnections(role)) {
 			throw new ForbiddenException(
-				"Only an owner or an admin can disconnect Slack.",
+				"Seul un propriétaire ou un administrateur peut déconnecter Slack.",
 			);
 		}
 
@@ -286,7 +286,7 @@ export class SlackConnectionService {
 			return accounts.count;
 		});
 
-		if (removed === 0) throw new NotFoundException("Slack is not connected.");
+		if (removed === 0) throw new NotFoundException("Slack n’est pas connecté.");
 
 		return { disconnected: true };
 	}

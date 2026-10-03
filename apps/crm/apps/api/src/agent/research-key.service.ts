@@ -33,7 +33,7 @@ export class ResearchKeyService {
 			return {
 				outcome: "unknown",
 				reason:
-					"This install has no AGENT_BRIDGE_SECRET, so nothing can check.",
+					"Cette installation n’a pas d’AGENT_BRIDGE_SECRET : aucune vérification possible.",
 			};
 		}
 
@@ -49,7 +49,7 @@ export class ResearchKeyService {
 			});
 
 			if (!response.ok) {
-				return this.cannotTell(`The agent answered ${response.status}.`);
+				return this.cannotTell(`L’agent a répondu ${response.status}.`);
 			}
 
 			const body = verifyAnswer.parse(await response.json());
@@ -59,11 +59,11 @@ export class ResearchKeyService {
 			if (body.outcome === "invalid") {
 				return {
 					outcome: "invalid",
-					reason: body.reason || "Context did not recognise that API key.",
+					reason: body.reason || "Context n’a pas reconnu cette clé API.",
 				};
 			}
 
-			return this.cannotTell(body.reason ?? "No answer.");
+			return this.cannotTell(body.reason ?? "Aucune réponse.");
 		} catch (error) {
 			return this.cannotTell(
 				error instanceof Error ? error.message : String(error),

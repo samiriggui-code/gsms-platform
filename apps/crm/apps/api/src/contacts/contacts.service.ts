@@ -218,7 +218,7 @@ export class ContactsService {
 		});
 
 		if (!contact) {
-			throw new NotFoundException(`No contact with id ${id}.`);
+			throw new NotFoundException("Contact introuvable.");
 		}
 
 		const relationship = await this.relationship(
@@ -273,7 +273,7 @@ export class ContactsService {
 			});
 			if (existing) {
 				throw new ConflictException(
-					`${[existing.firstName, existing.lastName].filter(Boolean).join(" ")} already uses ${email}.`,
+					`${[existing.firstName, existing.lastName].filter(Boolean).join(" ")} utilise déjà ${email}.`,
 				);
 			}
 		}
@@ -359,7 +359,7 @@ export class ContactsService {
 
 			return { id, name: nameOf(contact) };
 		} catch (error) {
-			throw this.translate(error, id);
+			throw this.translate(error);
 		}
 	}
 
@@ -375,7 +375,7 @@ export class ContactsService {
 
 			return { id, name: nameOf(contact) };
 		} catch (error) {
-			throw this.translate(error, id);
+			throw this.translate(error);
 		}
 	}
 
@@ -402,7 +402,7 @@ export class ContactsService {
 
 				if (!row) {
 					if (guard) return null;
-					throw new NotFoundException(`No contact with id ${id}.`);
+					throw new NotFoundException("Contact introuvable.");
 				}
 				if (
 					guard &&
@@ -438,7 +438,7 @@ export class ContactsService {
 				return { targets, name, suppressed: suppress !== null };
 			});
 		} catch (error) {
-			throw this.translate(error, id);
+			throw this.translate(error);
 		}
 
 		if (!deleted) return null;
@@ -517,7 +517,7 @@ export class ContactsService {
 				return updated;
 			});
 		} catch (error) {
-			throw this.translate(error, id);
+			throw this.translate(error);
 		}
 	}
 
@@ -556,7 +556,7 @@ export class ContactsService {
 				select: { id: true },
 			});
 			if (!company) {
-				throw new NotFoundException(`No company with id ${companyId}.`);
+				throw new NotFoundException("Société introuvable.");
 			}
 		}
 
@@ -678,7 +678,7 @@ export class ContactsService {
 		});
 
 		if (!contact) {
-			throw new NotFoundException(`No contact with id ${id}.`);
+			throw new NotFoundException("Contact introuvable.");
 		}
 
 		const queued = await this.agent.contactCreated(
@@ -715,11 +715,11 @@ export class ContactsService {
 		});
 
 		if (!fact) {
-			throw new NotFoundException(`No fact with id ${input.factId}.`);
+			throw new NotFoundException("Suggestion introuvable.");
 		}
 
 		if (fact.status !== FactStatus.PROPOSED) {
-			throw new ConflictException("That suggestion has already been settled.");
+			throw new ConflictException("Cette suggestion a déjà été traitée.");
 		}
 
 		const accepted = input.decision === "accept";
@@ -906,14 +906,14 @@ export class ContactsService {
 		};
 	}
 
-	private translate(cause: unknown, id: string): never {
+	private translate(cause: unknown): never {
 		if (cause instanceof PrismaNamespace.PrismaClientKnownRequestError) {
 			if (cause.code === "P2025") {
-				throw new NotFoundException(`No contact with id ${id}.`);
+				throw new NotFoundException("Contact introuvable.");
 			}
 			if (cause.code === "P2002") {
 				throw new ConflictException(
-					"Another contact already uses that email address.",
+					"Un autre contact utilise déjà cette adresse e-mail.",
 				);
 			}
 		}

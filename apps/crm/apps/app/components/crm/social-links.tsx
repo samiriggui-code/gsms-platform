@@ -1,11 +1,13 @@
 import { Button } from "@crm/ui/components/button";
 import type { CarbonIcon } from "@crm/ui/components/icon";
 import { Icon } from "@crm/ui/components/icon";
+import { useTranslations } from "next-intl";
 import {
 	type CompanyLinks,
 	type ContactLinks,
 	companySocialLinks,
 	contactSocialLinks,
+	SOCIAL_LINK_NAMESPACE,
 } from "@/lib/social-links";
 
 function SocialLinks({
@@ -18,6 +20,7 @@ function SocialLinks({
 		href: string;
 	}>;
 }) {
+	const t = useTranslations(SOCIAL_LINK_NAMESPACE);
 	if (rows.length === 0) return null;
 
 	return (
@@ -26,7 +29,7 @@ function SocialLinks({
 				<Button key={String(link.key)} asChild variant="outline" size="sm">
 					<a href={link.href} target="_blank" rel="noreferrer noopener">
 						<Icon icon={link.icon} data-icon="inline-start" />
-						{link.label}
+						{t(String(link.key))}
 					</a>
 				</Button>
 			))}

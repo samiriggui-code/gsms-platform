@@ -54,11 +54,17 @@ export const setResearchKeyInput = z.object({
 	apiKey: z
 		.string()
 		.trim()
-		.min(8, "That does not look like a Context API key — it is too short.")
-		.max(500, "That does not look like a Context API key — it is too long.")
+		.min(
+			8,
+			"Cela ne ressemble pas à une clé API Context — elle est trop courte.",
+		)
+		.max(
+			500,
+			"Cela ne ressemble pas à une clé API Context — elle est trop longue.",
+		)
 		.refine(
 			(value) => !/\s/.test(value),
-			"An API key has no spaces in it. Paste the whole key on its own.",
+			"Une clé API ne contient pas d’espaces. Collez la clé complète, seule.",
 		),
 });
 
@@ -70,11 +76,11 @@ export const setArchiveRetentionDaysInput = z.object({
 		.int()
 		.min(
 			MIN_ARCHIVE_RETENTION_DAYS,
-			`Retention has to be at least ${MIN_ARCHIVE_RETENTION_DAYS} day.`,
+			`La durée de conservation doit être d’au moins ${MIN_ARCHIVE_RETENTION_DAYS} jour.`,
 		)
 		.max(
 			MAX_ARCHIVE_RETENTION_DAYS,
-			`Retention cannot be longer than ${MAX_ARCHIVE_RETENTION_DAYS} days.`,
+			`La durée de conservation ne peut pas dépasser ${MAX_ARCHIVE_RETENTION_DAYS} jours.`,
 		),
 });
 

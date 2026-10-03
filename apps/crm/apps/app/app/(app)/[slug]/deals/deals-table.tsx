@@ -25,7 +25,7 @@ import { ListSearch } from "@/components/data-table/list-search";
 import { useTableQuery } from "@/components/data-table/use-table-query";
 import { EntityListShell } from "@/components/desk-ui/entity-list-shell";
 import { LocalDay, LocalRelativeTime } from "@/components/local-date-time";
-import { DEAL_STAGE_OPTIONS } from "@/lib/deal-stage";
+import { DEAL_STAGE_NAMESPACE, DEAL_STAGE_OPTIONS } from "@/lib/deal-stage";
 import { useTRPC } from "@/lib/trpc/client";
 import type { RouterOutputs } from "@/lib/trpc/types";
 import { DealsBulkActions } from "./deals-bulk-actions";
@@ -33,10 +33,12 @@ import { dealsSearchParams } from "./deals-search-params";
 
 type DealRow = RouterOutputs["deals"]["list"]["rows"][number];
 
-const COLUMNS: DataTableColumn<DealRow>[] = [
+type Translate = ReturnType<typeof useTranslations>;
+
+const columnsFor = (tt: Translate): DataTableColumn<DealRow>[] => [
 	{
 		id: "name",
-		header: "Deal",
+		header: tt("deal"),
 		sortable: true,
 		hideable: false,
 		width: "w-[24%]",
@@ -44,21 +46,21 @@ const COLUMNS: DataTableColumn<DealRow>[] = [
 	},
 	{
 		id: "company",
-		header: "Company",
+		header: tt("company"),
 		sortable: true,
 		width: "w-[18%]",
 		cell: (row) => <CompanyCell company={row.company} />,
 	},
 	{
 		id: "stage",
-		header: "Stage",
+		header: tt("stage"),
 		sortable: true,
 		width: "w-[18%]",
 		cell: (row) => <DealStageMenu dealId={row.id} stage={row.stage} />,
 	},
 	{
 		id: "amount",
-		header: "Amount",
+		header: tt("amount"),
 		sortable: true,
 		align: "right",
 		width: "w-[12%]",
@@ -74,7 +76,7 @@ const COLUMNS: DataTableColumn<DealRow>[] = [
 	},
 	{
 		id: "owner",
-		header: "Owner",
+		header: tt("owner"),
 		sortable: true,
 		width: "w-[14%]",
 		hideBelow: "md",
@@ -82,7 +84,7 @@ const COLUMNS: DataTableColumn<DealRow>[] = [
 	},
 	{
 		id: "expectedCloseDate",
-		header: "Close date",
+		header: tt("closeDate"),
 		sortable: true,
 		width: "w-[12%]",
 		hideBelow: "lg",
@@ -97,8 +99,8 @@ const COLUMNS: DataTableColumn<DealRow>[] = [
 	},
 	{
 		id: "createdAt",
-		header: "Created",
-		label: "Created date",
+		header: tt("created"),
+		label: tt("createdDate"),
 		sortable: true,
 		align: "right",
 		width: "w-[10%]",
@@ -111,7 +113,7 @@ const COLUMNS: DataTableColumn<DealRow>[] = [
 	},
 	{
 		id: "lastActivity",
-		header: "Last activity",
+		header: tt("lastActivity"),
 		sortable: true,
 		align: "right",
 		width: "w-[12%]",
@@ -128,10 +130,10 @@ const COLUMNS: DataTableColumn<DealRow>[] = [
 	},
 ];
 
-const ARCHIVED_COLUMN: DataTableColumn<DealRow> = {
+const archivedColumn = (tt: Translate): DataTableColumn<DealRow> => ({
 	id: "archivedAt",
-	header: "Archived",
-	label: "Archived date",
+	header: tt("archived"),
+	label: tt("archivedDate"),
 	sortable: true,
 	align: "right",
 	width: "w-[12%]",
@@ -144,10 +146,12 @@ const ARCHIVED_COLUMN: DataTableColumn<DealRow> = {
 			)}
 		</span>
 	),
-};
+});
 
 export function DealsTable() {
 	const t = useTranslations("deals");
+	const tt = useTranslations("crmTables");
+	const tStage = useTranslations(DEAL_STAGE_NAMESPACE);
 	const openRecord = useOpenRecord();
 	const trpc = useTRPC();
 	const prefetchRecord = usePrefetchRecord();
@@ -190,7 +194,7 @@ export function DealsTable() {
 	const facets: DataTableFacet[] = [
 		{
 			id: "owner",
-			label: "Owner",
+			label: tt("owner"),
 			options: (users.data ?? []).flatMap((user) =>
 				(facetCounts?.owner?.[user.id] ?? 0) > 0
 					? [{ value: user.id, label: user.name }]
@@ -199,17 +203,25 @@ export function DealsTable() {
 		},
 		{
 			id: "stage",
-			label: "Stage",
+			label: tt("stage"),
 			options: DEAL_STAGE_OPTIONS.filter(
 				(option) => (facetCounts?.stage?.[option.value] ?? 0) > 0,
-			),
+			).map((option) => ({
+				value: option.value,
+				label: tStage(option.value),
+			})),
 		},
 		{
 			id: "closing",
-			label: "Closing",
+			label: tt("closing"),
 			options: CLOSING_OPTIONS.flatMap((option) =>
 				(facetCounts?.closing?.[option.value] ?? 0) > 0
-					? [{ value: option.value, label: option.label }]
+					? [
+							{
+								value: option.value,
+								label: tt(`closingOptions.${option.value}`),
+							},
+						]
 					: [],
 			),
 		},
@@ -226,9 +238,9 @@ export function DealsTable() {
 	const columns = useMemo(
 		() =>
 			input.archived
-				? [...COLUMNS, ARCHIVED_COLUMN, ...fieldColumns]
-				: [...COLUMNS, ...fieldColumns],
-		[fieldColumns, input.archived],
+				? [...columnsFor(tt), archivedColumn(tt), ...fieldColumns]
+				: [...columnsFor(tt), ...fieldColumns],
+		[fieldColumns, input.archived, tt],
 	);
 
 	return (

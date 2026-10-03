@@ -5,6 +5,8 @@ import Money from "@carbon/icons-react/es/Money";
 import UserMultiple from "@carbon/icons-react/es/UserMultiple";
 import type { CarbonIcon } from "@crm/ui/components/icon";
 
+export const SOCIAL_LINK_NAMESPACE = "shellSocial";
+
 type SocialLink<T> = { key: keyof T; label: string; icon: CarbonIcon };
 
 export type CompanyLinks = {

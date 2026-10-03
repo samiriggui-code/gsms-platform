@@ -48,7 +48,7 @@ export class ConversationService {
 		});
 
 		if (!thread) {
-			throw new NotFoundException(`No email thread with id ${threadId}.`);
+			throw new NotFoundException("Fil d’e-mails introuvable.");
 		}
 
 		const faces = await this.facesFor(
@@ -138,7 +138,7 @@ export class ConversationService {
 		});
 
 		if (!event) {
-			throw new NotFoundException(`No calendar event with id ${eventId}.`);
+			throw new NotFoundException("Événement d’agenda introuvable.");
 		}
 
 		return {

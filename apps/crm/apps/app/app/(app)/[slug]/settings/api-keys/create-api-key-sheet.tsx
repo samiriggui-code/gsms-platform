@@ -29,6 +29,7 @@ import {
 } from "@crm/ui/components/sheet";
 import { Spinner } from "@crm/ui/components/spinner";
 import { useMutation } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { parseAsBoolean, useQueryState } from "nuqs";
 import { type ComponentProps, Suspense, useId, useState } from "react";
 import { toast } from "sonner";
@@ -40,22 +41,19 @@ import { CreatedApiKeyDialog } from "./created-api-key-dialog";
 
 const FORM = "create-api-key";
 
-const EXPIRATION_OPTIONS = [
-	{ value: "30", label: "30 days" },
-	{ value: "90", label: "90 days" },
-	{ value: "365", label: "1 year" },
-	{ value: "never", label: "No expiration" },
-] as const;
+const EXPIRATION_OPTIONS = ["30", "90", "365", "never"] as const;
 
-type ExpirationValue = (typeof EXPIRATION_OPTIONS)[number]["value"];
+type ExpirationValue = (typeof EXPIRATION_OPTIONS)[number];
 
 type CreatedApiKey = RouterOutputs["apiKeys"]["create"];
 
 function NewApiKeyButton(props: ComponentProps<typeof Button>) {
+	const t = useTranslations("settingsApiKeys");
+
 	return (
 		<Button {...props}>
 			<Icon icon={Add} data-icon="inline-start" />
-			New API key
+			{t("newKey")}
 		</Button>
 	);
 }
@@ -69,6 +67,7 @@ export function CreateApiKeySheet() {
 }
 
 function CreateApiKeyForm() {
+	const t = useTranslations("settingsApiKeys");
 	const trpc = useTRPC();
 	const cache = useCrmCache();
 
@@ -105,11 +104,8 @@ function CreateApiKeyForm() {
 
 				<SheetContent side="right">
 					<SheetHeader>
-						<SheetTitle>New API key</SheetTitle>
-						<SheetDescription>
-							Acts as you. Anything it can read or change is exactly what you
-							can.
-						</SheetDescription>
+						<SheetTitle>{t("newKey")}</SheetTitle>
+						<SheetDescription>{t("sheetDescription")}</SheetDescription>
 					</SheetHeader>
 
 					<form
@@ -126,12 +122,12 @@ function CreateApiKeyForm() {
 					>
 						<FieldGroup>
 							<Field>
-								<FieldLabel htmlFor={nameId}>Name</FieldLabel>
+								<FieldLabel htmlFor={nameId}>{t("name")}</FieldLabel>
 								<Input
 									id={nameId}
 									value={name}
 									onChange={(event) => setName(event.target.value)}
-									placeholder="CI pipeline"
+									placeholder={t("namePlaceholder")}
 									maxLength={64}
 									autoComplete="off"
 									autoCapitalize="off"
@@ -139,13 +135,11 @@ function CreateApiKeyForm() {
 									spellCheck={false}
 									required
 								/>
-								<FieldDescription>
-									Something you will recognise later, like where it runs.
-								</FieldDescription>
+								<FieldDescription>{t("nameDescription")}</FieldDescription>
 							</Field>
 
 							<Field>
-								<FieldLabel htmlFor={expirationId}>Expires</FieldLabel>
+								<FieldLabel htmlFor={expirationId}>{t("expires")}</FieldLabel>
 								<Select
 									value={expiration}
 									onValueChange={(value) =>
@@ -157,8 +151,8 @@ function CreateApiKeyForm() {
 									</SelectTrigger>
 									<SelectContent>
 										{EXPIRATION_OPTIONS.map((option) => (
-											<SelectItem key={option.value} value={option.value}>
-												{option.label}
+											<SelectItem key={option} value={option}>
+												{t(`expiration.${option}`)}
 											</SelectItem>
 										))}
 									</SelectContent>
@@ -174,10 +168,10 @@ function CreateApiKeyForm() {
 							disabled={!name.trim() || create.isPending}
 						>
 							{create.isPending ? <Spinner /> : null}
-							Create key
+							{t("createKey")}
 						</Button>
 						<SheetClose asChild>
-							<Button variant="outline">Cancel</Button>
+							<Button variant="outline">{t("cancel")}</Button>
 						</SheetClose>
 					</SheetFooter>
 				</SheetContent>

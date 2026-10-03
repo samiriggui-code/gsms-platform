@@ -60,7 +60,7 @@ export class SettingsService {
 
 		if (!chosen) {
 			throw new BadRequestException(
-				`That model is not in this install's catalog: "${modelId}".`,
+				`Ce modèle ne fait pas partie du catalogue de cette installation : « ${modelId} ».`,
 			);
 		}
 

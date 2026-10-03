@@ -112,7 +112,7 @@ export function coerceValue(
 		if (definition.required) {
 			throw new FieldValueError(
 				definition.key,
-				`${definition.label} cannot be empty.`,
+				`${definition.label} ne peut pas être vide.`,
 			);
 		}
 
@@ -127,7 +127,7 @@ export function coerceValue(
 			}
 			throw new FieldValueError(
 				definition.key,
-				`${definition.label} takes true or false.`,
+				`${definition.label} attend vrai ou faux.`,
 			);
 		}
 
@@ -138,7 +138,7 @@ export function coerceValue(
 			if (!Number.isFinite(parsed)) {
 				throw new FieldValueError(
 					definition.key,
-					`${definition.label} takes a number.`,
+					`${definition.label} attend un nombre.`,
 				);
 			}
 
@@ -152,7 +152,7 @@ export function coerceValue(
 			if (!dateOnly && !ISO_DATE_TIME.test(raw)) {
 				throw new FieldValueError(
 					definition.key,
-					`${definition.label} takes a date like 2027-03-31.`,
+					`${definition.label} attend une date au format 2027-03-31.`,
 				);
 			}
 
@@ -161,7 +161,7 @@ export function coerceValue(
 			if (Number.isNaN(parsed.getTime())) {
 				throw new FieldValueError(
 					definition.key,
-					`${definition.label} takes a date like 2027-03-31.`,
+					`${definition.label} attend une date au format 2027-03-31.`,
 				);
 			}
 
@@ -179,7 +179,7 @@ export function coerceValue(
 			if (!option) {
 				throw new FieldValueError(
 					definition.key,
-					`${definition.label} has no option "${raw}".`,
+					`${definition.label} n'a pas d'option « ${raw} ».`,
 				);
 			}
 
@@ -269,7 +269,7 @@ export async function writeValues(
 		const definition = byKey.get(key);
 
 		if (!definition) {
-			throw new FieldValueError(key, `There is no field called "${key}".`);
+			throw new FieldValueError(key, `Aucun champ ne s'appelle « ${key} ».`);
 		}
 
 		const data = coerceValue(definition, input);
@@ -324,7 +324,7 @@ async function assertUsersExist(
 		if (!found.has(write.stored)) {
 			throw new FieldValueError(
 				write.definition.key,
-				`${write.definition.label} takes someone who works here.`,
+				`${write.definition.label} attend un membre de l'équipe.`,
 			);
 		}
 	}

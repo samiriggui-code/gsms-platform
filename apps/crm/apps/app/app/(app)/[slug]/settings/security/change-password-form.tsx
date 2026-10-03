@@ -3,9 +3,11 @@
 import { Alert, AlertTitle } from "@crm/ui/components/alert";
 import { Button } from "@crm/ui/components/button";
 import { Input } from "@crm/ui/components/input";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 export function ChangePasswordForm() {
+	const t = useTranslations("settingsSecurity");
 	const [currentPassword, setCurrentPassword] = useState("");
 	const [newPassword, setNewPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
@@ -19,7 +21,7 @@ export function ChangePasswordForm() {
 		setDone(false);
 
 		if (newPassword !== confirmPassword) {
-			setError("The new password and confirmation don't match.");
+			setError(t("mismatch"));
 			return;
 		}
 
@@ -37,7 +39,7 @@ export function ChangePasswordForm() {
 			} | null;
 
 			if (!response.ok) {
-				setError(body?.message ?? "Could not change the password.");
+				setError(body?.message ?? t("failed"));
 				return;
 			}
 
@@ -60,13 +62,13 @@ export function ChangePasswordForm() {
 
 			{done ? (
 				<Alert>
-					<AlertTitle>Password changed.</AlertTitle>
+					<AlertTitle>{t("changed")}</AlertTitle>
 				</Alert>
 			) : null}
 
 			<div className="flex flex-col gap-1.5">
 				<label htmlFor="currentPassword" className="text-sm/5 font-medium">
-					Current password
+					{t("current")}
 				</label>
 				<Input
 					id="currentPassword"
@@ -80,7 +82,7 @@ export function ChangePasswordForm() {
 
 			<div className="flex flex-col gap-1.5">
 				<label htmlFor="newPassword" className="text-sm/5 font-medium">
-					New password
+					{t("new")}
 				</label>
 				<Input
 					id="newPassword"
@@ -94,7 +96,7 @@ export function ChangePasswordForm() {
 
 			<div className="flex flex-col gap-1.5">
 				<label htmlFor="confirmPassword" className="text-sm/5 font-medium">
-					Confirm new password
+					{t("confirm")}
 				</label>
 				<Input
 					id="confirmPassword"
@@ -107,7 +109,7 @@ export function ChangePasswordForm() {
 			</div>
 
 			<Button type="submit" disabled={isSubmitting} className="w-fit">
-				{isSubmitting ? "Saving…" : "Change password"}
+				{isSubmitting ? t("saving") : t("submit")}
 			</Button>
 		</form>
 	);

@@ -53,7 +53,7 @@ export class SavedViewsService {
 	): Promise<SavedView> {
 		const existing = await this.db.savedView.findUnique({ where: { id } });
 		if (!existing || existing.ownerId !== userId) {
-			throw new NotFoundException(`No saved view with id ${id}.`);
+			throw new NotFoundException("Vue introuvable.");
 		}
 
 		try {
@@ -68,20 +68,20 @@ export class SavedViewsService {
 
 			return this.serialize(row, userId);
 		} catch (error) {
-			throw this.translate(error, id);
+			throw this.translate(error);
 		}
 	}
 
 	async delete(id: string, userId: string): Promise<{ id: string }> {
 		const existing = await this.db.savedView.findUnique({ where: { id } });
 		if (!existing || existing.ownerId !== userId) {
-			throw new NotFoundException(`No saved view with id ${id}.`);
+			throw new NotFoundException("Vue introuvable.");
 		}
 
 		try {
 			await this.db.savedView.delete({ where: { id } });
 		} catch (error) {
-			throw this.translate(error, id);
+			throw this.translate(error);
 		}
 
 		return { id };
@@ -112,13 +112,13 @@ export class SavedViewsService {
 		};
 	}
 
-	private translate(cause: unknown, id?: string): never {
+	private translate(cause: unknown): never {
 		if (cause instanceof PrismaNamespace.PrismaClientKnownRequestError) {
 			if (cause.code === "P2002") {
-				throw new ConflictException("You already have a view with that name.");
+				throw new ConflictException("Vous avez déjà une vue portant ce nom.");
 			}
 			if (cause.code === "P2025") {
-				throw new NotFoundException(`No saved view with id ${id}.`);
+				throw new NotFoundException("Vue introuvable.");
 			}
 		}
 		throw cause;

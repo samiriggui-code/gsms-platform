@@ -31,6 +31,7 @@ import { SkeletonSwap } from "@crm/ui/components/skeleton-swap";
 import { TokenField } from "@crm/ui/components/token-field";
 import { cn } from "@crm/ui/lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { useReducer, useRef } from "react";
 import { flushSync } from "react-dom";
 import { toast } from "sonner";
@@ -86,7 +87,6 @@ type PendingSubmission = {
 const CREATE_AGENT_COMMAND = {
 	commandType: "CREATE_AGENT" as const,
 	invocation: "/Create agent",
-	label: "Create agent",
 };
 
 type ComposerCommand = typeof CREATE_AGENT_COMMAND;
@@ -414,6 +414,7 @@ export function AgentComposer({
 		clientRequestId: string,
 	) => Promise<void>;
 }) {
+	const t = useTranslations("agentsComposer");
 	const trpc = useTRPC();
 	const pendingSubmission = useRef<PendingSubmission | null>(null);
 	const editor = useRef<HTMLDivElement>(null);
@@ -535,7 +536,9 @@ export function AgentComposer({
 					disabled={!canSend}
 					aria-busy={submitAction.pending || state.attachmentsReading}
 					aria-label={
-						state.attachmentsReading ? "Preparing attachments" : "Send message"
+						state.attachmentsReading
+							? t("preparingAttachments")
+							: t("sendMessage")
 					}
 					onClick={submit}
 					className="rounded-full"
@@ -544,11 +547,13 @@ export function AgentComposer({
 						status={state.attachmentsReading ? "pending" : submitAction.status}
 						pendingLabel={
 							<span className="sr-only">
-								{state.attachmentsReading ? "Preparing attachments" : "Sending"}
+								{state.attachmentsReading
+									? t("preparingAttachments")
+									: t("sending")}
 							</span>
 						}
-						successLabel={<span className="sr-only">Sent</span>}
-						errorLabel={<span className="sr-only">Send failed</span>}
+						successLabel={<span className="sr-only">{t("sent")}</span>}
+						errorLabel={<span className="sr-only">{t("sendFailed")}</span>}
 					>
 						<Icon icon={ArrowUp} />
 					</AsyncButtonContent>
@@ -589,11 +594,10 @@ function ComposerEditor({
 	onRemoveContext: (key: string) => void;
 	onSubmit: () => void;
 }) {
+	const t = useTranslations("agentsComposer");
 	const parts = composerEditorParts(state);
 	const placeholder =
-		mode === "home"
-			? "Ask about your CRM or automate a task…"
-			: "Send a message";
+		mode === "home" ? t("placeholderHome") : t("placeholderChat");
 	const commit = () => {
 		const root = editorRef.current;
 		if (!root || composingRef.current) return;
@@ -610,7 +614,7 @@ function ComposerEditor({
 			ref={editorRef}
 			role="textbox"
 			tabIndex={disabled ? -1 : 0}
-			aria-label="Message the agent builder"
+			aria-label={t("editorLabel")}
 			aria-multiline="true"
 			aria-disabled={disabled}
 			data-empty={state.draft.length === 0 && state.anchors.length === 0}
@@ -770,12 +774,13 @@ function ComposerContextToken({
 	disabled: boolean;
 	onRemove: (key: string) => void;
 }) {
+	const t = useTranslations("agentsComposer");
 	const remove = disabled ? undefined : () => onRemove(anchor.key);
 	let content: React.ReactNode = null;
 	if (anchor.key === COMMAND_CONTEXT_KEY && state.command) {
 		content = (
 			<ChatCommandChip
-				label={state.command.label}
+				label={t("createAgentCommand")}
 				icon={Application}
 				variant="composer"
 				onRemove={remove}
@@ -1232,6 +1237,7 @@ function ResourcePicker({
 	getInsertionOffset: () => number;
 	onPicked: (key: string) => void;
 }) {
+	const t = useTranslations("agentsComposer");
 	const add = (resource: BuilderResource) => {
 		dispatch({
 			type: "resource.added",
@@ -1253,7 +1259,7 @@ function ResourcePicker({
 				<Button
 					variant="ghost"
 					size="icon-sm"
-					aria-label="Tag CRM records and integrations"
+					aria-label={t("tagResources")}
 					disabled={disabled}
 				>
 					<Icon icon={Add} />
@@ -1270,8 +1276,8 @@ function ResourcePicker({
 									value: event.target.value,
 								})
 							}
-							placeholder="Search CRM"
-							aria-label="Search CRM"
+							placeholder={t("searchCrm")}
+							aria-label={t("searchCrm")}
 							disabled={disabled}
 						/>
 						<InputGroupAddon>
@@ -1303,7 +1309,7 @@ function ResourcePicker({
 					})}
 					<SkeletonSwap
 						loading={loading}
-						label="CRM records"
+						label={t("crmRecords")}
 						skeleton={<ResourceResultsSkeleton />}
 					>
 						{resources.map((resource) => (
@@ -1318,7 +1324,7 @@ function ResourcePicker({
 						))}
 						{ready && connectedGoogle.length === 0 && resources.length === 0 ? (
 							<p className="px-3 py-5 text-center text-muted-foreground text-xs">
-								No matching records.
+								{t("noMatchingRecords")}
 							</p>
 						) : null}
 					</SkeletonSwap>
@@ -1341,12 +1347,13 @@ function AttachmentPicker({
 	getInsertionOffset: () => number;
 	onPicked: (key: string) => void;
 }) {
+	const t = useTranslations("agentsComposer");
 	const input = useRef<HTMLInputElement>(null);
 	const addFiles = async (files: FileList | null) => {
 		if (!files || files.length === 0) return;
 		dispatch({ type: "attachments.reading.started" });
 		try {
-			const attachments = await readFiles(files);
+			const attachments = await readFiles(files, t);
 			const accepted = attachments.slice(0, remaining);
 			const lastAccepted = accepted.at(-1);
 			if (lastAccepted) {
@@ -1358,7 +1365,7 @@ function AttachmentPicker({
 				onPicked(attachmentContextKey(lastAccepted));
 			}
 		} catch {
-			toast.error("Those files could not be attached. Try again.");
+			toast.error(t("attachFailed"));
 		} finally {
 			dispatch({ type: "attachments.reading.finished" });
 		}
@@ -1380,7 +1387,7 @@ function AttachmentPicker({
 			<Button
 				variant="ghost"
 				size="icon-sm"
-				aria-label="Attach files"
+				aria-label={t("attachFiles")}
 				disabled={disabled}
 				onClick={() => input.current?.click()}
 			>
@@ -1403,6 +1410,7 @@ function CommandPicker({
 	getInsertionOffset: () => number;
 	onPicked: (key: string) => void;
 }) {
+	const t = useTranslations("agentsComposer");
 	return (
 		<Popover
 			open={disabled ? false : open}
@@ -1414,7 +1422,7 @@ function CommandPicker({
 				<Button
 					variant="ghost"
 					size="icon-sm"
-					aria-label="Open slash commands"
+					aria-label={t("openSlashCommands")}
 					disabled={disabled}
 					className="font-mono text-sm"
 				>
@@ -1436,7 +1444,7 @@ function CommandPicker({
 				>
 					<Icon icon={Application} className="size-4 text-muted-foreground" />
 					<span className="font-medium text-xs">
-						/{CREATE_AGENT_COMMAND.label}
+						/{t("createAgentCommand")}
 					</span>
 				</button>
 			</PopoverContent>
@@ -1501,25 +1509,26 @@ function ResourceButton({
 
 async function readFiles(
 	files: FileList | null,
+	t: ReturnType<typeof useTranslations>,
 ): Promise<BuilderUploadAttachment[]> {
 	if (!files) return [];
 	const acceptedFiles: File[] = [];
 
 	for (const file of Array.from(files).slice(0, 5)) {
 		if (file.size === 0) {
-			toast.error(`${file.name} is empty.`);
+			toast.error(t("fileEmpty", { name: file.name }));
 			continue;
 		}
 		if (file.size > 2_000_000) {
-			toast.error(`${file.name} is larger than 2 MB.`);
+			toast.error(t("fileTooLarge", { name: file.name }));
 			continue;
 		}
 		if (file.name.length > 180) {
-			toast.error("That file name is too long.");
+			toast.error(t("fileNameTooLong"));
 			continue;
 		}
 		if (file.type.length > 120) {
-			toast.error(`${file.name} has an unsupported file type.`);
+			toast.error(t("fileUnsupported", { name: file.name }));
 			continue;
 		}
 		acceptedFiles.push(file);
@@ -1537,7 +1546,7 @@ async function readFiles(
 					),
 				};
 			} catch {
-				toast.error(`${file.name} could not be read.`);
+				toast.error(t("fileUnreadable", { name: file.name }));
 				return null;
 			}
 		}),

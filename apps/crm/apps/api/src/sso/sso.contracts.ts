@@ -11,7 +11,7 @@ export const registerSsoProviderInput = z.object({
 		.max(64)
 		.regex(
 			/^[a-z0-9][a-z0-9-]*$/,
-			"Use lower-case letters, numbers and hyphens.",
+			"Utilisez des lettres minuscules, des chiffres et des tirets.",
 		),
 	issuer: z.string().trim().url().max(512),
 	domain: z.string().trim().min(1).max(255),

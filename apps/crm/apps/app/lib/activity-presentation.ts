@@ -23,6 +23,8 @@ const PRESENTATION: ActivityPresentation = {
 	ENRICHMENT: { icon: MagicWand, label: "Enrichment" },
 };
 
+export const ACTIVITY_LABEL_NAMESPACE = "shellActivity";
+
 export function activityLabel(type: ActivityType): string {
 	return PRESENTATION[type].label;
 }

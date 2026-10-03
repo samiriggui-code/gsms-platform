@@ -51,7 +51,8 @@ const hasExactlyOneRecord = (input: {
 }) =>
 	[input.contactId, input.companyId, input.dealId].filter(Boolean).length === 1;
 
-const recordMessage = "Choose exactly one contact, company or deal.";
+const recordMessage =
+	"Choisissez exactement un contact, une société ou une affaire.";
 
 export const conversationListInput = z
 	.object(recordShape)
@@ -100,13 +101,16 @@ export const builderAttachment = z
 			.max(2_800_000)
 			.regex(
 				/^(?:[A-Za-z\d+/]{4})*(?:[A-Za-z\d+/]{2}==|[A-Za-z\d+/]{3}=)?$/,
-				"Attachment content must be valid base64.",
+				"Le contenu de la pièce jointe doit être en base64 valide.",
 			),
 	})
 	.refine(
 		(attachment) =>
 			decodedBase64Size(attachment.contentBase64) === attachment.size,
-		{ message: "Attachment size does not match its content.", path: ["size"] },
+		{
+			message: "La taille de la pièce jointe ne correspond pas à son contenu.",
+			path: ["size"],
+		},
 	);
 
 const builderStoredAttachment = z.object({
@@ -155,7 +159,7 @@ export const builderQuestionResponseInput = z
 		text: z.string().trim().min(1).max(20_000).optional(),
 	})
 	.refine((input) => Boolean(input.optionId) !== Boolean(input.text), {
-		message: "Choose one option or enter a written answer.",
+		message: "Choisissez une option ou saisissez une réponse.",
 	});
 
 export type BuilderQuestionResponseInput = z.infer<

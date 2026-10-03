@@ -1,5 +1,24 @@
 # Handoff Cursor → Claude
 
+> Pour reprendre en local à deux sessions : [`HANDOFF-REPRISE-LOCALE.md`](./HANDOFF-REPRISE-LOCALE.md).
+
+## 2026-10-03 — CRM, étape 3 : tout le CRM en français
+
+**Fait**
+- Interface (`apps/crm/apps/app`) : tous les textes passent par next-intl, le français est la langue par défaut. Les messages sont rangés par zone dans `messages/{fr,en}/` : `base`, `shell` (connexion, accueil, menus), `crm` (fiches, listes, tableau de bord, chronologie), `settings` (paramètres), `agents` (agents IA et chat). `messages/{fr,en}/index.ts` les assemble.
+- Composants partagés (`packages/ui`) : textes par défaut en français, dates et montants au format `fr-FR`.
+- API : messages d'erreur et de validation en français ; erreurs de champs personnalisés (`packages/db/src/fields.ts`) en français.
+- `packages/validation` : messages en français ; les suggestions de nouveaux champs sont adaptées à GSMS (statut du compte, taille, région, origine dont « Appel d'offres », commercial référent).
+- Sous-titres des pages Sociétés, Contacts, Affaires et Conformité réécrits pour les utilisateurs.
+
+**Vérifié** : écrans connexion, accueil, sociétés, contacts, affaires, fiche société, agents et paramètres affichés en français dans Chromium, sans erreur JavaScript.
+
+**Tests** : CRM app 169 ; api 386 ; agent 370 (1 échec qui existait déjà) ; check-types sans erreur.
+
+**Reste en anglais** : des messages d'erreur renvoyés tels quels par Google, Microsoft ou Slack ; les noms de marque.
+
+---
+
 ## 2026-10-03 — Chantier AO-MCP, étape 3 : GO / NO-GO documenté
 
 Branche `cursor/ao-mcp-go-no-go`. Plan : `docs/chantiers/AO-MCP-AUDIT.md` (§8).

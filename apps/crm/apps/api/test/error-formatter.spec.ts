@@ -14,7 +14,7 @@ describe("what a rejected form says", () => {
 		const cause = causeOf(setResearchKeyInput, { apiKey: "short" });
 
 		expect(readableInputError("ignored", cause)).toBe(
-			"That does not look like a Context API key — it is too short.",
+			"Cela ne ressemble pas à une clé API Context — elle est trop courte.",
 		);
 	});
 

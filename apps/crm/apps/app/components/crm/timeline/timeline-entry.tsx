@@ -5,12 +5,13 @@ import { Checkbox } from "@crm/ui/components/checkbox";
 import { StatusIndicator } from "@crm/ui/components/status-indicator";
 import { cn } from "@crm/ui/lib/utils";
 import { useMutation } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { z } from "zod";
 import { RecordLink } from "@/components/crm/record-sheet/record-link";
 import { LocalDateTime, LocalRelativeTime } from "@/components/local-date-time";
-import { activityLabel } from "@/lib/activity-presentation";
-import { dealStageLabel } from "@/lib/deal-stage";
+import { ACTIVITY_LABEL_NAMESPACE } from "@/lib/activity-presentation";
+import { DEAL_STAGE_NAMESPACE } from "@/lib/deal-stage";
 import { useCrmCache } from "@/lib/trpc/cache";
 import { useTRPC } from "@/lib/trpc/client";
 import type { RouterOutputs } from "@/lib/trpc/types";
@@ -45,6 +46,9 @@ export function TimelineEntry({
 	entry: TimelineEntryData;
 	anchor: TimelineAnchor;
 }) {
+	const t = useTranslations("crmTimeline");
+	const tActivity = useTranslations(ACTIVITY_LABEL_NAMESPACE);
+	const tStage = useTranslations(DEAL_STAGE_NAMESPACE);
 	const trpc = useTRPC();
 	const cache = useCrmCache();
 
@@ -70,12 +74,12 @@ export function TimelineEntry({
 	const synced = entry.meta?.synced === true;
 	const author = synced
 		? entry.emailThread
-			? "via Gmail"
-			: "via Calendar"
+			? t("viaGmail")
+			: t("viaCalendar")
 		: entry.createdBy.name;
 
 	const headline = change
-		? `${dealStageLabel(change.from)} → ${dealStageLabel(change.to)}`
+		? `${tStage(change.from)} → ${tStage(change.to)}`
 		: entry.subject;
 
 	const here = anchorId(anchor);
@@ -94,13 +98,13 @@ export function TimelineEntry({
 					<Checkbox
 						checked={done}
 						disabled={complete.isPending}
-						aria-label={done ? "Mark as not done" : "Mark as done"}
+						aria-label={done ? t("markNotDone") : t("markDone")}
 						onCheckedChange={(checked) =>
 							complete.mutate({ id: entry.id, completed: checked === true })
 						}
 					/>
 				) : (
-					<span role="img" aria-label={activityLabel(entry.type)}>
+					<span role="img" aria-label={tActivity(entry.type)}>
 						<ActivityIcon type={entry.type} />
 					</span>
 				)}
@@ -132,9 +136,7 @@ export function TimelineEntry({
 						) : null}
 
 						{!headline && !entry.body ? (
-							<p className="text-muted-foreground">
-								{activityLabel(entry.type)}
-							</p>
+							<p className="text-muted-foreground">{tActivity(entry.type)}</p>
 						) : null}
 					</div>
 
@@ -171,7 +173,7 @@ export function TimelineEntry({
 								tone={overdue ? "error" : "info"}
 								label={
 									<>
-										{overdue ? "Overdue" : "Due"}{" "}
+										{overdue ? t("overdue") : t("due")}{" "}
 										<LocalRelativeTime date={entry.dueAt} />
 									</>
 								}

@@ -18,7 +18,9 @@ export class SessionGuard implements CanActivate {
 
 		const targets = [context.getHandler(), context.getClass()];
 
-		if (this.reflector.getAllAndOverride<boolean>(ALLOW_ANONYMOUS_KEY, targets)) {
+		if (
+			this.reflector.getAllAndOverride<boolean>(ALLOW_ANONYMOUS_KEY, targets)
+		) {
 			return true;
 		}
 
@@ -30,6 +32,6 @@ export class SessionGuard implements CanActivate {
 			return true;
 		}
 
-		throw new UnauthorizedException("No valid session.");
+		throw new UnauthorizedException("Session invalide ou expirée.");
 	}
 }

@@ -1,11 +1,12 @@
 "use client";
 
-import Play from "@carbon/icons-react/es/Play";
 import MachineLearning from "@carbon/icons-react/es/MachineLearning";
+import Play from "@carbon/icons-react/es/Play";
 import { Button } from "@crm/ui/components/button";
 import { Icon } from "@crm/ui/components/icon";
-import { AccentActionPanel } from "@/components/desk-ui/soft-panel";
 import { cn } from "@crm/ui/lib/utils";
+import { useTranslations } from "next-intl";
+import { AccentActionPanel } from "@/components/desk-ui/soft-panel";
 
 type PhaseActionsProps = {
 	ingestRunning?: boolean;
@@ -23,12 +24,13 @@ export function PhaseActions({
 	onDigest,
 	className,
 }: PhaseActionsProps) {
+	const t = useTranslations("shellCompliance");
 	return (
 		<AccentActionPanel
 			className={cn(className)}
-			eyebrow="Phases cabinet"
-			title="Lancer les moteurs"
-			description="Ingest = DocuLens (OCR, classif, embeddings). Digest = relations GSMS (timeline, prescriptions…). Validation humaine entre les deux."
+			eyebrow={t("phasesEyebrow")}
+			title={t("phasesTitle")}
+			description={t("phasesBody")}
 		>
 			<div className="flex flex-wrap gap-2">
 				<Button
@@ -38,7 +40,7 @@ export function PhaseActions({
 					className="gap-2"
 				>
 					<Icon icon={Play} className="size-4" />
-					{ingestRunning ? "Ingest en cours…" : "Lancer Ingest"}
+					{ingestRunning ? t("ingestRunning") : t("ingestRun")}
 				</Button>
 				<Button
 					type="button"
@@ -48,7 +50,7 @@ export function PhaseActions({
 					className="gap-2"
 				>
 					<Icon icon={MachineLearning} className="size-4" />
-					{digestRunning ? "Digest en cours…" : "Lancer Digest"}
+					{digestRunning ? t("digestRunning") : t("digestRun")}
 				</Button>
 			</div>
 		</AccentActionPanel>

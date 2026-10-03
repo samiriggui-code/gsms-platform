@@ -25,6 +25,7 @@ import { Textarea } from "@crm/ui/components/textarea";
 import { InvalidInput, type Permission, parse, schemas } from "@crm/validation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useSlackChannels } from "@/components/slack/use-slack-channels";
@@ -33,6 +34,7 @@ import { useTRPC } from "@/lib/trpc/client";
 import { useWorkspaceUrl } from "@/lib/use-workspace-url";
 
 export function NewAgentDialog({ children }: { children: React.ReactNode }) {
+	const t = useTranslations("agentsNewAgent");
 	const router = useRouter();
 	const trpc = useTRPC();
 	const queryClient = useQueryClient();
@@ -81,7 +83,7 @@ export function NewAgentDialog({ children }: { children: React.ReactNode }) {
 						: null,
 					allowed,
 				},
-				"This agent",
+				t("thisAgent"),
 			);
 
 			create.mutate({
@@ -93,9 +95,7 @@ export function NewAgentDialog({ children }: { children: React.ReactNode }) {
 			});
 		} catch (error) {
 			toast.error(
-				error instanceof InvalidInput
-					? error.message
-					: "Could not hand this to the builder.",
+				error instanceof InvalidInput ? error.message : t("handoffFailed"),
 			);
 		}
 	};
@@ -106,40 +106,37 @@ export function NewAgentDialog({ children }: { children: React.ReactNode }) {
 
 			<DialogContent className="sm:max-w-(--container-sheet)">
 				<DialogHeader>
-					<DialogTitle>New agent</DialogTitle>
-					<DialogDescription>
-						Say what it is and where it lives. The builder writes the rest. You
-						can change all of this later.
-					</DialogDescription>
+					<DialogTitle>{t("title")}</DialogTitle>
+					<DialogDescription>{t("description")}</DialogDescription>
 				</DialogHeader>
 
 				<div className="flex flex-col gap-4">
 					<div className="flex flex-col gap-1.5">
-						<Label htmlFor="agent-name">Name</Label>
+						<Label htmlFor="agent-name">{t("name")}</Label>
 						<Input
 							id="agent-name"
 							onChange={(event) => setName(event.target.value)}
-							placeholder="Renewal prep brief"
+							placeholder={t("namePlaceholder")}
 							value={name}
 						/>
 					</div>
 
 					<div className="flex flex-col gap-1.5">
-						<Label htmlFor="agent-job">What it should do</Label>
+						<Label htmlFor="agent-job">{t("job")}</Label>
 						<Textarea
 							id="agent-job"
 							onChange={(event) => setJob(event.target.value)}
-							placeholder="A week before a renewal, gather the account history and post a short brief for whoever owns the deal."
+							placeholder={t("jobPlaceholder")}
 							rows={3}
 							value={job}
 						/>
 					</div>
 
 					<div className="flex flex-col gap-1.5">
-						<Label htmlFor="agent-channel">Lives in</Label>
+						<Label htmlFor="agent-channel">{t("channel")}</Label>
 						<Select onValueChange={setChannelId} value={channelId}>
 							<SelectTrigger id="agent-channel">
-								<SelectValue placeholder="Pick a Slack channel" />
+								<SelectValue placeholder={t("channelPlaceholder")} />
 							</SelectTrigger>
 							<SelectContent>
 								{rows.map((row) => (
@@ -152,14 +149,14 @@ export function NewAgentDialog({ children }: { children: React.ReactNode }) {
 						<p className="text-muted-foreground text-xs">
 							{channel
 								? channel.isMember
-									? `Comp AI is already in #${channel.name}.`
-									: `Comp AI is not in #${channel.name} yet. It joins when you create this.`
-								: "Leave this empty and the builder will ask."}
+									? t("channelMember", { channel: channel.name })
+									: t("channelNotMember", { channel: channel.name })
+								: t("channelEmpty")}
 						</p>
 					</div>
 
 					<div className="flex flex-col gap-1.5">
-						<Label>Allowed to</Label>
+						<Label>{t("allowedTo")}</Label>
 						<div className="flex flex-wrap gap-2">
 							{schemas.agents.permissions.map((entry) => {
 								const on = allowed.includes(entry.id);
@@ -185,7 +182,7 @@ export function NewAgentDialog({ children }: { children: React.ReactNode }) {
 												motion="none"
 											/>
 										) : null}
-										{entry.label}
+										{t(`permissions.${entry.id}`)}
 									</Button>
 								);
 							})}
@@ -195,17 +192,17 @@ export function NewAgentDialog({ children }: { children: React.ReactNode }) {
 
 				<DialogFooter className="items-center">
 					<p className="mr-auto text-muted-foreground text-xs">
-						Nothing sends until you turn it on.
+						{t("footerNote")}
 					</p>
 					<Button
 						disabled={create.isPending}
 						onClick={() => setOpen(false)}
 						variant="outline"
 					>
-						Cancel
+						{t("cancel")}
 					</Button>
 					<Button disabled={!ready || create.isPending} onClick={hand}>
-						{create.isPending ? "Handing over…" : "Hand to the builder"}
+						{create.isPending ? t("handingOver") : t("handOver")}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

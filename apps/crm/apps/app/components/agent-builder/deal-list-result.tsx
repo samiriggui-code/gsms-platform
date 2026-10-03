@@ -8,6 +8,7 @@ import {
 } from "@crm/ui/components/simple-table";
 import { TableCell } from "@crm/ui/components/table";
 import { formatMoney } from "@crm/ui/lib/format";
+import { useTranslations } from "next-intl";
 import { CompanyCell } from "@/components/crm/company-cell";
 import { DealStageIndicator } from "@/components/crm/deal-stage";
 import { OwnerCell } from "@/components/crm/owner-cell";
@@ -17,41 +18,47 @@ import { LocalDay } from "@/components/local-date-time";
 import type { DealListItem, DealListResult } from "@/lib/agent-transcript";
 import { DEAL_STAGE_OPTIONS } from "@/lib/deal-stage";
 
-const COLUMNS: SimpleTableColumn[] = [
-	{ id: "deal", header: "Deal", width: "w-[20%]" },
-	{ id: "company", header: "Company", width: "w-[18%]" },
-	{ id: "stage", header: "Stage", width: "w-[18%]" },
-	{
-		id: "amount",
-		header: "Amount",
-		width: "w-[12%]",
-		align: "right",
-	},
-	{ id: "owner", header: "Owner", width: "w-[14%]" },
-	{ id: "close", header: "Close date", width: "w-[12%]" },
-	{ id: "idle", header: "Idle", width: "w-[8%]", align: "right" },
-];
+type Translate = ReturnType<typeof useTranslations>;
+
+function dealColumns(t: Translate): SimpleTableColumn[] {
+	return [
+		{ id: "deal", header: t("columnDeal"), width: "w-[20%]" },
+		{ id: "company", header: t("columnCompany"), width: "w-[18%]" },
+		{ id: "stage", header: t("columnStage"), width: "w-[18%]" },
+		{
+			id: "amount",
+			header: t("columnAmount"),
+			width: "w-[12%]",
+			align: "right",
+		},
+		{ id: "owner", header: t("columnOwner"), width: "w-[14%]" },
+		{ id: "close", header: t("columnCloseDate"), width: "w-[12%]" },
+		{ id: "idle", header: t("columnIdle"), width: "w-[8%]", align: "right" },
+	];
+}
 
 export function DealListResultTable({ result }: { result: DealListResult }) {
+	const t = useTranslations("agentsDealList");
 	const openRecord = useOpenRecord();
 	const prefetchRecord = usePrefetchRecord();
 	const count = result.deals.length;
-	const title = tableTitle(result);
+	const title = tableTitle(result, t);
+	const columns = dealColumns(t);
 
 	return (
 		<section aria-label={title} className="flex w-full flex-col gap-3">
 			<SimpleTable
-				columns={COLUMNS}
+				columns={columns}
 				className="min-w-[56rem] table-fixed [&_td:first-child]:pl-4 [&_td:last-child]:pr-4 [&_th:first-child]:pl-4 [&_th:last-child]:pr-4"
 				headerHeight="h-11"
 			>
 				{count === 0 ? (
 					<SimpleTableRow>
 						<TableCell
-							colSpan={COLUMNS.length}
+							colSpan={columns.length}
 							className="h-32 whitespace-normal py-8 text-center align-middle text-muted-foreground"
 						>
-							No deals met these pipeline filters.
+							{t("empty")}
 						</TableCell>
 					</SimpleTableRow>
 				) : (
@@ -103,13 +110,9 @@ export function DealListResultTable({ result }: { result: DealListResult }) {
 								</TableCell>
 								<TableCell
 									className="overflow-hidden px-3 py-3 text-right text-muted-foreground tabular-nums"
-									title={
-										deal.neverActive
-											? "No activity has ever been recorded"
-											: undefined
-									}
+									title={deal.neverActive ? t("neverActive") : undefined}
 								>
-									{deal.daysSinceLastActivity}d
+									{t("idleDays", { days: deal.daysSinceLastActivity })}
 								</TableCell>
 							</SimpleTableRow>
 						);
@@ -117,9 +120,9 @@ export function DealListResultTable({ result }: { result: DealListResult }) {
 				)}
 			</SimpleTable>
 			<div className="flex flex-wrap items-center justify-between gap-3 text-muted-foreground text-xs">
-				<span>{tableMeta(result)}</span>
+				<span>{tableMeta(result, t)}</span>
 				<span>
-					As of <LocalDay date={result.asOf} />
+					{t("asOf")} <LocalDay date={result.asOf} />
 				</span>
 			</div>
 		</section>
@@ -137,24 +140,23 @@ function Stage({ stage }: { stage: string }) {
 	);
 }
 
-function tableTitle(result: DealListResult): string {
-	const count = result.deals.length;
-	const status =
-		result.criteria.status === "all" ? "" : `${result.criteria.status} `;
-	const stale = result.criteria.inactiveForDays === null ? "" : "stale ";
-	return count === 0
-		? "No matching deals"
-		: `${count} ${stale}${status}deal${count === 1 ? "" : "s"}`;
+function tableTitle(result: DealListResult, t: Translate): string {
+	return t("title", {
+		count: result.deals.length,
+		status: result.criteria.status,
+		stale: result.criteria.inactiveForDays === null ? "no" : "yes",
+	});
 }
 
-function tableMeta(result: DealListResult): string {
+function tableMeta(result: DealListResult, t: Translate): string {
+	const total = pipelineTotal(result.deals);
 	const details = [
-		`${result.deals.length} deal${result.deals.length === 1 ? "" : "s"}`,
-		pipelineTotal(result.deals),
+		t("dealCount", { count: result.deals.length }),
+		total ? t("pipelineTotal", { amount: total }) : null,
 		result.criteria.inactiveForDays === null
 			? null
-			: `${result.criteria.inactiveForDays}+ days inactive`,
-		result.hasMore ? "More results available" : null,
+			: t("inactiveDays", { days: result.criteria.inactiveForDays }),
+		result.hasMore ? t("moreResults") : null,
 	].filter((detail): detail is string => Boolean(detail));
 
 	return details.join(" · ");
@@ -176,5 +178,5 @@ function pipelineTotal(deals: readonly DealListItem[]): string | null {
 	if (!currency) return null;
 
 	const amount = deals.reduce((sum, deal) => sum + (deal.amount ?? 0), 0);
-	return `${formatMoney(Math.round(amount * 100), currency)} pipeline`;
+	return formatMoney(Math.round(amount * 100), currency);
 }

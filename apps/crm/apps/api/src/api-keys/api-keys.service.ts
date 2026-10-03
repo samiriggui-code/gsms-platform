@@ -114,7 +114,7 @@ export class ApiKeysService {
 		});
 
 		if (count === 0) {
-			throw new NotFoundException("No such API key.");
+			throw new NotFoundException("Clé API introuvable.");
 		}
 
 		this.logger.log({

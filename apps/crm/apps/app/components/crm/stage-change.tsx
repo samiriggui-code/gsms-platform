@@ -23,10 +23,15 @@ import { Icon } from "@crm/ui/components/icon";
 import { Spinner } from "@crm/ui/components/spinner";
 import { Textarea } from "@crm/ui/components/textarea";
 import { useMutation } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { parseAsString, useQueryStates } from "nuqs";
 import { useId, useState } from "react";
 import { toast } from "sonner";
-import { DEAL_STAGE_OPTIONS, LOSING_STAGES } from "@/lib/deal-stage";
+import {
+	DEAL_STAGE_NAMESPACE,
+	DEAL_STAGE_OPTIONS,
+	LOSING_STAGES,
+} from "@/lib/deal-stage";
 import { SEARCH_PARAM } from "@/lib/search-param-keys";
 import { useCrmCache } from "@/lib/trpc/cache";
 import { useTRPC } from "@/lib/trpc/client";
@@ -61,6 +66,7 @@ export function DealStageMenu({
 	stage: DealStage;
 	variant?: "inline" | "control";
 }) {
+	const tStage = useTranslations(DEAL_STAGE_NAMESPACE);
 	const [, setCloseParams] = useQueryStates(closeReasonParams);
 	const setStage = useStageMutation();
 
@@ -110,7 +116,7 @@ export function DealStageMenu({
 				>
 					{DEAL_STAGE_OPTIONS.map((option) => (
 						<DropdownMenuRadioItem key={option.value} value={option.value}>
-							{option.label}
+							{tStage(option.value)}
 						</DropdownMenuRadioItem>
 					))}
 				</DropdownMenuRadioGroup>
@@ -120,6 +126,7 @@ export function DealStageMenu({
 }
 
 export function CloseReasonDialog() {
+	const t = useTranslations("crmDeals");
 	const reasonId = useId();
 	const [closeValues, setCloseParams] = useQueryStates(closeReasonParams);
 	const closing = closeValues[SEARCH_PARAM.dialog.closeDeal];
@@ -135,7 +142,7 @@ export function CloseReasonDialog() {
 	};
 
 	const setStage = useStageMutation(() => {
-		toast.success("Deal closed.");
+		toast.success(t("dealClosed"));
 		close();
 	});
 
@@ -147,12 +154,12 @@ export function CloseReasonDialog() {
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>
-						{stage === "CLOSED_LOST" ? "Close as lost" : "Mark as unqualified"}
+						{stage === "CLOSED_LOST" ? t("closeLost") : t("markUnqualified")}
 					</DialogTitle>
 					<DialogDescription>
 						{stage === "CLOSED_LOST"
-							? "What did we lose it to? This is the only place that answer gets recorded."
-							: "Why is this not a fit? It goes on the timeline so nobody re-runs the same deal."}
+							? t("lostDescription")
+							: t("unqualifiedDescription")}
 					</DialogDescription>
 				</DialogHeader>
 
@@ -166,12 +173,12 @@ export function CloseReasonDialog() {
 					}}
 				>
 					<Field>
-						<FieldLabel htmlFor={reasonId}>Reason</FieldLabel>
+						<FieldLabel htmlFor={reasonId}>{t("reason")}</FieldLabel>
 						<Textarea
 							id={reasonId}
 							value={reason}
 							onChange={(event) => setReason(event.target.value)}
-							placeholder="Went with an incumbent vendor"
+							placeholder={t("reasonPlaceholder")}
 							rows={3}
 						/>
 					</Field>
@@ -184,10 +191,10 @@ export function CloseReasonDialog() {
 						disabled={setStage.isPending || reason.trim() === ""}
 					>
 						{setStage.isPending ? <Spinner /> : null}
-						Save
+						{t("save")}
 					</Button>
 					<Button variant="outline" onClick={close}>
-						Cancel
+						{t("cancel")}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

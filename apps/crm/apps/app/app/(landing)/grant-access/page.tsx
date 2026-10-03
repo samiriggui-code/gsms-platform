@@ -1,28 +1,26 @@
 import { type MailboxProviderId, mailboxGrantsNeeded } from "@crm/auth";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { AuthHeading, AuthShell } from "@/components/auth-shell";
 import { requireSession, signInAccounts } from "@/lib/session";
 import { GrantAccess } from "./grant-access";
 
-export const metadata: Metadata = {
-	title: "Grant access",
-};
+export async function generateMetadata(): Promise<Metadata> {
+	const t = await getTranslations("shellGrantAccess");
+	return { title: t("metaTitle") };
+}
 
 export const instant = false;
 
 const DESCRIPTION = {
-	google:
-		"This CRM reads your Gmail and Calendar so meetings and email threads show up on the right company. It is read-only — nothing is ever sent on your behalf.",
-	microsoft:
-		"This CRM reads your Outlook mail so email threads show up on the right company. It is read-only — nothing is ever sent on your behalf.",
-} satisfies Record<MailboxProviderId, string>;
-
-const BOTH =
-	"This CRM reads your mail and calendar so meetings and email threads show up on the right company. It is read-only — nothing is ever sent on your behalf.";
+	google: "descriptionGoogle",
+	microsoft: "descriptionMicrosoft",
+} as const satisfies Record<MailboxProviderId, string>;
 
 export default async function GrantAccessPage() {
 	const { user } = await requireSession();
+	const t = await getTranslations("shellGrantAccess");
 
 	const providers = mailboxGrantsNeeded(await signInAccounts(user.id));
 
@@ -35,15 +33,14 @@ export default async function GrantAccessPage() {
 	return (
 		<AuthShell>
 			<AuthHeading
-				title="One more step"
-				description={(only ? DESCRIPTION[only] : undefined) ?? BOTH}
+				title={t("title")}
+				description={t(only ? DESCRIPTION[only] : "descriptionBoth")}
 			/>
 
 			<GrantAccess providers={providers} />
 
 			<p className="text-center text-muted-foreground text-sm/5">
-				Only conversations with companies in the CRM are stored. Personal mail
-				is discarded without being saved.
+				{t("storageNote")}
 			</p>
 		</AuthShell>
 	);

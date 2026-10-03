@@ -23,6 +23,7 @@ import {
 } from "@crm/ui/components/dropdown-menu";
 import { Icon } from "@crm/ui/components/icon";
 import { useMutation } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useCrmCache } from "@/lib/trpc/cache";
@@ -33,12 +34,6 @@ import {
 	useRecordStack,
 } from "./record-stack";
 
-const NOUN = {
-	company: "company",
-	contact: "contact",
-	deal: "deal",
-} satisfies Record<RecordKind, string>;
-
 const RECORD_PROCEDURES = {
 	company: "companies",
 	contact: "contacts",
@@ -46,13 +41,16 @@ const RECORD_PROCEDURES = {
 } satisfies Record<RecordKind, "companies" | "contacts" | "deals">;
 
 function useArchiveRecord(record: RecordRef) {
+	const t = useTranslations("crmSheet");
 	const trpc = useTRPC();
 	const cache = useCrmCache();
 
 	const handlers = {
 		onSuccess: (archived: { name: string }) => {
 			toast.success(
-				`${archived.name || `The ${NOUN[record.kind]}`} was archived.`,
+				t("archivedToast", {
+					name: archived.name || t(`theRecord.${record.kind}`),
+				}),
 			);
 			void cache[record.kind](record.id);
 		},
@@ -65,13 +63,16 @@ function useArchiveRecord(record: RecordRef) {
 }
 
 function useRestoreRecord(record: RecordRef) {
+	const t = useTranslations("crmSheet");
 	const trpc = useTRPC();
 	const cache = useCrmCache();
 
 	const handlers = {
 		onSuccess: (restored: { name: string }) => {
 			toast.success(
-				`${restored.name || `The ${NOUN[record.kind]}`} was restored.`,
+				t("restoredToast", {
+					name: restored.name || t(`theRecord.${record.kind}`),
+				}),
 			);
 			void cache[record.kind](record.id);
 		},
@@ -84,6 +85,7 @@ function useRestoreRecord(record: RecordRef) {
 }
 
 function usePurgeRecord(record: RecordRef) {
+	const t = useTranslations("crmSheet");
 	const trpc = useTRPC();
 	const cache = useCrmCache();
 	const { close } = useRecordStack();
@@ -91,7 +93,9 @@ function usePurgeRecord(record: RecordRef) {
 	const handlers = {
 		onSuccess: (purged: { name: string }) => {
 			toast.success(
-				`${purged.name || `The ${NOUN[record.kind]}`} was deleted forever.`,
+				t("purgedToast", {
+					name: purged.name || t(`theRecord.${record.kind}`),
+				}),
 			);
 			void cache.removed(record);
 			close();
@@ -115,6 +119,7 @@ export function RecordActions({
 	consequence: string;
 	archivedAt: string | null;
 }) {
+	const t = useTranslations("crmSheet");
 	const [confirming, setConfirming] = useState(false);
 	const archive = useArchiveRecord(record);
 	const restore = useRestoreRecord(record);
@@ -128,7 +133,7 @@ export function RecordActions({
 				<DropdownMenuTrigger asChild>
 					<Button variant="ghost" size="icon-sm" disabled={pending}>
 						<Icon icon={OverflowMenuVertical} />
-						<span className="sr-only">More actions</span>
+						<span className="sr-only">{t("moreActions")}</span>
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end" className="min-w-44">
@@ -138,14 +143,14 @@ export function RecordActions({
 								onSelect={() => restore.mutate({ id: record.id })}
 							>
 								<Icon icon={Undo} />
-								Restore {NOUN[record.kind]}
+								{t(`restore.${record.kind}`)}
 							</DropdownMenuItem>
 							<DropdownMenuItem
 								variant="destructive"
 								onSelect={() => setConfirming(true)}
 							>
 								<Icon icon={TrashCan} />
-								Delete {NOUN[record.kind]} forever
+								{t(`deleteForever.${record.kind}`)}
 							</DropdownMenuItem>
 						</>
 					) : (
@@ -153,7 +158,7 @@ export function RecordActions({
 							onSelect={() => archive.mutate({ id: record.id })}
 						>
 							<Icon icon={Archive} />
-							Archive {NOUN[record.kind]}
+							{t(`archive.${record.kind}`)}
 						</DropdownMenuItem>
 					)}
 				</DropdownMenuContent>
@@ -162,17 +167,17 @@ export function RecordActions({
 			<AlertDialog open={confirming} onOpenChange={setConfirming}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>Delete {name} forever?</AlertDialogTitle>
+						<AlertDialogTitle>{t("deleteTitle", { name })}</AlertDialogTitle>
 						<AlertDialogDescription>{consequence}</AlertDialogDescription>
 					</AlertDialogHeader>
 
 					<AlertDialogFooter>
-						<AlertDialogCancel>Cancel</AlertDialogCancel>
+						<AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
 						<AlertDialogAction
 							variant="destructive"
 							onClick={() => purge.mutate({ id: record.id })}
 						>
-							Delete forever
+							{t("deleteForeverAction")}
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>

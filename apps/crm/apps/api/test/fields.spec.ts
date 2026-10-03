@@ -186,7 +186,7 @@ describe("field definitions", () => {
 				showOnTable: false,
 				showOnFilter: false,
 			}),
-		).rejects.toThrow(/already a field/);
+		).rejects.toThrow(/existe déjà/);
 	});
 
 	it("keeps the same key when the label is renamed", async () => {
@@ -211,7 +211,7 @@ describe("field definitions", () => {
 		} catch (cause) {
 			refused = cause as Error;
 		}
-		expect(refused?.message).toMatch(/cannot change/);
+		expect(refused?.message).toMatch(/ne peut pas changer/);
 	});
 
 	it("will not turn a field into a select with nothing to choose", async () => {
@@ -234,7 +234,7 @@ describe("field definitions", () => {
 		} catch (cause) {
 			refused = cause as Error;
 		}
-		expect(refused?.message).toMatch(/at least one option/);
+		expect(refused?.message).toMatch(/au moins une option/);
 	});
 
 	it("archives without losing values, and restores them", async () => {
@@ -256,9 +256,9 @@ describe("field definitions", () => {
 	it("says a field is missing without swallowing other failures", async () => {
 		const missing = `missing-${suffix}`;
 
-		await expect(fields.archive(missing)).rejects.toThrow(/does not exist/);
-		await expect(fields.restore(missing)).rejects.toThrow(/does not exist/);
-		await expect(fields.delete(missing)).rejects.toThrow(/does not exist/);
+		await expect(fields.archive(missing)).rejects.toThrow(/n’existe pas/);
+		await expect(fields.restore(missing)).rejects.toThrow(/n’existe pas/);
+		await expect(fields.delete(missing)).rejects.toThrow(/n’existe pas/);
 	});
 
 	it("reorders inside one entity only", async () => {
@@ -295,7 +295,7 @@ describe("field definitions", () => {
 		} catch (cause) {
 			refused = cause as Error;
 		}
-		expect(refused?.message).toMatch(/not on this record type/);
+		expect(refused?.message).toMatch(/absent de ce type d’enregistrement/);
 	});
 });
 
@@ -344,7 +344,7 @@ describe("field values", () => {
 			} catch (cause) {
 				refused = cause as Error;
 			}
-			expect(refused?.message).toMatch(/takes a date/);
+			expect(refused?.message).toMatch(/attend une date/);
 		}
 
 		expect(
@@ -357,13 +357,13 @@ describe("field values", () => {
 	it("rejects a value the type cannot hold", async () => {
 		await expect(
 			fields.applyValues(db, "COMPANY", companyId, { spec_seats: "loads" }),
-		).rejects.toThrow(/takes a number/);
+		).rejects.toThrow(/attend un nombre/);
 	});
 
 	it("rejects an unknown key", async () => {
 		await expect(
 			fields.applyValues(db, "COMPANY", companyId, { nope: "x" }),
-		).rejects.toThrow(/no field called/);
+		).rejects.toThrow(/Aucun champ/);
 	});
 
 	it("writes none of a batch when one value in it is refused", async () => {
@@ -378,7 +378,7 @@ describe("field values", () => {
 		} catch (cause) {
 			refused = cause as Error;
 		}
-		expect(refused?.message).toMatch(/takes a date/);
+		expect(refused?.message).toMatch(/attend une date/);
 
 		expect(await db.fieldValue.count({ where: { companyId: record } })).toBe(0);
 	});
@@ -408,7 +408,7 @@ describe("field values", () => {
 		} catch (cause) {
 			refused = cause as Error;
 		}
-		expect(refused?.message).toMatch(/works here/);
+		expect(refused?.message).toMatch(/membre de l.équipe/);
 
 		expect(await db.fieldValue.count({ where: { companyId: record } })).toBe(0);
 
@@ -492,7 +492,7 @@ describe("a select option that was taken away", () => {
 		} catch (cause) {
 			refused = cause as Error;
 		}
-		expect(refused?.message).toMatch(/no option/);
+		expect(refused?.message).toMatch(/pas d.option/);
 	});
 
 	it("still reads as a label in a table, not as an option id", async () => {

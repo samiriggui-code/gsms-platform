@@ -83,6 +83,7 @@ const VERBS: ToolVerbs = {
 	set_field_value: "Filled in a custom field",
 	manage_fields: "Changed what the CRM tracks",
 	archive_field: "Asked to retire a field",
+	query_findings: "Checked the compliance findings",
 
 	load_skill: "Read its instructions for this",
 	web_search: "Searched the web",
@@ -97,6 +98,12 @@ const VERBS: ToolVerbs = {
 	glob: "Looked for files",
 	grep: "Searched inside the files",
 };
+
+export const TOOL_VERB_NAMESPACE = "shellToolVerbs";
+
+export function toolVerbKey(tool: string): string | null {
+	return Object.hasOwn(VERBS, tool) ? tool : null;
+}
 
 function humanise(tool: string): string {
 	const words = tool.replace(/_/g, " ");

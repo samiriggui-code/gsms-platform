@@ -27,6 +27,7 @@ import {
 	ENRICHMENT_PAGE_MAX,
 } from "@crm/validation/enrichment-queue";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useOpenRecord } from "@/components/crm/record-sheet/record-stack";
 import { elapsedLabel, queueFooter } from "@/lib/enrichment-queue";
@@ -51,6 +52,7 @@ const STATE_TONE = {
 } satisfies Record<QueueRow["state"], StatusTone>;
 
 export function EnrichmentQueue() {
+	const t = useTranslations("shellEnrichment");
 	const trpc = useTRPC();
 	const openRecord = useOpenRecord();
 	const [open, setOpen] = useState(false);
@@ -100,14 +102,14 @@ export function EnrichmentQueue() {
 						tone={total > 0 ? "primary" : "neutral"}
 						aria-hidden="true"
 					/>
-					{total > 0 ? `Enriching ${total}` : "Enriching"}
+					{total > 0 ? t("triggerCount", { count: total }) : t("trigger")}
 				</Button>
 			</PopoverTrigger>
 
 			<PopoverContent align="end" size="panel">
 				<div className="flex items-center justify-between border-b px-4 py-3">
 					<span className="font-semibold text-popover-foreground text-sm">
-						Enriching now
+						{t("title")}
 					</span>
 					<span className="font-mono text-muted-foreground text-xs">
 						{total}
@@ -117,11 +119,10 @@ export function EnrichmentQueue() {
 				{visible.length === 0 ? (
 					<div className="flex flex-col gap-1 px-6 py-8 text-center">
 						<span className="font-medium text-popover-foreground text-sm">
-							Nothing right now
+							{t("emptyTitle")}
 						</span>
 						<span className="text-muted-foreground text-xs">
-							New companies and contacts show up here while your agents look
-							them up.
+							{t("emptyBody")}
 						</span>
 					</div>
 				) : (
@@ -135,7 +136,7 @@ export function EnrichmentQueue() {
 				{footer.more > 0 ? (
 					<div className="flex items-center justify-between px-4 py-3 text-xs">
 						<span className="text-muted-foreground">
-							{footer.more} more queued
+							{t("moreQueued", { count: footer.more })}
 						</span>
 						{footer.action === "show-all" ? (
 							<button
@@ -143,7 +144,7 @@ export function EnrichmentQueue() {
 								className="cursor-pointer text-primary"
 								onClick={() => setExpanded(true)}
 							>
-								Show all
+								{t("showAll")}
 							</button>
 						) : null}
 						{footer.action === "load-more" ? (
@@ -156,7 +157,7 @@ export function EnrichmentQueue() {
 									)
 								}
 							>
-								Load more
+								{t("loadMore")}
 							</button>
 						) : null}
 					</div>
@@ -277,17 +278,16 @@ function ScheduledSection({
 	total: number;
 	onOpen: (row: ScheduledRow) => void;
 }) {
+	const t = useTranslations("shellEnrichment");
 	const [shown, setShown] = useState(false);
 
 	return (
 		<Collapsible className="border-t" open={shown} onOpenChange={setShown}>
 			<CollapsibleTrigger className="flex w-full cursor-pointer items-center justify-between px-4 py-3 text-xs hover:bg-muted">
 				<span className="text-muted-foreground">
-					{total === 1
-						? "1 record is booked for a later look"
-						: `${total} records are booked for a later look`}
+					{t("scheduled", { count: total })}
 				</span>
-				<span className="text-primary">{shown ? "Hide" : "Show"}</span>
+				<span className="text-primary">{shown ? t("hide") : t("show")}</span>
 			</CollapsibleTrigger>
 
 			<CollapsibleContent className="max-h-60 overflow-y-auto border-t">
@@ -310,7 +310,7 @@ function ScheduledSection({
 
 				{total > rows.length ? (
 					<div className="px-4 py-3 text-muted-foreground text-xs">
-						{total - rows.length} more are booked but not listed here
+						{t("scheduledMore", { count: total - rows.length })}
 					</div>
 				) : null}
 			</CollapsibleContent>

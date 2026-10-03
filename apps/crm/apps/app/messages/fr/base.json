@@ -35,7 +35,7 @@
 		"pulseHeadline": "{count} comptes dans le pipeline.",
 		"pulseSubhead": "Chaque établissement et société suivis.",
 		"pulseSubheadArchived": "Vue archives",
-		"pulseBody": "Enrichissement, propriétaire et activité — même atelier que le Compliance Desk.",
+		"pulseBody": "Établissements clients et prospects : responsable, activité et informations à jour.",
 		"panelTitle": "État liste",
 		"shown": "Affichés",
 		"total": "Total",
@@ -63,7 +63,7 @@
 		"pulseHeadline": "{count} contacts suivis.",
 		"pulseSubhead": "Personnes liées aux comptes du pipeline.",
 		"pulseSubheadArchived": "Vue archives",
-		"pulseBody": "Même atelier DocuLens — listes et métriques dans le bandeau.",
+		"pulseBody": "Interlocuteurs de vos clients et prospects, avec leur entreprise et leurs échanges.",
 		"panelTitle": "État liste",
 		"shown": "Affichés",
 		"total": "Total",
@@ -93,7 +93,7 @@
 		"pulseSubhead": "{count} affaires · {mode}",
 		"pulseModeArchived": "archives",
 		"pulseModeActive": "vue active",
-		"pulseBody": "Étapes, clôtures et valeur — même langage visuel que Compliance Desk.",
+		"pulseBody": "Suivi des affaires : étape, date de clôture et montant de chaque prestation.",
 		"panelTitle": "État pipeline",
 		"shown": "Affichés",
 		"total": "Total",
@@ -116,7 +116,7 @@
 	},
 	"trust": {
 		"title": "Trust Center",
-		"description": "Findings Grace (audit + cyber) et QAtrial — atelier interne.",
+		"description": "Constats GRACE (audit et cyber) et QAtrial, à usage interne.",
 		"loading": "Chargement…",
 		"pulseEyebrow": "Trust Center",
 		"pulseHeadline": "{count} findings agrégés.",
@@ -124,7 +124,7 @@
 		"pulseSubheadOpen": "{count} ouverts à traiter",
 		"pulseSubheadClear": "Aucun finding ouvert",
 		"pulseSubheadOff": "Grace / QAtrial absents de l’env CRM",
-		"pulseBody": "Agrégation Grace (audit + cyber) et QAtrial — stub interne, pas un portail public.",
+		"pulseBody": "Synthèse des constats GRACE (audit et cyber) et QAtrial, à usage interne.",
 		"panelTitle": "Synthèse",
 		"total": "Total",
 		"open": "Ouverts",
@@ -150,7 +150,7 @@
 	},
 	"compliance": {
 		"title": "Compliance Desk",
-		"description": "Atelier documentaire GSMS — patterns UI DocuLens dans la coque Camp AI. Ingest / Digest manuels."
+		"description": "Documents des clients GSMS : dépôt, import et analyse."
 	},
 	"overview": {
 		"title": "Vue d’ensemble",

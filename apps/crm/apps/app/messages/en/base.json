@@ -35,7 +35,7 @@
 		"pulseHeadline": "{count} accounts in the pipeline.",
 		"pulseSubhead": "Every establishment and company you track.",
 		"pulseSubheadArchived": "Archived view",
-		"pulseBody": "Enrichment, owner and activity — same workshop as Compliance Desk.",
+		"pulseBody": "Client and prospect sites: owner, activity and up-to-date details.",
 		"panelTitle": "List status",
 		"shown": "Shown",
 		"total": "Total",
@@ -63,7 +63,7 @@
 		"pulseHeadline": "{count} contacts tracked.",
 		"pulseSubhead": "People linked to pipeline accounts.",
 		"pulseSubheadArchived": "Archived view",
-		"pulseBody": "Same DocuLens workshop — lists in a soft panel, metrics in the band.",
+		"pulseBody": "People at your clients and prospects, with their company and conversations.",
 		"panelTitle": "List status",
 		"shown": "Shown",
 		"total": "Total",
@@ -93,7 +93,7 @@
 		"pulseSubhead": "{count} deals · {mode}",
 		"pulseModeArchived": "archived",
 		"pulseModeActive": "active view",
-		"pulseBody": "Stages, closing dates and value — same visual language as Compliance Desk.",
+		"pulseBody": "Deal tracking: stage, closing date and amount of each engagement.",
 		"panelTitle": "Pipeline status",
 		"shown": "Shown",
 		"total": "Total",
@@ -116,7 +116,7 @@
 	},
 	"trust": {
 		"title": "Trust Center",
-		"description": "Grace findings (audit + cyber) and QAtrial — internal workshop.",
+		"description": "GRACE (audit and cyber) and QAtrial findings, for internal use.",
 		"loading": "Loading…",
 		"pulseEyebrow": "Trust Center",
 		"pulseHeadline": "{count} aggregated findings.",
@@ -124,7 +124,7 @@
 		"pulseSubheadOpen": "{count} open to handle",
 		"pulseSubheadClear": "No open findings",
 		"pulseSubheadOff": "Grace / QAtrial missing from CRM env",
-		"pulseBody": "Grace (audit + cyber) and QAtrial aggregation — internal stub, not a public portal.",
+		"pulseBody": "Summary of GRACE (audit and cyber) and QAtrial findings, for internal use.",
 		"panelTitle": "Summary",
 		"total": "Total",
 		"open": "Open",
@@ -150,7 +150,7 @@
 	},
 	"compliance": {
 		"title": "Compliance Desk",
-		"description": "GSMS document workshop — DocuLens UI patterns in the Camp AI shell. Manual Ingest / Digest."
+		"description": "GSMS client documents: upload, import and analysis."
 	},
 	"overview": {
 		"title": "Overview",
