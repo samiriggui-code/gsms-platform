@@ -410,6 +410,10 @@ Branches `cursor/ao-mcp-<étape>`. Chaque étape est livrable, testée et déplo
 | 10 | **Dossier final et dépôt** | Package `Administratif/ Technique/ Financier/ Annexes/ Checklist/` avec originaux, fichiers générés, manifeste (versions, hash, provenance, journal de production). ZIP, ainsi que DOCX, XLSX et PDF. APPROVED puis SUBMITTED uniquement par un humain. Événement `tender.submitted`, worker d'outbox. Onglet Dossier final. |
 | 11 | **CRM / Eve** (coordonné avec la session CRM) | Côté Core : connecteur corrigé (`/rest`, `x-api-key`, `externalId = workspace`), opportunité CRM → dossier AO, envoi des événements `tender.*`. Côté CRM (autre session, déjà convenu) : champ d'affaire « Statut dossier AO » (en préparation / déposé / attribué / non retenu), mis à jour par les événements `tender.*` ; `DealStage` reste le pipeline commercial. L'étape 2 du CRM ajoute le webhook signé vers `/api/v1/events/ingest/crm` (`deal.created`, `deal.stage.changed`) et le filtre `externalId` sur `/rest/deals`. L'étape 4 du CRM ajoute les outils Eve de suivi (`tender.go_no_go.decided`, `tender.submitted`). |
 
+**Avancement**
+- Étape 0 : livrée (PR #14).
+- Étape 1 : livrée (branche `cursor/ao-mcp-dossier`). Le cycle de validation est une machine à états dédiée (`tenders/lifecycle.py`), parce qu'elle n'avance que sur décision humaine. WF-TENDER, l'orchestration des moteurs, viendra avec ces derniers à partir de l'étape 4.
+
 L'étape 4 peut passer avant la 3 si Samir préfère voir le MCP branché plus tôt ; les étapes 1 à 3 n'en dépendent
 pas.
 

@@ -93,6 +93,8 @@ class Workspace(UUIDPk, Timestamped, Base):
     kind: Mapped[WorkspaceKind] = mapped_column(str_enum(WorkspaceKind), default=WorkspaceKind.PERMANENT)
     status: Mapped[WorkspaceStatus] = mapped_column(str_enum(WorkspaceStatus), default=WorkspaceStatus.ACTIVE)
     created_from_mission_id: Mapped[uuid.UUID | None] = mapped_column()
+    # Identifiant lisible partagé avec les applications (ex. « WS-AO-2026-0042 ») ; l'UUID reste la clé.
+    reference: Mapped[str | None] = mapped_column(String(40), unique=True)
 
 
 class User(UUIDPk, Timestamped, Base):

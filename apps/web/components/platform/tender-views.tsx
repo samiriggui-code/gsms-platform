@@ -9,6 +9,7 @@ import type { TenderTab, TenderTabSlug } from "@/lib/tenders/tabs";
 import { CoreFailureState, EmptyState, NoWorkspaceState } from "./core-state";
 import { formatAmount, formatValue, StatusBadge } from "./format";
 import { type Column, ResourcePanel } from "./resource-panel";
+import { DceUpload, GoNoGoDecision } from "./tenders/tender-actions";
 
 export function TabIntro({ tab, actions }: { tab: TenderTab; actions?: ReactNode }) {
   return (
@@ -27,13 +28,14 @@ export function TabIntro({ tab, actions }: { tab: TenderTab; actions?: ReactNode
 const LIST_TABS: Partial<Record<TenderTabSlug, { columns: Column[]; empty: { title: string; description: string; icon: typeof FileText } }>> = {
   pieces: {
     columns: [
-      { key: "kind", label: "Pièce", render: (row) => <Badge tone="primary">{String(row.kind ?? "—")}</Badge> },
-      { key: "title", label: "Intitulé" },
-      { key: "required", label: "Exigée" },
-      { key: "provided", label: "Fournie", render: (row) => <StatusBadge value={row.provided === true ? "conforme" : row.provided === false ? "manquante" : undefined} /> },
-      { key: "updated_at", label: "Mise à jour" },
+      { key: "label", label: "Pièce", render: (row) => <Badge tone={row.provided ? "primary" : "neutral"}>{String(row.label ?? row.kind ?? "—")}</Badge> },
+      { key: "title", label: "Fichier" },
+      { key: "required", label: "Attendue", render: (row) => (row.required ? "Oui" : "—") },
+      { key: "provided", label: "Reçue", render: (row) => <StatusBadge value={row.provided ? "reçue" : "manquante"} /> },
+      { key: "parse_status", label: "Analyse", render: (row) => <StatusBadge value={row.parse_status} /> },
+      { key: "version", label: "Version" },
     ],
-    empty: { icon: FileStack, title: "Aucune pièce", description: "Déposez le DCE (zip) : le Core classe les pièces (RC, CCTP, CCAP, AE, BPU, DPGF, annexes)." },
+    empty: { icon: FileStack, title: "Aucune pièce", description: "Déposez le DCE (ZIP ou fichiers) : le Core classe les pièces (RC, CCTP, CCAP, AE, BPU, DPGF, DQE, annexes)." },
   },
   exigences: {
     columns: [
@@ -84,20 +86,22 @@ const LIST_TABS: Partial<Record<TenderTabSlug, { columns: Column[]; empty: { tit
     columns: [
       { key: "title", label: "Document" },
       { key: "kind", label: "Type" },
+      { key: "folder", label: "Dossier" },
       { key: "version", label: "Version" },
-      { key: "origin", label: "Origine" },
+      { key: "sha256", label: "Empreinte", render: (row) => <span className="font-mono text-[11px]">{row.sha256 ? `${String(row.sha256).slice(0, 12)}…` : "—"}</span> },
+      { key: "parse_status", label: "Analyse", render: (row) => <StatusBadge value={row.parse_status} /> },
       { key: "updated_at", label: "Date" },
     ],
-    empty: { icon: FileText, title: "Aucun document", description: "Versions générées et déposées pour ce dossier." },
+    empty: { icon: FileText, title: "Aucun document", description: "Pièces reçues et documents produits pour ce dossier, avec version et empreinte." },
   },
   echeances: {
     columns: [
       { key: "title", label: "Jalon" },
-      { key: "kind", label: "Nature" },
       { key: "due_at", label: "Date" },
       { key: "status", label: "Statut", render: (row) => <StatusBadge value={row.status} /> },
+      { key: "source", label: "Source", render: (row) => <span className="font-mono text-[11px] text-muted-foreground" title={typeof row.excerpt === "string" ? row.excerpt : undefined}>{formatValue(row.source)}</span> },
     ],
-    empty: { icon: CalendarClock, title: "Aucun jalon", description: "Questions, visite, remise : les jalons et rappels apparaîtront ici." },
+    empty: { icon: CalendarClock, title: "Aucun jalon", description: "Les dates du DCE (questions, visite, remise) apparaissent après l'analyse, avec la page d'origine." },
   },
   historique: {
     columns: [
@@ -119,7 +123,17 @@ const LIST_TABS: Partial<Record<TenderTabSlug, { columns: Column[]; empty: { tit
   },
 };
 
-export function TenderTabView({ tab, result }: { tab: TenderTab; result: CoreResult<unknown> | null }) {
+export function TenderTabView({
+  tab,
+  result,
+  workspaceId,
+  missionId,
+}: {
+  tab: TenderTab;
+  result: CoreResult<unknown> | null;
+  workspaceId: string;
+  missionId: string | null;
+}) {
   const list = LIST_TABS[tab.slug];
   const actions = tabActions(tab.slug, !!result?.ok);
 
@@ -127,6 +141,7 @@ export function TenderTabView({ tab, result }: { tab: TenderTab; result: CoreRes
     return (
       <>
         <TabIntro tab={tab} actions={actions} />
+        {tab.slug === "pieces" && missionId && result?.ok ? <DceUpload workspaceId={workspaceId} missionId={missionId} /> : null}
         <ResourcePanel title={tab.label} result={result} columns={list.columns} empty={list.empty} />
       </>
     );
@@ -142,7 +157,7 @@ export function TenderTabView({ tab, result }: { tab: TenderTab; result: CoreRes
       ) : tab.slug === "analyse" ? (
         <AnalysisView data={result.data as Record<string, unknown>} />
       ) : tab.slug === "go-no-go" ? (
-        <GoNoGoView data={result.data as Record<string, unknown>} />
+        <GoNoGoView data={result.data as Record<string, unknown>} workspaceId={workspaceId} missionId={missionId} />
       ) : tab.slug === "reponse-financiere" ? (
         <FinancialView data={result.data as Record<string, unknown>} />
       ) : (
@@ -152,10 +167,9 @@ export function TenderTabView({ tab, result }: { tab: TenderTab; result: CoreRes
   );
 }
 
-/** Actions d'écriture : affichées mais désactivées tant que les endpoints POST ne sont pas branchés. */
+/** Actions d'écriture à venir : affichées mais désactivées tant que les endpoints POST ne sont pas branchés. */
 function tabActions(slug: TenderTabSlug, coreOk: boolean): ReactNode {
   const label: Partial<Record<TenderTabSlug, { text: string; icon: typeof Upload }>> = {
-    pieces: { text: "Déposer le DCE (zip)", icon: Upload },
     analyse: { text: "Lancer l'analyse", icon: FileText },
     questions: { text: "Nouvelle question", icon: HelpCircle },
     agents: { text: "Demander à l'assistant", icon: Bot },
@@ -220,7 +234,7 @@ function AnalysisView({ data }: { data: Record<string, unknown> }) {
   );
 }
 
-function GoNoGoView({ data }: { data: Record<string, unknown> }) {
+function GoNoGoView({ data, workspaceId, missionId }: { data: Record<string, unknown>; workspaceId: string; missionId: string | null }) {
   const criteria = asList<Row>(data?.criteria);
   const decision = data?.decision as Row | null | undefined;
   return (
@@ -260,20 +274,18 @@ function GoNoGoView({ data }: { data: Record<string, unknown> }) {
           </CardHeader>
           <CardContent className="flex flex-col gap-3 text-[13px]">
             {decision ? (
-              <p>
-                <StatusBadge value={decision.value} /> par {formatValue(decision.by)} le {formatValue(decision.at)}
-              </p>
+              <>
+                <p>
+                  <StatusBadge value={decision.value} /> par {formatValue(decision.by)} le {formatValue(decision.at)}
+                </p>
+                {typeof decision.rationale === "string" ? <p className="text-muted-foreground">{decision.rationale}</p> : null}
+              </>
             ) : (
-              <p className="text-muted-foreground">Aucune décision enregistrée.</p>
+              <>
+                <p className="text-muted-foreground">Aucune décision enregistrée. Elle est définitive et motivée.</p>
+                {missionId ? <GoNoGoDecision workspaceId={workspaceId} missionId={missionId} /> : null}
+              </>
             )}
-            <div className="flex gap-2">
-              <Button size="sm" variant="contrast" disabled title="À brancher : POST go-no-go/decision">
-                Go
-              </Button>
-              <Button size="sm" variant="outline" disabled title="À brancher : POST go-no-go/decision">
-                No-Go
-              </Button>
-            </div>
           </CardContent>
         </Card>
       </div>

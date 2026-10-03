@@ -1,5 +1,47 @@
 # Handoff Cursor → Claude
 
+## 2026-10-03 — Chantier AO-MCP, étape 1 : dossier AO et DCE
+
+Branche `cursor/ao-mcp-dossier`. Plan complet : `docs/chantiers/AO-MCP-AUDIT.md` (§8).
+
+- **Un workspace par dossier AO**
+  - `POST /api/v1/tenders` crée un workspace TEMPORARY rattaché à l'organisation GSMS, jamais à l'acheteur : l'offre, prix compris, n'est visible que de l'équipe.
+  - La création passe par `WorkspaceManager`, qui accepte désormais un workspace sans site. Elle crée aussi la mission APPEL_OFFRES, le dossier, les dossiers du coffre-fort et les bindings d'apps.
+  - Référence lisible `WS-AO-AAAA-NNNN` dans `identity_workspace.reference`, unique, numérotée par année. Elle figure dans l'événement `workspace.created`.
+  - Création réservée aux rôles d'équipe GSMS (owner, admin, manager, consultant).
+  - `GET /api/v1/tenders` liste les dossiers de tous les workspaces accessibles. `GET /workspaces/{ws}/tenders/current` renvoie le dossier d'un workspace AO.
+- **DCE** : `POST …/tenders/{mission}/dce` accepte des fichiers et/ou un ZIP.
+  - Les pièces sont rangées dans « Dossier de consultation », puis Docling et le Digest tournent en tâche de fond. Le rangement par type existait déjà.
+  - Les noms Windows (CP437/UTF-8 sans drapeau) sont décodés.
+  - Sont ignorés et signalés : `__MACOSX`, fichiers cachés, archives imbriquées, fichiers chiffrés ou trop gros. Plafonds : 500 fichiers, 2 Go décompressés.
+  - Une pièce redéposée sous le même nom devient une **nouvelle version** du même document (rectificatif) ; si elle est identique, aucun doublon n'est créé.
+- **Onglets branchés** (`tenders/views.py`, aucune donnée recalculée) :
+  - pièces : reçues avec leur type, attendues, manquantes ;
+  - documents : version, SHA-256, dossier, analyse ;
+  - échéances : saisie + Digest, avec la page source ;
+  - historique : journal d'audit du workspace, noms des personnes.
+- **Validation humaine** (`tenders/lifecycle.py`, table `tender_status_change`)
+  - Cycle : DRAFT → REVIEW → READY → APPROVED → SUBMITTED, avec retours arrière motivés.
+  - Seul un utilisateur peut changer le statut. Les agents et les comptes client sont refusés.
+  - READY, APPROVED et SUBMITTED exigent une décision GO.
+  - APPROVED et SUBMITTED exigent un commentaire (pour SUBMITTED : plateforme et accusé de dépôt).
+  - Événements `tender.status.changed` et, au dépôt, `tender.submitted`, envoyés au CRM par l'outbox. L'envoi réel arrivera à l'étape 10.
+- **Portail**
+  - `/app/tenders/{workspaceId}` remplace `/app/tenders/{missionId}`.
+  - Bouton « Nouveau dossier AO » ; zone de dépôt du DCE.
+  - Boutons de validation dans l'en-tête ; formulaire de décision Go / No-Go (motivée, définitive) ; carte « Validations » dans la synthèse.
+  - Statuts affichés en français ; montant absent affiché « — » au lieu de « 0 € ».
+- **Migration `0010`** : validée sur PostgreSQL 16 dans les deux sens. Tests : `tests/test_tender_dossier.py` (8 tests, 174 au total).
+- **Vérifié en vrai** (PostgreSQL 16, Core, portail en production locale, Chromium, ordinateur et mobile 390 px) :
+  - création de WS-AO-2026-0001 ;
+  - ZIP du DCE → RC, CCTP et BPU reconnus et analysés, CCAP et AE signalés manquants ;
+  - date de remise lue dans le RC p. 3 ;
+  - GO, puis relecture → prêt → approuvé → déposé ; événements en outbox vers le CRM ;
+  - le compte client ne voit aucun dossier AO.
+  - Limite de la vérification : Docling n'est pas installé dans l'environnement de test, la conversion était simulée (le reste est réel).
+
+---
+
 ## 2026-10-03 — CRM, étape 2 : pont CRM ↔ Core
 
 **Fait**

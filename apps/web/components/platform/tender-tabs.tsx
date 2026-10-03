@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-export function TenderTabs({ missionId, tabs }: { missionId: string; tabs: { slug: string; label: string }[] }) {
+export function TenderTabs({ workspaceId, tabs }: { workspaceId: string; tabs: { slug: string; label: string }[] }) {
   const segment = useSelectedLayoutSegment() ?? "synthese";
-  const base = `/app/tenders/${encodeURIComponent(missionId)}`;
+  const base = `/app/tenders/${encodeURIComponent(workspaceId)}`;
 
   return (
     <nav aria-label="Onglets du dossier d'appel d'offres" className="-mx-4 mb-6 overflow-x-auto border-b border-border px-4 sm:mx-0 sm:px-0">
