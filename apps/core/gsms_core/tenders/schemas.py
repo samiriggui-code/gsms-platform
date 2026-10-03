@@ -224,3 +224,31 @@ class ComplianceOut(BaseModel):
     types: dict[str, str]
     targets: dict[str, str]
     rows: list[RequirementOut]
+
+
+class EnginePieceOut(BaseModel):
+    filename: str
+    reason: str
+
+
+class EngineCapabilityOut(BaseModel):
+    key: str
+    label: str
+
+
+class EngineOut(BaseModel):
+    """État du moteur AO pour ce dossier (dernier chargement), en termes métier."""
+
+    status: str  # connecte | indisponible | non_configure | jamais
+    label: str
+    connected: bool
+    configured: bool
+    reference: str | None = None
+    binding_status: str | None = None
+    last_call_at: datetime | None = None
+    last_success_at: datetime | None = None
+    last_error: str | None = None
+    documents_sent: int = 0
+    documents_rejected: list[EnginePieceOut] = Field(default_factory=list)
+    documents_skipped: list[EnginePieceOut] = Field(default_factory=list)
+    capabilities: list[EngineCapabilityOut] = Field(default_factory=list)

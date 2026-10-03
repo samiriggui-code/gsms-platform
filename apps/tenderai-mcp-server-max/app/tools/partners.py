@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import logging
 from pathlib import Path
 
@@ -36,7 +35,7 @@ def register_partner_tools(
         Returns:
             Markdown text of the partner brief
         """
-        rfp = await db.get_rfp(rfp_id)
+        rfp = await db.get_rfp_in_workspace(rfp_id, None)
         if not rfp:
             raise ValueError(f"RFP not found: {rfp_id}")
 
@@ -93,7 +92,7 @@ def register_partner_tools(
         Returns:
             Dict with checklist_items list and partner_id
         """
-        rfp = await db.get_rfp(rfp_id)
+        rfp = await db.get_rfp_in_workspace(rfp_id, None)
         if not rfp:
             raise ValueError(f"RFP not found: {rfp_id}")
 
@@ -177,7 +176,7 @@ def register_partner_tools(
         Returns:
             Dict with deliverable_id, status, and tracking details
         """
-        rfp = await db.get_rfp(rfp_id)
+        rfp = await db.get_rfp_in_workspace(rfp_id, None)
         if not rfp:
             raise ValueError(f"RFP not found: {rfp_id}")
 

@@ -44,7 +44,7 @@ export const TENDER_TABS: TenderTab[] = [
   { slug: "documents", label: "Documents", source: "Core (coffre-fort chiffré)", endpoint: T.documents, description: "Pièces reçues et documents produits : version, empreinte SHA-256, dossier de rangement, analyse." },
   { slug: "echeances", label: "Échéances", source: "Core", endpoint: T.deadlines, description: "Date de remise saisie et dates trouvées dans le DCE (questions, visite, remise), avec leur source." },
   { slug: "historique", label: "Historique", source: "Core (journal d'audit chaîné)", endpoint: T.history, description: "Qui a fait quoi sur le dossier : dépôts, consultations, décisions, validations." },
-  { slug: "agents", label: "Agents", source: "Assistant", endpoint: T.agents, description: "Tâches proposées par l'assistant (préparer les pièces, résumer le CCTP…), à valider." },
+  { slug: "agents", label: "Agents", source: "Moteur AO et assistant", endpoint: T.agents, description: "État du moteur appel d'offres pour ce dossier (pièces reçues, ce qu'il peut préparer), puis tâches proposées par l'assistant, à valider." },
 ];
 
 export function tenderTab(slug: string): TenderTab | undefined {

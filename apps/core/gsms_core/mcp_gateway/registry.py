@@ -3,15 +3,17 @@
 from __future__ import annotations
 
 ALLOWED_TOOLS: dict[str, frozenset[str]] = {
-    # TenderAI (répondre aux AO) — apps/tenderai-mcp-server-max
+    # MCP Appel d'offres — apps/tenderai-mcp-server-max. Chaque appel porte le workspace_id du dossier.
+    # generate_financial_proposal n'est pas ouvert : il exige un proposal_id produit par build_bom
+    # (matériel, hors circuit sûreté). Le chiffrage arrive avec les outils ao_* de l'étape 5.
     "tenderai": frozenset(
         {
+            "ao_workspace_load",
             "parse_tender_rfp",
             "generate_compliance_matrix",
             "check_submission_deadline",
             "validate_document_completeness",
             "build_full_technical_proposal",
-            "generate_financial_proposal",
             "search_past_proposals",
         }
     ),

@@ -310,6 +310,40 @@ export function GoNoGoDecision({ workspaceId, missionId }: { workspaceId: string
 }
 
 
+/** Transmet le dossier et ses pièces au moteur AO ; un moteur indisponible est affiché, jamais bloquant. */
+export function EngineLoadButton({ workspaceId, missionId, connected }: { workspaceId: string; missionId: string; connected: boolean }) {
+  const router = useRouter();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [, startTransition] = useTransition();
+
+  async function load() {
+    setError(null);
+    setBusy(true);
+    const result = await postJson(`workspaces/${workspaceId}/tenders/${missionId}/engine`, {});
+    setBusy(false);
+    if (!result.ok) {
+      setError(result.error);
+      return;
+    }
+    startTransition(() => router.refresh());
+  }
+
+  return (
+    <div className="flex flex-col items-start gap-1.5">
+      <Button type="button" size="sm" variant={connected ? "outline" : "contrast"} onClick={load} disabled={busy}>
+        {busy ? <Loader2 className="size-3.5 animate-spin" aria-hidden /> : <Upload className="size-3.5" aria-hidden />}
+        {connected ? "Retransmettre le dossier" : "Transmettre le dossier"}
+      </Button>
+      {error ? (
+        <p role="alert" className="text-[12.5px] text-destructive">
+          {error}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
 /** Montant estimé et date limite du dossier : servent à la matrice de faisabilité (capacité financière, délai). */
 export function TenderFactsForm({
   workspaceId,

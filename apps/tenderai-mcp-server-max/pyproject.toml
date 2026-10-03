@@ -1,0 +1,18 @@
+# Outillage uniquement (tests, lint) : les dépendances d'exécution restent dans requirements.txt.
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = [".venv", "data", "db"]
+
+[tool.ruff.lint]
+# Erreurs réelles (pyflakes, syntaxe), imports triés, modernisation ; le style du code repris de TenderAI
+# n'est pas réécrit en masse.
+select = ["E9", "F", "I", "B", "UP"]
+ignore = ["UP045", "B904"]

@@ -6,6 +6,7 @@ Authorization: Bearer <token> header against MCP_API_KEY.
 
 from __future__ import annotations
 
+import hmac
 import logging
 
 logger = logging.getLogger(__name__)
@@ -44,7 +45,8 @@ class BearerTokenMiddleware:
             return
 
         token = auth_value[7:]
-        if token != self.expected_token:
+        # Comparaison à temps constant : la durée ne révèle pas le nombre de caractères corrects.
+        if not hmac.compare_digest(token.encode(), self.expected_token.encode()):
             logger.warning("Invalid Bearer token from %s", scope.get("client"))
             await self._send_401(send)
             return

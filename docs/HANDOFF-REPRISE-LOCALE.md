@@ -68,7 +68,7 @@ Plan : `docs/chantiers/AO-MCP-AUDIT.md` §8, une PR par étape, branches `cursor
 | 1. Dossier AO `WS-AO-AAAA-NNNN` et dépôt du DCE | fusionnée | #17 |
 | 2. Digest AO et matrice d'exigences | fusionnée | #18 |
 | 3. GO / NO-GO documenté (profil GSMS, matrice de faisabilité, migration `0012`) | fusionnée | #20 |
-| 4. MCP AO remis à niveau | **prochaine étape de la session B** | — |
+| 4. MCP AO remis à niveau | livrée, PR en cours (branche `cursor/ao-mcp-serveur`) | — |
 | 5 à 10. Chiffrage, BPU/DPGF/DQE, mémoire, GRACE et plan de prévention, QAtrial et checklist, dossier final | à faire | — |
 | 11. CRM / Eve | à faire, avec la session A | — |
 

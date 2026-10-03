@@ -8,6 +8,16 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+# Modèle Claude par défaut (identifiant exact, sans suffixe de date). Surcharge : LLM_MODEL.
+DEFAULT_LLM_MODEL = "claude-opus-5-5"
+
+# Plafond d'un fichier échangé en base64 avec le Core (une pièce de DCE, un modèle Excel).
+DEFAULT_MAX_FILE_MB = 20
+
+
+class ConfigError(RuntimeError):
+    """Configuration refusée au démarrage (ex. transport HTTP sans authentification)."""
+
 
 def _project_root() -> Path:
     """Return the project root (parent of app/)."""
@@ -27,7 +37,7 @@ class Settings:
 
     # LLM
     anthropic_api_key: str = ""
-    llm_model: str = "claude-sonnet-4-5-20241022"
+    llm_model: str = DEFAULT_LLM_MODEL
     llm_max_tokens: int = 4096
 
     # Embeddings (Voyage AI)
@@ -41,9 +51,12 @@ class Settings:
     # Data
     data_dir: str = "data"
 
+    # Fichiers échangés avec le Core (base64)
+    max_file_mb: int = DEFAULT_MAX_FILE_MB
+
     # Company
-    company_name: str = "Your Company"
-    default_currency: str = "OMR"
+    company_name: str = "GSMS"
+    default_currency: str = "EUR"
     default_margin_pct: float = 15.0
 
     # Logging
@@ -60,6 +73,22 @@ class Settings:
         p = Path(self.data_dir)
         return p if p.is_absolute() else self.project_root / p
 
+    @property
+    def max_file_bytes(self) -> int:
+        return self.max_file_mb * 1024 * 1024
+
+
+def check_http_auth(settings: Settings) -> None:
+    """En HTTP, le serveur refuse de démarrer sans jeton (MCP_API_KEY) ni OAuth (OAUTH_ISSUER_URL)."""
+    if settings.transport != "http":
+        return
+    if settings.oauth_issuer_url or settings.mcp_api_key.strip():
+        return
+    raise ConfigError(
+        "TRANSPORT=http sans authentification : définissez MCP_API_KEY (jeton partagé avec le Core) "
+        "ou OAUTH_ISSUER_URL. Le serveur ne démarre pas sans protection."
+    )
+
 
 def load_settings() -> Settings:
     """Load settings from .env file and environment variables."""
@@ -73,15 +102,16 @@ def load_settings() -> Settings:
         mcp_api_key=os.getenv("MCP_API_KEY", ""),
         oauth_issuer_url=os.getenv("OAUTH_ISSUER_URL", ""),
         anthropic_api_key=os.getenv("ANTHROPIC_API_KEY", ""),
-        llm_model=os.getenv("LLM_MODEL", "claude-sonnet-4-5-20241022"),
+        llm_model=os.getenv("LLM_MODEL", "").strip() or DEFAULT_LLM_MODEL,
         llm_max_tokens=int(os.getenv("LLM_MAX_TOKENS", "4096")),
         voyage_api_key=os.getenv("VOYAGE_API_KEY", ""),
         embedding_model=os.getenv("EMBEDDING_MODEL", "voyage-3-lite"),
         embedding_dimensions=int(os.getenv("EMBEDDING_DIMENSIONS", "512")),
         database_path=os.getenv("DATABASE_PATH", "db/tenderai.db"),
         data_dir=os.getenv("DATA_DIR", "data"),
-        company_name=os.getenv("COMPANY_NAME", "Your Company"),
-        default_currency=os.getenv("DEFAULT_CURRENCY", "OMR"),
+        max_file_mb=int(os.getenv("MAX_FILE_MB", str(DEFAULT_MAX_FILE_MB))),
+        company_name=os.getenv("COMPANY_NAME", "").strip() or "GSMS",
+        default_currency=os.getenv("DEFAULT_CURRENCY", "EUR"),
         default_margin_pct=float(os.getenv("DEFAULT_MARGIN_PCT", "15")),
         log_level=os.getenv("LOG_LEVEL", "INFO"),
         project_root=_project_root(),

@@ -224,5 +224,7 @@ export const ENDPOINTS = {
     history: (workspaceId: string, missionId: string) => `${tender(workspaceId, missionId)}/history`,
     /** GET → AgentRun[] (actions proposées par l'assistant, à valider) */
     agents: (workspaceId: string, missionId: string) => `${tender(workspaceId, missionId)}/agents`,
+    /** GET → état du moteur AO (dernier chargement, sans appel réseau) ; POST → transmet le dossier au moteur */
+    engine: (workspaceId: string, missionId: string) => `${tender(workspaceId, missionId)}/engine`,
   },
 } as const;

@@ -1,5 +1,7 @@
-# TenderAI MCP — VPS Hostinger + Traefik
-# Smoke: http://187.77.166.124:8090/mcp — DNS A mcp après GO
+# MCP Appel d'offres (GSMS) — VPS Hostinger + Traefik. Déployé par deploy/deploy-all.sh.
+# Le Core le joint sur le réseau interne de la plateforme : http://gsms-tenderai-mcp:8090/mcp.
+# Public (claude.ai, Claude Code) : https://mcp.gsms-security.com/mcp, par le Traefik existant.
+# Jeton obligatoire : MCP_API_KEY dans ../../.env (sans jeton, le serveur refuse de démarrer).
 name: gsms-mcp
 
 services:
@@ -15,13 +17,15 @@ services:
       TRANSPORT: http
       HOST: 0.0.0.0
       PORT: '8090'
+    # Local uniquement (contrôle depuis le VPS) ; l'accès public passe par Traefik en HTTPS.
     ports:
-      - '8090:8090'
+      - '127.0.0.1:8090:8090'
     volumes:
       - gsms_mcp_db:/opt/tenderai/db
       - gsms_mcp_data:/opt/tenderai/data
     networks:
       - mcp
+      - platform
     labels:
       - traefik.enable=true
       - traefik.http.routers.mcp.entrypoints=websecure
@@ -36,3 +40,7 @@ volumes:
 networks:
   mcp:
     name: gsms-mcp
+  # Réseau interne de la plateforme (créé par deploy/deploy.sh, nom fixe) : le Core y joint le MCP.
+  platform:
+    name: gsms-platform_default
+    external: true

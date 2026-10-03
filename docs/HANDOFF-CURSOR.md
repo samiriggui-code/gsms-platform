@@ -2,6 +2,82 @@
 
 > Pour reprendre en local à deux sessions : [`HANDOFF-REPRISE-LOCALE.md`](./HANDOFF-REPRISE-LOCALE.md).
 
+## 2026-10-03 — Chantier AO-MCP, étape 4 : MCP AO remis à niveau
+
+Branche `cursor/ao-mcp-serveur`. Plan : `docs/chantiers/AO-MCP-AUDIT.md` (§1.1, §3, §8).
+
+**MCP (`apps/tenderai-mcp-server-max`)**
+- **Accès protégé.**
+  - En `TRANSPORT=http`, le serveur refuse de démarrer sans `MCP_API_KEY` ni `OAUTH_ISSUER_URL` (code de sortie 2).
+  - Le jeton est comparé à temps constant (`hmac.compare_digest`).
+- **Cloisonnement par dossier.**
+  - Colonne `rfp.workspace_id`, ajoutée aussi aux bases existantes au démarrage.
+  - Nouvelle table `ao_workspace` : un identifiant de workspace du Core et sa référence `WS-AO-…` vont toujours ensemble.
+  - Les outils ouverts au Core prennent `workspace_id` : `parse_tender_rfp`, `generate_compliance_matrix`, `check_submission_deadline`, `validate_document_completeness`, `build_full_technical_proposal`.
+  - Un RFP n'est visible que depuis son dossier. Les outils autonomes ne voient pas les dossiers du Core.
+- **Fichiers en base64** (`app/files.py`).
+  - Plafond de 20 Mo par fichier (`MAX_FILE_MB`), contrôle de l'empreinte SHA-256 annoncée, nom de fichier sans chemin.
+  - Dans un dossier du Core, aucune pièce n'est conservée et les DOCX produits reviennent en base64.
+- **Nouvel outil `ao_workspace_load(workspace_id, reference, documents[])`** (`app/tools/ao.py`). Il renvoie :
+  - l'identifiant de l'espace côté MCP ;
+  - les pièces reçues et les pièces refusées, avec le motif ;
+  - les capacités disponibles, avec des libellés métier.
+- **Modèle LLM** : `LLM_MODEL`, défaut `claude-opus-5-5`.
+  - L'ancien identifiant invalide est supprimé.
+  - La réponse ne garde que les blocs de texte : les modèles récents renvoient aussi des blocs de réflexion.
+  - Un refus du modèle lève une erreur claire.
+- **Prompts** en français, orientés sûreté et sécurité incendie : SSIAP, CNAPS, IDCC 1351, marchés publics. Le modèle ne doit rien inventer, et un champ manquant est rendu par `[À COMPLÉTER : …]`.
+- **Défauts de l'audit corrigés.**
+  - `ingest_vendor_quote` enregistre les lignes du devis (table `vendor_quote`, `quote_id`), et `build_bom` peut les reprendre (`quote_ids`).
+  - La société vient de `COMPANY_NAME` (défaut GSMS), en euros par défaut.
+  - La matrice de conformité met « À vérifier », plus jamais « Compliant ».
+- **Tests et CI.**
+  - 21 tests pytest : authentification, base64, `ao_workspace_load`, cloisonnement, devis.
+  - Outillage : `pyproject.toml` (configuration pytest et ruff) et `requirements-dev.txt`.
+  - Workflow `.github/workflows/mcp-ao.yml` (ruff + pytest).
+
+**Core**
+- Liste blanche : `ao_workspace_load` est ajouté. `generate_financial_proposal` est retiré : il exige `build_bom`, et le chiffrage arrive à l'étape 5.
+- **URL par défaut du MCP.**
+  - `GSMS_TENDERAI_MCP_URL` vaut `http://gsms-tenderai-mcp:8090/mcp` par défaut.
+  - Une variable vide, celle que transmet docker-compose, reprend cette valeur.
+- **`tenders/engine.py`** :
+  - lit les pièces du dossier dans le coffre-fort et les envoie en base64 (20 Mo par pièce, 120 Mo par chargement) ;
+  - appelle `ao_workspace_load` ;
+  - passe la liaison `tender` de `pending:…` à ACTIVE, avec l'identifiant de l'espace côté MCP ;
+  - garde l'état du dernier appel dans les métadonnées de la liaison, donc sans migration ;
+  - inscrit l'action `tender.engine.load` au journal d'audit.
+- **Route `GET|POST /workspaces/{ws}/tenders/{mission}/engine`**, réservée à l'équipe GSMS.
+  - États : connecté, indisponible (avec le motif), non configuré, jamais transmis.
+  - Un MCP en panne renvoie 200 « indisponible ». Une liaison déjà active le reste.
+- Aucun événement `tender.*` n'est ajouté ni modifié.
+
+**Portail** : onglet **Agents** du dossier, carte « Moteur appel d'offres ».
+- Elle affiche l'état, les pièces reçues et les pièces non transmises, ainsi que les capacités avec leurs libellés métier, jamais les noms d'outils.
+- Le bouton « Transmettre le dossier » envoie le dossier au moteur.
+
+**Déploiement**
+- `deploy-all.sh` met à jour et relance la stack `gsms-mcp`, puis vérifie que le Core joint le MCP (réponse 401 sans jeton).
+- Le compose du MCP rejoint `gsms-platform_default` et ne publie plus le port 8090 qu'en `127.0.0.1`.
+- `deploy/README.md` documente `MCP_API_KEY`, `GSMS_TENDERAI_MCP_TOKEN`, `LLM_MODEL` et `ANTHROPIC_API_KEY`, sans valeur.
+
+**Vérifié en vrai**
+- Environnement : MCP en HTTP avec jeton, Core sur PostgreSQL 18.2. Le PostgreSQL 16 n'est pas disponible sur le poste ; aucune migration n'est ajoutée à cette étape.
+- Le MCP lancé sans jeton refuse de démarrer.
+- Parcours : dossier `WS-AO-2026-0001`, dépôt du DCE (2 pièces), transmission.
+  - Résultat : « Moteur AO connecté », 2 pièces reçues, liaison ACTIVE.
+  - Le dossier est enregistré dans la base du MCP, et l'action figure au journal.
+- MCP arrêté : 200 « indisponible – moteur AO injoignable », synthèse du dossier toujours en 200.
+
+**Tests** : Core 197 (ruff et format OK) ; MCP 21 (ruff OK) ; portail lint, tsc et build OK.
+
+**À faire côté Samir, sur le VPS** :
+- mettre la même valeur dans `MCP_API_KEY` (`.env` du MCP) et dans `GSMS_TENDERAI_MCP_TOKEN` (`.env` de la plateforme) ;
+- renseigner `ANTHROPIC_API_KEY` dans le `.env` du MCP ;
+- relancer `deploy-all.sh`.
+
+---
+
 ## 2026-10-03 — CRM, étape 3 : tout le CRM en français
 
 **Fait**

@@ -415,6 +415,10 @@ Branches `cursor/ao-mcp-<étape>`. Chaque étape est livrable, testée et déplo
 - Étape 1 : livrée (PR #17). Le cycle de validation est une machine à états dédiée (`tenders/lifecycle.py`), parce qu'elle n'avance que sur décision humaine. WF-TENDER, l'orchestration des moteurs, viendra avec ces derniers à partir de l'étape 4.
 - Étape 2 : livrée (PR #18). Matrice synchronisée par l'EventBus (`digest.updated`).
 - Étape 3 : livrée (branche `cursor/ao-mcp-go-no-go`). Profil GSMS saisi dans les paramètres du portail ; matrice de faisabilité déterministe en 11 dimensions.
+- Étape 4 : livrée (branche `cursor/ao-mcp-serveur`).
+  - MCP : accès protégé, cloisonnement par `workspace_id`, fichiers en base64, `ao_workspace_load`, prompts en français, tests et CI `mcp-ao.yml`.
+  - Le Core appelle réellement le MCP (`tenders/engine.py`, route `…/engine`) ; l'état du moteur s'affiche dans l'onglet Agents.
+  - Le MCP est déployé par `deploy-all.sh`.
 
 L'étape 4 peut passer avant la 3 si Samir préfère voir le MCP branché plus tôt ; les étapes 1 à 3 n'en dépendent
 pas.
