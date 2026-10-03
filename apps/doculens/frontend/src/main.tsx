@@ -1,7 +1,8 @@
 import React, { Suspense, lazy } from 'react';
 import ReactDOM from 'react-dom/client';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { isCoreMode } from './api/client';
 
 import { AuthProvider } from './auth/AuthProvider';
 import { ProtectedRoute } from './auth/ProtectedRoute';
@@ -50,7 +51,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                   <Route index element={<IntakePage />} />
                   <Route path="work-queues" element={<WorkQueuesPage />} />
                   <Route path="pipeline" element={<PipelinePage />} />
-                  <Route path="qa" element={<QaPage />} />
+                  <Route path="qa" element={isCoreMode ? <Navigate to="/app/pipeline" replace /> : <QaPage />} />
                   <Route path="settings" element={<SettingsPage />} />
                 </Route>
               </Routes>

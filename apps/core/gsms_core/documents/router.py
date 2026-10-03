@@ -1,14 +1,30 @@
 from __future__ import annotations
 
+import contextlib
 import uuid
+from urllib.parse import quote
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Request, UploadFile, status
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    Query,
+    Request,
+    UploadFile,
+    status,
+)
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
 from gsms_core.deps import WorkspaceContext, get_db, get_settings_dep, require_roles, require_workspace
-from gsms_core.documents import service
-from gsms_core.documents.models import Blob, DocumentVersion
-from gsms_core.documents.schemas import DocumentOut, DossierOut, UploadOut, VersionOut
+from gsms_core.documents import parsing, service
+from gsms_core.documents.models import Blob, DocumentParse, DocumentVersion
+from gsms_core.documents.parsers.schemas import NormalizedDocument
+from gsms_core.documents.schemas import DocumentOut, DossierOut, ParseOut, UploadOut, VersionOut
+from gsms_core.documents.search import MAX_LIMIT, SearchHit, search_documents
 from gsms_core.identity.models import CONTRIBUTE_ROLES
 from gsms_core.settings import Settings
 
@@ -77,7 +93,11 @@ def list_documents(
     ctx: WorkspaceContext = Depends(require_workspace),
     db: Session = Depends(get_db),
 ):
-    return service.list_documents(db, ctx.workspace_id, mission_id, doc_type)
+    docs = service.list_documents(db, ctx.workspace_id, mission_id, doc_type)
+    statuses = parsing.parse_statuses(db, docs)
+    return [
+        DocumentOut.model_validate(d).model_copy(update={"parse_status": statuses.get(d.id)}) for d in docs
+    ]
 
 
 @router.get("/documents/{document_id}", response_model=DocumentOut)
@@ -117,3 +137,127 @@ def dossier(
         present=c.present,
         missing=c.missing,
     )
+
+
+def _parse_out(parse: DocumentParse) -> ParseOut:
+    out = ParseOut.model_validate(parse)
+    if parse.result:
+        out.summary = {
+            "page_count": parse.result.get("page_count"),
+            "blocks": len(parse.result.get("blocks") or []),
+            "tables": len(parse.result.get("tables") or []),
+        }
+    return out
+
+
+def run_parse_and_digest(app, parse_id: uuid.UUID) -> None:
+    """Hors requête : parsing puis reconstruction du Digest du workspace (session dédiée).
+
+    Chemin minimal (BackgroundTasks FastAPI) tant que le Core n'a pas de worker ; le même appel sera
+    exécuté par le worker (file sur l'outbox / Celery) sans changer ce contrat.
+    """
+    from gsms_core.digest.service import DigestBuildError, rebuild_digest
+
+    with app.state.db.session_factory() as session:
+        parse = parsing.run_parse(session, app.state.storage, app.state.document_parser, parse_id)
+        if parse.status.value == "PARSED":
+            # Un échec du Digest est déjà tracé (statut FAILED + digest.failed).
+            with contextlib.suppress(DigestBuildError):
+                rebuild_digest(session, parse.workspace_id, actor="service:core", trigger=f"parse:{parse.id}")
+
+
+@router.post("/documents/{document_id}/parse", response_model=ParseOut, status_code=status.HTTP_202_ACCEPTED)
+def parse_document(
+    document_id: uuid.UUID,
+    request: Request,
+    background: BackgroundTasks,
+    ctx: WorkspaceContext = Depends(require_roles(CONTRIBUTE_ROLES)),
+    db: Session = Depends(get_db),
+):
+    """Demande le parsing (Docling) de la version courante ; le Digest est reconstruit ensuite."""
+    try:
+        parse = parsing.request_parse(
+            db, ctx.workspace_id, document_id, request.app.state.document_parser, ctx.actor
+        )
+    except service.NotFound as exc:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "document introuvable") from exc
+    db.commit()
+    background.add_task(run_parse_and_digest, request.app, parse.id)
+    return _parse_out(parse)
+
+
+@router.get("/documents/{document_id}/parse", response_model=ParseOut)
+def get_parse(
+    document_id: uuid.UUID, ctx: WorkspaceContext = Depends(require_workspace), db: Session = Depends(get_db)
+):
+    try:
+        return _parse_out(parsing.latest_parse(db, ctx.workspace_id, document_id))
+    except service.NotFound as exc:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "aucun parsing pour ce document") from exc
+
+
+@router.get("/documents/{document_id}/content")
+def document_content(
+    document_id: uuid.UUID,
+    request: Request,
+    version_id: uuid.UUID | None = Query(default=None),
+    ctx: WorkspaceContext = Depends(require_workspace),
+    db: Session = Depends(get_db),
+):
+    """Fichier d'origine (version courante, ou ``version_id``) pour la consultation dans DocuLens."""
+    try:
+        doc = service.get_document(db, ctx.workspace_id, document_id)
+        vid = version_id or doc.current_version_id
+        if vid is None:
+            raise service.NotFound("version")
+        version = service.get_version(db, ctx.workspace_id, vid)
+        if version.document_id != doc.id:
+            raise service.NotFound("version")
+    except service.NotFound as exc:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, f"{exc} introuvable") from exc
+    blob = db.get(Blob, version.blob_id)
+    stream = request.app.state.storage.open(blob.object_key)
+
+    def chunks():
+        with contextlib.closing(stream):
+            while data := stream.read(64 * 1024):
+                yield data
+
+    ascii_name = "".join(
+        c for c in version.filename.encode("ascii", "ignore").decode() if c.isprintable() and c != '"'
+    )
+    disposition = (
+        f"inline; filename=\"{ascii_name or 'document'}\"; filename*=UTF-8''{quote(version.filename)}"
+    )
+    return StreamingResponse(
+        chunks(),
+        media_type=blob.mime or "application/octet-stream",
+        headers={"Content-Disposition": disposition, "X-Content-Type-Options": "nosniff"},
+    )
+
+
+@router.get("/documents/{document_id}/normalized", response_model=NormalizedDocument)
+def normalized_document(
+    document_id: uuid.UUID, ctx: WorkspaceContext = Depends(require_workspace), db: Session = Depends(get_db)
+):
+    """Contenu structuré (blocs, tableaux, ``SourceRef``) du dernier parsing réussi de la version courante."""
+    try:
+        doc = service.get_document(db, ctx.workspace_id, document_id)
+    except service.NotFound as exc:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "document introuvable") from exc
+    normalized = parsing.current_normalized(db, doc)
+    if normalized is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "document pas encore parsé")
+    return normalized
+
+
+@router.get("/search", response_model=list[SearchHit])
+def search(
+    q: str = Query(min_length=1, max_length=200),
+    limit: int = Query(default=20, ge=1, le=MAX_LIMIT),
+    mission_id: uuid.UUID | None = Query(default=None),
+    ctx: WorkspaceContext = Depends(require_workspace),
+    db: Session = Depends(get_db),
+):
+    """Recherche plein texte dans les documents parsés du workspace ; chaque résultat garde sa provenance."""
+    return search_documents(db, ctx.workspace_id, q, limit=limit, mission_id=mission_id)

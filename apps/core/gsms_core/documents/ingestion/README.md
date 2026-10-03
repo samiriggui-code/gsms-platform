@@ -1,34 +1,30 @@
-# Pipeline d'ingestion documentaire — extraction DocuLens (à venir, phase P2)
+# Pipeline documentaire du Core — état (2026-10-03)
 
-Ce dossier accueillera le pipeline d'ingestion du Core, **extrait de DocuLens** :
-
-- Source : `apps/doculens` (subtree de `github.com/CodeWithMoin/doculens-ai`, commit `218caef`),
-  licence **MIT**, © 2025 Moinuddin Shaik. Voir `apps/doculens/GSMS-PROVENANCE.md`.
-- Méthode : **copie attribuée** (§18 du document V2). Chaque fichier repris garde l'en-tête MIT
-  d'origine suivi de la mention `adapted from CodeWithMoin/doculens-ai@218caef`.
-- **Aucun code DocuLens n'est copié à ce stade** : ce dossier ne contient que ce plan.
-
-## Composants prévus
-
-| Composant DocuLens | Cible Core | Adaptation |
-|---|---|---|
-| `doc_utils/extraction.py` (Docling : layout, tables, pages) | `ingestion/extraction.py` | lecture depuis le stockage objet (`documents/storage.py`), pas depuis le disque |
-| `doc_utils/chunking.py` (Docling `HybridChunker`, ~800 tokens) | `ingestion/chunking.py` | conserver page de début/fin et titre de section pour les citations |
-| `services/llm_factory.py` + `config/llm_config.py` (Instructor multi-fournisseurs) | `gsms_core/llm/factory.py` | fournisseur abstrait, option d'hébergement souverain, `anthropic` à jour |
-| `services/prompt_loader.py` (+ `prompts/*.j2`) | `gsms_core/llm/prompts.py` | chargeur repris ; prompts **réécrits en français**, par type de pièce |
-| `services/vector_store.py` + embeddings | `ingestion/vector_store.py` | table `document_chunk` via Alembic, **pgvector** + `tsvector('french')`, filtre `workspace_id` obligatoire, fusion RRF |
-| `core/*` (Node, LLMNode, Pipeline) | `ingestion/pipeline.py` | motif Node à sortie Pydantic, déclenché par `document.uploaded` |
-| `evaluation/retrieval.py` (Recall@K, MRR) | `tests/eval/` | non-régression RAG sur un corpus GSMS |
-
-## Flux cible (§15)
+> Ce dossier contenait le plan d'extraction du moteur DocuLens. Décision du 2026-10-03 :
+> **Docling est le moteur documentaire universel**, intégré par un *adapter*, et le **Digest
+> appartient au Core**. Le parsing ne s'extrait donc plus de DocuLens (qui reste l'interface
+> documentaire : dépôt, consultation, recherche, navigation, provenance).
 
 ```
-document.uploaded ─► worker « ingest » (lit le blob par object_key)
-  ─► Docling ─► HybridChunker ─► embeddings ─► classification (taxonomie FR)
-  ─► extraction par schéma du type de pièce ─► document.ingested / document.classified
-  ─► recalcul de complétude du dossier (documents/dossier.py)
+DocuLens / apps/web  ──►  GSMS Core  ──►  DoclingAdapter (DocumentParser)  ──►  Docling
+                              │                       │
+                              │                 NormalizedDocument (blocs, tableaux, SourceRef)
+                              ▼                       │
+                     Digest (gsms_core/digest)  ◄─────┘
+                              │
+                       WorkspaceDigest (multi-document, provenance, conflits, manquants)
+                              │
+                       EventBus → orchestration (Tender / GRACE / QAtrial / Eve : phase suivante)
 ```
 
-Les colonnes `embedding vector(...)` et `tsv tsvector` sont spécifiques à PostgreSQL : elles seront
-ajoutées par une migration Alembic dédiée, protégée par un test de dialecte
-(`op.get_bind().dialect.name == "postgresql"`), afin que la suite de tests reste exécutable sur SQLite.
+| Élément | Emplacement |
+|---|---|
+| Contrat de sortie (`NormalizedDocument`, `SourceRef`) | `documents/parsers/schemas.py` |
+| Interface moteur (`DocumentParser`, `ParseError`) | `documents/parsers/base.py` |
+| Seul point de contact avec Docling | `documents/parsers/docling_adapter.py` |
+| Cycle de parsing + événements | `documents/parsing.py` (table `document_parse`) |
+| Routes lues par DocuLens (liste + `parse_status`, `content`, `normalized`, `search`) | `documents/router.py`, `documents/search.py` |
+| Digest (classification, exigences, obligations, échéances, livrables, risques, conflits, manquants) | `digest/` (table `digest_workspace_digest`) |
+
+Ce qui reste utile de DocuLens pour plus tard (chunking hybride, embeddings, recherche citée,
+`evaluation/retrieval.py`) est listé dans `docs/HANDOFF-CURSOR.md` (DEFERRED).

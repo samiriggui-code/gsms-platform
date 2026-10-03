@@ -4,7 +4,8 @@
  * Tous les chemins sont relatifs à `${CORE_API_URL}/api/v1`.
  * Authentification : `Authorization: Bearer <JWT Core>` (cookie httpOnly gsms_session).
  * En-têtes de contexte posés par lib/core/client.ts : X-GSMS-Workspace-Id,
- * X-GSMS-Mission-Id, X-GSMS-Correlation-Id (+ Idempotency-Key pour l'intake).
+ * X-GSMS-Mission-Id / X-GSMS-Engagement-Id, X-GSMS-Client-Id, X-GSMS-Site-Id,
+ * X-GSMS-Tenant-Id, X-GSMS-Correlation-Id (+ Idempotency-Key pour l'intake).
  *
  * Réponses liste : tableau brut ou `{ items: T[], total?: number, next_cursor?: string }`.
  * Erreurs : format FastAPI `{ detail: string | [{ msg }] }`.
@@ -43,8 +44,26 @@ export const ENDPOINTS = {
     list: () => "/workspaces",
     /** GET → fiche site */
     detail: (workspaceId: string) => ws(workspaceId),
+    /** GET → contexte métier résolu (ContextResolver) */
+    context: (workspaceId: string) => `${ws(workspaceId)}/context`,
     /** GET → {attention[], deadlines[], missions[], activity[]} */
     dashboard: (workspaceId: string) => `${ws(workspaceId)}/dashboard`,
+    /** GET/POST → bindings apps spécialisées */
+    applications: (workspaceId: string) => `${ws(workspaceId)}/applications`,
+  },
+
+  context: {
+    applications: () => "/context/applications",
+    engagementTypes: () => "/context/engagement-types",
+    byWorkspace: (workspaceId: string) => `/context/by-workspace/${enc(workspaceId)}`,
+    byEngagement: (engagementId: string) => `/context/by-engagement/${enc(engagementId)}`,
+    bySite: (siteId: string) => `/context/by-site/${enc(siteId)}`,
+    byClient: (clientId: string) => `/context/by-client/${enc(clientId)}`,
+  },
+
+  /** POST {client_id, site_id, engagement_type, title, ...} → engagement + workspace déterministe */
+  engagements: {
+    create: () => "/engagements",
   },
 
   /** GET → Client[] (organisations clientes, avec nb de sites et contacts) */

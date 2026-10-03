@@ -20,6 +20,9 @@ import type {
   UploadResponse,
   UserProfile,
 } from './types';
+import * as core from './core';
+
+export { isCoreMode } from './core';
 
 type QueryParams = Record<string, string | number | boolean | undefined>;
 
@@ -50,10 +53,12 @@ export function setApiConfig(update: Partial<ApiConfig>) {
 
 export function setAuthToken(token?: string | null) {
   apiConfig = { ...apiConfig, accessToken: token ?? undefined };
+  core.setCoreToken(token ?? undefined);
 }
 
 export function clearAuthToken() {
   apiConfig = { ...apiConfig, accessToken: undefined };
+  core.setCoreToken(undefined);
 }
 
 function resolveUrl(path: string, params?: QueryParams): string {
@@ -106,6 +111,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
 }
 
 export async function fetchDocuments(limit = 20): Promise<DocumentEntry[]> {
+  if (core.isCoreMode) return core.coreDocuments(limit);
   const response = await fetch(resolveUrl('/events/documents', { limit }), {
     headers: buildHeaders(),
   });
@@ -113,6 +119,7 @@ export async function fetchDocuments(limit = 20): Promise<DocumentEntry[]> {
 }
 
 export async function fetchEvents(limit = 20): Promise<EventEntry[]> {
+  if (core.isCoreMode) return core.coreEvents(limit);
   const response = await fetch(resolveUrl('/events', { limit }), {
     headers: buildHeaders(),
   });
@@ -120,6 +127,7 @@ export async function fetchEvents(limit = 20): Promise<EventEntry[]> {
 }
 
 export async function archiveDocument(documentId: string, reason?: string): Promise<DocumentLifecycleResponse> {
+  if (core.isCoreMode) core.notInCoreMode('Archivage');
   const response = await fetch(resolveUrl(`/events/documents/${documentId}/archive`), {
     method: 'POST',
     headers: buildHeaders(undefined, true),
@@ -132,6 +140,7 @@ export async function deleteDocument(
   documentId: string,
   options?: { reason?: string; purgeVectors?: boolean },
 ): Promise<DocumentLifecycleResponse> {
+  if (core.isCoreMode) core.notInCoreMode('Suppression');
   const response = await fetch(
     resolveUrl(`/events/documents/${documentId}`, {
       reason: options?.reason,
@@ -146,6 +155,7 @@ export async function deleteDocument(
 }
 
 export async function restoreDocument(documentId: string, reason?: string): Promise<DocumentLifecycleResponse> {
+  if (core.isCoreMode) core.notInCoreMode('Restauration');
   const response = await fetch(resolveUrl(`/events/documents/${documentId}/restore`), {
     method: 'POST',
     headers: buildHeaders(undefined, true),
@@ -158,6 +168,7 @@ export async function fetchDocumentChunks(
   documentId: string,
   limit: number,
 ): Promise<ChunkRecord[]> {
+  if (core.isCoreMode) return core.coreChunks(documentId, limit);
   const response = await fetch(
     resolveUrl(`/events/documents/${documentId}/chunks`, { limit }),
     {
@@ -168,6 +179,7 @@ export async function fetchDocumentChunks(
 }
 
 export async function fetchQaHistory(limit = 20): Promise<QAHistoryEntry[]> {
+  if (core.isCoreMode) return [];
   const response = await fetch(resolveUrl('/events/qa/history', { limit }), {
     headers: buildHeaders(),
   });
@@ -175,6 +187,7 @@ export async function fetchQaHistory(limit = 20): Promise<QAHistoryEntry[]> {
 }
 
 export async function fetchSearchHistory(limit = 20): Promise<SearchHistoryEntry[]> {
+  if (core.isCoreMode) return [];
   const response = await fetch(resolveUrl('/events/search/history', { limit }), {
     headers: buildHeaders(),
   });
@@ -182,6 +195,7 @@ export async function fetchSearchHistory(limit = 20): Promise<SearchHistoryEntry
 }
 
 export async function fetchRuntimeConfig(): Promise<RuntimeConfig> {
+  if (core.isCoreMode) return core.coreRuntimeConfig();
   const response = await fetch(resolveUrl('/events/config'), {
     headers: buildHeaders(),
   });
@@ -189,6 +203,7 @@ export async function fetchRuntimeConfig(): Promise<RuntimeConfig> {
 }
 
 export async function fetchDashboardInsights(): Promise<DashboardInsights> {
+  if (core.isCoreMode) return core.coreDashboard();
   const response = await fetch(resolveUrl('/events/insights/dashboard'), {
     headers: buildHeaders(),
   });
@@ -196,6 +211,7 @@ export async function fetchDashboardInsights(): Promise<DashboardInsights> {
 }
 
 export async function postEvent(payload: Record<string, unknown>): Promise<EventResponse> {
+  if (core.isCoreMode) core.notInCoreMode('Résumé et questions-réponses IA');
   const response = await fetch(resolveUrl('/events'), {
     method: 'POST',
     headers: buildHeaders(undefined, true),
@@ -209,6 +225,7 @@ export async function uploadDocument(options: {
   docType?: string;
   metadata?: Record<string, unknown>;
 }): Promise<UploadResponse> {
+  if (core.isCoreMode) return core.coreUpload(options.file, options.docType);
   const form = new FormData();
   form.append('file', options.file);
   if (options.docType) {
@@ -227,6 +244,7 @@ export async function uploadDocument(options: {
 }
 
 export async function login(credentials: { email: string; password: string }): Promise<AuthResponse> {
+  if (core.isCoreMode) return core.coreLogin(credentials);
   const response = await fetch(resolveUrl('/auth/login'), {
     method: 'POST',
     headers: buildHeaders(undefined, true),
@@ -236,6 +254,7 @@ export async function login(credentials: { email: string; password: string }): P
 }
 
 export async function fetchProfile(): Promise<UserProfile> {
+  if (core.isCoreMode) return core.coreProfile();
   const response = await fetch(resolveUrl('/auth/me'), {
     headers: buildHeaders(),
   });
@@ -246,6 +265,7 @@ export async function classifyDocument(
   documentId: string,
   payload: DocumentClassificationRequest = {},
 ): Promise<DocumentClassificationResponse> {
+  if (core.isCoreMode) core.notInCoreMode('Classification IA');
   const response = await fetch(resolveUrl(`/events/documents/${documentId}/classify`), {
     method: 'POST',
     headers: buildHeaders(undefined, true),
@@ -255,6 +275,7 @@ export async function classifyDocument(
 }
 
 export async function fetchLabels(): Promise<LabelsResponse> {
+  if (core.isCoreMode) return { tree: [], candidate_labels: [] };
   const response = await fetch(resolveUrl('/events/labels'), {
     headers: buildHeaders(),
   });
@@ -262,6 +283,7 @@ export async function fetchLabels(): Promise<LabelsResponse> {
 }
 
 export async function createLabel(payload: LabelRequestPayload): Promise<LabelResponse> {
+  if (core.isCoreMode) core.notInCoreMode('Libellés');
   const response = await fetch(resolveUrl('/events/labels'), {
     method: 'POST',
     headers: buildHeaders(undefined, true),
@@ -271,6 +293,7 @@ export async function createLabel(payload: LabelRequestPayload): Promise<LabelRe
 }
 
 export async function updateLabel(labelId: string, payload: Partial<LabelRequestPayload>): Promise<LabelResponse> {
+  if (core.isCoreMode) core.notInCoreMode('Libellés');
   const response = await fetch(resolveUrl(`/events/labels/${labelId}`), {
     method: 'PATCH',
     headers: buildHeaders(undefined, true),
@@ -280,6 +303,7 @@ export async function updateLabel(labelId: string, payload: Partial<LabelRequest
 }
 
 export async function deleteLabel(labelId: string, force = false): Promise<void> {
+  if (core.isCoreMode) core.notInCoreMode('Libellés');
   const response = await fetch(resolveUrl(`/events/labels/${labelId}`, { force }), {
     method: 'DELETE',
     headers: buildHeaders(),
@@ -288,6 +312,7 @@ export async function deleteLabel(labelId: string, force = false): Promise<void>
 }
 
 export async function fetchClassificationHistory(documentId: string): Promise<ClassificationHistoryEntry[]> {
+  if (core.isCoreMode) return [];
   const response = await fetch(resolveUrl(`/events/documents/${documentId}/classification-history`), {
     headers: buildHeaders(),
   });
@@ -298,10 +323,27 @@ export async function overrideClassification(
   documentId: string,
   payload: ClassificationOverrideRequest,
 ): Promise<ClassificationHistoryEntry> {
+  if (core.isCoreMode) core.notInCoreMode('Classification IA');
   const response = await fetch(resolveUrl(`/events/documents/${documentId}/classification-history`), {
     method: 'POST',
     headers: buildHeaders(undefined, true),
     body: JSON.stringify(payload),
   });
   return handleResponse<ClassificationHistoryEntry>(response);
+}
+
+/** Recherche du ⌘K : plein texte avec provenance dans le Core, filtre local en mode autonome. */
+export async function searchDocumentEntries(query: string, limit = 6): Promise<DocumentEntry[]> {
+  if (core.isCoreMode) return core.coreSearchEntries(query, limit);
+  const needle = query.trim().toLowerCase();
+  const documents = await fetchDocuments(150);
+  return documents
+    .filter((document) =>
+      [document.filename, document.doc_type, document.summary?.summary, document.document_id]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase()
+        .includes(needle),
+    )
+    .slice(0, limit);
 }

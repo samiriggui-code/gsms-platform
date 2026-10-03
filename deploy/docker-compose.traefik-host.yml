@@ -12,3 +12,14 @@ services:
       traefik.http.routers.gsms-platform.tls.certresolver: ${TRAEFIK_CERTRESOLVER}
       traefik.http.routers.gsms-platform.service: gsms-platform
       traefik.http.services.gsms-platform.loadbalancer.server.port: "3000"
+
+  doculens:
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: ${TRAEFIK_NETWORK}
+      traefik.http.routers.gsms-platform-doculens.rule: Host(`doculens.${DOMAIN}`)
+      traefik.http.routers.gsms-platform-doculens.entrypoints: ${TRAEFIK_ENTRYPOINT}
+      traefik.http.routers.gsms-platform-doculens.tls: "true"
+      traefik.http.routers.gsms-platform-doculens.tls.certresolver: ${TRAEFIK_CERTRESOLVER}
+      traefik.http.routers.gsms-platform-doculens.service: gsms-platform-doculens
+      traefik.http.services.gsms-platform-doculens.loadbalancer.server.port: "80"

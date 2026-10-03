@@ -10,7 +10,14 @@ WORKDIR /app
 
 COPY pyproject.toml README.md ./
 COPY gsms_core ./gsms_core
-RUN pip install .
+# Docling (moteur documentaire) avec PyTorch CPU : pas de pilotes CUDA, image bien plus légère.
+RUN pip install --extra-index-url https://download.pytorch.org/whl/cpu ".[docling]"
+
+# Modèles Docling (mise en page, tableaux, OCR) téléchargés au build : aucun téléchargement pendant
+# l'analyse d'un document. Si le téléchargement échoue (réseau), le build continue et Docling les
+# récupérera au premier PDF ; l'entrypoint n'utilise ce dossier que s'il est rempli.
+RUN docling-tools models download -o /opt/docling-models \
+    || (echo "AVERTISSEMENT : modèles Docling non téléchargés au build" && rm -rf /opt/docling-models)
 
 COPY alembic.ini ./
 COPY migrations ./migrations

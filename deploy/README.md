@@ -1,19 +1,25 @@
 # Déployer GSMS Platform sur le VPS
 
-Une commande installe tout en Docker : PostgreSQL, Core (FastAPI) et Web (Next.js). L'application se branche
-**sur le Traefik déjà en place** par étiquettes Docker. **Pas de Caddy** ; rien d'existant n'est arrêté ni
-modifié. Seul le web est publié ; le Core et la base restent sur le réseau interne du projet.
+Une commande installe tout en Docker : PostgreSQL, Core (FastAPI, avec Docling), Web (Next.js) et DocuLens
+(interface documentaire). L'application se branche **sur le Traefik déjà en place** par étiquettes Docker.
+**Pas de Caddy** ; rien d'existant n'est arrêté ni modifié. Seuls le web et DocuLens sont publiés ; le Core et
+la base restent sur le réseau interne du projet.
 
 Méthode reprise de `gsms-qualiopi/deploy` (même principe : `deploy.sh` idempotent, `.env` généré, `COMPOSE_FILE`).
 
 ```
-Internet ──443──> Traefik (existant) ──> web (Next.js :3000) ──> core (FastAPI :8000) ──> db (PostgreSQL 16 + pgvector)
+Internet ──443──> Traefik (existant) ─┬─> gsms-security.com           web (Next.js :3000) ──┐
+                                      └─> doculens.gsms-security.com  doculens (nginx :80) ─┴─> core (FastAPI :8000) ──> db
 ```
+
+DocuLens (`apps/doculens`, image `docker/Dockerfile.gsms`) ne sert que son interface ; nginx relaie
+`/api/v1/auth/*` et `/api/v1/workspaces/*` au Core sur le même domaine (pas de CORS). Mêmes comptes que la
+plateforme. Le dépôt d'un document lance l'analyse Docling puis le Digest dans le Core.
 
 ## Installation (VPS, root)
 
 Prérequis :
-- **DNS :** enregistrement **A** `gsms-security.com` → IP du VPS (`187.77.166.124`).
+- **DNS :** enregistrements **A** `gsms-security.com` et `doculens.gsms-security.com` → IP du VPS (`187.77.166.124`).
 - **Traefik :** en marche, avec une entrée `:443` et un résolveur Let's Encrypt.
 
 ```bash
@@ -33,7 +39,7 @@ docker compose exec core python -m gsms_core.cli create-admin vous@gsms-security
 
 ## Ce que fait `deploy.sh`
 
-1. **Vérifie le DNS** : le domaine doit pointer vers ce serveur. Passer outre avec `SKIP_DNS_CHECK=1`.
+1. **Vérifie le DNS** : le domaine doit pointer vers ce serveur. Passer outre avec `SKIP_DNS_CHECK=1`. Pour `doculens.<domaine>`, simple avertissement.
 2. **Crée `.env`** (droits 600, jamais committé) au premier lancement, avec des secrets aléatoires :
    - `POSTGRES_PASSWORD` ;
    - `GSMS_JWT_SECRET` ;
@@ -43,8 +49,11 @@ docker compose exec core python -m gsms_core.cli create-admin vous@gsms-security
    - l'**entrée :443** (`websecure`…), l'**entrée :80** pour la redirection HTTP → HTTPS si elle existe, et le **résolveur de certificats**.
 4. **Contrôle les conflits** :
    - un autre conteneur déclarant déjà le routeur `gsms-platform` arrête le script ;
-   - des ports locaux déjà pris aussi : `127.0.0.1:8100` (Core) et `127.0.0.1:3100` (Web), distincts de qualiopi (8000 / 3000).
+   - un autre conteneur servant déjà `doculens.<domaine>` (ancienne stack DocuLens) aussi ;
+   - des ports locaux déjà pris aussi : `127.0.0.1:8100` (Core), `127.0.0.1:3100` (Web) et `127.0.0.1:3110` (DocuLens), distincts de qualiopi (8000 / 3000).
 5. **`docker compose up -d --build`**. Les migrations Alembic passent au démarrage du Core.
+   Le premier build du Core est long (PyTorch CPU + modèles Docling, environ 2 Go d'image) ; les suivants
+   réutilisent le cache Docker.
 
 Si une valeur Traefik ne peut pas être lue, le script s'arrête et indique quoi préciser :
 
@@ -56,7 +65,7 @@ TRAEFIK_ENTRYPOINT=websecure TRAEFIK_CERTRESOLVER=letsencrypt ./deploy/deploy.sh
 ## Précautions Traefik
 
 - **Noms préfixés `gsms-platform`** (routeur, service, middleware de redirection) : aucune collision avec qualiopi ni les autres sites.
-- **Seul `web` porte des étiquettes `traefik.*`.** Le Core et la base ne sont jamais routés.
+- **Seuls `web` et `doculens` portent des étiquettes `traefik.*`.** Le Core et la base ne sont jamais routés.
 - **`traefik.enable=true` est explicite**, donc ça fonctionne avec `exposedByDefault=false`.
 - **Le certificat ne couvre que `gsms-security.com`.** Pour `www.gsms-security.com`, créer d'abord son DNS, puis ajouter `|| Host(\`www.${DOMAIN}\`)` à la règle du routeur. Sinon Let's Encrypt échoue pour tout le certificat.
 - Le nom de projet est fixé (`name: gsms-platform` dans `docker-compose.yml`) : le réseau s'appelle toujours `gsms-platform_default`, quel que soit le dossier du clone.
@@ -77,7 +86,7 @@ Les données (base, documents) sont dans les volumes Docker `gsms-platform_gsms-
 ```bash
 cd /opt/gsms-platform                      # .env indique à Docker les fichiers à utiliser (COMPOSE_FILE)
 docker compose ps                          # état
-docker compose logs -f core web            # journaux
+docker compose logs -f core web doculens   # journaux
 docker compose exec db pg_dump -U gsms gsms_core | gzip > sauvegarde-$(date +%F).sql.gz
 docker compose exec core python -m gsms_core.cli create-admin autre@gsms-security.com "Nom"
 ```

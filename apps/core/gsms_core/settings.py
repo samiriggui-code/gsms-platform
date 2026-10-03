@@ -31,6 +31,10 @@ class Settings(BaseSettings):
     s3_region: str = "us-east-1"
     max_upload_mb: int = 100
 
+    # Origines navigateur autorisées à appeler l'API (ex. DocuLens : https://doculens.gsms-security.com).
+    # Vide = aucune (les apps passent par le même domaine ou côté serveur).
+    cors_origins: list[str] = Field(default_factory=list)
+
     # Secrets HMAC des webhooks entrants, indexés par source (crm, grace, qatrial...).
     webhook_secrets: dict[str, str] = Field(default_factory=dict)
 

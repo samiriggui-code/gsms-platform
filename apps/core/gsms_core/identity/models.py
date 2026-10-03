@@ -43,6 +43,8 @@ class Role(enum.StrEnum):
 
 # Rôles autorisés à créer/modifier des missions, actions, etc.
 MANAGE_ROLES = frozenset({Role.OWNER, Role.ADMIN, Role.MANAGER, Role.CONSULTANT})
+# Rôles client capables d'administrer leur org / attacher des apps.
+CLIENT_ADMIN_ROLES = frozenset({Role.CLIENT_ADMIN, Role.OWNER, Role.ADMIN})
 # Rôles autorisés à écrire des contenus (dépôt de pièces, preuves). viewer est en lecture seule.
 CONTRIBUTE_ROLES = frozenset(set(Role) - {Role.VIEWER})
 # Priorité pour choisir le rôle effectif quand plusieurs memberships s'appliquent.
@@ -55,6 +57,8 @@ class ServiceApp(enum.StrEnum):
     QATRIAL = "qatrial"
     TENDERAI = "tenderai"
     EVE = "eve"
+    DOCULENS = "doculens"
+    INTAKE = "intake"
 
 
 class Organization(UUIDPk, Timestamped, Base):

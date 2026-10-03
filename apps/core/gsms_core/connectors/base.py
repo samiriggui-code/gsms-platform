@@ -19,6 +19,10 @@ class CallContext:
     workspace_id: uuid.UUID | str
     actor: str
     mission_id: uuid.UUID | str | None = None
+    client_id: uuid.UUID | str | None = None
+    site_id: uuid.UUID | str | None = None
+    engagement_id: uuid.UUID | str | None = None
+    tenant_id: uuid.UUID | str | None = None
     correlation_id: str = field(default_factory=lambda: uuid.uuid4().hex)
 
     def headers(self) -> dict[str, str]:
@@ -29,6 +33,15 @@ class CallContext:
         }
         if self.mission_id:
             h["X-GSMS-Mission-Id"] = str(self.mission_id)
+        if self.engagement_id:
+            h["X-GSMS-Engagement-Id"] = str(self.engagement_id)
+            h.setdefault("X-GSMS-Mission-Id", str(self.engagement_id))
+        if self.client_id:
+            h["X-GSMS-Client-Id"] = str(self.client_id)
+        if self.site_id:
+            h["X-GSMS-Site-Id"] = str(self.site_id)
+        if self.tenant_id:
+            h["X-GSMS-Tenant-Id"] = str(self.tenant_id)
         return h
 
 

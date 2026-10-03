@@ -19,7 +19,7 @@ import {
   X,
 } from 'lucide-react';
 
-import { fetchDocuments } from '../../api/client';
+import { isCoreMode, searchDocumentEntries } from '../../api/client';
 import type { DocumentEntry } from '../../api/types';
 import { cn } from '../../lib/utils';
 import { useUIStore } from '../../stores/uiStore';
@@ -38,12 +38,13 @@ interface AppShellProps {
   onLaunchUpload?: () => void;
 }
 
+// Branché sur le GSMS Core, les questions-réponses IA ne sont pas encore servies : l'entrée est masquée.
 const PRIMARY_NAV = [
   { to: '/app', label: 'Overview', icon: LayoutDashboard, end: true },
-  { to: '/app/qa', label: 'Ask DocuLens', icon: MessageSquareText },
+  { to: '/app/qa', label: 'Ask DocuLens', icon: MessageSquareText, standaloneOnly: true },
   { to: '/app/pipeline', label: 'Documents', icon: FileStack },
   { to: '/app/work-queues', label: 'Work queues', icon: FolderKanban },
-];
+].filter((item) => !(isCoreMode && item.standaloneOnly));
 
 const SECONDARY_NAV = [
   { to: '/app/pipeline', label: 'Activity', icon: Activity },
@@ -94,11 +95,10 @@ export function AppShell({ headerAction, children, onLaunchUpload }: AppShellPro
     let cancelled = false;
     setIsSearching(true);
     const timer = window.setTimeout(() => {
-      fetchDocuments(150)
-        .then((documents) => {
+      searchDocumentEntries(query, 6)
+        .then((matches) => {
           if (cancelled) return;
-          const matches = documents.filter((document) => [document.filename, document.doc_type, document.summary?.summary, document.document_id].filter(Boolean).join(' ').toLowerCase().includes(query));
-          setSearchResults(matches.slice(0, 6));
+          setSearchResults(matches);
           setSearchError(matches.length ? null : `No documents match “${searchValue.trim()}”`);
         })
         .catch((error: unknown) => !cancelled && setSearchError(error instanceof Error ? error.message : 'Search is unavailable.'))
@@ -200,7 +200,7 @@ export function AppShell({ headerAction, children, onLaunchUpload }: AppShellPro
               </form>
             </div>
             <div className="max-h-[360px] overflow-y-auto p-2">
-              {!searchValue.trim() ? <CommandEmpty onNavigate={openDestination} /> : isSearching ? <div className="flex items-center gap-2 px-3 py-8 text-sm text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> Searching your workspace…</div> : searchResults.length ? searchResults.map((document) => <button key={document.document_id} onClick={() => selectDocument(document.document_id)} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition hover:bg-surface-subtle"><span className="grid h-8 w-8 place-items-center rounded-lg border border-border bg-background"><FileStack className="h-3.5 w-3.5" /></span><span className="min-w-0 flex-1"><span className="block truncate text-xs font-semibold">{document.filename ?? document.document_id}</span><span className="mt-0.5 block text-[10px] text-muted-foreground">{document.doc_type ?? 'Unclassified'} · {document.status ?? 'Processing'}</span></span><ChevronHint /></button>) : <p className="px-3 py-8 text-center text-sm text-muted-foreground">{searchError}</p>}
+              {!searchValue.trim() ? <CommandEmpty onNavigate={openDestination} /> : isSearching ? <div className="flex items-center gap-2 px-3 py-8 text-sm text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> Searching your workspace…</div> : searchResults.length ? searchResults.map((document) => <button key={document.document_id} onClick={() => selectDocument(document.document_id)} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition hover:bg-surface-subtle"><span className="grid h-8 w-8 place-items-center rounded-lg border border-border bg-background"><FileStack className="h-3.5 w-3.5" /></span><span className="min-w-0 flex-1"><span className="block truncate text-xs font-semibold">{document.filename ?? document.document_id}</span><span className="mt-0.5 block text-[10px] text-muted-foreground">{document.doc_type ?? 'Unclassified'} · {document.status ?? 'Processing'}</span>{isCoreMode && document.summary?.summary ? <span className="mt-1 block truncate text-[11px] text-muted-foreground">{document.summary.summary}</span> : null}</span><ChevronHint /></button>) : <p className="px-3 py-8 text-center text-sm text-muted-foreground">{searchError}</p>}
             </div>
           </div>
         </div>

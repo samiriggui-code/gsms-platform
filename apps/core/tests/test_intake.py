@@ -132,9 +132,7 @@ def test_crm_submit_public_intake_payload_shape():
         return httpx.Response(200, json={"id": "act-1"})
 
     ctx = CallContext(workspace_id="ws-1", actor="intake:a@b.c", correlation_id="c1")
-    with CrmClient(
-        "http://crm.test", public_key="k", transport=httpx.MockTransport(responder)
-    ) as crm:
+    with CrmClient("http://crm.test", public_key="k", transport=httpx.MockTransport(responder)) as crm:
         out = crm.submit_public_intake(
             ctx,
             {

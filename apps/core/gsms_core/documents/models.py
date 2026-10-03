@@ -3,6 +3,7 @@ from __future__ import annotations
 import enum
 import uuid
 from datetime import datetime
+from typing import Any
 
 from sqlalchemy import BigInteger, ForeignKey, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
@@ -82,3 +83,35 @@ class DossierTemplate(UUIDPk, Base):
     mission_type: Mapped[MissionType] = mapped_column(str_enum(MissionType), index=True)
     label: Mapped[str] = mapped_column(String(200))
     required_doc_types: Mapped[list[str]] = mapped_column(default=list)
+
+
+class ParseStatus(enum.StrEnum):
+    PENDING = "PENDING"
+    RUNNING = "RUNNING"
+    PARSED = "PARSED"
+    FAILED = "FAILED"
+
+
+class DocumentParse(UUIDPk, Timestamped, Base):
+    """Une exécution du parseur (Docling via ``DocumentParser``) sur une version figée d'un document.
+
+    ``result`` contient le ``NormalizedDocument`` sérialisé : c'est l'entrée du Digest.
+    """
+
+    __tablename__ = "document_parse"
+
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("identity_workspace.id"), index=True)
+    document_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("document_document.id"), index=True)
+    version_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("document_version.id"), index=True)
+    mission_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("mission_mission.id"))
+    status: Mapped[ParseStatus] = mapped_column(
+        str_enum(ParseStatus), default=ParseStatus.PENDING, index=True
+    )
+    parser: Mapped[str] = mapped_column(String(50))
+    parser_version: Mapped[str | None] = mapped_column(String(50))
+    requested_by: Mapped[str] = mapped_column(String(200))
+    started_at: Mapped[datetime | None] = mapped_column()
+    finished_at: Mapped[datetime | None] = mapped_column()
+    error_code: Mapped[str | None] = mapped_column(String(80))
+    error_message: Mapped[str | None] = mapped_column(String(1000))
+    result: Mapped[dict[str, Any] | None] = mapped_column()

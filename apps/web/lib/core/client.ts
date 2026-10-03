@@ -41,6 +41,12 @@ export type CoreRequest = {
   token?: string | null;
   workspaceId?: string | null;
   missionId?: string | null;
+  /** Contexte métier complet (préféré) — pose tous les headers X-GSMS-*. */
+  gsmsHeaders?: Record<string, string> | null;
+  clientId?: string | null;
+  siteId?: string | null;
+  engagementId?: string | null;
+  tenantId?: string | null;
   idempotencyKey?: string;
   correlationId?: string;
   timeoutMs?: number;
@@ -112,8 +118,21 @@ export async function coreFetch<T>(path: string, req: CoreRequest = {}): Promise
   const headers = new Headers({ Accept: "application/json" });
   headers.set("X-GSMS-Correlation-Id", req.correlationId ?? crypto.randomUUID());
   if (token) headers.set("Authorization", `Bearer ${token}`);
+  // Headers métier : contexte Core résolu en priorité, sinon ids unitaires.
+  if (req.gsmsHeaders) {
+    for (const [key, value] of Object.entries(req.gsmsHeaders)) {
+      if (value) headers.set(key, value);
+    }
+  }
   if (req.workspaceId) headers.set("X-GSMS-Workspace-Id", req.workspaceId);
   if (req.missionId) headers.set("X-GSMS-Mission-Id", req.missionId);
+  if (req.engagementId) {
+    headers.set("X-GSMS-Engagement-Id", req.engagementId);
+    if (!headers.has("X-GSMS-Mission-Id")) headers.set("X-GSMS-Mission-Id", req.engagementId);
+  }
+  if (req.clientId) headers.set("X-GSMS-Client-Id", req.clientId);
+  if (req.siteId) headers.set("X-GSMS-Site-Id", req.siteId);
+  if (req.tenantId) headers.set("X-GSMS-Tenant-Id", req.tenantId);
   if (req.idempotencyKey) headers.set("Idempotency-Key", req.idempotencyKey);
   if (req.body !== undefined) headers.set("Content-Type", "application/json");
 
@@ -167,10 +186,9 @@ export async function coreFetch<T>(path: string, req: CoreRequest = {}): Promise
 export const getMe = cache(async (): Promise<CoreResult<Me>> => coreFetch<Me>(ENDPOINTS.auth.me()));
 
 /**
- * Workspace (site) courant : cookie gsms_ws, sinon workspace par défaut du profil.
- * Si le profil ne peut pas être chargé, `failure` porte l'erreur Core
- * (pour afficher « Core indisponible » plutôt que « choisir un site »).
- * Le Core revérifie toujours le membership.
+ * Workspace (site / engagement) courant : cookie gsms_ws, sinon claim JWT du profil.
+ * Ne retombe JAMAIS sur workspaces[0] — un choix implicite masque le multi-site / multi-prestation.
+ * Si aucun workspace n'est sélectionné, `workspaceId` est null et l'UI doit forcer le switcher.
  */
 export const getWorkspaceContext = cache(
   async (): Promise<{ workspaceId: string | null; failure: CoreFailure | null }> => {
@@ -179,7 +197,7 @@ export const getWorkspaceContext = cache(
     if (fromCookie) return { workspaceId: fromCookie, failure: null };
     const me = await getMe();
     if (!me.ok) return { workspaceId: null, failure: me };
-    return { workspaceId: me.data.workspace_id ?? me.data.workspaces[0]?.id ?? null, failure: null };
+    return { workspaceId: me.data.workspace_id ?? null, failure: null };
   },
 );
 

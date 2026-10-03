@@ -43,14 +43,10 @@ def build_dashboard(db: Session, workspace_id: uuid.UUID, *, limit: int = 8) -> 
     deadlines = _deadlines(db, workspace_id, now, horizon, limit)
     missions = _missions(db, workspace_id, limit)
     activity = _activity(db, workspace_id, limit)
-    return DashboardOut(
-        attention=attention, deadlines=deadlines, missions=missions, activity=activity
-    )
+    return DashboardOut(attention=attention, deadlines=deadlines, missions=missions, activity=activity)
 
 
-def _attention(
-    db: Session, workspace_id: uuid.UUID, now: datetime, limit: int
-) -> list[DashboardItem]:
+def _attention(db: Session, workspace_id: uuid.UUID, now: datetime, limit: int) -> list[DashboardItem]:
     items: list[DashboardItem] = []
 
     actions = db.scalars(

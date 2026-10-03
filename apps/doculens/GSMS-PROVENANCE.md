@@ -27,3 +27,41 @@ Plus de 150 dépôts GitHub s'appellent « DocuLens ». Le bon a été identifi�
 - L'en-tête de licence MIT et la mention de l'auteur doivent rester sur tout code extrait vers d'autres dossiers (Core, UI).
 
 Décisions KEEP / ADAPT / EXTRACT / REMOVE : voir [`docs/architecture/GSMS-PLATFORM-CORE-V2.md`](../../docs/architecture/GSMS-PLATFORM-CORE-V2.md) § 18.
+
+## Adaptations GSMS
+
+### 2026-10-03 — Mode « GSMS Core » (interface documentaire du Core)
+
+Activé au build du frontend par `VITE_GSMS_CORE_URL` (URL publique du Core). Sans cette variable,
+DocuLens fonctionne comme l'upstream, avec son propre backend.
+
+| Variable (frontend) | Rôle |
+|---|---|
+| `VITE_GSMS_CORE_URL` | URL du GSMS Core, par ex. `https://gsms-security.com`. Active le mode Core. |
+| `VITE_GSMS_WORKSPACE_ID` | Optionnel : workspace imposé. Sinon, celui du jeton Core (`workspace_id`). |
+
+Côté Core, autoriser l'origine de DocuLens : `GSMS_CORS_ORIGINS='["https://doculens.gsms-security.com"]'`.
+
+En mode Core, `frontend/src/api/client.ts` délègue à `frontend/src/api/core.ts` :
+
+| Écran DocuLens | Route du Core |
+|---|---|
+| Connexion / profil | `POST /api/v1/auth/login`, `GET /api/v1/auth/me` |
+| Dépôt | `POST …/workspaces/{ws}/documents` puis `POST …/documents/{id}/parse` (Docling, puis Digest) |
+| Liste, statut d'analyse | `GET …/workspaces/{ws}/documents` (`parse_status`) |
+| Consultation des extraits + provenance | `GET …/documents/{id}/normalized` (blocs, lignes de tableau, `SourceRef`) |
+| Fichier d'origine | `GET …/documents/{id}/content` |
+| Recherche ⌘K | `GET …/workspaces/{ws}/search?q=` (plein texte, avec page / section / feuille / cellule) |
+| Activité | `GET …/workspaces/{ws}/events` |
+
+Masqué ou refusé proprement (erreur 501 lisible) tant que le Core ne le sert pas : questions-réponses
+et résumés IA (page « Ask DocuLens » redirigée vers Documents), classification IA, libellés,
+archivage / suppression / restauration. Le backend Python et le worker Celery de DocuLens ne sont
+plus utilisés dans ce mode (non supprimés).
+
+### 2026-10-03 — Image de déploiement GSMS
+
+`docker/Dockerfile.gsms` + `docker/nginx.gsms.conf` : interface construite avec `VITE_GSMS_CORE_URL=/`,
+servie par nginx qui relaie `/api/v1/auth/*` et `/api/v1/workspaces/*` au Core (service `core` du
+`docker-compose.yml` de la racine). Publiée sur `doculens.<domaine>` par `deploy/deploy.sh`.
+Les fichiers `docker/Dockerfile.*` et `docker/nginx.conf` d'origine sont inchangés.

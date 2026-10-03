@@ -5,7 +5,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict
 
-from gsms_core.documents.models import DocumentSource, DocumentStatus
+from gsms_core.documents.models import DocumentSource, DocumentStatus, ParseStatus
 
 
 class DocumentOut(BaseModel):
@@ -20,6 +20,8 @@ class DocumentOut(BaseModel):
     source: DocumentSource
     current_version_id: uuid.UUID | None
     created_at: datetime
+    # Dernier parsing de la version courante (renseigné par la liste ; ``None`` = jamais parsé).
+    parse_status: ParseStatus | None = None
 
 
 class VersionOut(BaseModel):
@@ -47,3 +49,23 @@ class DossierOut(BaseModel):
     required: list[str]
     present: list[str]
     missing: list[str]
+
+
+class ParseOut(BaseModel):
+    """État d'un parsing ; ``summary`` résume le ``NormalizedDocument`` sans renvoyer tout le contenu."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    workspace_id: uuid.UUID
+    document_id: uuid.UUID
+    version_id: uuid.UUID
+    status: ParseStatus
+    parser: str
+    parser_version: str | None
+    error_code: str | None
+    error_message: str | None
+    created_at: datetime
+    started_at: datetime | None
+    finished_at: datetime | None
+    summary: dict[str, int | None] | None = None
