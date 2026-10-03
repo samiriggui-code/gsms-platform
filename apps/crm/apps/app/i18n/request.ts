@@ -1,10 +1,10 @@
 import { cookies } from "next/headers";
 import { getRequestConfig } from "next-intl/server";
 import {
+	type AppLocale,
 	defaultLocale,
 	isAppLocale,
 	LOCALE_COOKIE,
-	type AppLocale,
 } from "./config";
 
 async function loadMessages(locale: AppLocale) {
