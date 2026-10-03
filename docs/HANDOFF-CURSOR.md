@@ -1,5 +1,16 @@
 # Handoff Cursor → Claude
 
+## 2026-10-03 — Cartographie DocuLens (auth / lifecycle / Core HMAC)
+
+Exploration lecture seule de `apps/doculens` + ingest Core. Points utiles pour le chantier serveur :
+
+- **JWT DocuLens** (`get_current_user`) ne protège que `GET /auth/me`. Routes documents/events = `require_api_key` (no-op si `DOCULENS_API_KEY` vide) + showcase write-guard. Pas de scoping user/workspace sur les docs.
+- **Documents** = events JSONB (`document_upload` + `task_context.metadata.document`), pas de table Document. `workspace_id` n’existe que sur `document_labels` (nullable) et n’est jamais passé depuis les endpoints.
+- **Hook notify Core** : après `pipeline.run` dans `app/tasks/tasks.py` (`document_upload` → ingested ; `_auto_classify_from_summary` / `record_classification_result` → classified). Core attend `POST /api/v1/events/ingest/{source}` + `X-GSMS-Signature: sha256=<hmac>` ; taxonomie FR déjà dans `gsms_core/documents/dossier.py`.
+- Doctrine rappelée : ne pas déployer DocuLens tel quel ; extraction vers Core P2 (`documents/ingestion/README.md`).
+
+---
+
 ## 2026-10-02 — Clarification : Core = pont, pas CRM ; sous-domaines `*.gsms-security.com`
 
 **Intention user (reformulée) :**
