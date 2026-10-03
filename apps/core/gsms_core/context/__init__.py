@@ -9,8 +9,8 @@ from gsms_core.context.workspace_manager import WorkspaceManager
 
 __all__ = [
     "APPLICATION_REGISTRY",
-    "ApplicationId",
     "SERVICE_CATALOG",
+    "ApplicationId",
     "ContextResolver",
     "ResolvedContext",
     "WorkspaceManager",

@@ -18,6 +18,7 @@ from gsms_core.context.models import (
     ContactApplicationBinding,
     WorkspaceApplicationBinding,
 )
+from gsms_core.digest.service import latest_digest
 from gsms_core.documents.models import Document
 from gsms_core.events.models import Event
 from gsms_core.identity.models import Organization, Site, Workspace, WorkspaceStatus
@@ -44,6 +45,7 @@ class ResolvedContext:
     documents: list[dict[str, Any]] = field(default_factory=list)
     recent_events: list[dict[str, Any]] = field(default_factory=list)
     permissions: list[str] = field(default_factory=list)
+    digest: dict[str, Any] | None = None
 
     def headers(self) -> dict[str, str]:
         """Headers à propager vers les apps (et le frontend commun)."""
@@ -79,6 +81,7 @@ class ResolvedContext:
             "documents": self.documents,
             "recent_events": self.recent_events,
             "permissions": self.permissions,
+            "digest": self.digest,
             "headers": self.headers(),
         }
 
@@ -166,9 +169,7 @@ class ContextResolver:
             if engagement_type is None:
                 engagement_type = mission.type.value.lower()
 
-        contacts = list(
-            self.session.scalars(select(Contact).where(Contact.organization_id == client.id))
-        )
+        contacts = list(self.session.scalars(select(Contact).where(Contact.organization_id == client.id)))
         bindings = list(
             self.session.scalars(
                 select(WorkspaceApplicationBinding).where(
@@ -235,10 +236,7 @@ class ContextResolver:
 
         events = list(
             self.session.scalars(
-                select(Event)
-                .where(Event.workspace_id == ws.id)
-                .order_by(Event.occurred_at.desc())
-                .limit(20)
+                select(Event).where(Event.workspace_id == ws.id).order_by(Event.occurred_at.desc()).limit(20)
             )
         )
         recent_events = [
@@ -250,6 +248,20 @@ class ContextResolver:
             }
             for e in events
         ]
+
+        digest_record = latest_digest(self.session, ws.id)
+        digest_state = (
+            {
+                "digest_id": str(digest_record.id),
+                "built_at": digest_record.built_at.isoformat() if digest_record.built_at else None,
+                "documents": digest_record.document_count,
+                "conflicts": digest_record.conflict_count,
+                "missing_information": digest_record.missing_count,
+                "counts": digest_record.counts or {},
+            }
+            if digest_record is not None
+            else None
+        )
 
         return ResolvedContext(
             tenant_id=None,  # multi-tenant SaaS pas encore modélisé ; org GSMS ≠ tenant
@@ -268,6 +280,7 @@ class ContextResolver:
             open_tasks=open_tasks,
             documents=documents,
             recent_events=recent_events,
+            digest=digest_state,
             permissions=[
                 "read_client",
                 "read_contacts",

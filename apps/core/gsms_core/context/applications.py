@@ -1,4 +1,11 @@
-"""ApplicationRegistry — capacités des apps spécialisées sous autorité Core."""
+"""ApplicationRegistry — capacités des apps spécialisées sous autorité Core.
+
+Trois natures distinctes :
+- ``business`` : application métier liée à un workspace par binding (DocuLens, Tender, GRACE…) ;
+- ``engine`` : moteur technique sans métier, appelé par le Core via un adapter (Docling) — jamais
+  lié à un workspace, jamais appelé par un frontend ;
+- les capacités propres au Core (``CORE_CAPABILITIES``), dont le Digest.
+"""
 
 from __future__ import annotations
 
@@ -6,8 +13,14 @@ from dataclasses import dataclass
 from enum import StrEnum
 
 
+class ApplicationKind(StrEnum):
+    BUSINESS = "business"
+    ENGINE = "engine"
+
+
 class ApplicationId(StrEnum):
     DOCULENS = "doculens"
+    DOCLING = "docling"
     TENDER = "tender"
     GRACE = "grace"
     QATRIAL = "qatrial"
@@ -21,22 +34,40 @@ class ApplicationSpec:
     label: str
     role: str
     capabilities: tuple[str, ...]
+    kind: ApplicationKind = ApplicationKind.BUSINESS
+
+    @property
+    def bindable(self) -> bool:
+        """Seules les applications métier se lient à un workspace."""
+        return self.kind == ApplicationKind.BUSINESS
 
 
 APPLICATION_REGISTRY: dict[ApplicationId, ApplicationSpec] = {
     ApplicationId.DOCULENS: ApplicationSpec(
         id=ApplicationId.DOCULENS,
         label="DocuLens",
-        role="moteur documentaire",
+        role="interface documentaire (dépôt, consultation, recherche)",
         capabilities=(
-            "document_ingestion",
-            "extraction",
+            "document_upload",
+            "document_view",
+            "document_search",
+            "document_navigation",
+            "document_provenance",
+        ),
+    ),
+    ApplicationId.DOCLING: ApplicationSpec(
+        id=ApplicationId.DOCLING,
+        label="Docling",
+        role="moteur technique de parsing (via DoclingAdapter du Core)",
+        kind=ApplicationKind.ENGINE,
+        capabilities=(
+            "parse_pdf",
+            "parse_docx",
+            "parse_xlsx",
+            "parse_pptx",
             "ocr",
-            "classification",
-            "metadata_extraction",
-            "indexing",
-            "semantic_search",
-            "document_linking",
+            "extract_tables",
+            "extract_layout",
         ),
     ),
     ApplicationId.TENDER: ApplicationSpec(
@@ -113,9 +144,23 @@ APPLICATION_REGISTRY: dict[ApplicationId, ApplicationSpec] = {
     ),
     ApplicationId.INTAKE: ApplicationSpec(
         id=ApplicationId.INTAKE,
-        label="Intake / Digest",
+        label="Intake",
         role="entrée commerciale / brief mission",
         capabilities=("intake", "brief_capture", "lead_routing"),
+    ),
+}
+
+
+# Capacités du Core lui-même (pas une application) : le Digest appartient au Core.
+CORE_CAPABILITIES: dict[str, tuple[str, ...]] = {
+    "core_digest": (
+        "classify_business_document",
+        "extract_requirements",
+        "extract_obligations",
+        "reconcile_documents",
+        "detect_conflicts",
+        "detect_missing_information",
+        "produce_workspace_digest",
     ),
 }
 

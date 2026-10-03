@@ -78,6 +78,7 @@ class ApplicationSpecOut(BaseModel):
     id: str
     label: str
     role: str
+    kind: str = "business"
     capabilities: list[str]
 
 

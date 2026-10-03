@@ -121,6 +121,7 @@ def import_all_models() -> None:
     """Importe tous les modèles pour peupler ``Base.metadata`` (Alembic, create_all)."""
     from gsms_core.audit import models as _audit  # noqa: F401
     from gsms_core.context import models as _context  # noqa: F401
+    from gsms_core.digest import models as _digest  # noqa: F401
     from gsms_core.documents import models as _documents  # noqa: F401
     from gsms_core.events import models as _events  # noqa: F401
     from gsms_core.identity import models as _identity  # noqa: F401

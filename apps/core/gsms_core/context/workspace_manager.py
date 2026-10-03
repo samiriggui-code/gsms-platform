@@ -167,6 +167,8 @@ class WorkspaceManager:
         metadata: dict | None = None,
     ) -> WorkspaceApplicationBinding:
         app = get_application(application_id)
+        if not app.bindable:
+            raise ValueError(f"{app.label} est un moteur technique : il ne se lie pas à un workspace")
         existing = self.session.scalar(
             select(WorkspaceApplicationBinding).where(
                 WorkspaceApplicationBinding.gsms_workspace_id == workspace_id,

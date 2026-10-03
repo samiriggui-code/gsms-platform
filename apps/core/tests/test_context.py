@@ -116,7 +116,7 @@ def test_workspace_manager_rejects_unknown_type(session, demo):
             title="x",
             actor="test",
         )
-        assert False, "expected KeyError"
+        raise AssertionError("expected KeyError")
     except KeyError:
         pass
 

@@ -37,6 +37,7 @@ def list_applications(_: Principal = Depends(get_current_principal)) -> list[App
             id=spec.id.value,
             label=spec.label,
             role=spec.role,
+            kind=spec.kind.value,
             capabilities=list(spec.capabilities),
         )
         for spec in APPLICATION_REGISTRY.values()
@@ -175,7 +176,7 @@ def attach_application(
             metadata=body.metadata,
         )
         db.commit()
-    except KeyError as exc:
+    except (KeyError, ValueError) as exc:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, str(exc)) from exc
     return ApplicationBindingOut(
         id=binding.id,
