@@ -1,5 +1,7 @@
 # Handoff Cursor → Claude
 
+> Pour reprendre en local à deux sessions : [`HANDOFF-REPRISE-LOCALE.md`](./HANDOFF-REPRISE-LOCALE.md).
+
 ## 2026-10-03 — CRM, étape 3 : tout le CRM en français
 
 **Fait**
