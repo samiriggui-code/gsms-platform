@@ -19,7 +19,7 @@ import {
   X,
 } from 'lucide-react';
 
-import { fetchDocuments } from '../../api/client';
+import { isCoreMode, searchDocumentEntries } from '../../api/client';
 import type { DocumentEntry } from '../../api/types';
 import { cn } from '../../lib/utils';
 import { useUIStore } from '../../stores/uiStore';
@@ -38,12 +38,13 @@ interface AppShellProps {
   onLaunchUpload?: () => void;
 }
 
+// Branché sur le GSMS Core, les questions-réponses IA ne sont pas encore servies : l'entrée est masquée.
 const PRIMARY_NAV = [
   { to: '/app', label: 'Overview', icon: LayoutDashboard, end: true },
-  { to: '/app/qa', label: 'Ask DocuLens', icon: MessageSquareText },
+  { to: '/app/qa', label: 'Ask DocuLens', icon: MessageSquareText, standaloneOnly: true },
   { to: '/app/pipeline', label: 'Documents', icon: FileStack },
   { to: '/app/work-queues', label: 'Work queues', icon: FolderKanban },
-];
+].filter((item) => !(isCoreMode && item.standaloneOnly));
 
 const SECONDARY_NAV = [
   { to: '/app/pipeline', label: 'Activity', icon: Activity },
@@ -94,11 +95,10 @@ export function AppShell({ headerAction, children, onLaunchUpload }: AppShellPro
     let cancelled = false;
     setIsSearching(true);
     const timer = window.setTimeout(() => {
-      fetchDocuments(150)
-        .then((documents) => {
+      searchDocumentEntries(query, 6)
+        .then((matches) => {
           if (cancelled) return;
-          const matches = documents.filter((document) => [document.filename, document.doc_type, document.summary?.summary, document.document_id].filter(Boolean).join(' ').toLowerCase().includes(query));
-          setSearchResults(matches.slice(0, 6));
+          setSearchResults(matches);
           setSearchError(matches.length ? null : `No documents match “${searchValue.trim()}”`);
         })
         .catch((error: unknown) => !cancelled && setSearchError(error instanceof Error ? error.message : 'Search is unavailable.'))

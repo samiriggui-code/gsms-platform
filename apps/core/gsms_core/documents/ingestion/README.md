@@ -23,6 +23,7 @@ DocuLens / apps/web  ──►  GSMS Core  ──►  DoclingAdapter (DocumentPa
 | Interface moteur (`DocumentParser`, `ParseError`) | `documents/parsers/base.py` |
 | Seul point de contact avec Docling | `documents/parsers/docling_adapter.py` |
 | Cycle de parsing + événements | `documents/parsing.py` (table `document_parse`) |
+| Routes lues par DocuLens (liste + `parse_status`, `content`, `normalized`, `search`) | `documents/router.py`, `documents/search.py` |
 | Digest (classification, exigences, obligations, échéances, livrables, risques, conflits, manquants) | `digest/` (table `digest_workspace_digest`) |
 
 Ce qui reste utile de DocuLens pour plus tard (chunking hybride, embeddings, recherche citée,

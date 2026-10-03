@@ -1,5 +1,32 @@
 # Handoff Cursor → Claude
 
+## 2026-10-03 — Chantier DocuLens branché sur le Core
+
+Branche `cursor/doculens-core-bridge`, empilée sur la PR #3 (fusionnée). Chaîne visée :
+DocuLens → Core → Docling → Digest.
+
+**Core :**
+- `GET /api/v1/workspaces/{ws}/documents` renvoie `parse_status` (dernier parsing de la version courante).
+- `GET …/documents/{id}/content` : fichier d'origine (version courante ou `?version_id=`), nom de fichier UTF-8 sûr.
+- `GET …/documents/{id}/normalized` : `NormalizedDocument` du dernier parsing réussi (404 tant que non parsé).
+- `GET …/workspaces/{ws}/search?q=` : recherche plein texte déterministe (casse et accents ignorés, tous
+  les termes requis) dans les documents parsés ; chaque résultat porte son `SourceRef`. Module `documents/search.py`.
+- `GSMS_CORS_ORIGINS` : origines navigateur autorisées (vide par défaut).
+- Tests : `tests/test_doculens_bridge.py` (7). Suite Core : 107 verts, ruff propre.
+- Essai réel avec Docling 2.132 (DOCX + XLSX) : parsing, recherche (`BPU!B4`, section « Article 4 »),
+  fichier d'origine identique à l'octet, Digest (1 conflit), CORS.
+
+**DocuLens (`apps/doculens/frontend`) :** mode Core activé par `VITE_GSMS_CORE_URL` ; détail dans
+`apps/doculens/GSMS-PROVENANCE.md` § Adaptations GSMS. Typecheck, lint et build verts.
+
+**DEFERRED / CHANTIER SUIVANT :**
+- Déploiement de DocuLens en mode Core sur `doculens.gsms-security.com` (build avec `VITE_GSMS_CORE_URL`, CORS du Core).
+- Recherche sémantique (chunks + embeddings) et questions-réponses citées servies par le Core, derrière `/search`.
+- Écran de provenance dédié (aller à la page / cellule dans le fichier d'origine).
+- Choix du workspace dans DocuLens (aujourd'hui : celui du jeton ou `VITE_GSMS_WORKSPACE_ID`).
+- Retrait du backend et du worker Celery de DocuLens une fois le mode Core validé.
+- Toujours en attente : MCP, GRACE, QAtrial, Eve.
+
 ## 2026-10-03 — Chantier Core : pipeline documentaire Docling + Digest (suite de la PR #3)
 
 Branche `cursor/gsms-core-context-authority-74cc` (même PR #3). Reprise depuis l'état GitHub : l'« audit document pipeline » et la mise à jour de ce fichier faits par Cursor n'avaient pas été poussés (perdus avec la session).

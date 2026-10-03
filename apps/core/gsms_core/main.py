@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
 from gsms_core import __version__
@@ -43,6 +44,14 @@ def create_app(
     # Moteur de parsing derrière l'interface DocumentParser (Docling par défaut, import paresseux).
     app.state.document_parser = document_parser or DoclingAdapter()
     app.state.workflows = build_engine(settings, bus)
+    if settings.cors_origins:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=settings.cors_origins,
+            allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
+            allow_headers=["Authorization", "Content-Type", "X-GSMS-Workspace-Id"],
+            expose_headers=["Content-Disposition"],
+        )
 
     @app.get("/api/v1/health", tags=["ops"])
     def health(request: Request) -> dict:
