@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Met à jour TOUT sur le VPS : plateforme (Core, portail, DocuLens, messagerie) puis GRACE, QAtrial et le CRM
-# avec la connexion « Se connecter avec GSMS ».
+# Met à jour TOUT sur le VPS : plateforme (Core, portail, DocuLens, messagerie), MCP Appel d'offres, puis
+# GRACE, QAtrial et le CRM avec la connexion « Se connecter avec GSMS ».
 #
 #   cd /opt/gsms-platform && git pull && ./deploy/deploy-all.sh gsms-security.com
 #   ./deploy/deploy-all.sh gsms-security.com --bootstrap   # 1re fois : crée les comptes (mots de passe affichés)
@@ -169,6 +169,62 @@ deploy_app() {
   fi
 }
 
+# ── MCP Appel d'offres ────────────────────────────────────────────────────────────────────────────────────
+# Stack à part (apps/tenderai-mcp-server-max/deploy/vps), branchée sur le réseau interne de la plateforme :
+# le Core le joint sur http://gsms-tenderai-mcp:8090/mcp. Jeton obligatoire, saisi par l'exploitant :
+# MCP_API_KEY dans le .env du MCP = GSMS_TENDERAI_MCP_TOKEN dans le .env de la plateforme (jamais affiché).
+deploy_mcp() {
+  say "MCP Appel d'offres"
+  local source="$REPO/apps/tenderai-mcp-server-max" app_root project backup=""
+  app_root="$source"
+  project="gsms-mcp"
+  if docker inspect gsms-tenderai-mcp >/dev/null 2>&1; then
+    local files
+    files="$(label gsms-tenderai-mcp com.docker.compose.project.config_files)"
+    project="$(label gsms-tenderai-mcp com.docker.compose.project)"
+    [[ -z "$project" ]] && project="gsms-mcp"
+    if [[ -n "$files" ]]; then
+      app_root="$(cd "$(dirname "${files%%,*}")/../.." && pwd)"
+    fi
+  fi
+  echo "Code du MCP : $app_root"
+  if [[ "$app_root" != "$source" ]]; then
+    command -v rsync >/dev/null || { warn "MCP AO : rsync absent (apt install rsync), MCP ignoré."; return 0; }
+    mkdir -p "$BACKUPS"
+    backup="$BACKUPS/tenderai-mcp-$STAMP.tgz"
+    tar -C "$app_root" --exclude=.venv --exclude=db --exclude=data -czf "$backup" . 2>/dev/null || true
+    rsync -a --exclude='.env' --exclude='.env.*' --exclude='.venv/' --exclude='db/' --exclude='data/' \
+      --exclude='__pycache__/' --exclude='.git/' "$source/" "$app_root/"
+    echo "Code mis à jour (ancien code sauvegardé : $backup)"
+  fi
+
+  local envfile="$app_root/.env" key token
+  key="$(get_env_in "$envfile" MCP_API_KEY)"
+  token="$(get_env_in "$REPO/.env" GSMS_TENDERAI_MCP_TOKEN)"
+  if [[ -z "$key" ]]; then
+    warn "MCP AO : MCP_API_KEY absent de $envfile. Sans jeton le serveur refuse de démarrer : ajoutez-le" \
+         "(openssl rand -hex 32), mettez la même valeur dans GSMS_TENDERAI_MCP_TOKEN de $REPO/.env, puis relancez."
+    return 0
+  fi
+  if [[ -z "$token" ]]; then
+    warn "MCP AO : GSMS_TENDERAI_MCP_TOKEN vide dans $REPO/.env : le Core n'appellera pas le moteur AO."
+  elif [[ "$token" != "$key" ]]; then
+    warn "MCP AO : GSMS_TENDERAI_MCP_TOKEN (plateforme) et MCP_API_KEY (MCP) diffèrent : le Core sera refusé."
+  fi
+
+  local compose=(docker compose -p "$project" -f "$app_root/deploy/vps/docker-compose.vps.yml")
+  if ! "${compose[@]}" build mcp; then
+    if [[ -n "$backup" && -s "$backup" ]]; then
+      tar -C "$app_root" -xzf "$backup"
+    fi
+    warn "MCP AO : la construction a échoué ; l'ancienne version continue de tourner."
+    return 0
+  fi
+  "${compose[@]}" up -d mcp
+  OK+=("MCP AO : https://mcp.$DOMAIN/mcp (et http://gsms-tenderai-mcp:8090/mcp pour le Core)")
+}
+deploy_mcp
+
 say "2/4 Applications (GRACE, QAtrial, CRM)"
 deploy_app grace gsms-grace-api "api web" "https://grace.$DOMAIN/api/auth/sso/callback"
 deploy_app qatrial gsms-qatrial-app "app" "https://qatrial.$DOMAIN/api/auth/sso/callback"
@@ -193,6 +249,24 @@ for probe in gsms-grace-api gsms-qatrial-app gsms-crm-app; do
     warn "$probe ne joint pas $ISSUER (réseau sortant du conteneur ou DNS) : la connexion GSMS échouera."
   fi
 done
+# Le Core doit joindre le MCP AO par le réseau interne ; sans jeton, le MCP répond 401 (authentification active).
+if docker inspect gsms-tenderai-mcp >/dev/null 2>&1; then
+  mcp_code="$(docker compose exec -T core python -c "
+import urllib.request, urllib.error
+try:
+    urllib.request.urlopen(urllib.request.Request('http://gsms-tenderai-mcp:8090/mcp', method='POST'), timeout=10)
+    print(200)
+except urllib.error.HTTPError as e:
+    print(e.code)
+except Exception:
+    print(0)
+" 2>/dev/null || echo 0)"
+  if [[ "$mcp_code" == "401" ]]; then
+    echo "Core → MCP AO : joignable, authentification active"
+  else
+    warn "Core → MCP AO : réponse « $mcp_code » au lieu de 401 (réseau gsms-platform_default ou MCP arrêté)."
+  fi
+fi
 
 # ── 4. Résumé ───────────────────────────────────────────────────────────────────────────────────────────
 say "4/4 Résumé"

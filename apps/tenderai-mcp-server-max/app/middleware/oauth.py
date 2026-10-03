@@ -14,8 +14,6 @@ import logging
 import secrets
 import time
 
-from pydantic import AnyUrl
-
 from mcp.server.auth.provider import (
     AccessToken,
     AuthorizationCode,
@@ -25,6 +23,7 @@ from mcp.server.auth.provider import (
     construct_redirect_uri,
 )
 from mcp.shared.auth import OAuthClientInformationFull, OAuthToken
+from pydantic import AnyUrl
 
 from app.db.database import Database
 

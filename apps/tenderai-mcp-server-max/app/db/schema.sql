@@ -1,7 +1,18 @@
 -- TenderAI SQLite Schema
 
+-- Espace AO : un dossier WS-AO-… du Core. Aucun fichier conservé, seulement le lien et la date du dernier chargement.
+CREATE TABLE IF NOT EXISTS ao_workspace (
+    id              TEXT PRIMARY KEY,
+    workspace_id    TEXT NOT NULL UNIQUE,
+    reference       TEXT NOT NULL UNIQUE,
+    last_document_count INTEGER DEFAULT 0,
+    last_loaded_at  TEXT DEFAULT (datetime('now')),
+    created_at      TEXT DEFAULT (datetime('now'))
+);
+
 CREATE TABLE IF NOT EXISTS rfp (
     id              TEXT PRIMARY KEY,
+    workspace_id    TEXT,
     title           TEXT NOT NULL,
     client          TEXT NOT NULL,
     sector          TEXT DEFAULT 'telecom',
@@ -69,6 +80,19 @@ CREATE TABLE IF NOT EXISTS bom (
     sort_order      INTEGER DEFAULT 0,
     created_at      TEXT DEFAULT (datetime('now')),
     updated_at      TEXT DEFAULT (datetime('now'))
+);
+
+-- Devis fournisseur ingéré : lignes extraites conservées (réutilisables par build_bom).
+CREATE TABLE IF NOT EXISTS vendor_quote (
+    id              TEXT PRIMARY KEY,
+    vendor_id       TEXT NOT NULL REFERENCES vendor(id),
+    workspace_id    TEXT,
+    source_name     TEXT DEFAULT '',
+    sha256          TEXT DEFAULT '',
+    currency        TEXT DEFAULT '',
+    items           TEXT DEFAULT '[]',
+    total           REAL DEFAULT 0.0,
+    created_at      TEXT DEFAULT (datetime('now'))
 );
 
 CREATE TABLE IF NOT EXISTS partner (

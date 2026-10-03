@@ -6,10 +6,11 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import Field, model_validator
+from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 DEV_JWT_SECRET = "change-me-dev-only-not-a-secret-0123456789"  # noqa: S105 - valeur de dev, refusée en prod
+TENDERAI_MCP_DEFAULT_URL = "http://gsms-tenderai-mcp:8090/mcp"
 
 
 class Settings(BaseSettings):
@@ -67,7 +68,9 @@ class Settings(BaseSettings):
     qatrial_url: str = "http://localhost:3003"
     qatrial_token: str | None = None
 
-    tenderai_mcp_url: str = "http://localhost:8765/mcp"
+    # MCP Appel d'offres : URL interne du service Docker (réseau gsms-platform_default sur le VPS).
+    # En local : http://localhost:8000/mcp (TRANSPORT=http). Jeton = MCP_API_KEY du MCP, saisi sur le VPS.
+    tenderai_mcp_url: str = TENDERAI_MCP_DEFAULT_URL
     tenderai_mcp_token: str | None = None
     lexsocket_mcp_url: str = "https://mcp.lexsocket.ai/"
     lexsocket_mcp_token: str | None = None
@@ -76,6 +79,12 @@ class Settings(BaseSettings):
     contracts_dir: Path | None = None
 
     remediation_severity_threshold: Literal["critical", "major", "minor"] = "minor"
+
+    @field_validator("tenderai_mcp_url", mode="before")
+    @classmethod
+    def _default_mcp_url_when_empty(cls, value: object) -> object:
+        # docker-compose transmet « GSMS_TENDERAI_MCP_URL= » vide quand le .env ne la renseigne pas.
+        return value if value not in (None, "") else TENDERAI_MCP_DEFAULT_URL
 
     @model_validator(mode="after")
     def _refuse_dev_secrets_in_prod(self) -> Settings:

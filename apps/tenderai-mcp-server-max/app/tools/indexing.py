@@ -197,7 +197,7 @@ def register_indexing_tools(
             f"**Margin Info:** {extracted.get('margin_info', '')}\n\n"
             f"## Technologies\n"
             + "\n".join(f"- {t}" for t in extracted.get("technologies", []))
-            + f"\n\n## Keywords\n"
+            + "\n\n## Keywords\n"
             + ", ".join(extracted.get("keywords", []))
             + f"\n\n## Full Summary\n{extracted.get('full_summary', '')}\n"
         )
@@ -278,8 +278,6 @@ def register_indexing_tools(
         Returns:
             Dict with matches (ranked list), result_count, and search_mode used
         """
-        use_fts = mode in ("auto", "keyword", "hybrid")
-        use_vec = mode in ("auto", "semantic", "hybrid")
         has_vec = embeddings is not None and db.vec_enabled
 
         # Determine actual mode

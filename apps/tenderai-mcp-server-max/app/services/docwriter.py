@@ -5,10 +5,8 @@ from __future__ import annotations
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 from docx import Document
-from docx.enum.section import WD_ORIENT
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Inches, Pt, RGBColor
@@ -198,7 +196,7 @@ class DocWriterService:
         footer.is_linked_to_previous = False
         p = footer.paragraphs[0] if footer.paragraphs else footer.add_paragraph()
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        run = p.add_run(f"{metadata.get('company', 'TenderAI')} — Confidential")
+        run = p.add_run(f"{metadata.get('company', 'GSMS')} — Confidential")
         run.font.size = Pt(8)
         run.font.color.rgb = RGBColor(0x99, 0x99, 0x99)
 
@@ -226,11 +224,11 @@ class DocWriterService:
         for i, header in enumerate(headers):
             table.rows[0].cells[i].text = header
 
-        for idx, (req, resp) in enumerate(zip(requirements, responses), 1):
+        for idx, (req, resp) in enumerate(zip(requirements, responses, strict=True), 1):
             row = table.add_row()
             row.cells[0].text = str(idx)
             row.cells[1].text = req.get("requirement", str(req))
-            row.cells[2].text = resp.get("status", "Compliant")
+            row.cells[2].text = resp.get("status", "À vérifier")
             row.cells[3].text = resp.get("narrative", "")
 
         self._format_table(table)
@@ -359,7 +357,7 @@ class DocWriterService:
         headers = [
             "Category", "Item", "Description", "Manufacturer",
             "Part Number", "Qty", f"Unit Cost ({currency})",
-            f"Margin %", f"Total ({currency})",
+            "Margin %", f"Total ({currency})",
         ]
         for col, header in enumerate(headers, 1):
             cell = ws.cell(row=3, column=col, value=header)

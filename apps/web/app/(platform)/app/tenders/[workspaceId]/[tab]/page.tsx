@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { TenderTabView } from "@/components/platform/tender-views";
 import { coreFetch } from "@/lib/core/client";
+import { ENDPOINTS } from "@/lib/core/endpoints";
 import { tenderTab } from "@/lib/tenders/tabs";
 import { safeDecode } from "@/lib/utils";
 import { getTenderSummary } from "../summary";
@@ -20,9 +21,12 @@ export default async function TenderTabPage({ params }: { params: Params }) {
 
   const workspaceId = safeDecode(raw);
   const { result: summary, missionId } = await getTenderSummary(workspaceId);
-  const result = missionId
-    ? await coreFetch<unknown>(tab.endpoint(workspaceId, missionId), { workspaceId, missionId })
-    : summary;
+  const [result, engine] = await Promise.all([
+    missionId ? coreFetch<unknown>(tab.endpoint(workspaceId, missionId), { workspaceId, missionId }) : summary,
+    missionId && tab.slug === "agents"
+      ? coreFetch<unknown>(ENDPOINTS.tenders.engine(workspaceId, missionId), { workspaceId, missionId })
+      : null,
+  ]);
 
-  return <TenderTabView tab={tab} result={result} workspaceId={workspaceId} missionId={missionId} />;
+  return <TenderTabView tab={tab} result={result} workspaceId={workspaceId} missionId={missionId} engine={engine} />;
 }

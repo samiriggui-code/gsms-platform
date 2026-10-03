@@ -52,9 +52,18 @@ class Database:
 
     async def _run_schema(self) -> None:
         schema_path = Path(__file__).parent / "schema.sql"
-        sql = schema_path.read_text()
+        sql = schema_path.read_text(encoding="utf-8")
         await self._db.executescript(sql)
+        await self._migrate()
         await self._db.commit()
+
+    async def _migrate(self) -> None:
+        """Colonnes ajoutées après coup : CREATE TABLE IF NOT EXISTS ne modifie pas une base existante."""
+        cursor = await self._db.execute("PRAGMA table_info(rfp)")
+        columns = {row[1] for row in await cursor.fetchall()}
+        if "workspace_id" not in columns:
+            await self._db.execute("ALTER TABLE rfp ADD COLUMN workspace_id TEXT")
+        await self._db.execute("CREATE INDEX IF NOT EXISTS ix_rfp_workspace ON rfp(workspace_id)")
 
     async def _load_vec_extension(self) -> None:
         """Load sqlite-vec extension and create vec0 virtual table if available."""
@@ -108,7 +117,7 @@ class Database:
         cols = ["id", "title", "client"]
         vals = [rfp_id, title, client]
         for key in (
-            "sector", "country", "rfp_number", "issue_date", "deadline",
+            "workspace_id", "sector", "country", "rfp_number", "issue_date", "deadline",
             "submission_method", "status", "file_path", "notes",
         ):
             if key in kwargs:
@@ -133,6 +142,13 @@ class Database:
             row["evaluation_criteria"] = json.loads(row.get("evaluation_criteria") or "[]")
         return row
 
+    async def get_rfp_in_workspace(self, rfp_id: str, workspace_id: Optional[str]) -> Optional[dict]:
+        """RFP visible depuis cet espace uniquement : celui d'un autre dossier (ou d'aucun) n'existe pas ici."""
+        row = await self.get_rfp(rfp_id)
+        if row is None or (row.get("workspace_id") or None) != (workspace_id or None):
+            return None
+        return row
+
     async def update_rfp(self, rfp_id: str, **kwargs) -> Optional[dict]:
         sets, vals = [], []
         for key, value in kwargs.items():
@@ -151,6 +167,35 @@ class Database:
         if status:
             return await self._fetchall("SELECT * FROM rfp WHERE status=? ORDER BY created_at DESC", (status,))
         return await self._fetchall("SELECT * FROM rfp ORDER BY created_at DESC")
+
+    # ------------------------------------------------------------------
+    # Espaces AO (dossiers WS-AO du Core)
+    # ------------------------------------------------------------------
+
+    async def get_ao_workspace(self, workspace_id: str) -> Optional[dict]:
+        return await self._fetchone("SELECT * FROM ao_workspace WHERE workspace_id=?", (workspace_id,))
+
+    async def load_ao_workspace(self, *, workspace_id: str, reference: str, document_count: int) -> dict:
+        """Crée ou retrouve l'espace ; un identifiant et une référence vont toujours ensemble."""
+        by_id = await self.get_ao_workspace(workspace_id)
+        by_ref = await self._fetchone("SELECT * FROM ao_workspace WHERE reference=?", (reference,))
+        if by_id and by_id["reference"] != reference:
+            raise ValueError(
+                f"l'espace {workspace_id} est déjà lié à la référence {by_id['reference']}, pas à {reference}"
+            )
+        if by_ref and by_ref["workspace_id"] != workspace_id:
+            raise ValueError(f"la référence {reference} est déjà liée à un autre espace")
+        if by_id:
+            await self._execute(
+                "UPDATE ao_workspace SET last_document_count=?, last_loaded_at=datetime('now') WHERE id=?",
+                (document_count, by_id["id"]),
+            )
+        else:
+            await self._execute(
+                "INSERT INTO ao_workspace (id, workspace_id, reference, last_document_count) VALUES (?, ?, ?, ?)",
+                (_new_id(), workspace_id, reference, document_count),
+            )
+        return await self.get_ao_workspace(workspace_id)
 
     # ------------------------------------------------------------------
     # Proposal
@@ -268,6 +313,31 @@ class Database:
         for row in rows:
             row["past_projects"] = json.loads(row.get("past_projects") or "[]")
         return rows
+
+    async def create_vendor_quote(
+        self,
+        *,
+        vendor_id: str,
+        items: list[dict],
+        total: float,
+        currency: str,
+        source_name: str = "",
+        sha256: str = "",
+        workspace_id: Optional[str] = None,
+    ) -> dict:
+        quote_id = _new_id()
+        await self._execute(
+            "INSERT INTO vendor_quote (id, vendor_id, workspace_id, source_name, sha256, currency, items, total) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            (quote_id, vendor_id, workspace_id, source_name, sha256, currency, json.dumps(items), total),
+        )
+        return await self.get_vendor_quote(quote_id)
+
+    async def get_vendor_quote(self, quote_id: str) -> Optional[dict]:
+        row = await self._fetchone("SELECT * FROM vendor_quote WHERE id=?", (quote_id,))
+        if row:
+            row["items"] = json.loads(row.get("items") or "[]")
+        return row
 
     # ------------------------------------------------------------------
     # BOM

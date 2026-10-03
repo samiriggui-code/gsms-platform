@@ -10,11 +10,10 @@ from __future__ import annotations
 import asyncio
 import logging
 import sys
-from pathlib import Path
 
 from mcp.server.fastmcp import FastMCP
 
-from app.config import Settings, load_settings
+from app.config import ConfigError, Settings, check_http_auth, load_settings
 from app.db.database import Database
 from app.services.docwriter import DocWriterService
 from app.services.llm import LLMService
@@ -49,12 +48,13 @@ def build_server(settings: Settings) -> tuple[FastMCP, Database]:
 
     # --- MCP Server ---
     mcp_kwargs: dict = dict(
-        name="TenderAI",
+        name="GSMS — Appels d'offres",
         instructions=(
-            "TenderAI is a tender/proposal management system. Use its tools to parse RFP documents, "
-            "write technical and financial proposals, coordinate with partners, and track compliance. "
-            "Always start by parsing the RFP with parse_tender_rfp, then use the analysis and "
-            "writing tools to build the proposal."
+            "Moteur de réponse aux appels d'offres de GSMS (sûreté et sécurité incendie). Pour un dossier du "
+            "Core GSMS, commencez par ao_workspace_load (workspace_id, référence WS-AO-AAAA-NNNN, pièces en "
+            "base64), puis passez le même workspace_id à chaque outil : un dossier ne voit jamais les données "
+            "d'un autre. Les fichiers s'échangent en base64 ; le serveur ne conserve aucune pièce du Core. "
+            "Le moteur propose ; la conformité et les décisions sont toujours validées par une personne."
         ),
     )
 
@@ -62,8 +62,10 @@ def build_server(settings: Settings) -> tuple[FastMCP, Database]:
     oauth_provider = None
     if settings.oauth_issuer_url:
         from urllib.parse import urlparse as _urlparse
+
         from mcp.server.auth.settings import AuthSettings, ClientRegistrationOptions, RevocationOptions
         from mcp.server.transport_security import TransportSecuritySettings
+
         from app.middleware.oauth import TenderAIOAuthProvider
 
         oauth_provider = TenderAIOAuthProvider(db)
@@ -91,6 +93,7 @@ def build_server(settings: Settings) -> tuple[FastMCP, Database]:
     mcp = FastMCP(**mcp_kwargs)
 
     # --- Register Tools ---
+    from app.tools.ao import register_ao_tools
     from app.tools.document import register_document_tools
     from app.tools.financial import register_financial_tools
     from app.tools.indexing import register_indexing_tools
@@ -99,7 +102,8 @@ def build_server(settings: Settings) -> tuple[FastMCP, Database]:
 
     data_dir = settings.abs_data_dir()
 
-    register_document_tools(mcp, db, llm, parser, docwriter, data_dir)
+    register_ao_tools(mcp, db, settings.max_file_bytes)
+    register_document_tools(mcp, db, llm, parser, docwriter, data_dir, settings.max_file_bytes)
 
     # --- Embeddings (optional) ---
     embeddings = None
@@ -118,6 +122,7 @@ def build_server(settings: Settings) -> tuple[FastMCP, Database]:
     register_financial_tools(
         mcp, db, llm, parser, docwriter, data_dir,
         settings.default_currency, settings.default_margin_pct,
+        settings.company_name, settings.max_file_bytes,
     )
     register_partner_tools(mcp, db, llm, data_dir)
     register_indexing_tools(mcp, db, llm, parser, data_dir, embeddings=embeddings)
@@ -136,6 +141,7 @@ def build_server(settings: Settings) -> tuple[FastMCP, Database]:
 
 async def _run(settings: Settings) -> None:
     """Initialize DB and run the server."""
+    check_http_auth(settings)
     mcp, db = build_server(settings)
 
     # Connect database and run schema migration
@@ -160,6 +166,7 @@ async def _run(settings: Settings) -> None:
             elif settings.mcp_api_key:
                 # Static Bearer token auth (for Claude Code / direct API access)
                 import uvicorn
+
                 from app.middleware.auth import BearerTokenMiddleware
 
                 app = mcp.streamable_http_app()
@@ -172,12 +179,8 @@ async def _run(settings: Settings) -> None:
                 server = uvicorn.Server(config)
                 await server.serve()
             else:
-                logger.warning("No auth configured — running without authentication")
-                await mcp.run_async(
-                    transport="streamable-http",
-                    host=settings.host,
-                    port=settings.port,
-                )
+                # Inatteignable : check_http_auth a refusé ce démarrage dans main().
+                raise ConfigError("transport HTTP sans authentification")
         else:
             logger.info("Starting stdio transport")
             await mcp.run_async(transport="stdio")
@@ -187,6 +190,11 @@ async def _run(settings: Settings) -> None:
 
 def main() -> None:
     settings = load_settings()
+    try:
+        check_http_auth(settings)
+    except ConfigError as exc:
+        print(f"Démarrage refusé : {exc}", file=sys.stderr)
+        sys.exit(2)
     asyncio.run(_run(settings))
 
 

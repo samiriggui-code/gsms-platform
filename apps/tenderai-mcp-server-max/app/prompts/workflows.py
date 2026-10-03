@@ -76,7 +76,7 @@ def register_prompts(mcp: FastMCP, db: Database, llm: LLMService, data_dir: Path
         Args:
             rfp_id: ID of the parsed RFP to analyze
         """
-        rfp = await db.get_rfp(rfp_id)
+        rfp = await db.get_rfp_in_workspace(rfp_id, None)
         if not rfp:
             raise ValueError(f"RFP not found: {rfp_id}")
 
@@ -96,7 +96,7 @@ def register_prompts(mcp: FastMCP, db: Database, llm: LLMService, data_dir: Path
             f"## Parsed Sections\n{json.dumps(rfp.get('parsed_sections', {}), indent=2)}\n\n"
             f"## Requirements\n" +
             "\n".join(f"- {r}" if isinstance(r, str) else f"- {json.dumps(r)}" for r in rfp.get("requirements", [])) +
-            f"\n\n## Evaluation Criteria\n" +
+            "\n\n## Evaluation Criteria\n" +
             "\n".join(f"- {json.dumps(c)}" for c in rfp.get("evaluation_criteria", [])) +
             f"\n\n## Company Profile\n{company_profile}\n\n"
             f"## Past Proposals\n{past_proposals}\n\n"
@@ -122,7 +122,7 @@ def register_prompts(mcp: FastMCP, db: Database, llm: LLMService, data_dir: Path
             rfp_id: ID of the parsed RFP
             differentiators: Optional key differentiators to highlight
         """
-        rfp = await db.get_rfp(rfp_id)
+        rfp = await db.get_rfp_in_workspace(rfp_id, None)
         if not rfp:
             raise ValueError(f"RFP not found: {rfp_id}")
 
@@ -178,7 +178,7 @@ def register_prompts(mcp: FastMCP, db: Database, llm: LLMService, data_dir: Path
             partner_name: Name of the partner to evaluate
             rfp_id: ID of the parsed RFP
         """
-        rfp = await db.get_rfp(rfp_id)
+        rfp = await db.get_rfp_in_workspace(rfp_id, None)
         if not rfp:
             raise ValueError(f"RFP not found: {rfp_id}")
 
@@ -227,7 +227,7 @@ def register_prompts(mcp: FastMCP, db: Database, llm: LLMService, data_dir: Path
         Args:
             rfp_id: ID of the parsed RFP
         """
-        rfp = await db.get_rfp(rfp_id)
+        rfp = await db.get_rfp_in_workspace(rfp_id, None)
         if not rfp:
             raise ValueError(f"RFP not found: {rfp_id}")
 
@@ -264,8 +264,8 @@ def register_prompts(mcp: FastMCP, db: Database, llm: LLMService, data_dir: Path
             f"19. Package and submit per the RFP instructions\n\n"
             f"## Current RFP Requirements\n" +
             "\n".join(f"- {r}" if isinstance(r, str) else f"- {json.dumps(r)}" for r in rfp.get("requirements", [])) +
-            f"\n\n## Notes\n"
-            f"- Always check deadline status before starting each phase\n"
-            f"- Track all partner deliverables and follow up on overdue items\n"
-            f"- Generate compliance matrix early to identify gaps\n"
+            "\n\n## Notes\n"
+            "- Always check deadline status before starting each phase\n"
+            "- Track all partner deliverables and follow up on overdue items\n"
+            "- Generate compliance matrix early to identify gaps\n"
         )

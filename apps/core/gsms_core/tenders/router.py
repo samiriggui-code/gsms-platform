@@ -33,7 +33,7 @@ from gsms_core.identity.models import CONTRIBUTE_ROLES, MANAGE_ROLES, Workspace
 from gsms_core.identity.service import accessible_workspaces, staff_role
 from gsms_core.missions import service as missions
 from gsms_core.settings import Settings
-from gsms_core.tenders import dossier, feasibility, lifecycle, service, views
+from gsms_core.tenders import dossier, engine, feasibility, lifecycle, service, views
 from gsms_core.tenders import profile as company
 from gsms_core.tenders import requirements as matrix
 from gsms_core.tenders.models import GoNoGo, TenderCase, TenderRequirement
@@ -48,6 +48,7 @@ from gsms_core.tenders.schemas import (
     DecisionIn,
     DecisionOut,
     DossierStatusOut,
+    EngineOut,
     GoNoGoOut,
     OpportunityOut,
     RequirementCreate,
@@ -417,6 +418,40 @@ def post_dossier_status(
     db.commit()
     db.refresh(case)
     return _dossier_status(db, case, ctx)
+
+
+@router.get("/{mission_id}/engine", response_model=EngineOut)
+def get_engine(
+    case: TenderCase = Depends(_load_case),
+    ctx: WorkspaceContext = Depends(require_workspace),
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings_dep),
+) -> EngineOut:
+    """État du moteur AO (dernier chargement) ; aucun appel réseau."""
+    _team(ctx)
+    return EngineOut(**engine.engine_state(db, case, settings))
+
+
+@router.post("/{mission_id}/engine", response_model=EngineOut)
+async def post_engine(
+    request: Request,
+    case: TenderCase = Depends(_load_case),
+    ctx: WorkspaceContext = Depends(require_roles(CONTRIBUTE_ROLES)),
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings_dep),
+) -> EngineOut:
+    """Transmet le dossier et ses pièces au moteur AO. Une panne du moteur renvoie 200 « indisponible »."""
+    _team(ctx)
+    state = await engine.load_case(
+        db,
+        request.app.state.vault,
+        settings,
+        case,
+        actor=ctx.actor,
+        transport=getattr(request.app.state, "mcp_transport", None),
+    )
+    db.commit()
+    return EngineOut(**state)
 
 
 @router.get("/{mission_id}/go-no-go", response_model=GoNoGoOut)

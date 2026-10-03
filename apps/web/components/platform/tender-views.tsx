@@ -1,4 +1,4 @@
-import { Bot, CalendarClock, FileStack, FileText, HelpCircle, History, ShieldAlert, Upload } from "lucide-react";
+import { Bot, CalendarClock, Cpu, FileStack, FileText, HelpCircle, History, ShieldAlert, Upload } from "lucide-react";
 import type { ReactNode } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { formatAmount, formatValue, StatusBadge } from "./format";
 import { type Column, ResourcePanel } from "./resource-panel";
 import { type Feasibility, FeasibilityMatrix, GoNoGoGrid } from "./tenders/go-no-go";
 import { type Compliance, RequirementsMatrix } from "./tenders/requirements-matrix";
-import { DceUpload, GoNoGoDecision } from "./tenders/tender-actions";
+import { DceUpload, EngineLoadButton, GoNoGoDecision } from "./tenders/tender-actions";
 
 export function TabIntro({ tab, actions }: { tab: TenderTab; actions?: ReactNode }) {
   return (
@@ -112,11 +112,13 @@ export function TenderTabView({
   result,
   workspaceId,
   missionId,
+  engine,
 }: {
   tab: TenderTab;
   result: CoreResult<unknown> | null;
   workspaceId: string;
   missionId: string | null;
+  engine?: CoreResult<unknown> | null;
 }) {
   const list = LIST_TABS[tab.slug];
   const actions = tabActions(tab.slug, !!result?.ok);
@@ -126,6 +128,9 @@ export function TenderTabView({
       <>
         <TabIntro tab={tab} actions={actions} />
         {tab.slug === "pieces" && missionId && result?.ok ? <DceUpload workspaceId={workspaceId} missionId={missionId} /> : null}
+        {tab.slug === "agents" && missionId && engine?.ok ? (
+          <EngineCard state={engine.data as EngineState} workspaceId={workspaceId} missionId={missionId} />
+        ) : null}
         <ResourcePanel title={tab.label} result={result} columns={list.columns} empty={list.empty} />
       </>
     );
@@ -156,6 +161,97 @@ export function TenderTabView({
         <Card><EmptyState title="Vue non disponible" /></Card>
       )}
     </>
+  );
+}
+
+type EnginePiece = { filename: string; reason: string };
+type EngineState = {
+  status: "connecte" | "indisponible" | "non_configure" | "jamais";
+  label: string;
+  connected: boolean;
+  configured: boolean;
+  reference: string | null;
+  last_call_at: string | null;
+  last_success_at: string | null;
+  last_error: string | null;
+  documents_sent: number;
+  documents_rejected: EnginePiece[];
+  documents_skipped: EnginePiece[];
+  capabilities: { key: string; label: string }[];
+};
+
+const ENGINE_TONES: Record<EngineState["status"], "success" | "warning" | "danger" | "neutral"> = {
+  connecte: "success",
+  indisponible: "danger",
+  non_configure: "neutral",
+  jamais: "warning",
+};
+
+/** Moteur AO : état du dernier chargement du dossier, en termes métier (jamais le nom technique des outils). */
+function EngineCard({ state, workspaceId, missionId }: { state: EngineState; workspaceId: string; missionId: string }) {
+  const issues = [...(state.documents_rejected ?? []), ...(state.documents_skipped ?? [])];
+  return (
+    <Card className="mb-5">
+      <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <Cpu className="size-4 text-muted-foreground" aria-hidden />
+          <CardTitle>Moteur appel d’offres</CardTitle>
+          <Badge tone={ENGINE_TONES[state.status] ?? "neutral"}>{state.label}</Badge>
+        </div>
+        {state.configured ? <EngineLoadButton workspaceId={workspaceId} missionId={missionId} connected={state.connected} /> : null}
+      </CardHeader>
+      <CardContent className="flex flex-col gap-3 text-[13px]">
+        {state.status === "non_configure" ? (
+          <p className="text-muted-foreground">Le moteur n’est pas encore branché sur ce serveur. Le dossier reste entièrement utilisable.</p>
+        ) : state.status === "jamais" ? (
+          <p className="text-muted-foreground">Transmettez le dossier pour que le moteur reçoive ses pièces et indique ce qu’il peut préparer.</p>
+        ) : (
+          <dl className="grid gap-x-6 gap-y-1.5 sm:grid-cols-3">
+            <div>
+              <dt className="text-muted-foreground">Dernier essai</dt>
+              <dd>{state.last_call_at ? formatValue(state.last_call_at) : "—"}</dd>
+            </div>
+            <div>
+              <dt className="text-muted-foreground">Dernière transmission réussie</dt>
+              <dd>{state.last_success_at ? formatValue(state.last_success_at) : "—"}</dd>
+            </div>
+            <div>
+              <dt className="text-muted-foreground">Pièces reçues par le moteur</dt>
+              <dd>{state.documents_sent}</dd>
+            </div>
+          </dl>
+        )}
+        {state.status === "indisponible" && state.last_error ? (
+          <p role="status" className="text-destructive">
+            {state.last_error}
+          </p>
+        ) : null}
+        {issues.length > 0 ? (
+          <div>
+            <p className="mb-1 text-muted-foreground">Pièces non transmises</p>
+            <ul className="list-disc pl-5">
+              {issues.map((piece) => (
+                <li key={`${piece.filename}-${piece.reason}`}>
+                  {piece.filename} : {piece.reason}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+        {state.connected && state.capabilities.length > 0 ? (
+          <div>
+            <p className="mb-1.5 text-muted-foreground">Ce que le moteur peut préparer pour ce dossier</p>
+            <div className="flex flex-wrap gap-1.5">
+              {state.capabilities.map((cap) => (
+                <Badge key={cap.key} tone="primary">
+                  {cap.label}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </CardContent>
+    </Card>
   );
 }
 

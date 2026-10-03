@@ -10,10 +10,12 @@ from typing import Optional
 from mcp.server.fastmcp import FastMCP
 
 from app.db.database import Database
+from app.files import encode_file
 from app.services.docwriter import DocWriterService
 from app.services.embeddings import EmbeddingService
 from app.services.llm import LLMService
 from app.services.parser import ParserService
+from app.tools.ao import resolve_scope
 
 logger = logging.getLogger(__name__)
 
@@ -116,7 +118,7 @@ def register_technical_tools(
                 f"Country: {rfp['country']}\n"
             )
             if rfp.get("requirements"):
-                rfp_context += f"\nRequirements:\n" + "\n".join(
+                rfp_context += "\nRequirements:\n" + "\n".join(
                     f"- {r}" if isinstance(r, str) else f"- {r.get('requirement', str(r))}"
                     for r in rfp["requirements"]
                 )
@@ -208,7 +210,7 @@ def register_technical_tools(
 
     @mcp.tool()
     async def write_technical_section(
-        section_name: str, rfp_id: str, context: str = ""
+        section_name: str, rfp_id: str, context: str = "", workspace_id: str | None = None
     ) -> dict:
         """Write a single section of a technical proposal grounded by RFP requirements and company knowledge.
 
@@ -219,13 +221,14 @@ def register_technical_tools(
             section_name: Name of the section (e.g., "Executive Summary", "Technical Approach")
             rfp_id: ID of the parsed RFP
             context: Additional context or instructions for this section
+            workspace_id: Core workspace of the tender (required for an RFP parsed in a workspace)
 
         Returns:
             Dict with section_name, content, and word_count
         """
-        rfp = await db.get_rfp(rfp_id)
+        rfp = await db.get_rfp_in_workspace(rfp_id, await resolve_scope(db, workspace_id))
         if not rfp:
-            raise ValueError(f"RFP not found: {rfp_id}")
+            raise ValueError(f"RFP introuvable dans cet espace : {rfp_id}")
 
         # Load grounding context
         context_docs = await _load_context_docs(rfp_id, section_name)
@@ -241,8 +244,8 @@ def register_technical_tools(
         if context:
             user_prompt += f"\nAdditional context: {context}\n"
         user_prompt += (
-            f"\nWrite 500-1000 words of formal proposal content. "
-            f"Do not include the section heading itself — just the body text."
+            "\nWrite 500-1000 words of formal proposal content. "
+            "Do not include the section heading itself — just the body text."
         )
 
         content = await llm.generate_section(
@@ -300,8 +303,8 @@ def register_technical_tools(
 
     @mcp.tool()
     async def build_full_technical_proposal(
-        rfp_id: str, sections: list[str] | None = None
-    ) -> str:
+        rfp_id: str, sections: list[str] | None = None, workspace_id: str | None = None
+    ) -> str | dict:
         """Build a complete technical proposal DOCX with all sections.
 
         Generates each section using AI, then assembles them into a professionally
@@ -310,13 +313,15 @@ def register_technical_tools(
         Args:
             rfp_id: ID of the parsed RFP
             sections: Optional list of section names. Defaults to standard 7-section structure.
+            workspace_id: Core workspace of the tender (the DOCX is then returned in base64)
 
         Returns:
-            File path to the generated DOCX document
+            File path (standalone) or {filename, content_base64, sha256…} (Core workspace)
         """
-        rfp = await db.get_rfp(rfp_id)
+        scope = await resolve_scope(db, workspace_id)
+        rfp = await db.get_rfp_in_workspace(rfp_id, scope)
         if not rfp:
-            raise ValueError(f"RFP not found: {rfp_id}")
+            raise ValueError(f"RFP introuvable dans cet espace : {rfp_id}")
 
         section_list = sections or DEFAULT_SECTIONS
 
@@ -327,6 +332,7 @@ def register_technical_tools(
             result = await write_technical_section(
                 section_name=section_name,
                 rfp_id=rfp_id,
+                workspace_id=scope,
             )
             doc_sections.append({
                 "title": section_name,
@@ -354,6 +360,8 @@ def register_technical_tools(
             await db.update_proposal(proposals[0]["id"], output_path=output_path, status="review")
 
         logger.info("Built full technical proposal: %s", output_path)
+        if scope is not None:
+            return encode_file(output_path)
         return output_path
 
     @mcp.tool()
@@ -377,7 +385,7 @@ def register_technical_tools(
         """
         context_docs = []
         if rfp_id:
-            rfp = await db.get_rfp(rfp_id)
+            rfp = await db.get_rfp_in_workspace(rfp_id, None)
             if rfp:
                 context_docs.append(
                     f"RFP: {rfp['title']}\nClient: {rfp['client']}\n"
@@ -423,7 +431,7 @@ def register_technical_tools(
         """
         context_docs = [await _load_company_profile()]
         if rfp_id:
-            rfp = await db.get_rfp(rfp_id)
+            rfp = await db.get_rfp_in_workspace(rfp_id, None)
             if rfp:
                 context_docs.append(f"RFP: {rfp['title']}\nClient: {rfp['client']}")
 

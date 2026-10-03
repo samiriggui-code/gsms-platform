@@ -44,6 +44,7 @@ ACTION_LABELS = {
     "tender.requirements.sync": "Matrice d'exigences mise à jour",
     "tender.requirement.update": "Exigence modifiée",
     "tender.requirement.create": "Exigence ajoutée",
+    "tender.engine.load": "Dossier transmis au moteur AO",
 }
 
 FIELD_LABELS = {

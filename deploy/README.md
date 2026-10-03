@@ -215,6 +215,40 @@ Sauvegardez aussi le volume des documents et une copie de `.env`. Sans `GSMS_JWT
 
 Renseigner dans `.env`, puis relancer `deploy.sh` :
 - **Services :** `GSMS_CRM_URL` / `_TOKEN`, `GSMS_GRACE_URL` / `_TOKEN`, `GSMS_QATRIAL_URL` / `_TOKEN` ;
-- **MCP AO :** `GSMS_TENDERAI_MCP_URL` / `_TOKEN`.
+- **MCP AO :** voir la section suivante.
 
 Les secrets de `GSMS_WEBHOOK_SECRETS` sont à recopier dans chaque application émettrice.
+
+## MCP Appel d'offres (moteur AO)
+
+Le MCP AO (`apps/tenderai-mcp-server-max`) tourne dans sa propre stack Docker (`gsms-mcp`, conteneur
+`gsms-tenderai-mcp`), lancée et mise à jour par `deploy-all.sh`. Il rejoint le réseau interne
+`gsms-platform_default` : le Core le joint sur `http://gsms-tenderai-mcp:8090/mcp`. L'accès public
+(claude.ai, Claude Code) passe par Traefik : `https://mcp.gsms-security.com/mcp`. Le port 8090 n'est ouvert
+qu'en local sur le VPS (`127.0.0.1:8090`).
+
+**Jeton partagé (obligatoire).** Sans jeton, le MCP refuse de démarrer en HTTP. Vous le saisissez vous-même,
+jamais dans le dépôt. La même valeur va à deux endroits :
+
+| Fichier | Variable | Rôle |
+|---|---|---|
+| `apps/tenderai-mcp-server-max/.env` (sur le VPS) | `MCP_API_KEY` | jeton attendu par le MCP |
+| `/opt/gsms-platform/.env` | `GSMS_TENDERAI_MCP_TOKEN` | jeton envoyé par le Core |
+
+Pour générer une valeur : `openssl rand -hex 32`. `deploy-all.sh` vérifie que les deux valeurs sont
+identiques, sans les afficher.
+
+**Autres variables du MCP** (`apps/tenderai-mcp-server-max/.env`, modèle : `.env.example`) :
+- `ANTHROPIC_API_KEY` : clé de l'API Claude, pour les outils de rédaction ;
+- `LLM_MODEL` : identifiant exact du modèle Claude (vide = `claude-opus-5-5`) ;
+- `COMPANY_NAME` (défaut `GSMS`), `DEFAULT_CURRENCY` (défaut `EUR`) ;
+- `MAX_FILE_MB` : plafond d'une pièce échangée avec le Core (défaut 20).
+
+**Côté plateforme** : `GSMS_TENDERAI_MCP_URL` peut rester vide (valeur par défaut :
+`http://gsms-tenderai-mcp:8090/mcp`).
+
+Dans le portail, onglet **Agents** d'un dossier AO :
+- l'état du moteur s'affiche (connecté, indisponible, non configuré) ;
+- le bouton « Transmettre le dossier » envoie les pièces du coffre-fort au moteur.
+
+Un moteur arrêté n'empêche jamais d'utiliser le dossier.
