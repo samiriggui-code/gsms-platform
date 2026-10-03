@@ -176,13 +176,17 @@ export const ENDPOINTS = {
      *  POST {title, buyer?, consultation_ref?, submission_deadline?} → crée un workspace AO dédié
      *  (organisation GSMS, référence WS-AO-AAAA-NNNN). Réservé à l'équipe GSMS. */
     all: () => "/tenders",
+    /** GET → {profile, qualifications, missing[]} ; PUT CompanyProfile (agrément CNAPS, effectifs, certifications,
+     *  CA, délai de mobilisation…) — profil GSMS lu par la matrice de faisabilité. Équipe GSMS uniquement. */
+    profile: () => "/tenders/profile",
     /** GET → TenderSummary du dossier AO de ce workspace (un workspace AO = un dossier) */
     current: (workspaceId: string) => `${ws(workspaceId)}/tenders/current`,
     /** GET → TenderMission[] (dossiers AO du workspace) */
     list: (workspaceId: string) => `${ws(workspaceId)}/tenders`,
     /** GET ?q=&cpv=&nuts=&min_amount=&max_amount=&deadline_before= → Opportunity[] (veille) */
     opportunities: (workspaceId: string) => `${ws(workspaceId)}/tenders/opportunities`,
-    /** GET → TenderSummary {mission, buyer, lots[], amount, status, next_deadlines[]} */
+    /** GET → TenderSummary {mission, buyer, lots[], amount, status, next_deadlines[]} ;
+     *  PATCH {title?, buyer?, consultation_ref?, submission_deadline?, estimated_amount?} */
     summary: (workspaceId: string, missionId: string) => tender(workspaceId, missionId),
     /** GET → Piece[] {kind, label, title, required, provided, parse_status, document_id} (Digest + pièces attendues) */
     pieces: (workspaceId: string, missionId: string) => `${tender(workspaceId, missionId)}/pieces`,
@@ -197,8 +201,11 @@ export const ENDPOINTS = {
     requirements: (workspaceId: string, missionId: string) => `${tender(workspaceId, missionId)}/requirements`,
     /** GET → ComplianceRow[] (statut final décidé par l'humain) */
     compliance: (workspaceId: string, missionId: string) => `${tender(workspaceId, missionId)}/compliance`,
-    /** GET → {criteria[], score, recommendation, assistant_opinion?, decision?} ; POST /go-no-go/decision */
+    /** GET → {criteria[], score, recommendation, decision?, feasibility: {status READY|WARNING|BLOCKED,
+     *  dimensions[{key, label, status, justification, sources[]}], profile_missing[]}} */
     goNoGo: (workspaceId: string, missionId: string) => `${tender(workspaceId, missionId)}/go-no-go`,
+    /** PUT {criteria: [{code, label, weight, score 0-5, eliminatory}]} → GoNoGo (grille de notation, avant décision) */
+    goNoGoCriteria: (workspaceId: string, missionId: string) => `${tender(workspaceId, missionId)}/go-no-go/criteria`,
     /** POST {decision: GO|NO_GO, rationale} → GoNoGo (humain uniquement, une seule fois) */
     goNoGoDecision: (workspaceId: string, missionId: string) => `${tender(workspaceId, missionId)}/go-no-go/decision`,
     /** GET → Risk[] */

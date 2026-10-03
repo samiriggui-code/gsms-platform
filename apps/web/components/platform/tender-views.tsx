@@ -9,6 +9,7 @@ import type { TenderTab, TenderTabSlug } from "@/lib/tenders/tabs";
 import { CoreFailureState, EmptyState, NoWorkspaceState } from "./core-state";
 import { formatAmount, formatValue, StatusBadge } from "./format";
 import { type Column, ResourcePanel } from "./resource-panel";
+import { type Feasibility, FeasibilityMatrix, GoNoGoGrid } from "./tenders/go-no-go";
 import { type Compliance, RequirementsMatrix } from "./tenders/requirements-matrix";
 import { DceUpload, GoNoGoDecision } from "./tenders/tender-actions";
 
@@ -242,35 +243,33 @@ function AnalysisView({ data }: { data: Record<string, unknown> }) {
 function GoNoGoView({ data, workspaceId, missionId }: { data: Record<string, unknown>; workspaceId: string; missionId: string | null }) {
   const criteria = asList<Row>(data?.criteria);
   const decision = data?.decision as Row | null | undefined;
+  const feasibility = data?.feasibility as Feasibility | null | undefined;
+  const grid = criteria.map((row, i) => ({
+    code: String(row.code ?? `critere_${i + 1}`),
+    label: String(row.label ?? row.code ?? ""),
+    weight: Number(row.weight ?? 1),
+    score: Number(row.score ?? 0),
+    eliminatory: Boolean(row.eliminatory),
+  }));
   return (
-    <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
-      <SimpleList
-        title="Grille déterministe"
-        rows={criteria}
-        empty="Grille non calculée par le Core."
-        render={(row) => (
-          <div className="grid grid-cols-[1fr_auto] items-center gap-4">
-            <span className="font-medium">{formatValue(row.label)}</span>
-            <span className="font-mono">{formatValue(row.score)}{row.max !== undefined ? ` / ${String(row.max)}` : ""}</span>
-          </div>
-        )}
-      />
-      <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5">
+      {feasibility ? <FeasibilityMatrix workspaceId={workspaceId} feasibility={feasibility} /> : null}
+      <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr] [&>*]:min-w-0">
         <Card>
           <CardHeader>
-            <CardTitle>Score et recommandation</CardTitle>
+            <CardTitle>Grille de notation</CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col gap-3 text-[13px]">
-            <p className="text-[34px]/[1] font-[700] tracking-[-0.04em]">{formatValue(data?.score)}</p>
-            <p>
-              Recommandation calculée : <StatusBadge value={data?.recommendation} />
+          <CardContent className="flex flex-col gap-4 text-[13px]">
+            <p className="text-muted-foreground">
+              Complément à la matrice : votre appréciation, critère par critère. Score calculé par le Core (moyenne pondérée, un critère éliminatoire noté 0 recommande No-Go).
             </p>
-            {typeof data?.assistant_opinion === "string" ? (
-              <p className="rounded-[10px] border border-border bg-surface-subtle p-3 text-muted-foreground">
-                <span className="font-semibold text-foreground">Avis de l&apos;assistant : </span>
-                {data.assistant_opinion}
-              </p>
-            ) : null}
+            {missionId ? <GoNoGoGrid workspaceId={workspaceId} missionId={missionId} initial={grid} locked={Boolean(decision)} /> : null}
+            <p className="flex flex-wrap items-center gap-3">
+              <span className="text-[28px]/[1] font-[700] tracking-[-0.04em]">{data?.score === null || data?.score === undefined ? "—" : `${String(data.score)} / 100`}</span>
+              <span>
+                Recommandation : <StatusBadge value={data?.recommendation} />
+              </span>
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -287,7 +286,9 @@ function GoNoGoView({ data, workspaceId, missionId }: { data: Record<string, unk
               </>
             ) : (
               <>
-                <p className="text-muted-foreground">Aucune décision enregistrée. Elle est définitive et motivée.</p>
+                <p className="text-muted-foreground">
+                  Aucune décision enregistrée. Elle est définitive, motivée, et garde la trace de la matrice de faisabilité au moment de décider.
+                </p>
                 {missionId ? <GoNoGoDecision workspaceId={workspaceId} missionId={missionId} /> : null}
               </>
             )}

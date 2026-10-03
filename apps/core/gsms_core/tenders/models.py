@@ -39,6 +39,8 @@ class TenderCase(UUIDPk, Timestamped, Base):
     # Référence de la consultation chez l'acheteur (numéro de marché, identifiant de la plateforme).
     consultation_ref: Mapped[str | None] = mapped_column(String(120))
     submission_deadline: Mapped[datetime | None] = mapped_column()
+    # Montant annuel estimé du marché (€ HT), saisi par l'équipe : sert à la capacité financière.
+    estimated_amount: Mapped[float | None] = mapped_column(Float)
     tenderai_rfp_uri: Mapped[str | None] = mapped_column(String(300))
     lexsocket_uri: Mapped[str | None] = mapped_column(String(300))
     criteria: Mapped[list[dict[str, Any]]] = mapped_column(default=list)

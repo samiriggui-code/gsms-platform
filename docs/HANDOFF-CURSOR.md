@@ -1,5 +1,48 @@
 # Handoff Cursor → Claude
 
+## 2026-10-03 — Chantier AO-MCP, étape 3 : GO / NO-GO documenté
+
+Branche `cursor/ao-mcp-go-no-go`. Plan : `docs/chantiers/AO-MCP-AUDIT.md` (§8).
+
+- **Profil GSMS** (`tenders/profile.py`) : réglage plateforme `tender_profile`, saisi dans Paramètres → « Profil GSMS — appels d'offres » (`GET|PUT /api/v1/tenders/profile`, équipe GSMS ; écriture réservée aux rôles de gestion). Il contient :
+  - l'autorisation CNAPS et sa validité ;
+  - les certifications ;
+  - les agents mobilisables par qualification ;
+  - le chiffre d'affaires et le délai de mobilisation ;
+  - la reprise du personnel et la sous-traitance.
+
+  Un champ vide est affiché « à renseigner » : aucune valeur n'est supposée.
+- **Matrice de faisabilité** (`tenders/feasibility.py`, déterministe), servie par `GET …/go-no-go` (champ `feasibility`).
+  - 11 dimensions du §3, chacune READY / WARNING / BLOCKED avec une justification en clair et ses sources (pièce et page, ou exigence REQ-xxx) :
+    - capacité humaine : effectifs du DCE comparés au profil ; un service 24 h/24 compte pour 5,5 agents par poste, estimation affichée comme telle ;
+    - capacité réglementaire : CNAPS, reprise du personnel ;
+    - capacité technique : statuts de la matrice ;
+    - capacité financière : montant du marché rapporté au chiffre d'affaires, avertissement au-delà de 50 %, blocage au-delà de 100 % ;
+    - capacité documentaire : pièces manquantes, contradictions ;
+    - délai : blocage à moins de 3 jours, avertissement à moins de 10 ;
+    - certifications ;
+    - moyens matériels ;
+    - risques ;
+    - dépendances : visite, sous-traitance ;
+    - informations manquantes.
+  - Statut global = le pire des statuts.
+- **Décision** : reste humaine. L'audit et l'événement `tender.go_no_go.decided` gardent un instantané de la matrice au moment de décider.
+- **Grille de notation**
+  - Saisie par l'équipe via `PUT …/go-no-go/criteria`, avec les libellés conservés.
+  - Score calculé par le Core avec le moteur existant. Grille figée après la décision.
+- **Dossier** : montant annuel estimé, nouvelle colonne `estimated_amount` (migration `0012`). Modifiable avec la date de remise via `PATCH /workspaces/{ws}/tenders/{mission}`, formulaire dans la Synthèse.
+- **Portail**
+  - Onglet Go / No-Go : bandeau du statut global, dimensions avec liens vers la pièce à la bonne page, grille modifiable, décision.
+  - Paramètres : formulaire du profil.
+- **Vérifié en vrai** (PostgreSQL 16, migration 0012 dans les deux sens, Chromium sur ordinateur et mobile 390 px) :
+  - profil saisi, montant 400 000 € et date renseignés ;
+  - matrice « à surveiller », dont capacité humaine SSIAP 2 avec un besoin d'environ 5,5 agents pour 3 mobilisables ;
+  - grille 60/100, décision GO enregistrée ;
+  - aucun débordement sur mobile.
+- **Tests** : `tests/test_tender_go_no_go.py` (5 tests ; 187 au total).
+
+---
+
 ## 2026-10-03 — Chantier AO-MCP, étape 2 : Digest AO et matrice d'exigences
 
 Branche `cursor/ao-mcp-exigences`. Plan : `docs/chantiers/AO-MCP-AUDIT.md` (§8).

@@ -70,6 +70,7 @@ def create_dossier(
     buyer: str | None = None,
     consultation_ref: str | None = None,
     submission_deadline: datetime | None = None,
+    estimated_amount: float | None = None,
 ) -> TenderCase:
     """Crée workspace AO + mission APPEL_OFFRES + dossier, avec la prochaine référence de l'année."""
     org = gsms_organization(session)
@@ -106,6 +107,7 @@ def create_dossier(
         submission_deadline=submission_deadline,
     )
     case.consultation_ref = consultation_ref
+    case.estimated_amount = estimated_amount
     session.flush()
     return case
 

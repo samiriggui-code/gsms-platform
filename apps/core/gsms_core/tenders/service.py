@@ -101,7 +101,13 @@ def score_case(
 
 
 def decide(
-    session: Session, case: TenderCase, decision: GoNoGo, *, decided_by: str, rationale: str
+    session: Session,
+    case: TenderCase,
+    decision: GoNoGo,
+    *,
+    decided_by: str,
+    rationale: str,
+    feasibility: dict | None = None,
 ) -> TenderCase:
     """Décision humaine. La recommandation calculée n'est qu'un avis ; un écart doit être motivé."""
     if decision == GoNoGo.PENDING:
@@ -124,7 +130,13 @@ def decide(
         action="tender.go_no_go.decide",
         subject_uri=uri,
         workspace_id=case.workspace_id,
-        after={"decision": decision.value, "score": case.score, "recommendation": case.recommendation.value},
+        after={
+            "decision": decision.value,
+            "score": case.score,
+            "recommendation": case.recommendation.value,
+            # Ce que la matrice de faisabilité montrait au moment de décider (trace de la décision).
+            "feasibility": feasibility,
+        },
     )
     publish(
         session,
@@ -140,7 +152,50 @@ def decide(
                 "score": case.score,
                 "recommendation": case.recommendation.value,
                 "overrides_recommendation": case.recommendation not in (GoNoGo.PENDING, decision),
+                "feasibility": feasibility,
             },
         ),
     )
     return case
+
+
+def set_grid(session: Session, case: TenderCase, rows: list[dict], actor: str) -> TenderCase:
+    """Grille de notation saisie par l'équipe (libellés conservés) ; score calculé en Python."""
+    criteria = [Criterion(r["code"], r["weight"], r["score"], r.get("eliminatory", False)) for r in rows]
+    score_case(session, case, criteria, actor)
+    case.criteria = [
+        {**asdict(c), "label": r.get("label") or c.code} for c, r in zip(criteria, rows, strict=True)
+    ]
+    session.flush()
+    return case
+
+
+EDITABLE_FIELDS = ("title", "buyer", "consultation_ref", "submission_deadline", "estimated_amount")
+
+
+def update_case(session: Session, case: TenderCase, changes: dict, actor: str) -> TenderCase:
+    unknown = set(changes) - set(EDITABLE_FIELDS)
+    if unknown:
+        raise TenderError(f"champs non modifiables : {', '.join(sorted(unknown))}")
+    if "title" in changes and not (changes["title"] or "").strip():
+        raise TenderError("intitulé obligatoire")
+    before = {k: _plain(getattr(case, k)) for k in changes}
+    for key, value in changes.items():
+        if isinstance(value, str):
+            value = value.strip() if key == "title" else (value.strip() or None)
+        setattr(case, key, value)
+    session.flush()
+    record(
+        session,
+        actor=actor,
+        action="tender.update",
+        subject_uri=core_uri("tender", case.id),
+        workspace_id=case.workspace_id,
+        before=before,
+        after={k: _plain(getattr(case, k)) for k in changes},
+    )
+    return case
+
+
+def _plain(value):
+    return value.isoformat() if hasattr(value, "isoformat") else value
