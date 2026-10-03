@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import uuid
+
 from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from gsms_core.db import utcnow
@@ -8,6 +11,7 @@ from gsms_core.deps import Principal, get_current_principal, get_db, get_setting
 from gsms_core.identity import service
 from gsms_core.identity.models import Organization
 from gsms_core.identity.schemas import LoginIn, MeOut, SwitchWorkspaceIn, TokenOut, WorkspaceOut
+from gsms_core.oidc import service as oidc
 from gsms_core.security import TokenClaims, create_access_token
 from gsms_core.settings import Settings
 
@@ -26,17 +30,10 @@ def _ws_out(access: service.WorkspaceAccess) -> WorkspaceOut:
     )
 
 
-@router.post("/auth/login", response_model=TokenOut)
-def login(
-    body: LoginIn, db: Session = Depends(get_db), settings: Settings = Depends(get_settings_dep)
-) -> TokenOut:
-    user = service.authenticate(db, body.email, body.password)
-    if user is None:
-        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "identifiants invalides")
-    user.last_login_at = utcnow()
-    db.commit()
-    if body.workspace_id is not None:
-        access = service.get_workspace_access(db, user.id, body.workspace_id)
+def _session(db: Session, settings: Settings, user, workspace_id: uuid.UUID | None) -> TokenOut:
+    """Session du Core pour ce compte : sur le workspace demandé, sinon le premier accessible."""
+    if workspace_id is not None:
+        access = service.get_workspace_access(db, user.id, workspace_id)
         if access is None:
             raise HTTPException(status.HTTP_403_FORBIDDEN, "workspace non autorisé")
     else:
@@ -58,6 +55,46 @@ def login(
     return TokenOut(
         access_token=create_access_token(settings, claims), workspace_id=claims.workspace_id, role=claims.role
     )
+
+
+@router.post("/auth/login", response_model=TokenOut)
+def login(
+    body: LoginIn, db: Session = Depends(get_db), settings: Settings = Depends(get_settings_dep)
+) -> TokenOut:
+    user = service.authenticate(db, body.email, body.password)
+    if user is None:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "identifiants invalides")
+    user.last_login_at = utcnow()
+    db.commit()
+    return _session(db, settings, user, body.workspace_id)
+
+
+class OidcSessionIn(BaseModel):
+    client_id: str = Field(max_length=64)
+    code: str = Field(min_length=20, max_length=200)
+    redirect_uri: str = Field(max_length=500)
+    code_verifier: str = Field(min_length=43, max_length=128)
+
+
+@router.post("/auth/oidc-session", response_model=TokenOut)
+def oidc_session(
+    body: OidcSessionIn, db: Session = Depends(get_db), settings: Settings = Depends(get_settings_dep)
+) -> TokenOut:
+    """« Se connecter avec GSMS » depuis DocuLens : le code (PKCE) ouvre une session du Core."""
+    try:
+        user = oidc.exchange_for_session(
+            db,
+            client_id=body.client_id,
+            code=body.code,
+            redirect_uri=body.redirect_uri,
+            code_verifier=body.code_verifier,
+        )
+    except oidc.OidcError as err:
+        db.commit()  # le code présenté est consommé, même refusé
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, err.description) from err
+    out = _session(db, settings, user, None)
+    db.commit()
+    return out
 
 
 @router.get("/auth/me", response_model=MeOut)

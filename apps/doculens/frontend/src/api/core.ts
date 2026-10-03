@@ -219,6 +219,92 @@ export async function coreProfile(): Promise<UserProfile> {
   return { ...role(me.role), id: me.id, email: me.email, full_name: me.name };
 }
 
+// --- « Se connecter avec GSMS » (OpenID Connect, client public + PKCE) ------------------------------
+// Le portail GSMS (fournisseur d'identité du Core) authentifie le membre ; le code obtenu ouvre une session
+// du Core par `POST /api/v1/auth/oidc-session`. Voir docs/architecture/IDENTITE-SSO.md.
+
+const SSO_CLIENT_ID = 'doculens';
+const SSO_STORAGE_KEY = 'doculens.gsms-sso';
+
+/** Portail GSMS : `VITE_GSMS_PORTAL_URL`, sinon déduit du domaine (doculens.<domaine> → https://<domaine>). */
+export function gsmsPortalUrl(): string {
+  const configured: string | undefined = import.meta.env.VITE_GSMS_PORTAL_URL || undefined;
+  if (configured) return configured.replace(/\/+$/, '');
+  const { protocol, hostname, port } = window.location;
+  const host = hostname.replace(/^doculens\./, '');
+  return `${protocol}//${host}${host === hostname && port ? `:${port}` : ''}`;
+}
+
+function ssoRedirectUri(): string {
+  return `${window.location.origin}/auth/callback`;
+}
+
+function base64Url(bytes: Uint8Array): string {
+  let binary = '';
+  bytes.forEach((byte) => {
+    binary += String.fromCharCode(byte);
+  });
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function randomToken(size = 32): string {
+  return base64Url(crypto.getRandomValues(new Uint8Array(size)));
+}
+
+/** Part vers le portail GSMS ; déjà connecté au portail, le retour est immédiat. */
+export async function startGsmsSignIn(next = '/app'): Promise<void> {
+  const state = randomToken();
+  const verifier = randomToken(48);
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier));
+  sessionStorage.setItem(SSO_STORAGE_KEY, JSON.stringify({ state, verifier, next }));
+  const params = new URLSearchParams({
+    response_type: 'code',
+    client_id: SSO_CLIENT_ID,
+    redirect_uri: ssoRedirectUri(),
+    scope: 'openid profile email',
+    state,
+    code_challenge: base64Url(new Uint8Array(digest)),
+    code_challenge_method: 'S256',
+  });
+  window.location.assign(`${gsmsPortalUrl()}/oidc/authorize?${params.toString()}`);
+}
+
+/** Retour du portail : vérifie l'état, échange le code contre une session du Core. Renvoie aussi la page visée. */
+export async function completeGsmsSignIn(code: string, state: string): Promise<{ auth: AuthResponse; next: string }> {
+  const raw = sessionStorage.getItem(SSO_STORAGE_KEY);
+  sessionStorage.removeItem(SSO_STORAGE_KEY);
+  const saved = raw ? (JSON.parse(raw) as { state: string; verifier: string; next?: string }) : null;
+  if (!saved || saved.state !== state) {
+    const error: ApiError = new Error('La demande de connexion a expiré. Recommencez.');
+    error.status = 400;
+    throw error;
+  }
+  const token = await call<{ access_token: string; token_type: string; workspace_id: string | null }>(
+    '/auth/oidc-session',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        client_id: SSO_CLIENT_ID,
+        code,
+        redirect_uri: ssoRedirectUri(),
+        code_verifier: saved.verifier,
+      }),
+    },
+  );
+  setCoreToken(token.access_token);
+  const next = saved.next && saved.next.startsWith('/') && !saved.next.startsWith('//') ? saved.next : '/app';
+  return {
+    auth: {
+      access_token: token.access_token,
+      token_type: token.token_type,
+      user: await coreProfile(),
+      personas: [],
+      roles: {},
+    },
+    next,
+  };
+}
+
 export async function coreLogin(credentials: { email: string; password: string }): Promise<AuthResponse> {
   const token = await call<{ access_token: string; token_type: string; workspace_id: string | null }>(
     '/auth/login',

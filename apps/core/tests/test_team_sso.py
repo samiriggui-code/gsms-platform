@@ -394,3 +394,51 @@ def test_secret_rotation_and_cli(client, session, owner, grace_client, capsys, s
     assert "SSO_CLIENT_ID=qatrial" in out and "https://qatrial.gsms-security.com/api/auth/sso/callback" in out
     assert main(["sso-client", "qatrial"]) == 0
     assert "Secret inchangé" in capsys.readouterr().out
+
+
+DOCULENS_CB = "https://doculens.gsms-security.com/auth/callback"
+
+
+def test_doculens_public_client_opens_a_core_session(client, session, owner):
+    from gsms_core.oidc import service as oidc
+
+    _, secret = oidc.save_client(session, "doculens", [DOCULENS_CB], "test")
+    session.commit()
+    assert secret is None  # client public : pas de secret
+    analyst = _member(client, session, "analyste@gsms-security.com", "analyst")
+
+    # PKCE obligatoire pour un client public.
+    no_pkce = client.post(
+        "/api/v1/oidc/authorize",
+        headers=analyst,
+        json={"client_id": "doculens", "redirect_uri": DOCULENS_CB, "scope": "openid", "state": "s"},
+    )
+    assert _query(no_pkce.json()["redirect_to"])["error"] == "invalid_request"
+
+    code = _query(_authorize(client, analyst, client_id="doculens", redirect_uri=DOCULENS_CB))["code"]
+    body = {"client_id": "doculens", "code": code, "redirect_uri": DOCULENS_CB, "code_verifier": "v" * 64}
+    r = client.post("/api/v1/auth/oidc-session", json=body)
+    assert r.status_code == 200, r.text
+    me = client.get("/api/v1/auth/me", headers={"Authorization": f"Bearer {r.json()['access_token']}"})
+    assert me.json()["email"] == "analyste@gsms-security.com"
+    # Usage unique ; le point d'accès des clients à secret n'ouvre rien pour un client public.
+    assert client.post("/api/v1/auth/oidc-session", json=body).status_code == 401
+    code = _query(_authorize(client, analyst, client_id="doculens", redirect_uri=DOCULENS_CB))["code"]
+    token = client.post(
+        "/api/v1/oidc/token",
+        data={
+            "grant_type": "authorization_code",
+            "code": code,
+            "redirect_uri": DOCULENS_CB,
+            "client_id": "doculens",
+        },
+    )
+    assert token.status_code == 401
+    # Un autre client (GRACE) ne peut pas ouvrir de session du Core.
+    bad = client.post("/api/v1/auth/oidc-session", json=body | {"client_id": "grace"})
+    assert bad.status_code == 401
+
+    # Compte client : DocuLens est réservé à l'équipe.
+    client_user = _login(client, "direction@abc-retail.example", "test-password")
+    denied = _authorize(client, client_user, client_id="doculens", redirect_uri=DOCULENS_CB)
+    assert _query(denied)["error"] == "access_denied"

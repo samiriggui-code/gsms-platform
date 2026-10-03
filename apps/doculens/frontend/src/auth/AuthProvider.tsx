@@ -2,7 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { clearAuthToken, fetchProfile, login as apiLogin, setAuthToken } from '../api/client';
-import type { RoleDefinition, UserProfile } from '../api/types';
+import { completeGsmsSignIn } from '../api/core';
+import type { AuthResponse, RoleDefinition, UserProfile } from '../api/types';
 import { DEFAULT_PERSONAS } from '../settings/types';
 import { AuthContext } from './context';
 import type { AuthContextValue } from './types';
@@ -80,9 +81,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(false);
   }, [persistAuth]);
 
-  const handleLogin = useCallback(
-    async (email: string, password: string) => {
-      const response = await apiLogin({ email, password });
+  const acceptSession = useCallback(
+    (response: AuthResponse) => {
       setUser(response.user);
       setAuthToken(response.access_token);
       if (response.personas?.length) {
@@ -101,6 +101,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [persistAuth],
   );
 
+  const handleLogin = useCallback(
+    async (email: string, password: string) => acceptSession(await apiLogin({ email, password })),
+    [acceptSession],
+  );
+
+  // « Se connecter avec GSMS » : retour du portail avec le code d'autorisation.
+  const handleGsmsLogin = useCallback(
+    async (code: string, state: string) => {
+      const { auth, next } = await completeGsmsSignIn(code, state);
+      acceptSession(auth);
+      return next;
+    },
+    [acceptSession],
+  );
+
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
@@ -108,9 +123,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       personas,
       roles,
       login: handleLogin,
+      loginWithGsms: handleGsmsLogin,
       logout: () => performLogout(true),
     }),
-    [user, isLoading, personas, roles, handleLogin, performLogout],
+    [user, isLoading, personas, roles, handleLogin, handleGsmsLogin, performLogout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

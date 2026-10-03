@@ -2,7 +2,9 @@ import { type FormEvent, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Check, Eye, EyeOff, FileCheck2, LockKeyhole, Sparkles } from 'lucide-react';
 
+import { isCoreMode } from '../api/core';
 import { useAuth } from '../auth/useAuth';
+import { GsmsLoginPage } from './GsmsLoginPage';
 import { Logo } from '../components/brand/Logo';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -12,6 +14,10 @@ import { useSettings } from '../settings/useSettings';
 const DEMO_ACCOUNT = { email: 'analyst@doculens.ai', password: 'Analyst!234' };
 
 export function LoginPage() {
+  return isCoreMode ? <GsmsLoginPage /> : <UpstreamLoginPage />;
+}
+
+function UpstreamLoginPage() {
   const { user, login } = useAuth();
   const { serverConfig } = useSettings();
   const navigate = useNavigate();

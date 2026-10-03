@@ -39,6 +39,9 @@ KEY_SETTING = "oidc_signing_key"
 CODE_TTL = timedelta(seconds=60)
 TOKEN_TTL = timedelta(hours=1)
 SCOPES = ("openid", "profile", "email")
+# Clients « publics » (application sans serveur, comme DocuLens) : pas de secret, PKCE obligatoire, et le code
+# s'échange contre une session du Core (``exchange_for_session``), pas contre des jetons OIDC.
+PUBLIC_CLIENTS = frozenset({"doculens"})
 
 
 class OidcError(Exception):
@@ -162,6 +165,7 @@ def default_redirect_uris(settings: Settings, app: str) -> list[str]:
         "grace": f"https://grace.{host}/api/auth/sso/callback",
         "qatrial": f"https://qatrial.{host}/api/auth/sso/callback",
         "crm": f"https://crm.{host}/api/auth/callback/gsms",
+        "doculens": f"https://doculens.{host}/auth/callback",
     }
     return [paths[app]] if app in paths else []
 
@@ -186,8 +190,10 @@ def save_client(
 ) -> tuple[OidcClient, str | None]:
     """Crée ou met à jour le client de l'application. Renvoie le secret en clair s'il est (re)généré."""
     catalog = app_catalog.APPS_BY_KEY.get(app)
-    if catalog is None or not catalog.sso:
-        raise ValueError(f"application inconnue : {app} (attendu : {', '.join(app_catalog.SSO_APPS)})")
+    public = app in PUBLIC_CLIENTS
+    if catalog is None or not (catalog.sso or public):
+        known = ", ".join([*app_catalog.SSO_APPS, *sorted(PUBLIC_CLIENTS)])
+        raise ValueError(f"application inconnue : {app} (attendu : {known})")
     uris = [_check_uri(u.strip()) for u in redirect_uris if u.strip()]
     if not uris:
         raise ValueError("au moins une adresse de retour est requise")
@@ -195,12 +201,16 @@ def save_client(
     client = session.get(OidcClient, app)
     secret = None
     if client is None:
-        secret = secrets.token_urlsafe(32)
+        secret = None if public else secrets.token_urlsafe(32)
         client = OidcClient(
-            client_id=app, app=app, name=catalog.name, secret_hash=_hash(secret), updated_by=actor
+            client_id=app,
+            app=app,
+            name=catalog.name,
+            secret_hash=_hash(secret) if secret else "",
+            updated_by=actor,
         )
         session.add(client)
-    elif rotate:
+    elif rotate and not public:
         secret = secrets.token_urlsafe(32)
         client.secret_hash = _hash(secret)
         client.secret_rotated_at = utcnow()
@@ -234,7 +244,7 @@ def client_view(client: OidcClient) -> dict:
 
 def _authenticate_client(session: Session, client_id: str | None, secret: str | None) -> OidcClient:
     client = session.get(OidcClient, client_id) if client_id else None
-    if client is None or not client.is_active or not secret:
+    if client is None or not client.is_active or not secret or not client.secret_hash:
         raise OidcError("invalid_client", "client inconnu ou secret absent", status=401)
     if not hmac.compare_digest(client.secret_hash, _hash(secret)):
         raise OidcError("invalid_client", "secret du client invalide", status=401)
@@ -294,6 +304,8 @@ def authorize(session: Session, user: User, req: AuthorizeRequest, actor: str) -
         scopes = req.scope.split()
         if "openid" not in scopes:
             raise OidcError("invalid_scope", "le scope openid est obligatoire", redirect=True)
+        if client.client_id in PUBLIC_CLIENTS and not req.code_challenge:
+            raise OidcError("invalid_request", "PKCE obligatoire pour cette application", redirect=True)
         if req.code_challenge and (req.code_challenge_method or "plain") != "S256":
             raise OidcError("invalid_request", "PKCE : seule la méthode S256 est acceptée", redirect=True)
         if req.prompt == "none":
@@ -348,21 +360,14 @@ def _profile(user: User, grant: AppGrant, scope: str) -> dict:
     return {k: v for k, v in claims.items() if v is not None}
 
 
-def exchange_code(
+def _consume_code(
     session: Session,
-    settings: Settings,
-    vault: Vault,
-    *,
-    grant_type: str | None,
+    client: OidcClient,
     code: str | None,
     redirect_uri: str | None,
-    client_id: str | None,
-    client_secret: str | None,
     code_verifier: str | None,
-) -> dict:
-    client = _authenticate_client(session, client_id, client_secret)
-    if grant_type != "authorization_code":
-        raise OidcError("unsupported_grant_type", "seul authorization_code est accepté")
+) -> tuple[OidcCode, User, AppGrant]:
+    """Vérifie et consomme un code d'autorisation (usage unique, durée, adresse de retour, PKCE, droits)."""
     row = session.get(OidcCode, _hash(code)) if code else None
     now = utcnow()
     if row is None or row.client_id != client.client_id:
@@ -388,6 +393,26 @@ def exchange_code(
         grant = grant_for(session, user, client.app)
     except OidcError as err:
         raise OidcError("invalid_grant", err.description) from err
+    return row, user, grant
+
+
+def exchange_code(
+    session: Session,
+    settings: Settings,
+    vault: Vault,
+    *,
+    grant_type: str | None,
+    code: str | None,
+    redirect_uri: str | None,
+    client_id: str | None,
+    client_secret: str | None,
+    code_verifier: str | None,
+) -> dict:
+    client = _authenticate_client(session, client_id, client_secret)
+    if grant_type != "authorization_code":
+        raise OidcError("unsupported_grant_type", "seul authorization_code est accepté")
+    row, user, grant = _consume_code(session, client, code, redirect_uri, code_verifier)
+    now = utcnow()
     client.last_used_at = now
     user.last_login_at = now
     key = signing_key(session, vault)
@@ -419,6 +444,34 @@ def exchange_code(
         "id_token": jwt.encode(id_claims, key.private, algorithm="RS256", headers=headers),
         "scope": row.scope,
     }
+
+
+def exchange_for_session(
+    session: Session,
+    *,
+    client_id: str | None,
+    code: str | None,
+    redirect_uri: str | None,
+    code_verifier: str | None,
+) -> User:
+    """Client public (DocuLens) : le code, prouvé par PKCE, ouvre une session du Core pour ce membre."""
+    client = session.get(OidcClient, client_id) if client_id else None
+    if client is None or not client.is_active or client.client_id not in PUBLIC_CLIENTS:
+        raise OidcError("invalid_client", "application inconnue ou non autorisée", status=401)
+    if not code_verifier:
+        raise OidcError("invalid_grant", "PKCE : code_verifier manquant")
+    _row, user, grant = _consume_code(session, client, code, redirect_uri, code_verifier)
+    now = utcnow()
+    client.last_used_at = now
+    user.last_login_at = now
+    record(
+        session,
+        actor=f"user:{user.id}",
+        action="oidc.login",
+        subject_uri=f"gsms://oidc/client/{client.client_id}",
+        after={"app": client.app, "role": grant.app_role},
+    )
+    return user
 
 
 def userinfo(session: Session, settings: Settings, vault: Vault, token: str) -> dict:

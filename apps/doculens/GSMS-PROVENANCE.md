@@ -65,3 +65,11 @@ plus utilisés dans ce mode (non supprimés).
 servie par nginx qui relaie `/api/v1/auth/*` et `/api/v1/workspaces/*` au Core (service `core` du
 `docker-compose.yml` de la racine). Publiée sur `doculens.<domaine>` par `deploy/deploy.sh`.
 Les fichiers `docker/Dockerfile.*` et `docker/nginx.conf` d'origine sont inchangés.
+
+### 2026-10-03 — Connexion « Accès GSMS »
+
+En mode Core, la page de connexion (`frontend/src/pages/GsmsLoginPage.tsx`) remplace celle de l'upstream :
+bouton « Se connecter avec GSMS » (OIDC du portail, PKCE, retour sur `/auth/callback`,
+`GsmsCallbackPage.tsx`), formulaire e-mail + mot de passe GSMS, textes en français, plus de compte de
+démonstration. `/` mène directement à l'application. Portail : `VITE_GSMS_PORTAL_URL`, sinon déduit du domaine
+(`doculens.<domaine>` → `https://<domaine>`). Hors mode Core, la page d'origine est inchangée.

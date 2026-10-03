@@ -3,7 +3,9 @@
 Chaque application garde **sa propre base**. Le Core est la **seule source** des comptes de l'équipe GSMS et de
 leurs rôles : on crée, modifie ou désactive un membre une fois, dans **Paramètres → Équipe** du portail.
 
-- **DocuLens** : se connecte directement au Core (même compte, même mot de passe).
+- **DocuLens** : « Se connecter avec GSMS » (client OIDC **public**, PKCE obligatoire, sans secret) ; le code
+  s'échange contre une session du Core (`POST /api/v1/auth/oidc-session`). Le formulaire e-mail + mot de passe
+  GSMS reste disponible. Déclaration : `cli sso-client doculens` (fait par `deploy/deploy-all.sh`).
 - **GRACE, CRM, QAtrial** : bouton « Se connecter avec GSMS » (OpenID Connect, flux *authorization code*).
   À la connexion, l'app crée ou met à jour l'utilisateur **dans sa propre base** à partir de l'e-mail, avec le
   rôle que le Core lui transmet. Un compte désactivé dans le Core ne peut plus se connecter nulle part.

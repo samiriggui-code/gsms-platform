@@ -297,6 +297,7 @@ _SSO_ENV = {
     "grace": "GRACE (apps/grace, fichier .env du serveur)",
     "qatrial": "QAtrial (apps/qatrial)",
     "crm": "CRM (apps/crm/.env)",
+    "doculens": "DocuLens (client public : rien à configurer côté application)",
 }
 
 
@@ -318,7 +319,7 @@ def _sso_client(settings, db: Database, args) -> int:
     """Déclare (ou met à jour) l'application auprès du fournisseur OIDC et affiche ses variables."""
     from gsms_core.oidc import service as oidc
 
-    apps = list(_SSO_ENV) if args.app == "all" else [args.app]
+    apps = [a for a in _SSO_ENV if a != "doculens"] if args.app == "all" else [args.app]
     if len(apps) > 1 and args.redirect_uri:
         print("Erreur : --redirect-uri s'utilise avec une seule application.", file=sys.stderr)
         return 1
@@ -336,6 +337,9 @@ def _sso_client(settings, db: Database, args) -> int:
             session.commit()
             print(f"\n== {_SSO_ENV[app]} ==")
             print(f"Adresse de retour : {', '.join(client.redirect_uris)}")
+            if app in oidc.PUBLIC_CLIENTS:
+                print("Client public (PKCE, sans secret) : prêt.")
+                continue
             if secret is None:
                 print("Secret inchangé (déjà affiché à la création). Pour en générer un nouveau : --rotate")
                 continue
