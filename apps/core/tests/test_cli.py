@@ -35,4 +35,11 @@ def test_prod_refuses_dev_secret_and_sqlite():
         Settings(env="prod", database_url="postgresql+psycopg://u:p@db/x")
     with pytest.raises(ValidationError):
         Settings(env="prod", jwt_secret="x" * 40, database_url="sqlite://")
-    Settings(env="prod", jwt_secret="x" * 40, database_url="postgresql+psycopg://u:p@db/x")
+    with pytest.raises(ValidationError):  # coffre-fort sans clé maître
+        Settings(env="prod", jwt_secret="x" * 40, database_url="postgresql+psycopg://u:p@db/x")
+    Settings(
+        env="prod",
+        jwt_secret="x" * 40,
+        database_url="postgresql+psycopg://u:p@db/x",
+        storage_master_key="A" * 43 + "=",
+    )

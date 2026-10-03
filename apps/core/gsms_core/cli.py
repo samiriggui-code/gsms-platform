@@ -71,6 +71,29 @@ def _read_password() -> str:
     return first
 
 
+def _vault_migrate(settings, db: Database) -> int:
+    from gsms_core.documents.storage import LocalFSStorage, build_storage
+    from gsms_core.vault.migrate import migrate_legacy
+    from gsms_core.vault.storage import Vault
+
+    storage = build_storage(settings)
+    legacy = (
+        LocalFSStorage(settings.legacy_storage_root, settings.s3_bucket)
+        if settings.legacy_storage_root
+        else storage
+    )
+    with db.session_factory() as session:
+        report = migrate_legacy(session, Vault.from_settings(storage, settings), legacy)
+    print(
+        f"Coffre-fort : {report.blobs_encrypted} fichier(s) chiffré(s), "
+        f"{report.versions_repointed} version(s) repointée(s), {report.documents_filed} pièce(s) rangée(s), "
+        f"{report.legacy_blobs_removed} ancien(s) blob(s) retiré(s)."
+    )
+    for error in report.errors:
+        print(f"Attention : {error}", file=sys.stderr)
+    return 1 if report.errors else 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="gsms_core.cli")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -78,6 +101,7 @@ def main(argv: list[str] | None = None) -> int:
     admin.add_argument("email")
     admin.add_argument("name")
     sub.add_parser("seed-demo", help="installer l'organisation de démonstration")
+    sub.add_parser("vault-migrate", help="chiffrer les fichiers existants et les ranger dans le coffre-fort")
     args = parser.parse_args(argv)
 
     settings = get_settings()
@@ -89,6 +113,9 @@ def main(argv: list[str] | None = None) -> int:
         with db.session_factory() as session:
             print(seed(session, password))
         return 0
+
+    if args.command == "vault-migrate":
+        return _vault_migrate(settings, db)
 
     try:
         password = _read_password()

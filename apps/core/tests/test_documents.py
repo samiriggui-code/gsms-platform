@@ -41,7 +41,10 @@ def test_upload_dedups_blobs_by_sha256(client, auth, demo, session, settings):
     assert a["document"]["id"] != b["document"]["id"]  # deux documents, un seul binaire
     assert session.scalar(select(func.count()).select_from(Blob)) == 1
     stored = [p for p in (settings.storage_local_root).rglob("*") if p.is_file()]
-    assert len(stored) == 1 and stored[0].read_bytes() == content
+    assert len(stored) == 1
+    raw = stored[0].read_bytes()  # coffre-fort : chiffré, jamais le contenu en clair
+    assert raw.startswith(b"GSMSV1") and b"registre de securite" not in raw
+    assert f"ws/{demo.lyon}/" in stored[0].as_posix()
 
 
 def test_new_versions_on_existing_document(client, auth, demo, session):

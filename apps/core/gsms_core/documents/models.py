@@ -30,16 +30,26 @@ class DocumentSource(enum.StrEnum):
 
 
 class Blob(UUIDPk, Timestamped, Base):
-    """Binaire unique (déduplication globale par sha256). L'accès passe par Document/Version, jamais par
-    la clé objet seule."""
+    """Binaire d'un workspace (déduplication par sha256 à l'intérieur du workspace seulement).
+
+    ``sha256`` et ``size`` portent sur le contenu en clair. ``encryption`` = ``aes256gcm-chunked-v1`` :
+    l'objet stocké est chiffré avec la clé du workspace (``gsms_core.vault``). Les blobs antérieurs au
+    coffre-fort (``workspace_id`` nul, ``encryption`` = ``none``) restent lisibles jusqu'à leur migration
+    (``python -m gsms_core.cli vault-migrate``). L'accès passe par Document/Version, jamais par la clé
+    objet seule.
+    """
 
     __tablename__ = "document_blob"
+    __table_args__ = (UniqueConstraint("workspace_id", "sha256"),)
 
-    sha256: Mapped[str] = mapped_column(String(64), unique=True)
+    workspace_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("identity_workspace.id"), index=True)
+    sha256: Mapped[str] = mapped_column(String(64), index=True)
     size: Mapped[int] = mapped_column(BigInteger)
     mime: Mapped[str] = mapped_column(String(200))
     bucket: Mapped[str] = mapped_column(String(100))
     object_key: Mapped[str] = mapped_column(String(500))
+    encryption: Mapped[str] = mapped_column(String(40), default="none")
+    key_version: Mapped[int | None] = mapped_column()
 
 
 class Document(UUIDPk, Timestamped, Base):
@@ -53,6 +63,8 @@ class Document(UUIDPk, Timestamped, Base):
     source: Mapped[DocumentSource] = mapped_column(str_enum(DocumentSource), default=DocumentSource.UPLOAD)
     # Pas de FK vers document_version pour éviter le cycle ; cohérence assurée par le service.
     current_version_id: Mapped[uuid.UUID | None] = mapped_column()
+    # Répertoire du coffre-fort (gsms_core.vault) ; toujours dans le même workspace.
+    folder_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("vault_folder.id"), index=True)
 
 
 class DocumentVersion(UUIDPk, Base):

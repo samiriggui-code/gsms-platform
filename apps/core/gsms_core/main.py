@@ -22,6 +22,8 @@ from gsms_core.intake.router import router as intake_router
 from gsms_core.missions.router import router as missions_router
 from gsms_core.settings import Settings, get_settings
 from gsms_core.tenders.router import router as tenders_router
+from gsms_core.vault.router import router as vault_router
+from gsms_core.vault.storage import Vault
 from gsms_core.work.router import router as work_router
 from gsms_core.workflows import build_engine
 from gsms_core.workspaces.router import router as workspaces_router
@@ -44,6 +46,8 @@ def create_app(
     app.state.settings = settings
     app.state.db = db or Database(settings.database_url)
     app.state.storage = storage or build_storage(settings)
+    # Coffre-fort : chiffrement par workspace au-dessus du stockage objet (gsms_core.vault).
+    app.state.vault = Vault.from_settings(app.state.storage, settings)
     # Moteur de parsing derrière l'interface DocumentParser (Docling par défaut, import paresseux).
     app.state.document_parser = document_parser or DoclingAdapter()
     app.state.workflows = build_engine(settings, bus)
@@ -76,6 +80,7 @@ def create_app(
         tenders_router,
         documents_router,
         digest_router,
+        vault_router,
         work_router,
         events_router,
     ):

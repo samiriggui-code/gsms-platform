@@ -19,6 +19,7 @@ from fastapi import (
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
+from gsms_core.audit.service import record
 from gsms_core.deps import WorkspaceContext, get_db, get_settings_dep, require_roles, require_workspace
 from gsms_core.documents import parsing, service
 from gsms_core.documents.models import Blob, DocumentParse, DocumentVersion
@@ -26,9 +27,22 @@ from gsms_core.documents.parsers.schemas import NormalizedDocument
 from gsms_core.documents.schemas import DocumentOut, DossierOut, ParseOut, UploadOut, VersionOut
 from gsms_core.documents.search import MAX_LIMIT, SearchHit, search_documents
 from gsms_core.identity.models import CONTRIBUTE_ROLES
+from gsms_core.missions.uri import core_uri
 from gsms_core.settings import Settings
+from gsms_core.vault import folders as vault_folders
 
 router = APIRouter(prefix="/api/v1/workspaces/{ws}", tags=["documents"])
+
+
+def _visible_doc(db: Session, ctx: WorkspaceContext, document_id: uuid.UUID):
+    """Document du workspace, visible pour ce rôle (un client ne voit pas « Travail GSMS ») ; sinon 404."""
+    try:
+        doc = service.get_document(db, ctx.workspace_id, document_id)
+    except service.NotFound as exc:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "document introuvable") from exc
+    if not vault_folders.document_visible(db, doc, ctx.role):
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "document introuvable")
+    return doc
 
 
 def _version_out(v: DocumentVersion, b: Blob) -> VersionOut:
@@ -47,20 +61,36 @@ def _version_out(v: DocumentVersion, b: Blob) -> VersionOut:
 @router.post("/documents", response_model=UploadOut, status_code=status.HTTP_201_CREATED)
 def upload(
     request: Request,
+    background: BackgroundTasks,
     file: UploadFile = File(...),
     title: str | None = Form(default=None),
     doc_type: str | None = Form(default=None),
     mission_id: uuid.UUID | None = Form(default=None),
     document_id: uuid.UUID | None = Form(default=None),
     note: str | None = Form(default=None),
+    folder_id: uuid.UUID | None = Form(default=None),
+    analyze: bool = Form(default=False),
     ctx: WorkspaceContext = Depends(require_roles(CONTRIBUTE_ROLES)),
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings_dep),
 ):
+    """Dépôt dans le coffre-fort (chiffré). ``folder_id`` : dossier cible (par défaut « Pièces client ») ;
+    ``analyze`` : lance aussitôt l'analyse Docling puis le Digest."""
+    if document_id is not None:
+        existing = _visible_doc(db, ctx, document_id)
+        target_folder_id = existing.folder_id
+    else:
+        try:
+            target = vault_folders.resolve_upload_folder(db, ctx.workspace_id, folder_id, ctx.role, ctx.actor)
+        except LookupError as exc:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, "dossier introuvable") from exc
+        except vault_folders.FolderForbidden as exc:
+            raise HTTPException(status.HTTP_403_FORBIDDEN, str(exc)) from exc
+        target_folder_id = target.id
     try:
         result = service.upload_document(
             db,
-            request.app.state.storage,
+            request.app.state.vault,
             workspace_id=ctx.workspace_id,
             actor=ctx.actor,
             stream=file.file,
@@ -72,12 +102,20 @@ def upload(
             mission_id=mission_id,
             document_id=document_id,
             note=note,
+            folder_id=target_folder_id,
         )
     except service.NotFound as exc:
         raise HTTPException(status.HTTP_404_NOT_FOUND, f"{exc} introuvable") from exc
     except service.UploadTooLarge as exc:
         raise HTTPException(413, str(exc)) from exc
+    parse = None
+    if analyze and result.version_created:
+        parse = parsing.request_parse(
+            db, ctx.workspace_id, result.document.id, request.app.state.document_parser, ctx.actor
+        )
     db.commit()
+    if parse is not None:
+        background.add_task(run_parse_and_digest, request.app, parse.id)
     return UploadOut(
         document=DocumentOut.model_validate(result.document),
         version=_version_out(result.version, result.blob),
@@ -94,6 +132,9 @@ def list_documents(
     db: Session = Depends(get_db),
 ):
     docs = service.list_documents(db, ctx.workspace_id, mission_id, doc_type)
+    visible = vault_folders.visible_document_ids(db, ctx.workspace_id, ctx.role)
+    if visible is not None:
+        docs = [d for d in docs if d.id in visible]
     statuses = parsing.parse_statuses(db, docs)
     return [
         DocumentOut.model_validate(d).model_copy(update={"parse_status": statuses.get(d.id)}) for d in docs
@@ -104,20 +145,14 @@ def list_documents(
 def get_document(
     document_id: uuid.UUID, ctx: WorkspaceContext = Depends(require_workspace), db: Session = Depends(get_db)
 ):
-    try:
-        return service.get_document(db, ctx.workspace_id, document_id)
-    except service.NotFound as exc:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "document introuvable") from exc
+    return _visible_doc(db, ctx, document_id)
 
 
 @router.get("/documents/{document_id}/versions", response_model=list[VersionOut])
 def list_versions(
     document_id: uuid.UUID, ctx: WorkspaceContext = Depends(require_workspace), db: Session = Depends(get_db)
 ):
-    try:
-        doc = service.get_document(db, ctx.workspace_id, document_id)
-    except service.NotFound as exc:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "document introuvable") from exc
+    doc = _visible_doc(db, ctx, document_id)
     return [_version_out(v, b) for v, b in service.list_versions(db, doc)]
 
 
@@ -156,14 +191,29 @@ def run_parse_and_digest(app, parse_id: uuid.UUID) -> None:
     Chemin minimal (BackgroundTasks FastAPI) tant que le Core n'a pas de worker ; le même appel sera
     exécuté par le worker (file sur l'outbox / Celery) sans changer ce contrat.
     """
+    from gsms_core.digest.schemas import WorkspaceDigest
     from gsms_core.digest.service import DigestBuildError, rebuild_digest
 
     with app.state.db.session_factory() as session:
-        parse = parsing.run_parse(session, app.state.storage, app.state.document_parser, parse_id)
+        parse = parsing.run_parse(session, app.state.vault, app.state.document_parser, parse_id)
         if parse.status.value == "PARSED":
             # Un échec du Digest est déjà tracé (statut FAILED + digest.failed).
             with contextlib.suppress(DigestBuildError):
-                rebuild_digest(session, parse.workspace_id, actor="service:core", trigger=f"parse:{parse.id}")
+                built = rebuild_digest(
+                    session, parse.workspace_id, actor="service:core", trigger=f"parse:{parse.id}"
+                )
+                digest = WorkspaceDigest.model_validate(built.payload)
+                # Coffre-fort : la pièce reconnue rejoint le sous-dossier de son type (CCTP, RC, BPU…).
+                vault_folders.file_by_type(
+                    session,
+                    parse.workspace_id,
+                    {
+                        d.document_id: d.business_type
+                        for d in digest.documents
+                        if d.document_id == parse.document_id
+                    },
+                )
+                session.commit()
 
 
 @router.post("/documents/{document_id}/parse", response_model=ParseOut, status_code=status.HTTP_202_ACCEPTED)
@@ -175,6 +225,7 @@ def parse_document(
     db: Session = Depends(get_db),
 ):
     """Demande le parsing (Docling) de la version courante ; le Digest est reconstruit ensuite."""
+    _visible_doc(db, ctx, document_id)
     try:
         parse = parsing.request_parse(
             db, ctx.workspace_id, document_id, request.app.state.document_parser, ctx.actor
@@ -190,6 +241,7 @@ def parse_document(
 def get_parse(
     document_id: uuid.UUID, ctx: WorkspaceContext = Depends(require_workspace), db: Session = Depends(get_db)
 ):
+    _visible_doc(db, ctx, document_id)
     try:
         return _parse_out(parsing.latest_parse(db, ctx.workspace_id, document_id))
     except service.NotFound as exc:
@@ -204,9 +256,9 @@ def document_content(
     ctx: WorkspaceContext = Depends(require_workspace),
     db: Session = Depends(get_db),
 ):
-    """Fichier d'origine (version courante, ou ``version_id``) pour la consultation dans DocuLens."""
+    """Fichier d'origine déchiffré (version courante, ou ``version_id``). Chaque accès est journalisé."""
+    doc = _visible_doc(db, ctx, document_id)
     try:
-        doc = service.get_document(db, ctx.workspace_id, document_id)
         vid = version_id or doc.current_version_id
         if vid is None:
             raise service.NotFound("version")
@@ -216,12 +268,16 @@ def document_content(
     except service.NotFound as exc:
         raise HTTPException(status.HTTP_404_NOT_FOUND, f"{exc} introuvable") from exc
     blob = db.get(Blob, version.blob_id)
-    stream = request.app.state.storage.open(blob.object_key)
-
-    def chunks():
-        with contextlib.closing(stream):
-            while data := stream.read(64 * 1024):
-                yield data
+    chunks = request.app.state.vault.iter_plaintext(db, blob)
+    record(
+        db,
+        actor=ctx.actor,
+        action="document.download",
+        subject_uri=core_uri("document", doc.id),
+        workspace_id=ctx.workspace_id,
+        after={"version": version.n, "version_id": str(version.id), "sha256": blob.sha256},
+    )
+    db.commit()
 
     ascii_name = "".join(
         c for c in version.filename.encode("ascii", "ignore").decode() if c.isprintable() and c != '"'
@@ -230,7 +286,7 @@ def document_content(
         f"inline; filename=\"{ascii_name or 'document'}\"; filename*=UTF-8''{quote(version.filename)}"
     )
     return StreamingResponse(
-        chunks(),
+        chunks,
         media_type=blob.mime or "application/octet-stream",
         headers={"Content-Disposition": disposition, "X-Content-Type-Options": "nosniff"},
     )
@@ -241,10 +297,7 @@ def normalized_document(
     document_id: uuid.UUID, ctx: WorkspaceContext = Depends(require_workspace), db: Session = Depends(get_db)
 ):
     """Contenu structuré (blocs, tableaux, ``SourceRef``) du dernier parsing réussi de la version courante."""
-    try:
-        doc = service.get_document(db, ctx.workspace_id, document_id)
-    except service.NotFound as exc:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "document introuvable") from exc
+    doc = _visible_doc(db, ctx, document_id)
     normalized = parsing.current_normalized(db, doc)
     if normalized is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "document pas encore parsé")
@@ -260,4 +313,8 @@ def search(
     db: Session = Depends(get_db),
 ):
     """Recherche plein texte dans les documents parsés du workspace ; chaque résultat garde sa provenance."""
-    return search_documents(db, ctx.workspace_id, q, limit=limit, mission_id=mission_id)
+    hits = search_documents(db, ctx.workspace_id, q, limit=MAX_LIMIT, mission_id=mission_id)
+    visible = vault_folders.visible_document_ids(db, ctx.workspace_id, ctx.role)
+    if visible is not None:
+        hits = [h for h in hits if h.document_id in visible]
+    return hits[:limit]

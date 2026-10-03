@@ -31,6 +31,12 @@ class Settings(BaseSettings):
     s3_region: str = "us-east-1"
     max_upload_mb: int = 100
 
+    # Coffre-fort : clé maître (32 octets en base64, « openssl rand -base64 32 ») qui enveloppe la clé de
+    # chiffrement de chaque workspace. Obligatoire en production ; en dev/test une clé fixe est utilisée.
+    storage_master_key: str | None = None
+    # Ancien stockage local (blobs d'avant le coffre-fort), lu par « gsms_core.cli vault-migrate ».
+    legacy_storage_root: Path | None = None
+
     # Origines navigateur autorisées à appeler l'API (ex. DocuLens : https://doculens.gsms-security.com).
     # Vide = aucune (les apps passent par le même domaine ou côté serveur).
     cors_origins: list[str] = Field(default_factory=list)
@@ -64,6 +70,10 @@ class Settings(BaseSettings):
                 raise ValueError("GSMS_JWT_SECRET doit être défini en production")
             if self.database_url.startswith("sqlite"):
                 raise ValueError("GSMS_DATABASE_URL doit pointer vers PostgreSQL en production")
+            if not self.storage_master_key:
+                raise ValueError(
+                    "GSMS_STORAGE_MASTER_KEY est obligatoire en production (coffre-fort chiffré)"
+                )
         return self
 
 

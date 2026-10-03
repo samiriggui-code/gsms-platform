@@ -21,10 +21,10 @@ from gsms_core.documents.models import Blob, Document, DocumentParse, DocumentVe
 from gsms_core.documents.parsers.base import DocumentParser, ParseError, ParseRequest
 from gsms_core.documents.parsers.schemas import NormalizedDocument
 from gsms_core.documents.service import NotFound, get_document
-from gsms_core.documents.storage import Storage
 from gsms_core.events.bus import publish
 from gsms_core.events.envelope import EventEnvelope
 from gsms_core.missions.uri import core_uri
+from gsms_core.vault.storage import Vault
 
 log = logging.getLogger(__name__)
 
@@ -72,9 +72,7 @@ def request_parse(
     return parse
 
 
-def run_parse(
-    session: Session, storage: Storage, parser: DocumentParser, parse_id: uuid.UUID
-) -> DocumentParse:
+def run_parse(session: Session, vault: Vault, parser: DocumentParser, parse_id: uuid.UUID) -> DocumentParse:
     """Exécute un parsing PENDING ; ne lève pas : l'échec est un statut + un événement."""
     parse = session.get(DocumentParse, parse_id)
     if parse is None:
@@ -93,8 +91,7 @@ def run_parse(
         if version is None or blob is None or doc is None or doc.workspace_id != parse.workspace_id:
             raise ParseError("document_not_found", "version ou fichier introuvable pour ce workspace")
         local = tmp_dir / (Path(version.filename).name or "document")
-        with storage.open(blob.object_key) as src, local.open("wb") as dst:
-            shutil.copyfileobj(src, dst)
+        vault.copy_to(session, blob, local)  # déchiffré en local temporaire, effacé en fin d'analyse
         normalized = parser.parse(
             ParseRequest(
                 path=local,
