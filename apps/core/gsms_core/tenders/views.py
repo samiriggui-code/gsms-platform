@@ -41,6 +41,20 @@ ACTION_LABELS = {
     "vault.folder.create": "Dossier créé dans le coffre-fort",
     "vault.document.move": "Pièce rangée",
     "vault.document.verify": "Intégrité vérifiée",
+    "tender.requirements.sync": "Matrice d'exigences mise à jour",
+    "tender.requirement.update": "Exigence modifiée",
+    "tender.requirement.create": "Exigence ajoutée",
+}
+
+FIELD_LABELS = {
+    "status": "statut",
+    "owner": "responsable",
+    "planned_response": "réponse prévue",
+    "evidence": "preuve",
+    "target_document": "document cible",
+    "mandatory": "obligatoire",
+    "type": "type",
+    "text": "texte",
 }
 
 
@@ -234,7 +248,10 @@ def _summary(entry: AuditLog, folders: dict[str, str]) -> str:
     if entry.action == "vault.document.move":
         return f"Rangée dans « {folders.get(str(after.get('folder_id')), 'un dossier')} »"
     if entry.action == "tender.status.change":
-        text = f"{before.get('status', '?')} → {after.get('status', '?')}"
+        from gsms_core.tenders.lifecycle import STATUS_LABELS
+
+        labels = {k.value: v for k, v in STATUS_LABELS.items()}
+        text = f"{labels.get(before.get('status'), '?')} → {labels.get(after.get('status'), '?')}"
         return f"{text} — {after['comment']}" if after.get("comment") else text
     if entry.action == "tender.go_no_go.decide":
         return f"Décision {after.get('decision')} (recommandation {after.get('recommendation')})"
@@ -242,6 +259,17 @@ def _summary(entry: AuditLog, folders: dict[str, str]) -> str:
         return f"Version {after.get('version')} · empreinte {str(after.get('sha256', ''))[:12]}…"
     if entry.action == "document.download":
         return f"Version {after.get('version')}"
+    if entry.action == "tender.requirement.update":
+        changed = [FIELD_LABELS.get(k, k) for k in after if k != "code"]
+        status = f" → {after['status']}" if "status" in after else ""
+        return f"{after.get('code', '')} : {', '.join(changed)}{status}"
+    if entry.action == "tender.requirements.sync":
+        return (
+            f"{after.get('added', 0)} ajoutée(s), {after.get('refreshed', 0)} mise(s) à jour, "
+            f"{after.get('stale', 0)} disparue(s) du DCE"
+        )
+    if entry.action == "tender.requirement.create":
+        return f"{after.get('code', '')} : {after.get('text', '')}"
     if entry.action in ("tender.create", "engagement.create"):
         return str(after.get("title") or "")
     keys = ", ".join(f"{k} : {v}" for k, v in list(after.items())[:3] if isinstance(v, (str, int, float)))
@@ -281,3 +309,78 @@ def history(session: Session, case: TenderCase, limit: int = 200) -> list[dict[s
         }
         for e in entries
     ]
+
+
+RISK_LABELS = {
+    "eliminatoire": ("Critère éliminatoire", "critique"),
+    "resiliation": ("Clause de résiliation", "elevee"),
+    "penalite": ("Pénalités", "elevee"),
+    "astreinte": ("Astreinte", "moyenne"),
+}
+
+
+def analysis(session: Session, case: TenderCase) -> dict[str, Any]:
+    """Lecture du DCE par thème (avec un exemple sourcé) et critères d'attribution pondérés."""
+    from gsms_core.digest.clauses import CLAUSE_RULES
+
+    digest = digest_of(session, case.workspace_id)
+    if digest is None:
+        return {"sections": [], "criteria": [], "criteria_total": None, "documents": 0}
+    by_category: dict[str, list] = {}
+    for clause in digest.clauses:
+        by_category.setdefault(clause.category, []).append(clause)
+    sections = []
+    for key, label, _ in CLAUSE_RULES:
+        items = by_category.get(key)
+        if not items:
+            continue
+        first = items[0]
+        mandatory = sum(1 for c in items if c.mandatory)
+        sections.append(
+            {
+                "id": key,
+                "title": label,
+                "count": len(items),
+                "mandatory": mandatory,
+                "summary": f"{len(items)} passage(s), dont {mandatory} obligatoire(s) — {first.text[:180]}",
+                "source": describe_source(first.source),
+            }
+        )
+    criteria = [
+        {
+            "id": c.id,
+            "label": c.label,
+            "weight": c.weight,
+            "unit": c.unit,
+            "source": describe_source(c.source),
+            "excerpt": c.source.excerpt,
+        }
+        for c in digest.criteria
+    ]
+    percents = [c.weight for c in digest.criteria if c.unit == "%" and c.weight is not None]
+    return {
+        "sections": sections,
+        "criteria": criteria,
+        "criteria_total": round(sum(percents), 2) if percents else None,
+        "documents": len(digest.documents),
+    }
+
+
+def risks(session: Session, case: TenderCase) -> list[dict[str, Any]]:
+    digest = digest_of(session, case.workspace_id)
+    rows = []
+    for risk in digest.risks if digest else []:
+        title, severity = RISK_LABELS.get(risk.kind, (risk.kind, "moyenne"))
+        rows.append(
+            {
+                "id": risk.id,
+                "title": title,
+                "kind": risk.kind,
+                "severity": severity,
+                "text": risk.text,
+                "source": describe_source(risk.source),
+            }
+        )
+    order = {"critique": 0, "elevee": 1, "moyenne": 2}
+    rows.sort(key=lambda r: order.get(r["severity"], 3))
+    return rows

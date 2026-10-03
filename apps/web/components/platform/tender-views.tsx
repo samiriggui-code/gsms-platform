@@ -1,4 +1,4 @@
-import { Bot, CalendarClock, FileStack, FileText, HelpCircle, History, ListChecks, ShieldAlert, Upload } from "lucide-react";
+import { Bot, CalendarClock, FileStack, FileText, HelpCircle, History, ShieldAlert, Upload } from "lucide-react";
 import type { ReactNode } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import type { TenderTab, TenderTabSlug } from "@/lib/tenders/tabs";
 import { CoreFailureState, EmptyState, NoWorkspaceState } from "./core-state";
 import { formatAmount, formatValue, StatusBadge } from "./format";
 import { type Column, ResourcePanel } from "./resource-panel";
+import { type Compliance, RequirementsMatrix } from "./tenders/requirements-matrix";
 import { DceUpload, GoNoGoDecision } from "./tenders/tender-actions";
 
 export function TabIntro({ tab, actions }: { tab: TenderTab; actions?: ReactNode }) {
@@ -37,32 +38,14 @@ const LIST_TABS: Partial<Record<TenderTabSlug, { columns: Column[]; empty: { tit
     ],
     empty: { icon: FileStack, title: "Aucune pièce", description: "Déposez le DCE (ZIP ou fichiers) : le Core classe les pièces (RC, CCTP, CCAP, AE, BPU, DPGF, DQE, annexes)." },
   },
-  exigences: {
-    columns: [
-      { key: "reference", label: "Réf." },
-      { key: "text", label: "Exigence", className: "min-w-[280px]" },
-      { key: "owner", label: "Propriétaire" },
-      { key: "status", label: "Statut", render: (row) => <StatusBadge value={row.status} /> },
-    ],
-    empty: { icon: ListChecks, title: "Aucune exigence", description: "Les exigences apparaissent après l'analyse du dossier." },
-  },
-  conformite: {
-    columns: [
-      { key: "requirement", label: "Exigence", className: "min-w-[260px]" },
-      { key: "proposed_status", label: "Statut proposé", render: (row) => <StatusBadge value={row.proposed_status} /> },
-      { key: "final_status", label: "Statut final (humain)", render: (row) => <StatusBadge value={row.final_status ?? "a_valider"} /> },
-      { key: "evidence", label: "Preuve" },
-    ],
-    empty: { icon: ListChecks, title: "Matrice vide", description: "La matrice est générée à partir des exigences ; chaque statut final est validé par un humain." },
-  },
   risques: {
     columns: [
       { key: "title", label: "Risque" },
       { key: "severity", label: "Gravité", render: (row) => <StatusBadge value={row.severity} /> },
-      { key: "mitigation", label: "Parade" },
-      { key: "owner", label: "Responsable" },
+      { key: "text", label: "Passage du DCE", className: "min-w-[280px]" },
+      { key: "source", label: "Source", render: (row) => <span className="font-mono text-[11px] text-muted-foreground">{formatValue(row.source)}</span> },
     ],
-    empty: { icon: ShieldAlert, title: "Aucun risque identifié", description: "Les risques issus de l'analyse et de la grille Go / No-Go apparaîtront ici." },
+    empty: { icon: ShieldAlert, title: "Aucun risque relevé", description: "Critères éliminatoires, pénalités et clauses de résiliation apparaissent après l'analyse du DCE." },
   },
   questions: {
     columns: [
@@ -154,6 +137,14 @@ export function TenderTabView({
         <Card><NoWorkspaceState /></Card>
       ) : !result.ok ? (
         <Card><CoreFailureState failure={result} /></Card>
+      ) : (tab.slug === "exigences" || tab.slug === "conformite") && missionId ? (
+        <RequirementsMatrix
+          key={`${(result.data as Compliance).summary?.total}-${(result.data as Compliance).summary?.stale}`}
+          workspaceId={workspaceId}
+          missionId={missionId}
+          data={result.data as Compliance}
+          mode={tab.slug}
+        />
       ) : tab.slug === "analyse" ? (
         <AnalysisView data={result.data as Record<string, unknown>} />
       ) : tab.slug === "go-no-go" ? (
@@ -170,7 +161,6 @@ export function TenderTabView({
 /** Actions d'écriture à venir : affichées mais désactivées tant que les endpoints POST ne sont pas branchés. */
 function tabActions(slug: TenderTabSlug, coreOk: boolean): ReactNode {
   const label: Partial<Record<TenderTabSlug, { text: string; icon: typeof Upload }>> = {
-    analyse: { text: "Lancer l'analyse", icon: FileText },
     questions: { text: "Nouvelle question", icon: HelpCircle },
     agents: { text: "Demander à l'assistant", icon: Bot },
   };
@@ -206,30 +196,45 @@ function SimpleList({ title, rows, empty, render }: { title: string; rows: Row[]
 }
 
 function AnalysisView({ data }: { data: Record<string, unknown> }) {
+  const total = typeof data?.criteria_total === "number" ? data.criteria_total : null;
   return (
     <div className="grid gap-5 lg:grid-cols-2">
       <SimpleList
-        title="Sections du dossier"
+        title="Lecture du DCE par thème"
         rows={asList<Row>(data?.sections)}
-        empty="Analyse non lancée."
+        empty="Analyse pas encore disponible : déposez le DCE."
         render={(row) => (
           <div className="flex flex-col gap-0.5">
-            <span className="font-medium">{formatValue(row.title)}</span>
+            <span className="flex items-center justify-between gap-3 font-medium">
+              {formatValue(row.title)}
+              <span className="font-mono text-[11px] text-muted-foreground">{formatValue(row.count)}</span>
+            </span>
             {row.summary ? <span className="text-muted-foreground">{String(row.summary)}</span> : null}
+            {row.source ? <span className="font-mono text-[11px] text-muted-foreground">{String(row.source)}</span> : null}
           </div>
         )}
       />
-      <SimpleList
-        title="Critères d'évaluation"
-        rows={asList<Row>(data?.criteria)}
-        empty="Aucun critère extrait."
-        render={(row) => (
-          <div className="flex justify-between gap-4">
-            <span className="font-medium">{formatValue(row.label ?? row.title)}</span>
-            <span className="font-mono text-muted-foreground">{row.weight !== undefined ? `${String(row.weight)} %` : "—"}</span>
-          </div>
-        )}
-      />
+      <div className="flex flex-col gap-3">
+        <SimpleList
+          title="Critères d'attribution"
+          rows={asList<Row>(data?.criteria)}
+          empty="Aucun critère pondéré trouvé dans le RC."
+          render={(row) => (
+            <div className="flex flex-col gap-0.5">
+              <span className="flex justify-between gap-4">
+                <span className="font-medium">{formatValue(row.label ?? row.title)}</span>
+                <span className="font-mono">{row.weight !== undefined && row.weight !== null ? `${String(row.weight)} ${String(row.unit ?? "%")}` : "—"}</span>
+              </span>
+              {row.source ? <span className="font-mono text-[11px] text-muted-foreground">{String(row.source)}</span> : null}
+            </div>
+          )}
+        />
+        {total !== null && total !== 100 ? (
+          <p role="note" className="rounded-[10px] border border-warning/30 bg-warning/10 p-3 text-[12.5px]">
+            La somme des pondérations lues vaut {total} % : vérifiez les critères dans le RC (sous-critères ou lecture incomplète).
+          </p>
+        ) : null}
+      </div>
     </div>
   );
 }

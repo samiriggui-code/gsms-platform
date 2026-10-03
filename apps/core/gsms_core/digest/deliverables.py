@@ -27,6 +27,8 @@ def extract_deliverables(doc: NormalizedDocument) -> list[Deliverable]:
             continue
         folded = fold(unit.text)
         block = blocks_by_id.get(unit.source.block_id or "")
+        if block is not None and block.kind in (BlockKind.TITLE, BlockKind.HEADING):
+            continue  # « Pièces à fournir » est le titre de la liste, pas une pièce
         in_section = bool(unit.source.section and _SECTION.search(fold(unit.source.section)))
         is_list_item = block is not None and block.kind == BlockKind.LIST_ITEM
         if (in_section and is_list_item) or _SENTENCE.search(folded):

@@ -12,28 +12,12 @@ from sqlalchemy import select
 from gsms_core.documents.parsers import DoclingAdapter
 from gsms_core.events.bus import pending_outbox
 from gsms_core.events.models import Event
-from gsms_core.identity.models import Membership, Organization, OrganizationKind, Role, User, Workspace
-from gsms_core.security import hash_password
+from gsms_core.identity.models import Organization, OrganizationKind, Role, Workspace
 from gsms_core.tenders.dossier import _entry_name, next_reference
 from gsms_core.tenders.models import DossierStatus, GoNoGo, TenderCase
-from tests.conftest import PASSWORD
 from tests.fake_docling import BPU, CCTP, RC, FakeConverter
 
 FILES = {"CCTP.pdf": CCTP, "RC.pdf": RC, "BPU.xlsx": BPU, "Règlement.pdf": RC}
-
-
-@pytest.fixture
-def staff(client, session, demo):
-    """Chargé d'affaires GSMS : membership sur l'organisation GSMS entière (rôle d'équipe)."""
-    gsms = session.scalar(select(Organization).where(Organization.kind == OrganizationKind.GSMS))
-    user = User(email="ca@gsms.example", name="Chargée d'affaires", password_hash=hash_password(PASSWORD))
-    session.add(user)
-    session.flush()
-    session.add(Membership(user_id=user.id, organization_id=gsms.id, workspace_id=None, role=Role.MANAGER))
-    session.commit()
-    r = client.post("/api/v1/auth/login", json={"email": user.email, "password": PASSWORD})
-    assert r.status_code == 200, r.text
-    return {"Authorization": f"Bearer {r.json()['access_token']}"}
 
 
 @pytest.fixture
