@@ -69,3 +69,38 @@ Core = pont HTTP vers les stacks ; CRM+Eve = commercial / intake.
 3. Smoke HTTPS par FQDN.
 4. Retirer Host / DNS `*.global-it-ss.com` app par app.
 5. Ensuite seulement : DocuLens / Tenant Core si GO.
+
+---
+
+## E. Retrait de `*.global-it-ss.com` (2026-10-03)
+
+**Constat externe (2026-10-03) :** `global-it-ss.com`, `crm.`, `grace.`, `qatrial.`, `mcp.global-it-ss.com` → **404 Traefik**.
+Aucun routeur ne les sert plus ; seuls les enregistrements DNS restent.
+
+### 1. Conteneurs (sur le VPS, en root)
+
+```bash
+cd /opt/gsms-platform && git pull
+bash scripts/vps-cleanup-global-it-ss.sh             # inventaire seul : rien n'est modifié
+bash scripts/vps-cleanup-global-it-ss.sh --apply     # retire les anciennes stacks (volumes conservés)
+bash scripts/vps-cleanup-global-it-ss.sh --apply --prune-images   # + libère l'espace des images inutilisées
+```
+
+Le script retire une stack seulement si :
+- un de ses routeurs Traefik vise encore `global-it-ss.com` et aucun ne vise `gsms-security.com` ;
+- ou c'est un projet retiré : Comp AI, Xacta, SimpleRisk, TenderAI legacy ;
+- ou tous ses conteneurs sont arrêtés.
+
+Il ne touche jamais à Traefik, à `gsms-platform`, ni à une stack qui sert `*.gsms-security.com`. Les stacks qui tournent sans servir de domaine sont signalées « à vérifier » (`?`), jamais retirées automatiquement. Les **volumes** (bases, fichiers) sont conservés.
+
+### 2. DNS (Hostinger → zone `global-it-ss.com`)
+
+Supprimer les enregistrements **A** `crm`, `grace`, `qatrial`, `mcp`, `minio`, `comp`, `admin`, `hub`. Ne garder que ce qui sert encore autre chose.
+
+**Ne pas toucher** aux enregistrements **MX / TXT / SPF / DKIM** si des boîtes mail `@global-it-ss.com` existent.
+
+L'apex `global-it-ss.com` (A → VPS, 404 aujourd'hui) peut être supprimé ou redirigé vers `gsms-security.com`.
+
+### 3. Hors VPS
+
+Le NUC garde ses sondes vers les anciens domaines (`apps/crm/deploy/nuc/admin/probe.sh`) : elles passeront en erreur après le retrait DNS. À mettre à jour ou à couper côté NUC.
