@@ -12,6 +12,8 @@ if str(ROOT) not in sys.path:
 os.environ.setdefault("OPENAI_API_KEY", "ci-test-key")
 os.environ.setdefault("ANTHROPIC_API_KEY", "ci-test-key")
 os.environ.setdefault("OPEN_ROUTER_API_KEY", "ci-test-key")
+os.environ.setdefault("OPENROUTER_API_KEY", "ci-test-key")
+os.environ.setdefault("DOCULENS_LLM_PROVIDER", "auto")
 os.environ.setdefault("DATABASE_HOST", "localhost")
 os.environ.setdefault("DATABASE_PORT", "5432")
 os.environ.setdefault("DATABASE_NAME", "doculens")

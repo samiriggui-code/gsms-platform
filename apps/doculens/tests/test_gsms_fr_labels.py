@@ -26,31 +26,34 @@ def test_fr_taxonomy_domains_present():
     }
 
 
-def test_classification_prompt_mentions_french_docs():
-    from app.services.classification_service import OpenAIClassificationService
+def test_classification_prompt_mentions_french_docs(monkeypatch):
+    from app.services import classification_service as mod
 
-    # Inspect prompt construction without calling OpenAI: invoke classify with stub client.
-    service = OpenAIClassificationService.__new__(OpenAIClassificationService)
-    service.model = "test"
     captured = {}
 
-    class FakeClient:
-        class responses:
-            @staticmethod
-            def create(**kwargs):
-                captured["input"] = kwargs["input"]
+    class FakeFactory:
+        def __init__(self, provider):
+            self.provider = provider
 
-                class R:
-                    output_text = '{"label":"dce","confidence":0.8,"reason":"DCE"}'
+        def create_completion(self, response_model, messages, **kwargs):
+            captured["messages"] = messages
+            captured["model"] = kwargs.get("model")
+            payload = response_model(
+                label="dce",
+                confidence=0.8,
+                reason="DCE",
+            )
+            return payload, object()
 
-                return R()
+    monkeypatch.setattr(mod, "LLMFactory", FakeFactory)
 
-    service.client = FakeClient()
-    result = OpenAIClassificationService.classify(
-        service,
+    service = mod.ClassificationService(provider="openrouter", model="test-model")
+    result = service.classify(
         text="Dossier de consultation des entreprises CCTP CCAP",
         candidate_labels=["dce", "rc", "autre"],
     )
-    assert "registres" in captured["input"].lower() or "DCE" in captured["input"]
-    assert "français" in captured["input"].lower() or "Choisis" in captured["input"]
+    prompt = captured["messages"][0]["content"]
+    assert "registres" in prompt.lower() or "DCE" in prompt
+    assert "Choisis" in prompt
     assert result.label == "dce"
+    assert service.version == "openrouter:test-model"

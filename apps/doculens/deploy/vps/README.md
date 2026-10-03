@@ -24,3 +24,18 @@ curl -fsS https://doculens.gsms-security.com/health/live
 
 - Bearer JWT Core (`iss=gsms-core`) **ou** compte Documents local **ou** `X-API-Key` de service.
 - Header obligatoire : `X-GSMS-Workspace-Id` (sauf si le jeton Core porte déjà `workspace_id`).
+
+## LLM (multi-clés)
+
+Plusieurs clés peuvent coexister ; le choix se fait via env :
+
+| Variable | Rôle |
+|---|---|
+| `DOCULENS_LLM_PROVIDER` | `auto` (défaut), `openrouter`, `anthropic`, `openai` (`codex`/`gpt`), `llama` |
+| `DOCULENS_LLM_MODEL` | Override modèle chat |
+| `DOCULENS_EMBEDDING_PROVIDER` | `auto`, `openrouter`, `openai` (Anthropic ne fait pas d’embeddings) |
+| `OPENROUTER_API_KEY` / `OPEN_ROUTER_API_KEY` | Gateway OpenRouter (chat + embeddings) |
+| `ANTHROPIC_API_KEY` | Claude (chat / classif) |
+| `OPENAI_API_KEY` | OpenAI / Codex (chat + embeddings) |
+
+En `auto` : priorité OpenRouter → Anthropic → OpenAI pour le chat ; OpenRouter → OpenAI pour les embeddings.

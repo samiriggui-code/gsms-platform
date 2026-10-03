@@ -302,6 +302,37 @@ def _convert_tree_nodes(nodes: List[Dict[str, Any]]) -> List[LabelTreeNode]:
 
 
 
+def _llm_runtime_status(settings) -> Dict[str, Any]:
+    """Public LLM status (no secrets) for ops / frontend."""
+    keys = {
+        "openai": settings.llm.has_key("openai"),
+        "anthropic": settings.llm.has_key("anthropic"),
+        "openrouter": settings.llm.has_key("openrouter"),
+    }
+    chat_provider = None
+    chat_model = None
+    embedding_provider = None
+    embedding_model = None
+    try:
+        chat_provider = settings.llm.resolve_chat_provider()
+        chat_model = settings.llm.resolve_chat_model(chat_provider)
+    except ValueError:
+        pass
+    try:
+        embedding_provider = settings.llm.resolve_embedding_provider()
+        embedding_model = settings.llm.resolve_embedding_model(embedding_provider)
+    except ValueError:
+        pass
+    return {
+        "provider_setting": settings.llm.provider,
+        "chat_provider": chat_provider,
+        "chat_model": chat_model,
+        "embedding_provider": embedding_provider,
+        "embedding_model": embedding_model,
+        "keys_configured": keys,
+    }
+
+
 @public_router.get("/config")
 def get_runtime_config() -> Dict[str, Any]:
     """Expose runtime configuration defaults for frontend clients."""
@@ -317,6 +348,7 @@ def get_runtime_config() -> Dict[str, Any]:
         "workspace_header": "X-GSMS-Workspace-Id",
         "showcase_read_only": settings.showcase_read_only,
         "api_key_header": settings.api_key_header,
+        "llm": _llm_runtime_status(settings),
         "persona_options": PERSONA_OPTIONS,
         "role_definitions": ROLE_DEFINITIONS,
     }

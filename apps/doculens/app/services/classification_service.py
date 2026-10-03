@@ -1,14 +1,15 @@
-"""Document classification service backed by OpenAI Responses API."""
+"""Document classification via the configured LLM provider (OpenAI / Anthropic / OpenRouter)."""
 
 from __future__ import annotations
 
-import json
 import logging
 from functools import lru_cache
 from typing import List, Optional, Sequence
 
-from openai import OpenAI
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+from app.config.settings import get_settings
+from app.services.llm_factory import LLMFactory
 
 logger = logging.getLogger(__name__)
 
@@ -27,14 +28,22 @@ class ClassificationResult(BaseModel):
     reasoning: Optional[str] = None
 
 
-class OpenAIClassificationService:
-    """Use OpenAI's Responses API to classify a document into one of the provided labels."""
+class _ClassificationPayload(BaseModel):
+    """Structured output expected from the LLM."""
 
-    DEFAULT_MODEL = "gpt-4.1-mini"
+    label: str = Field(description="Exact label code from the candidate list")
+    confidence: float = Field(ge=0.0, le=1.0, description="Confidence between 0 and 1")
+    reason: Optional[str] = Field(default=None, description="Short French explanation")
 
-    def __init__(self, *, model: str = DEFAULT_MODEL):
-        self.model = model
-        self.client = OpenAI()
+
+class ClassificationService:
+    """Classify a document into one of the provided labels using the active LLM provider."""
+
+    def __init__(self, *, provider: Optional[str] = None, model: Optional[str] = None):
+        settings = get_settings()
+        self.provider = provider or settings.llm.resolve_chat_provider()
+        self.model = model or settings.llm.resolve_chat_model(self.provider)  # type: ignore[arg-type]
+        self._llm = LLMFactory(self.provider)
 
     def classify(
         self,
@@ -44,6 +53,7 @@ class OpenAIClassificationService:
         hypothesis_template: Optional[str] = None,  # kept for signature compatibility
         multi_label: bool = False,  # kept for signature compatibility
     ) -> ClassificationResult:
+        del hypothesis_template, multi_label
         if not text.strip():
             raise ValueError("Document text cannot be empty for classification.")
         if not candidate_labels:
@@ -63,50 +73,25 @@ Contexte métier (indicatif) :
 Labels candidats (codes stables à renvoyer tels quels) :
 {formatted_labels}
 
-Réponds uniquement avec un objet JSON :
-{{
-  "label": "code exact de la liste",
-  "confidence": 0.0,
-  "reason": "explication courte en français"
-}}
-
 Document :
 {text}
 """
 
-        logger.debug("Classifying document using OpenAI model=%s labels=%d", self.model, len(candidate_labels))
-        response = self.client.responses.create(
-            model=self.model,
-            input=prompt,
+        logger.debug(
+            "Classifying document using provider=%s model=%s labels=%d",
+            self.provider,
+            self.model,
+            len(candidate_labels),
         )
-        payload = getattr(response, "output_text", None)
-        if not payload:
-            try:
-                payload = response.output[0].content[0].text  # type: ignore[attr-defined]
-            except (AttributeError, IndexError, TypeError):
-                payload = None
+        payload, _raw = self._llm.create_completion(
+            response_model=_ClassificationPayload,
+            messages=[{"role": "user", "content": prompt}],
+            model=self.model,
+        )
 
-        if not payload:
-            raise RuntimeError("OpenAI classification response did not contain any text output.")
-
-        payload = payload.strip()
-        if payload.startswith("```"):
-            payload_lines = payload.splitlines()
-            if payload_lines and payload_lines[0].startswith("```"):
-                payload_lines = payload_lines[1:]
-            if payload_lines and payload_lines[-1].startswith("```"):
-                payload_lines = payload_lines[:-1]
-            payload = "\n".join(payload_lines).strip()
-
-        try:
-            data = json.loads(payload)
-        except json.JSONDecodeError as exc:
-            logger.error("Failed to parse classification response as JSON: %s", payload)
-            raise ValueError("Classification response was not valid JSON.") from exc
-
-        label = data.get("label")
-        confidence = float(data.get("confidence", 0.0))
-        reason = data.get("reason")
+        label = payload.label
+        confidence = float(payload.confidence)
+        reason = payload.reason
 
         return ClassificationResult(
             label=label,
@@ -119,10 +104,20 @@ Document :
 
     @property
     def version(self) -> str:
-        return f"openai:{self.model}"
+        return f"{self.provider}:{self.model}"
+
+
+# Back-compat alias for imports / tests that still mention OpenAIClassificationService.
+OpenAIClassificationService = ClassificationService
 
 
 @lru_cache
-def get_classification_service(model: str = OpenAIClassificationService.DEFAULT_MODEL) -> OpenAIClassificationService:
-    """Return a cached instance of the OpenAI classification service."""
-    return OpenAIClassificationService(model=model)
+def get_classification_service(
+    provider: Optional[str] = None,
+    model: Optional[str] = None,
+) -> ClassificationService:
+    """Return a cached classification service bound to the resolved provider."""
+    settings = get_settings()
+    resolved_provider = provider or settings.llm.resolve_chat_provider()
+    resolved_model = model or settings.llm.resolve_chat_model(resolved_provider)  # type: ignore[arg-type]
+    return ClassificationService(provider=resolved_provider, model=resolved_model)
