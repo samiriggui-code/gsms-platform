@@ -25,7 +25,7 @@ from gsms_core.deps import (
 )
 from gsms_core.documents import parsing, service
 from gsms_core.documents.models import Blob, Document, DocumentVersion, ParseStatus
-from gsms_core.identity.models import CONTRIBUTE_ROLES, Organization, Site
+from gsms_core.identity.models import CONTRIBUTE_ROLES, Organization, Site, User
 from gsms_core.identity.service import accessible_workspaces
 from gsms_core.missions.uri import core_uri
 from gsms_core.vault import folders
@@ -121,6 +121,7 @@ class VerifyOut(BaseModel):
 class AccessEntry(BaseModel):
     at: datetime
     actor: str
+    actor_name: str
     action: str
     detail: dict | None
     hash: str
@@ -416,4 +417,22 @@ def access_log(
         .order_by(AuditLog.id.desc())
         .limit(200)
     )
-    return [AccessEntry(at=r.at, actor=r.actor, action=r.action, detail=r.after, hash=r.hash) for r in rows]
+    entries = list(rows)
+    names: dict[str, str] = {}
+    for actor in {r.actor for r in entries}:
+        kind, _, ident = actor.partition(":")
+        user = None
+        if kind == "user":
+            try:
+                user = db.get(User, uuid.UUID(ident))
+            except ValueError:
+                user = None
+        names[actor] = (
+            f"{user.name} ({user.email})" if user else ("GSMS Core" if kind == "service" else actor)
+        )
+    return [
+        AccessEntry(
+            at=r.at, actor=r.actor, actor_name=names[r.actor], action=r.action, detail=r.after, hash=r.hash
+        )
+        for r in entries
+    ]

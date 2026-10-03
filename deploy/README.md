@@ -73,6 +73,33 @@ TRAEFIK_ENTRYPOINT=websecure TRAEFIK_CERTRESOLVER=letsencrypt ./deploy/deploy.sh
 - **`APP_URL=https://$DOMAIN`** est écrit dans `.env` par `deploy.sh` et injecté dans le conteneur `web`. Sans ça, Next (HOSTNAME=0.0.0.0) renvoie des redirects vers `https://0.0.0.0:3000/…` (logout, garde `/app`).
 - **Docker 29 et Traefik < 3.6 :** Docker 29 refuse l'ancienne API qu'utilisent les Traefik 3.5 et antérieurs. Le fournisseur Docker de Traefik échoue alors (« client version 1.24 is too old ») et **aucun site** n'est plus routé. Si Docker est mis à jour sur le VPS, passer Traefik en v3.6 ou plus.
 
+## Coffre-fort documentaire (stockage chiffré)
+
+Toutes les pièces de toutes les applications sont rangées par le Core dans un coffre-fort unique :
+- **Chiffrement :** chaque fichier est chiffré (AES-256-GCM) avec la clé de **sa** prestation (workspace).
+  Les clés de prestation sont elles-mêmes chiffrées par la **clé maître** `GSMS_STORAGE_MASTER_KEY`
+  (générée par `deploy.sh` dans `.env`).
+- **Intégrité :** l'empreinte SHA-256 du contenu est enregistrée. Un fichier modifié, tronqué ou échangé est
+  refusé à la lecture. La vérification se lance depuis le portail (bouton « Vérifier l'intégrité »).
+- **Classement :** Client → Site → Prestation → dossiers. Les dossiers système sont « Pièces client »,
+  « Dossier de consultation », « Travail GSMS » (jamais visible des clients) et « Livrables ».
+  Après analyse, une pièce est rangée automatiquement dans le sous-dossier de son type (CCTP, RC, BPU…).
+- **Traçabilité :** dépôts, ouvertures, téléchargements, déplacements et vérifications sont inscrits au
+  journal d'audit chaîné du Core.
+- **Fichiers existants :** `deploy.sh` lance `python -m gsms_core.cli vault-migrate` à chaque déploiement.
+  La commande chiffre les fichiers d'avant le coffre-fort et les range. Relancée, elle ne refait rien. Les anciens
+  fichiers en clair (`/app/var/blobs/gsms-documents/sha256/…`) ne sont pas effacés automatiquement. Une fois
+  vérifié, on peut les supprimer :
+  `docker compose exec core sh -c 'rm -rf /app/var/blobs/gsms-documents/sha256'`.
+
+> **Sauvegardez `.env` hors du serveur.** Sans `GSMS_STORAGE_MASTER_KEY`, aucun document ne peut être
+> déchiffré, même à partir d'une sauvegarde du volume.
+
+Le support de stockage est le volume Docker `gsms-platform_gsms-documents`, qui ne contient que des fichiers
+chiffrés. Le Core sait aussi écrire dans un stockage compatible S3 (`GSMS_STORAGE_BACKEND=s3`, extra `s3`).
+MinIO n'est **pas** utilisé : depuis octobre 2025, MinIO ne publie plus d'images Docker maintenues. Si un
+stockage S3 devient nécessaire, préférer une solution maintenue comme Garage ou SeaweedFS.
+
 ## Mettre à jour
 
 ```bash

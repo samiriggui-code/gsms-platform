@@ -114,6 +114,7 @@ def test_download_is_decrypted_and_logged(client, auth, demo):
     log = client.get(log_url, headers=auth("consultant")).json()
     assert [e["action"] for e in log] == ["document.download", "document.upload"]
     assert log[0]["actor"].startswith("user:") and len(log[0]["hash"]) == 64
+    assert log[0]["actor_name"] == "Responsable Lyon (responsable.lyon@abc-retail.example)"
 
 
 def test_clients_never_see_gsms_internal_work(client, auth, demo):

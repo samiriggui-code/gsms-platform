@@ -38,6 +38,11 @@ services:
       GSMS_JWT_SECRET: ${GSMS_JWT_SECRET:?GSMS_JWT_SECRET est obligatoire (32 caractères minimum)}
       GSMS_JWT_TTL_MINUTES: ${GSMS_JWT_TTL_MINUTES:-480}
       GSMS_STORAGE_BACKEND: local
+      # Coffre-fort : clé maître qui enveloppe la clé de chaque workspace (générée par deploy.sh).
+      # La perdre rend tous les documents illisibles : sauvegarder .env hors du serveur.
+      GSMS_STORAGE_MASTER_KEY: ${GSMS_STORAGE_MASTER_KEY:?GSMS_STORAGE_MASTER_KEY est obligatoire}
+      # Fichiers d'avant le coffre-fort (en clair), chiffrés par « gsms_core.cli vault-migrate ».
+      GSMS_LEGACY_STORAGE_ROOT: /app/var/blobs
       # JSON {"grace": "...", "qatrial": "...", "crm": "..."} — généré par deploy/deploy.sh.
       GSMS_WEBHOOK_SECRETS: ${GSMS_WEBHOOK_SECRETS:?GSMS_WEBHOOK_SECRETS est obligatoire}
       GSMS_CRM_URL: ${GSMS_CRM_URL:-}
