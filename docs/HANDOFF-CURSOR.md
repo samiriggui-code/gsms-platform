@@ -1,5 +1,78 @@
 # Handoff Cursor → Claude
 
+## 2026-10-03 — Chantier Core : pipeline documentaire Docling + Digest (suite de la PR #3)
+
+Branche `cursor/gsms-core-context-authority-74cc` (même PR #3). Reprise depuis l'état GitHub : l'« audit document pipeline » et la mise à jour de ce fichier faits par Cursor n'avaient pas été poussés (perdus avec la session).
+
+**Décision appliquée :** Docling = moteur documentaire universel (engine), DocuLens = interface documentaire, Digest = Core.
+
+**Livré (Core uniquement, tout le reste de PR #3 conservé tel quel) :**
+- **Adapter :**
+  - `documents/parsers/` : `DocumentParser` (interface), `DoclingAdapter` (seul fichier qui importe Docling, import paresseux, convertisseur injectable), `NormalizedDocument` + `SourceRef` (page / section / bloc pour PDF-DOCX ; feuille + cellule A1 pour XLSX).
+  - Docling en extra optionnel `gsms-core[docling]`.
+- **Pipeline :** `documents/parsing.py` + table `document_parse` (PENDING → RUNNING → PARSED | FAILED, `result` = NormalizedDocument JSON).
+- **Digest :** `digest/` (classifier, requirements, obligations, deadlines, deliverables, risks, reconciliation, conflicts, completeness, provenance, engine, service, router) + table `digest_workspace_digest`.
+  - `WorkspaceDigest` multi-document : documents, entités, exigences, obligations, échéances, livrables, risques, informations manquantes, conflits, prochaines actions.
+  - Conflit `STAFFING_QUANTITY_MISMATCH` (ex. CCTP 2 SSIAP1 / BPU 1 / DPGF 2), `DEADLINE_MISMATCH`.
+  - Garde-fou `WorkspaceMismatch` : jamais deux workspaces mélangés.
+- **Workspace canonique :** partout `workspace_id` Core (aucun autre identifiant documentaire). `client_id`, `site_id` et l'engagement (Mission) sont résolus comme dans le ContextResolver.
+- **EventBus existant :**
+  - `document.uploaded` (déjà là), `document.parsing.started`, `document.parsed`, `document.parsing.failed` ;
+  - `digest.build.started`, `digest.updated`, `digest.failed`, `digest.conflict.detected`, `digest.missing_information.detected`.
+  - Pas de route sortante (outbox) : contrat prêt pour l'orchestration.
+- **API :**
+  - `POST|GET /api/v1/workspaces/{ws}/documents/{id}/parse` (dans le router documents existant) ;
+  - `GET /api/v1/workspaces/{ws}/digest`, `POST …/digest/rebuild`, `GET …/digest/conflicts`, `GET …/digest/missing`.
+- **Asynchrone :** chemin minimal `BackgroundTasks` (202, puis parsing et reconstruction du Digest hors requête, session dédiée). Le Core n'a pas encore de worker.
+- **ApplicationRegistry :**
+  - `ApplicationKind` business / engine ;
+  - `docling` = engine, non liable à un workspace (400) ;
+  - DocuLens recentré sur `document_upload/view/search/navigation/provenance` ;
+  - `CORE_CAPABILITIES["core_digest"]` ;
+  - « Intake / Digest » renommé « Intake ».
+- **ContextResolver :** `context.digest` = dernier Digest (id, date, compteurs).
+- **Migration `0003_document_parse_digest`** (validée upgrade/downgrade sur PostgreSQL 16 + SQLite).
+- **Tests :** `tests/test_docling_adapter.py` (8) + `tests/test_digest.py` (11), Docling simulé (`tests/fake_docling.py`). Suite complète **100 verts**, ruff propre.
+- **Validation sur le vrai Docling 2.132 (hors CI) :**
+  - **XLSX :** feuille + cellules A1 exactes (`BPU!D4`), après correction du format de groupe réel (label `sheet`).
+  - **DOCX :** titres, sections et paragraphes corrects.
+  - **Digest réel XLSX + DOCX :** conflit SSIAP1 détecté avec sa provenance.
+  - **PDF :** non validable dans le sandbox. Les modèles (layout HuggingFace, OCR RapidOCR sur modelscope.cn) sont bloqués par le réseau. L'échec remonte proprement en `ParseError` / statut FAILED.
+
+**DEFERRED / CHANTIER SUIVANT (non fait volontairement) :**
+- **Modèles Docling en production :** pré-télécharger les modèles (`docling-tools models download`) dans l'image du worker, avec un accès sortant HuggingFace / modelscope ou un miroir. Prévoir un réglage OCR (désactivé pour les PDF natifs, activé pour les scans), injecté via `converter_factory` de l'adapter.
+- Worker de parsing (l'outbox existe ; Celery/RQ ou worker dédié à l'image Docling) à la place de `BackgroundTasks` ; image Docker Core avec l'extra `docling` ou worker séparé.
+- Brancher DocuLens UI → Core (upload/parse/digest) ; retirer `DOCULENS_DEFAULT_WORKSPACE_ID` côté DocuLens.
+- Orchestration : routes outbox `digest.*` → Tender MCP / GRACE / QAtrial / Eve.
+- Chunking hybride + embeddings + recherche citée (pgvector, `tsvector('french')`) au-dessus de `NormalizedDocument` ; reprise possible de `evaluation/retrieval.py` de DocuLens.
+- Extraction enrichie (LLM en assistance, jamais décideur) : obligations / livrables plus fins, critères de notation, allotissement.
+- Front `apps/web` : écran Digest du workspace.
+- Les 5 chantiers lancés puis arrêtés (i18n web/CRM/GRACE/QAtrial, refonte DocuLens) sont dans `git stash` (« abandoned-5-chantiers-… ») sur `main`, non poussés.
+
+---
+
+## 2026-10-03 — PRIORITÉ N°1 : autorité contexte GSMS Core (audit + fondations)
+
+Branche `cursor/gsms-core-context-authority-74cc`.
+
+**Problème :** `X-GSMS-Workspace-Id` manquant n’est pas un bug de header — le concept workspace/prestation/client n’est pas centralisé. DocuLens / CRM / QAtrial / GRACE portent des « workspaces » incompatibles ; le front retombait sur `workspaces[0]`.
+
+**Phase 1 — Audit :** `docs/architecture/GSMS-CONTEXT-WORKSPACE-AUDIT.md` (16 réponses + inventaire).
+
+**Phases 2–5 livrées dans Core + web :**
+- `gsms_core/context/` : ApplicationRegistry, ServiceCatalog, WorkspaceManager, ContextResolver, Contact + bindings (`workspace_application_bindings`, `client_application_bindings`, `contact_application_bindings`)
+- API : `POST /engagements`, `GET /context/by-{workspace,engagement,site,client}`, `GET/POST /workspaces/{ws}/applications|context`, catalogues apps/types
+- Migration `0002_context_bindings`
+- Web : `lib/gsms/context.ts` + `load-context.ts` ; `coreFetch` propage Tenant/Client/Site/Engagement/Workspace ; **suppression du fallback `workspaces[0]`**
+- Connecteurs Core : headers client/site/engagement étendus
+- Tests : `tests/test_context.py` (5) + auth/isolation verts
+
+**Règle :** Mission Core = Engagement ; Workspace Core = seul ID canonique ; apps liées via bindings (jamais inventer un UUID DocuLens côté UI).
+
+**Suite (phases 6–13) :** brancher DocuLens/Tender/GRACE/QATrial/Eve sur bindings ; WorkflowEngine/EventBus déjà présents à enrichir ; supprimer defaults DocuLens (`DOCULENS_DEFAULT_WORKSPACE_ID`) sur la branche serveur DocuLens.
+
+---
+
 ## 2026-10-02 — Clarification : Core = pont, pas CRM ; sous-domaines `*.gsms-security.com`
 
 **Intention user (reformulée) :**

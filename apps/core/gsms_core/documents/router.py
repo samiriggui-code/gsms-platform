@@ -1,14 +1,26 @@
 from __future__ import annotations
 
+import contextlib
 import uuid
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Request, UploadFile, status
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    Query,
+    Request,
+    UploadFile,
+    status,
+)
 from sqlalchemy.orm import Session
 
 from gsms_core.deps import WorkspaceContext, get_db, get_settings_dep, require_roles, require_workspace
-from gsms_core.documents import service
-from gsms_core.documents.models import Blob, DocumentVersion
-from gsms_core.documents.schemas import DocumentOut, DossierOut, UploadOut, VersionOut
+from gsms_core.documents import parsing, service
+from gsms_core.documents.models import Blob, DocumentParse, DocumentVersion
+from gsms_core.documents.schemas import DocumentOut, DossierOut, ParseOut, UploadOut, VersionOut
 from gsms_core.identity.models import CONTRIBUTE_ROLES
 from gsms_core.settings import Settings
 
@@ -117,3 +129,60 @@ def dossier(
         present=c.present,
         missing=c.missing,
     )
+
+
+def _parse_out(parse: DocumentParse) -> ParseOut:
+    out = ParseOut.model_validate(parse)
+    if parse.result:
+        out.summary = {
+            "page_count": parse.result.get("page_count"),
+            "blocks": len(parse.result.get("blocks") or []),
+            "tables": len(parse.result.get("tables") or []),
+        }
+    return out
+
+
+def run_parse_and_digest(app, parse_id: uuid.UUID) -> None:
+    """Hors requête : parsing puis reconstruction du Digest du workspace (session dédiée).
+
+    Chemin minimal (BackgroundTasks FastAPI) tant que le Core n'a pas de worker ; le même appel sera
+    exécuté par le worker (file sur l'outbox / Celery) sans changer ce contrat.
+    """
+    from gsms_core.digest.service import DigestBuildError, rebuild_digest
+
+    with app.state.db.session_factory() as session:
+        parse = parsing.run_parse(session, app.state.storage, app.state.document_parser, parse_id)
+        if parse.status.value == "PARSED":
+            # Un échec du Digest est déjà tracé (statut FAILED + digest.failed).
+            with contextlib.suppress(DigestBuildError):
+                rebuild_digest(session, parse.workspace_id, actor="service:core", trigger=f"parse:{parse.id}")
+
+
+@router.post("/documents/{document_id}/parse", response_model=ParseOut, status_code=status.HTTP_202_ACCEPTED)
+def parse_document(
+    document_id: uuid.UUID,
+    request: Request,
+    background: BackgroundTasks,
+    ctx: WorkspaceContext = Depends(require_roles(CONTRIBUTE_ROLES)),
+    db: Session = Depends(get_db),
+):
+    """Demande le parsing (Docling) de la version courante ; le Digest est reconstruit ensuite."""
+    try:
+        parse = parsing.request_parse(
+            db, ctx.workspace_id, document_id, request.app.state.document_parser, ctx.actor
+        )
+    except service.NotFound as exc:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "document introuvable") from exc
+    db.commit()
+    background.add_task(run_parse_and_digest, request.app, parse.id)
+    return _parse_out(parse)
+
+
+@router.get("/documents/{document_id}/parse", response_model=ParseOut)
+def get_parse(
+    document_id: uuid.UUID, ctx: WorkspaceContext = Depends(require_workspace), db: Session = Depends(get_db)
+):
+    try:
+        return _parse_out(parsing.latest_parse(db, ctx.workspace_id, document_id))
+    except service.NotFound as exc:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "aucun parsing pour ce document") from exc
