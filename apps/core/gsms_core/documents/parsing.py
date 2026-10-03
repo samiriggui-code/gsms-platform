@@ -165,21 +165,45 @@ def parsed_documents(
         stmt = stmt.where(Document.mission_id == mission_id)
     out: list[NormalizedDocument] = []
     for doc in session.scalars(stmt):
-        if doc.current_version_id is None:
-            continue
-        parse = session.scalar(
-            select(DocumentParse)
-            .where(
-                DocumentParse.workspace_id == workspace_id,
-                DocumentParse.document_id == doc.id,
-                DocumentParse.version_id == doc.current_version_id,
-                DocumentParse.status == ParseStatus.PARSED,
-            )
-            .order_by(DocumentParse.created_at.desc())
-            .limit(1)
+        normalized = current_normalized(session, doc)
+        if normalized is not None:
+            out.append(normalized)
+    return out
+
+
+def current_normalized(session: Session, doc: Document) -> NormalizedDocument | None:
+    """``NormalizedDocument`` du dernier parsing réussi de la version courante, ou ``None``."""
+    if doc.current_version_id is None:
+        return None
+    parse = session.scalar(
+        select(DocumentParse)
+        .where(
+            DocumentParse.workspace_id == doc.workspace_id,
+            DocumentParse.document_id == doc.id,
+            DocumentParse.version_id == doc.current_version_id,
+            DocumentParse.status == ParseStatus.PARSED,
         )
-        if parse is not None and parse.result:
-            normalized = NormalizedDocument.model_validate(parse.result)
-            if normalized.workspace_id == workspace_id:
-                out.append(normalized)
+        .order_by(DocumentParse.created_at.desc())
+        .limit(1)
+    )
+    if parse is None or not parse.result:
+        return None
+    normalized = NormalizedDocument.model_validate(parse.result)
+    return normalized if normalized.workspace_id == doc.workspace_id else None
+
+
+def parse_statuses(session: Session, docs: list[Document]) -> dict[uuid.UUID, ParseStatus]:
+    """Statut du dernier parsing de la version courante, pour chaque document (une seule requête)."""
+    current = {d.id: d.current_version_id for d in docs if d.current_version_id is not None}
+    if not current:
+        return {}
+    rows = session.scalars(
+        select(DocumentParse)
+        .where(DocumentParse.document_id.in_(current.keys()))
+        .order_by(DocumentParse.created_at.desc())
+    )
+    out: dict[uuid.UUID, ParseStatus] = {}
+    for parse in rows:
+        if parse.document_id not in out and parse.version_id == current[parse.document_id]:
+            out[parse.document_id] = parse.status
     return out
