@@ -41,13 +41,10 @@ Le travail est découpé en deux sessions qui ne touchent pas les mêmes fichier
 |---|---|---|
 | 1. Métier GSMS (étapes d'affaire, champs, euro, données de démo) | fusionnée | #15 |
 | 2. Pont CRM ↔ Core (affaire gagnée → prestation GSMS) | fusionnée | #16 |
-| 3. Tout le CRM en français | **ouverte, prête** — à fusionner | #19 (`cursor/crm-francais`) |
+| 3. Tout le CRM en français | fusionnée | #19 |
 | 4. Agents métier | **à faire** | — |
 
-**PR #19** :
-- **Tests locaux** : tous verts (app 169, api 386 ; agent 370 avec 1 échec qui existe déjà sur `main`) ; check-types sans erreur.
-- **CI GitHub** : aucune ne tourne pour cette PR, car elle ne lance que `apps/core/**` et `apps/web/**`.
-- **Prochaine action** : la fusionner, puis faire déployer Samir (§7).
+**Note** : la CI GitHub ne couvre que `apps/core/**` et `apps/web/**`. Pour le CRM, lancer les tests à la main avant de fusionner (§6).
 
 **Étape 4 — agents métier du CRM (prochain travail de la session A)**. Agents Eve dans `apps/crm/apps/agent` :
 - **qualification d'un prospect** : type d'établissement, catégorie ERP, besoin probable (audit, commission
@@ -169,7 +166,7 @@ Ce que fait `deploy-all.sh` :
 **Dernier état connu** :
 - la connexion GSMS marche dans GRACE et QAtrial ;
 - Samir doit relancer la ligne de mise à jour pour le CRM. Le conteneur avait encore la version du 2026-10-02 ;
-- après la fusion de #19, relancer la même ligne pour avoir le CRM en français ;
+- #19 (CRM en français) est fusionnée : la même ligne la déploie ;
 - on attend une capture de l'écran « Résumé » du portail après déploiement.
 
 ## 8. À faire côté Samir
