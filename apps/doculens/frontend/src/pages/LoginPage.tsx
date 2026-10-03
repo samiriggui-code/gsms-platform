@@ -2,6 +2,7 @@ import { type FormEvent, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Check, Eye, EyeOff, FileCheck2, LockKeyhole, Sparkles } from 'lucide-react';
 
+import { isCoreMode } from '../api/client';
 import { useAuth } from '../auth/useAuth';
 import { Logo } from '../components/brand/Logo';
 import { Button } from '../components/ui/button';
@@ -32,8 +33,9 @@ export function LoginPage() {
     try {
       await login(email, password);
       navigate(fromState?.pathname ?? '/app', { replace: true });
-    } catch {
-      setError('Those credentials do not match this workspace.');
+    } catch (err) {
+      // Branché sur le GSMS Core, le message dit précisément ce qui bloque (identifiants, espace de travail…).
+      setError(isCoreMode && err instanceof Error ? err.message : 'Those credentials do not match this workspace.');
       setIsSubmitting(false);
     }
   };
@@ -70,9 +72,11 @@ export function LoginPage() {
             {error ? <div className="rounded-xl border border-destructive/20 bg-destructive/5 px-3 py-2.5 text-xs text-destructive">{error}</div> : null}
             <Button type="submit" className="h-11 w-full rounded-xl" disabled={isSubmitting}>{isSubmitting ? 'Signing in…' : 'Continue'} {!isSubmitting ? <ArrowRight className="ml-2 h-4 w-4" /> : null}</Button>
           </form>
+          {isCoreMode ? <p className="mt-7 text-center text-[11px] leading-5 text-muted-foreground">Mêmes identifiants que la plateforme GSMS (gsms-security.com).</p> : <>
           <div className="my-7 flex items-center gap-3 text-[10px] uppercase tracking-[0.16em] text-muted-foreground/60"><span className="h-px flex-1 bg-border" /> Portfolio demo <span className="h-px flex-1 bg-border" /></div>
           <button type="button" onClick={useDemo} className="flex w-full items-center justify-between rounded-xl border border-border bg-surface-subtle px-4 py-3 text-left transition hover:border-muted-foreground/30 hover:bg-muted"><span><span className="block text-xs font-semibold">Use analyst demo</span><span className="mt-0.5 block text-[10px] text-muted-foreground">Pre-fill local demo credentials</span></span><LockKeyhole className="h-4 w-4 text-muted-foreground" /></button>
           <p className="mt-7 text-center text-[11px] leading-5 text-muted-foreground">By continuing, you agree to the workspace security policy.<br />Demo accounts are disabled in production.</p>
+          </>}
         </div>
       </div>
     </div>

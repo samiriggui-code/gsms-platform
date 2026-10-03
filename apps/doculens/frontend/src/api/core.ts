@@ -219,11 +219,32 @@ export async function coreProfile(): Promise<UserProfile> {
   return { ...role(me.role), id: me.id, email: me.email, full_name: me.name };
 }
 
+function loginError(message: string, status: number): ApiError {
+  const error: ApiError = new Error(message);
+  error.status = status;
+  return error;
+}
+
 export async function coreLogin(credentials: { email: string; password: string }): Promise<AuthResponse> {
-  const token = await call<{ access_token: string; token_type: string; workspace_id: string | null }>(
-    '/auth/login',
-    { method: 'POST', body: JSON.stringify({ ...credentials, workspace_id: fixedWorkspaceId }) },
-  );
+  let token: { access_token: string; token_type: string; workspace_id: string | null };
+  try {
+    token = await call('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ ...credentials, workspace_id: fixedWorkspaceId }),
+    });
+  } catch (error) {
+    const status = (error as ApiError).status ?? 0;
+    if (status === 401) throw loginError('E-mail ou mot de passe incorrect.', status);
+    if (status === 403) throw loginError('Ce compte n’a accès à aucun espace de travail GSMS.', status);
+    throw loginError('Le GSMS Core ne répond pas. Réessayez dans un instant.', status);
+  }
+  if (!token.workspace_id && !fixedWorkspaceId) {
+    // Compte valide mais rattaché à aucun espace de travail (ex. administrateur sans prestation).
+    throw loginError(
+      'Votre compte n’est rattaché à aucun espace de travail. Créez une prestation sur la plateforme GSMS, puis reconnectez-vous.',
+      403,
+    );
+  }
   setCoreToken(token.access_token);
   return {
     access_token: token.access_token,
