@@ -10,8 +10,7 @@ from sqlalchemy.orm import Session
 from app.database.models import DocumentLabel
 from app.services.label_service import LabelConflictError, LabelService
 
-# Domaines → (code label, description FR). Les ``label_name`` sont les codes stables
-# attendus par le Core (snake_case) ; la description porte le libellé humain.
+# Domaines = prestations GSMS ; labels enfants = types de pièces.
 FR_TAXONOMY: dict[str, list[tuple[str, str]]] = {
     "commission_securite": [
         ("registre_securite", "Registre de sécurité"),
@@ -52,6 +51,14 @@ FR_TAXONOMY: dict[str, list[tuple[str, str]]] = {
     ],
 }
 
+# Libellés humains des domaines (= prestations GSMS).
+FR_DOMAIN_LABELS: dict[str, str] = {
+    "commission_securite": "Commission de sécurité",
+    "audit_surete": "Audit de sûreté",
+    "appel_offres": "Appels d'offres",
+    "autres": "Autres pièces",
+}
+
 
 def all_fr_label_codes() -> list[str]:
     codes: list[str] = []
@@ -73,11 +80,14 @@ def ensure_fr_labels(session: Session, *, workspace_id: str | None = None) -> in
     created = 0
     for domain_code, labels in FR_TAXONOMY.items():
         domain = _find_label(session, domain_code)
+        domain_desc = FR_DOMAIN_LABELS.get(
+            domain_code, f"Domaine {domain_code.replace('_', ' ')}"
+        )
         if domain is None:
             try:
                 domain = service.create_label(
                     label_name=domain_code,
-                    description=f"Domaine {domain_code.replace('_', ' ')}",
+                    description=domain_desc,
                     label_type="domain",
                 )
                 created += 1
@@ -87,6 +97,11 @@ def ensure_fr_labels(session: Session, *, workspace_id: str | None = None) -> in
             continue
         if domain.label_type != "domain":
             domain.label_type = "domain"
+            session.add(domain)
+            session.commit()
+        # Keep human-readable prestation names on domain labels.
+        if domain.description != domain_desc:
+            domain.description = domain_desc
             session.add(domain)
             session.commit()
 

@@ -1,5 +1,24 @@
 # Handoff Cursor → Claude
 
+## 2026-10-03 — DocuLens workspace + prestations GSMS
+
+Branche `cursor/doculens-server-gsms-74cc`.
+
+**Demande :** mode workspace ; docs/classement organisés par prestations (pas en vrac) ; clarifier Settings « Classification taxonomy » / « Role directory ».
+
+**Ce que renvoient ces settings :**
+- **Taxonomie** (`/events/labels`) = domaines (= prestations GSMS) + types de pièces pour le classifieur. Pas un réglage d’accès.
+- **Répertoire des rôles** = catalogue statique des personas (admin/analyste…) — lecture seule, pas les users du site.
+
+**Fait UI :**
+- Sidebar « Prestations » → filtre `/app/pipeline?prestation=…`
+- Liste documents groupée par commission / audit / AO / autres
+- Libellés FR (plus de snake_case brut)
+- Settings FR avec explication prestations vs rôles
+- `fr_labels.py` réparé (import circulaire) + descriptions domaines = noms de prestations
+
+---
+
 ## 2026-10-03 — DocuLens multi-provider LLM (OpenRouter / Anthropic / OpenAI)
 
 Branche `cursor/doculens-server-gsms-74cc`.

@@ -25,6 +25,7 @@ import type {
 import { cn } from '../lib/utils';
 import { inferRole, inferStatus, inferDueDate, formatDateTime } from '../lib/routing';
 import { derivePipelineStages } from '../lib/pipeline';
+import { displayLabelName } from '../lib/prestations';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
@@ -73,14 +74,27 @@ export function DocumentDetail({ document, onEventQueued }: DocumentDetailProps)
   const labelDomainMap = useMemo(() => {
     if (!labelsData?.tree) return {} as Record<string, string>;
     const map: Record<string, string> = {};
-    const traverse = (node: LabelTreeNode, domainName?: string) => {
+    const traverse = (node: LabelTreeNode, domainName?: string, domainDesc?: string | null) => {
       const nextDomain = node.type === 'domain' ? node.name : domainName;
+      const nextDesc = node.type === 'domain' ? node.description : domainDesc;
       if (node.type === 'label' && nextDomain) {
-        map[node.name] = nextDomain;
+        map[node.name] = displayLabelName(nextDomain, nextDesc);
       }
-      node.children?.forEach((child) => traverse(child, nextDomain));
+      node.children?.forEach((child) => traverse(child, nextDomain, nextDesc));
     };
-    labelsData.tree.forEach((node) => traverse(node, node.type === 'domain' ? node.name : undefined));
+    labelsData.tree.forEach((node) =>
+      traverse(node, node.type === 'domain' ? node.name : undefined, node.type === 'domain' ? node.description : undefined),
+    );
+    return map;
+  }, [labelsData]);
+  const labelDisplayMap = useMemo(() => {
+    if (!labelsData?.tree) return {} as Record<string, string>;
+    const map: Record<string, string> = {};
+    const walk = (node: LabelTreeNode) => {
+      map[node.name] = displayLabelName(node.name, node.description);
+      node.children?.forEach(walk);
+    };
+    labelsData.tree.forEach(walk);
     return map;
   }, [labelsData]);
   const latestHistory = historyData && historyData.length > 0 ? historyData[0] : undefined;
@@ -647,11 +661,11 @@ export function DocumentDetail({ document, onEventQueued }: DocumentDetailProps)
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex flex-wrap items-center gap-3">
-              <Badge variant="accent" className="text-xs uppercase tracking-wide">
-                {displayLabel}
+              <Badge variant="accent" className="text-xs tracking-wide">
+                {labelDisplayMap[displayLabel] ?? displayLabelName(displayLabel)}
               </Badge>
               {displayDomain ? (
-                <Badge variant="outline" className="text-xs uppercase tracking-wide text-muted-foreground">
+                <Badge variant="outline" className="text-xs tracking-wide text-muted-foreground">
                   {displayDomain}
                 </Badge>
               ) : null}
@@ -696,7 +710,7 @@ export function DocumentDetail({ document, onEventQueued }: DocumentDetailProps)
                     >
                       {candidateLabels.map((label) => (
                         <option key={label} value={label}>
-                          {label}
+                          {labelDisplayMap[label] ?? displayLabelName(label)}
                         </option>
                       ))}
                     </select>
@@ -751,9 +765,11 @@ export function DocumentDetail({ document, onEventQueued }: DocumentDetailProps)
                   {historyData.map((entry) => (
                     <div key={entry.id} className="flex items-center justify-between rounded-md border border-border/60 bg-muted/5 px-3 py-2">
                       <div className="space-y-0.5">
-                        <span className="font-semibold text-foreground">{entry.label_name}</span>
+                        <span className="font-semibold text-foreground">
+                          {labelDisplayMap[entry.label_name] ?? displayLabelName(entry.label_name)}
+                        </span>
                         {labelDomainMap[entry.label_name] ? (
-                          <span className="block text-[11px] uppercase tracking-wide text-muted-foreground/80">
+                          <span className="block text-[11px] tracking-wide text-muted-foreground/80">
                             {labelDomainMap[entry.label_name]}
                           </span>
                         ) : null}
