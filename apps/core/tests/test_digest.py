@@ -64,7 +64,7 @@ def test_multi_document_workspace_digest(tmp_path):
     assert {d.label for d in digest.deliverables} >= {"Mémoire technique", "DC1 et DC2 signés"}
     assert {m.key for m in digest.missing_information} == {"ccap", "ae"}
     assert "eliminatoire" in {r.kind for r in digest.risks}
-    assert {e.value for e in digest.entities} == {"Agent SSIAP 1"}
+    assert {e.value for e in digest.entities} == {"Agent SSIAP 1", "Chef d'équipe SSIAP 2"}
 
 
 def test_conflict_between_documents_is_detected_with_sources(tmp_path):

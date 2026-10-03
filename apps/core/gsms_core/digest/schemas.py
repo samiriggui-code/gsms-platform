@@ -74,6 +74,27 @@ class Risk(BaseModel):
     source: SourceRef
 
 
+class TenderClause(BaseModel):
+    """Clause d'un DCE classée par thème métier (horaires, SSIAP/CNAPS, reprise du personnel…)."""
+
+    id: str
+    category: str
+    label: str  # libellé du thème
+    text: str
+    mandatory: bool  # phrase prescriptive (« doit », « obligatoire »…)
+    source: SourceRef
+
+
+class AwardCriterion(BaseModel):
+    """Critère d'attribution et sa pondération, tels qu'écrits dans le RC."""
+
+    id: str
+    label: str
+    weight: float | None = None
+    unit: str | None = None  # « % » ou « points »
+    source: SourceRef
+
+
 class ConflictValue(BaseModel):
     value: str
     source: SourceRef
@@ -125,6 +146,8 @@ class WorkspaceDigest(BaseModel):
     deadlines: list[Deadline] = Field(default_factory=list)
     deliverables: list[Deliverable] = Field(default_factory=list)
     risks: list[Risk] = Field(default_factory=list)
+    clauses: list[TenderClause] = Field(default_factory=list)
+    criteria: list[AwardCriterion] = Field(default_factory=list)
     missing_information: list[MissingInformation] = Field(default_factory=list)
     conflicts: list[Conflict] = Field(default_factory=list)
     next_actions: list[NextAction] = Field(default_factory=list)
@@ -137,6 +160,8 @@ class WorkspaceDigest(BaseModel):
             "deadlines": len(self.deadlines),
             "deliverables": len(self.deliverables),
             "risks": len(self.risks),
+            "clauses": len(self.clauses),
+            "criteria": len(self.criteria),
             "conflicts": len(self.conflicts),
             "missing_information": len(self.missing_information),
         }

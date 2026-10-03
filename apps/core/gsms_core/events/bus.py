@@ -24,6 +24,7 @@ OUTBOX_ROUTES: dict[str, tuple[str, ...]] = {
     "action.closed": ("grace",),
     "intake.request.received": ("crm",),
     "tender.go_no_go.decided": ("crm",),
+    "tender.status.changed": ("crm",),
     "tender.submitted": ("crm",),
 }
 

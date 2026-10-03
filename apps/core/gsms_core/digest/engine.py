@@ -11,8 +11,10 @@ import uuid
 from collections import defaultdict
 
 from gsms_core.digest.classifier import classify
+from gsms_core.digest.clauses import extract_clauses
 from gsms_core.digest.completeness import detect_missing
 from gsms_core.digest.conflicts import detect_conflicts
+from gsms_core.digest.criteria import extract_criteria
 from gsms_core.digest.deadlines import extract_deadlines
 from gsms_core.digest.deliverables import extract_deliverables
 from gsms_core.digest.obligations import extract_obligations
@@ -77,6 +79,10 @@ class DigestEngine:
             digest.deadlines.extend(extract_deadlines(doc))
             digest.deliverables.extend(extract_deliverables(doc))
             digest.risks.extend(extract_risks(doc))
+            if engagement_type == MissionType.APPEL_OFFRES:
+                # Lecture métier d'un DCE : clauses par thème et critères d'attribution.
+                digest.clauses.extend(extract_clauses(doc))
+                digest.criteria.extend(extract_criteria(doc))
 
         digest.entities = self._entities(digest)
         digest.conflicts = detect_conflicts(digest.requirements, digest.deadlines)

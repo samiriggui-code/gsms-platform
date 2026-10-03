@@ -11,6 +11,7 @@ import {
   type RelanceSettings,
 } from "@/components/platform/admin-settings";
 import { PageHeader } from "@/components/platform/page-header";
+import { type CompanyProfileData, CompanyProfileForm } from "@/components/platform/tenders/company-profile-form";
 import { ResourcePanel } from "@/components/platform/resource-panel";
 import {
   RolesMatrix,
@@ -32,7 +33,7 @@ export default async function SettingsPage() {
     : failure;
   // Équipe, rôles et réglages plateforme : rôles visibles par toute l'équipe GSMS ; le reste seulement pour le
   // super admin et les administrateurs (403 sinon).
-  const [roles, team, sso, mail, llm, relances, rules] = await Promise.all([
+  const [roles, team, sso, mail, llm, relances, rules, tenderProfile] = await Promise.all([
     coreFetch<RolesData>(ENDPOINTS.admin.roles()),
     coreFetch<TeamData>(ENDPOINTS.admin.team()),
     coreFetch<SsoClients>(ENDPOINTS.admin.ssoClients()),
@@ -40,12 +41,13 @@ export default async function SettingsPage() {
     coreFetch<LlmSettings>(ENDPOINTS.admin.llm()),
     coreFetch<RelanceSettings>(ENDPOINTS.admin.relances()),
     coreFetch<RelanceRule[]>(ENDPOINTS.admin.relanceRules()),
+    coreFetch<CompanyProfileData>(ENDPOINTS.tenders.profile()),
   ]);
   const isPlatformAdmin = mail.ok && llm.ok;
 
   return (
     <>
-      <PageHeader title="Paramètres" description="Équipe, rôles, applications connectées, messagerie et notifications." />
+      <PageHeader title="Paramètres" description="Équipe, rôles, applications connectées, profil GSMS pour les appels d'offres, messagerie et notifications." />
       {team.ok && roles.ok ? (
         <div className="mb-8 flex flex-col gap-5">
           <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-foreground">Équipe et accès</p>
@@ -56,6 +58,12 @@ export default async function SettingsPage() {
       ) : roles.ok ? (
         <div className="mb-8">
           <RolesMatrix roles={roles.data} />
+        </div>
+      ) : null}
+      {tenderProfile.ok ? (
+        <div className="mb-8 flex flex-col gap-5">
+          <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-foreground">Appels d&apos;offres</p>
+          <CompanyProfileForm initial={tenderProfile.data} editable />
         </div>
       ) : null}
       {isPlatformAdmin ? (

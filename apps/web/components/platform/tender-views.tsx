@@ -1,4 +1,4 @@
-import { Bot, CalendarClock, FileStack, FileText, HelpCircle, History, ListChecks, ShieldAlert, Upload } from "lucide-react";
+import { Bot, CalendarClock, FileStack, FileText, HelpCircle, History, ShieldAlert, Upload } from "lucide-react";
 import type { ReactNode } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,9 @@ import type { TenderTab, TenderTabSlug } from "@/lib/tenders/tabs";
 import { CoreFailureState, EmptyState, NoWorkspaceState } from "./core-state";
 import { formatAmount, formatValue, StatusBadge } from "./format";
 import { type Column, ResourcePanel } from "./resource-panel";
+import { type Feasibility, FeasibilityMatrix, GoNoGoGrid } from "./tenders/go-no-go";
+import { type Compliance, RequirementsMatrix } from "./tenders/requirements-matrix";
+import { DceUpload, GoNoGoDecision } from "./tenders/tender-actions";
 
 export function TabIntro({ tab, actions }: { tab: TenderTab; actions?: ReactNode }) {
   return (
@@ -27,40 +30,23 @@ export function TabIntro({ tab, actions }: { tab: TenderTab; actions?: ReactNode
 const LIST_TABS: Partial<Record<TenderTabSlug, { columns: Column[]; empty: { title: string; description: string; icon: typeof FileText } }>> = {
   pieces: {
     columns: [
-      { key: "kind", label: "Pièce", render: (row) => <Badge tone="primary">{String(row.kind ?? "—")}</Badge> },
-      { key: "title", label: "Intitulé" },
-      { key: "required", label: "Exigée" },
-      { key: "provided", label: "Fournie", render: (row) => <StatusBadge value={row.provided === true ? "conforme" : row.provided === false ? "manquante" : undefined} /> },
-      { key: "updated_at", label: "Mise à jour" },
+      { key: "label", label: "Pièce", render: (row) => <Badge tone={row.provided ? "primary" : "neutral"}>{String(row.label ?? row.kind ?? "—")}</Badge> },
+      { key: "title", label: "Fichier" },
+      { key: "required", label: "Attendue", render: (row) => (row.required ? "Oui" : "—") },
+      { key: "provided", label: "Reçue", render: (row) => <StatusBadge value={row.provided ? "reçue" : "manquante"} /> },
+      { key: "parse_status", label: "Analyse", render: (row) => <StatusBadge value={row.parse_status} /> },
+      { key: "version", label: "Version" },
     ],
-    empty: { icon: FileStack, title: "Aucune pièce", description: "Déposez le DCE (zip) : le Core classe les pièces (RC, CCTP, CCAP, AE, BPU, DPGF, annexes)." },
-  },
-  exigences: {
-    columns: [
-      { key: "reference", label: "Réf." },
-      { key: "text", label: "Exigence", className: "min-w-[280px]" },
-      { key: "owner", label: "Propriétaire" },
-      { key: "status", label: "Statut", render: (row) => <StatusBadge value={row.status} /> },
-    ],
-    empty: { icon: ListChecks, title: "Aucune exigence", description: "Les exigences apparaissent après l'analyse du dossier." },
-  },
-  conformite: {
-    columns: [
-      { key: "requirement", label: "Exigence", className: "min-w-[260px]" },
-      { key: "proposed_status", label: "Statut proposé", render: (row) => <StatusBadge value={row.proposed_status} /> },
-      { key: "final_status", label: "Statut final (humain)", render: (row) => <StatusBadge value={row.final_status ?? "a_valider"} /> },
-      { key: "evidence", label: "Preuve" },
-    ],
-    empty: { icon: ListChecks, title: "Matrice vide", description: "La matrice est générée à partir des exigences ; chaque statut final est validé par un humain." },
+    empty: { icon: FileStack, title: "Aucune pièce", description: "Déposez le DCE (ZIP ou fichiers) : le Core classe les pièces (RC, CCTP, CCAP, AE, BPU, DPGF, DQE, annexes)." },
   },
   risques: {
     columns: [
       { key: "title", label: "Risque" },
       { key: "severity", label: "Gravité", render: (row) => <StatusBadge value={row.severity} /> },
-      { key: "mitigation", label: "Parade" },
-      { key: "owner", label: "Responsable" },
+      { key: "text", label: "Passage du DCE", className: "min-w-[280px]" },
+      { key: "source", label: "Source", render: (row) => <span className="font-mono text-[11px] text-muted-foreground">{formatValue(row.source)}</span> },
     ],
-    empty: { icon: ShieldAlert, title: "Aucun risque identifié", description: "Les risques issus de l'analyse et de la grille Go / No-Go apparaîtront ici." },
+    empty: { icon: ShieldAlert, title: "Aucun risque relevé", description: "Critères éliminatoires, pénalités et clauses de résiliation apparaissent après l'analyse du DCE." },
   },
   questions: {
     columns: [
@@ -84,20 +70,22 @@ const LIST_TABS: Partial<Record<TenderTabSlug, { columns: Column[]; empty: { tit
     columns: [
       { key: "title", label: "Document" },
       { key: "kind", label: "Type" },
+      { key: "folder", label: "Dossier" },
       { key: "version", label: "Version" },
-      { key: "origin", label: "Origine" },
+      { key: "sha256", label: "Empreinte", render: (row) => <span className="font-mono text-[11px]">{row.sha256 ? `${String(row.sha256).slice(0, 12)}…` : "—"}</span> },
+      { key: "parse_status", label: "Analyse", render: (row) => <StatusBadge value={row.parse_status} /> },
       { key: "updated_at", label: "Date" },
     ],
-    empty: { icon: FileText, title: "Aucun document", description: "Versions générées et déposées pour ce dossier." },
+    empty: { icon: FileText, title: "Aucun document", description: "Pièces reçues et documents produits pour ce dossier, avec version et empreinte." },
   },
   echeances: {
     columns: [
       { key: "title", label: "Jalon" },
-      { key: "kind", label: "Nature" },
       { key: "due_at", label: "Date" },
       { key: "status", label: "Statut", render: (row) => <StatusBadge value={row.status} /> },
+      { key: "source", label: "Source", render: (row) => <span className="font-mono text-[11px] text-muted-foreground" title={typeof row.excerpt === "string" ? row.excerpt : undefined}>{formatValue(row.source)}</span> },
     ],
-    empty: { icon: CalendarClock, title: "Aucun jalon", description: "Questions, visite, remise : les jalons et rappels apparaîtront ici." },
+    empty: { icon: CalendarClock, title: "Aucun jalon", description: "Les dates du DCE (questions, visite, remise) apparaissent après l'analyse, avec la page d'origine." },
   },
   historique: {
     columns: [
@@ -119,7 +107,17 @@ const LIST_TABS: Partial<Record<TenderTabSlug, { columns: Column[]; empty: { tit
   },
 };
 
-export function TenderTabView({ tab, result }: { tab: TenderTab; result: CoreResult<unknown> | null }) {
+export function TenderTabView({
+  tab,
+  result,
+  workspaceId,
+  missionId,
+}: {
+  tab: TenderTab;
+  result: CoreResult<unknown> | null;
+  workspaceId: string;
+  missionId: string | null;
+}) {
   const list = LIST_TABS[tab.slug];
   const actions = tabActions(tab.slug, !!result?.ok);
 
@@ -127,6 +125,7 @@ export function TenderTabView({ tab, result }: { tab: TenderTab; result: CoreRes
     return (
       <>
         <TabIntro tab={tab} actions={actions} />
+        {tab.slug === "pieces" && missionId && result?.ok ? <DceUpload workspaceId={workspaceId} missionId={missionId} /> : null}
         <ResourcePanel title={tab.label} result={result} columns={list.columns} empty={list.empty} />
       </>
     );
@@ -139,10 +138,18 @@ export function TenderTabView({ tab, result }: { tab: TenderTab; result: CoreRes
         <Card><NoWorkspaceState /></Card>
       ) : !result.ok ? (
         <Card><CoreFailureState failure={result} /></Card>
+      ) : (tab.slug === "exigences" || tab.slug === "conformite") && missionId ? (
+        <RequirementsMatrix
+          key={`${(result.data as Compliance).summary?.total}-${(result.data as Compliance).summary?.stale}`}
+          workspaceId={workspaceId}
+          missionId={missionId}
+          data={result.data as Compliance}
+          mode={tab.slug}
+        />
       ) : tab.slug === "analyse" ? (
         <AnalysisView data={result.data as Record<string, unknown>} />
       ) : tab.slug === "go-no-go" ? (
-        <GoNoGoView data={result.data as Record<string, unknown>} />
+        <GoNoGoView data={result.data as Record<string, unknown>} workspaceId={workspaceId} missionId={missionId} />
       ) : tab.slug === "reponse-financiere" ? (
         <FinancialView data={result.data as Record<string, unknown>} />
       ) : (
@@ -152,11 +159,9 @@ export function TenderTabView({ tab, result }: { tab: TenderTab; result: CoreRes
   );
 }
 
-/** Actions d'écriture : affichées mais désactivées tant que les endpoints POST ne sont pas branchés. */
+/** Actions d'écriture à venir : affichées mais désactivées tant que les endpoints POST ne sont pas branchés. */
 function tabActions(slug: TenderTabSlug, coreOk: boolean): ReactNode {
   const label: Partial<Record<TenderTabSlug, { text: string; icon: typeof Upload }>> = {
-    pieces: { text: "Déposer le DCE (zip)", icon: Upload },
-    analyse: { text: "Lancer l'analyse", icon: FileText },
     questions: { text: "Nouvelle question", icon: HelpCircle },
     agents: { text: "Demander à l'assistant", icon: Bot },
   };
@@ -192,66 +197,79 @@ function SimpleList({ title, rows, empty, render }: { title: string; rows: Row[]
 }
 
 function AnalysisView({ data }: { data: Record<string, unknown> }) {
+  const total = typeof data?.criteria_total === "number" ? data.criteria_total : null;
   return (
     <div className="grid gap-5 lg:grid-cols-2">
       <SimpleList
-        title="Sections du dossier"
+        title="Lecture du DCE par thème"
         rows={asList<Row>(data?.sections)}
-        empty="Analyse non lancée."
+        empty="Analyse pas encore disponible : déposez le DCE."
         render={(row) => (
           <div className="flex flex-col gap-0.5">
-            <span className="font-medium">{formatValue(row.title)}</span>
+            <span className="flex items-center justify-between gap-3 font-medium">
+              {formatValue(row.title)}
+              <span className="font-mono text-[11px] text-muted-foreground">{formatValue(row.count)}</span>
+            </span>
             {row.summary ? <span className="text-muted-foreground">{String(row.summary)}</span> : null}
+            {row.source ? <span className="font-mono text-[11px] text-muted-foreground">{String(row.source)}</span> : null}
           </div>
         )}
       />
-      <SimpleList
-        title="Critères d'évaluation"
-        rows={asList<Row>(data?.criteria)}
-        empty="Aucun critère extrait."
-        render={(row) => (
-          <div className="flex justify-between gap-4">
-            <span className="font-medium">{formatValue(row.label ?? row.title)}</span>
-            <span className="font-mono text-muted-foreground">{row.weight !== undefined ? `${String(row.weight)} %` : "—"}</span>
-          </div>
-        )}
-      />
+      <div className="flex flex-col gap-3">
+        <SimpleList
+          title="Critères d'attribution"
+          rows={asList<Row>(data?.criteria)}
+          empty="Aucun critère pondéré trouvé dans le RC."
+          render={(row) => (
+            <div className="flex flex-col gap-0.5">
+              <span className="flex justify-between gap-4">
+                <span className="font-medium">{formatValue(row.label ?? row.title)}</span>
+                <span className="font-mono">{row.weight !== undefined && row.weight !== null ? `${String(row.weight)} ${String(row.unit ?? "%")}` : "—"}</span>
+              </span>
+              {row.source ? <span className="font-mono text-[11px] text-muted-foreground">{String(row.source)}</span> : null}
+            </div>
+          )}
+        />
+        {total !== null && total !== 100 ? (
+          <p role="note" className="rounded-[10px] border border-warning/30 bg-warning/10 p-3 text-[12.5px]">
+            La somme des pondérations lues vaut {total} % : vérifiez les critères dans le RC (sous-critères ou lecture incomplète).
+          </p>
+        ) : null}
+      </div>
     </div>
   );
 }
 
-function GoNoGoView({ data }: { data: Record<string, unknown> }) {
+function GoNoGoView({ data, workspaceId, missionId }: { data: Record<string, unknown>; workspaceId: string; missionId: string | null }) {
   const criteria = asList<Row>(data?.criteria);
   const decision = data?.decision as Row | null | undefined;
+  const feasibility = data?.feasibility as Feasibility | null | undefined;
+  const grid = criteria.map((row, i) => ({
+    code: String(row.code ?? `critere_${i + 1}`),
+    label: String(row.label ?? row.code ?? ""),
+    weight: Number(row.weight ?? 1),
+    score: Number(row.score ?? 0),
+    eliminatory: Boolean(row.eliminatory),
+  }));
   return (
-    <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
-      <SimpleList
-        title="Grille déterministe"
-        rows={criteria}
-        empty="Grille non calculée par le Core."
-        render={(row) => (
-          <div className="grid grid-cols-[1fr_auto] items-center gap-4">
-            <span className="font-medium">{formatValue(row.label)}</span>
-            <span className="font-mono">{formatValue(row.score)}{row.max !== undefined ? ` / ${String(row.max)}` : ""}</span>
-          </div>
-        )}
-      />
-      <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5">
+      {feasibility ? <FeasibilityMatrix workspaceId={workspaceId} feasibility={feasibility} /> : null}
+      <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr] [&>*]:min-w-0">
         <Card>
           <CardHeader>
-            <CardTitle>Score et recommandation</CardTitle>
+            <CardTitle>Grille de notation</CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col gap-3 text-[13px]">
-            <p className="text-[34px]/[1] font-[700] tracking-[-0.04em]">{formatValue(data?.score)}</p>
-            <p>
-              Recommandation calculée : <StatusBadge value={data?.recommendation} />
+          <CardContent className="flex flex-col gap-4 text-[13px]">
+            <p className="text-muted-foreground">
+              Complément à la matrice : votre appréciation, critère par critère. Score calculé par le Core (moyenne pondérée, un critère éliminatoire noté 0 recommande No-Go).
             </p>
-            {typeof data?.assistant_opinion === "string" ? (
-              <p className="rounded-[10px] border border-border bg-surface-subtle p-3 text-muted-foreground">
-                <span className="font-semibold text-foreground">Avis de l&apos;assistant : </span>
-                {data.assistant_opinion}
-              </p>
-            ) : null}
+            {missionId ? <GoNoGoGrid workspaceId={workspaceId} missionId={missionId} initial={grid} locked={Boolean(decision)} /> : null}
+            <p className="flex flex-wrap items-center gap-3">
+              <span className="text-[28px]/[1] font-[700] tracking-[-0.04em]">{data?.score === null || data?.score === undefined ? "—" : `${String(data.score)} / 100`}</span>
+              <span>
+                Recommandation : <StatusBadge value={data?.recommendation} />
+              </span>
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -260,20 +278,20 @@ function GoNoGoView({ data }: { data: Record<string, unknown> }) {
           </CardHeader>
           <CardContent className="flex flex-col gap-3 text-[13px]">
             {decision ? (
-              <p>
-                <StatusBadge value={decision.value} /> par {formatValue(decision.by)} le {formatValue(decision.at)}
-              </p>
+              <>
+                <p>
+                  <StatusBadge value={decision.value} /> par {formatValue(decision.by)} le {formatValue(decision.at)}
+                </p>
+                {typeof decision.rationale === "string" ? <p className="text-muted-foreground">{decision.rationale}</p> : null}
+              </>
             ) : (
-              <p className="text-muted-foreground">Aucune décision enregistrée.</p>
+              <>
+                <p className="text-muted-foreground">
+                  Aucune décision enregistrée. Elle est définitive, motivée, et garde la trace de la matrice de faisabilité au moment de décider.
+                </p>
+                {missionId ? <GoNoGoDecision workspaceId={workspaceId} missionId={missionId} /> : null}
+              </>
             )}
-            <div className="flex gap-2">
-              <Button size="sm" variant="contrast" disabled title="À brancher : POST go-no-go/decision">
-                Go
-              </Button>
-              <Button size="sm" variant="outline" disabled title="À brancher : POST go-no-go/decision">
-                No-Go
-              </Button>
-            </div>
           </CardContent>
         </Card>
       </div>

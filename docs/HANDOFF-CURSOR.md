@@ -19,6 +19,125 @@
 
 ---
 
+## 2026-10-03 — Chantier AO-MCP, étape 3 : GO / NO-GO documenté
+
+Branche `cursor/ao-mcp-go-no-go`. Plan : `docs/chantiers/AO-MCP-AUDIT.md` (§8).
+
+- **Profil GSMS** (`tenders/profile.py`) : réglage plateforme `tender_profile`, saisi dans Paramètres → « Profil GSMS — appels d'offres » (`GET|PUT /api/v1/tenders/profile`, équipe GSMS ; écriture réservée aux rôles de gestion). Il contient :
+  - l'autorisation CNAPS et sa validité ;
+  - les certifications ;
+  - les agents mobilisables par qualification ;
+  - le chiffre d'affaires et le délai de mobilisation ;
+  - la reprise du personnel et la sous-traitance.
+
+  Un champ vide est affiché « à renseigner » : aucune valeur n'est supposée.
+- **Matrice de faisabilité** (`tenders/feasibility.py`, déterministe), servie par `GET …/go-no-go` (champ `feasibility`).
+  - 11 dimensions du §3, chacune READY / WARNING / BLOCKED avec une justification en clair et ses sources (pièce et page, ou exigence REQ-xxx) :
+    - capacité humaine : effectifs du DCE comparés au profil ; un service 24 h/24 compte pour 5,5 agents par poste, estimation affichée comme telle ;
+    - capacité réglementaire : CNAPS, reprise du personnel ;
+    - capacité technique : statuts de la matrice ;
+    - capacité financière : montant du marché rapporté au chiffre d'affaires, avertissement au-delà de 50 %, blocage au-delà de 100 % ;
+    - capacité documentaire : pièces manquantes, contradictions ;
+    - délai : blocage à moins de 3 jours, avertissement à moins de 10 ;
+    - certifications ;
+    - moyens matériels ;
+    - risques ;
+    - dépendances : visite, sous-traitance ;
+    - informations manquantes.
+  - Statut global = le pire des statuts.
+- **Décision** : reste humaine. L'audit et l'événement `tender.go_no_go.decided` gardent un instantané de la matrice au moment de décider.
+- **Grille de notation**
+  - Saisie par l'équipe via `PUT …/go-no-go/criteria`, avec les libellés conservés.
+  - Score calculé par le Core avec le moteur existant. Grille figée après la décision.
+- **Dossier** : montant annuel estimé, nouvelle colonne `estimated_amount` (migration `0012`). Modifiable avec la date de remise via `PATCH /workspaces/{ws}/tenders/{mission}`, formulaire dans la Synthèse.
+- **Portail**
+  - Onglet Go / No-Go : bandeau du statut global, dimensions avec liens vers la pièce à la bonne page, grille modifiable, décision.
+  - Paramètres : formulaire du profil.
+- **Vérifié en vrai** (PostgreSQL 16, migration 0012 dans les deux sens, Chromium sur ordinateur et mobile 390 px) :
+  - profil saisi, montant 400 000 € et date renseignés ;
+  - matrice « à surveiller », dont capacité humaine SSIAP 2 avec un besoin d'environ 5,5 agents pour 3 mobilisables ;
+  - grille 60/100, décision GO enregistrée ;
+  - aucun débordement sur mobile.
+- **Tests** : `tests/test_tender_go_no_go.py` (5 tests ; 187 au total).
+
+---
+
+## 2026-10-03 — Chantier AO-MCP, étape 2 : Digest AO et matrice d'exigences
+
+Branche `cursor/ao-mcp-exigences`. Plan : `docs/chantiers/AO-MCP-AUDIT.md` (§8).
+
+- **Digest (règles déterministes, sans LLM)**, uniquement pour une mission APPEL_OFFRES :
+  - `digest/clauses.py` : chaque phrase du DCE est rattachée à un thème. Thèmes : reprise du personnel, convention collective, clause sociale, clause environnementale, sous-traitance, plan de prévention, mobilisation, qualifications (SSIAP, CNAPS…), horaires, moyens humains, moyens matériels, sécurité / sûreté, prix et bordereaux, mémoire technique, pièces administratives, variantes, visite, durée du marché, pénalités, confidentialité. Chaque clause est marquée obligatoire ou non et garde sa source.
+  - `digest/criteria.py` : critères d'attribution et pondérations (« Prix : 40 % », « 60 % pour la valeur technique », tableau « Critère | Pondération »).
+  - Corrections :
+    - un titre « Pièces à fournir » n'est plus pris pour une pièce ;
+    - « d'un chef d'équipe SSIAP 2 » est maintenant compté. `test_digest` attendait l'ancien oubli et a été mis à jour.
+- **Matrice** (`tenders/requirements.py`, table `tender_requirement`, migration `0011`)
+  - Colonnes du §11 : code `REQ-001…`, source (pièce, page, section, cellule), exigence, type, obligatoire, réponse prévue, preuve, document cible (administratif / technique / financier / annexes), responsable, statut (TODO, IN_PROGRESS, COVERED, PARTIAL, BLOCKED, NOT_APPLICABLE).
+  - Construction : pièce à produire > effectif > critère éliminatoire > clause > obligation, sans doublon pour un même passage. Les pénalités vont dans l'onglet Risques.
+  - Synchronisation automatique : abonné EventBus `digest.updated`, plus `POST …/requirements/sync`.
+    - Les réponses humaines ne sont jamais écrasées.
+    - Une exigence disparue du DCE (rectificatif) est marquée `stale`, jamais supprimée ni renumérotée.
+  - Chaque modification est auditée, avec l'événement `tender.requirement.updated`.
+- **API**
+  - `GET …/analysis` : thèmes et critères, avec alerte si la somme des pondérations n'est pas 100 %.
+  - `GET …/risks`.
+  - `GET|POST …/requirements`, `PATCH …/requirements/{id}`, `GET …/compliance` (couverture des obligatoires).
+  - La matrice est réservée à l'équipe GSMS.
+- **Portail**
+  - Onglets Analyse, Exigences (filtres, lien vers la pièce à la bonne page, ajout manuel, « Relire le DCE »), Conformité (indicateurs, statut, responsable, document cible, réponse et preuve modifiables) et Risques.
+  - L'historique affiche en clair les changements de la matrice et les statuts.
+- **Vérifié en vrai** (PostgreSQL 16, migration 0011 dans les deux sens, Core, portail compilé, Chromium sur ordinateur et mobile 390 px) :
+  - ZIP RC + CCTP → 12 exigences sourcées, critères 40 / 60, risques classés ;
+  - exigence CNAPS passée à « Couverte » avec responsable, réponse et preuve ; couverture 1 / 9 ;
+  - historique lisible.
+  - Limite : la conversion Docling était simulée ; les extracteurs sont réels.
+- **Tests** : `tests/test_tender_requirements.py` (4 tests ; 182 au total). La fixture `staff` (équipe GSMS) est passée dans `conftest.py`.
+
+---
+
+## 2026-10-03 — Chantier AO-MCP, étape 1 : dossier AO et DCE
+
+Branche `cursor/ao-mcp-dossier`. Plan complet : `docs/chantiers/AO-MCP-AUDIT.md` (§8).
+
+- **Un workspace par dossier AO**
+  - `POST /api/v1/tenders` crée un workspace TEMPORARY rattaché à l'organisation GSMS, jamais à l'acheteur : l'offre, prix compris, n'est visible que de l'équipe.
+  - La création passe par `WorkspaceManager`, qui accepte désormais un workspace sans site. Elle crée aussi la mission APPEL_OFFRES, le dossier, les dossiers du coffre-fort et les bindings d'apps.
+  - Référence lisible `WS-AO-AAAA-NNNN` dans `identity_workspace.reference`, unique, numérotée par année. Elle figure dans l'événement `workspace.created`.
+  - Création réservée aux rôles d'équipe GSMS (owner, admin, manager, consultant).
+  - `GET /api/v1/tenders` liste les dossiers de tous les workspaces accessibles. `GET /workspaces/{ws}/tenders/current` renvoie le dossier d'un workspace AO.
+- **DCE** : `POST …/tenders/{mission}/dce` accepte des fichiers et/ou un ZIP.
+  - Les pièces sont rangées dans « Dossier de consultation », puis Docling et le Digest tournent en tâche de fond. Le rangement par type existait déjà.
+  - Les noms Windows (CP437/UTF-8 sans drapeau) sont décodés.
+  - Sont ignorés et signalés : `__MACOSX`, fichiers cachés, archives imbriquées, fichiers chiffrés ou trop gros. Plafonds : 500 fichiers, 2 Go décompressés.
+  - Une pièce redéposée sous le même nom devient une **nouvelle version** du même document (rectificatif) ; si elle est identique, aucun doublon n'est créé.
+- **Onglets branchés** (`tenders/views.py`, aucune donnée recalculée) :
+  - pièces : reçues avec leur type, attendues, manquantes ;
+  - documents : version, SHA-256, dossier, analyse ;
+  - échéances : saisie + Digest, avec la page source ;
+  - historique : journal d'audit du workspace, noms des personnes.
+- **Validation humaine** (`tenders/lifecycle.py`, table `tender_status_change`)
+  - Cycle : DRAFT → REVIEW → READY → APPROVED → SUBMITTED, avec retours arrière motivés.
+  - Seul un utilisateur peut changer le statut. Les agents et les comptes client sont refusés.
+  - READY, APPROVED et SUBMITTED exigent une décision GO.
+  - APPROVED et SUBMITTED exigent un commentaire (pour SUBMITTED : plateforme et accusé de dépôt).
+  - Événements `tender.status.changed` et, au dépôt, `tender.submitted`, envoyés au CRM par l'outbox. L'envoi réel arrivera à l'étape 10.
+- **Portail**
+  - `/app/tenders/{workspaceId}` remplace `/app/tenders/{missionId}`.
+  - Bouton « Nouveau dossier AO » ; zone de dépôt du DCE.
+  - Boutons de validation dans l'en-tête ; formulaire de décision Go / No-Go (motivée, définitive) ; carte « Validations » dans la synthèse.
+  - Statuts affichés en français ; montant absent affiché « — » au lieu de « 0 € ».
+- **Migration `0010`** : validée sur PostgreSQL 16 dans les deux sens. Tests : `tests/test_tender_dossier.py` (8 tests, 174 au total).
+- **Vérifié en vrai** (PostgreSQL 16, Core, portail en production locale, Chromium, ordinateur et mobile 390 px) :
+  - création de WS-AO-2026-0001 ;
+  - ZIP du DCE → RC, CCTP et BPU reconnus et analysés, CCAP et AE signalés manquants ;
+  - date de remise lue dans le RC p. 3 ;
+  - GO, puis relecture → prêt → approuvé → déposé ; événements en outbox vers le CRM ;
+  - le compte client ne voit aucun dossier AO.
+  - Limite de la vérification : Docling n'est pas installé dans l'environnement de test, la conversion était simulée (le reste est réel).
+
+---
+
 ## 2026-10-03 — CRM, étape 2 : pont CRM ↔ Core
 
 **Fait**

@@ -70,7 +70,7 @@ def _quantity_near(folded: str, match: re.Match[str]) -> float | None:
     before = folded[max(0, match.start() - 40) : match.start()]
     after = folded[match.end() : match.end() + 25]
     m_before = re.search(
-        _NUM + r"\s+(?:agents?|postes?|personnes?)?\s*(?:de\s+)?(?:qualifies?\s+)?(?:\w+\s+)?$", before
+        _NUM + r"\s+(?:agents?|postes?|personnes?)?\s*(?:de\s+)?(?:qualifies?\s+)?(?:[\w']+\s+){0,3}$", before
     )
     if m_before:
         return _to_number(m_before.group(1))

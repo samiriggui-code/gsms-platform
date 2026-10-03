@@ -27,7 +27,7 @@ class WorkspaceManagerError(RuntimeError):
 @dataclass(frozen=True)
 class EngagementWorkspace:
     client_id: uuid.UUID
-    site_id: uuid.UUID
+    site_id: uuid.UUID | None
     engagement_id: uuid.UUID
     workspace_id: uuid.UUID
     engagement_type: str
@@ -42,7 +42,7 @@ class WorkspaceManager:
         self,
         *,
         client_id: uuid.UUID,
-        site_id: uuid.UUID,
+        site_id: uuid.UUID | None,
         engagement_type: str,
         title: str,
         actor: str,
@@ -50,27 +50,32 @@ class WorkspaceManager:
         origin: MissionOrigin = MissionOrigin.MANUAL,
         attach_catalog_apps: bool = True,
         description: str | None = None,
+        reference: str | None = None,
     ) -> EngagementWorkspace:
         """Crée Mission + Workspace (ou réutilise le workspace du site) de façon déterministe.
 
         Règle : 1 engagement (Mission) → 1 workspace temporaire dédié si le site a déjà
         un workspace permanent, sinon crée le workspace site puis la mission.
         Pour la V1 : un workspace TEMPORARY par engagement, lié au site/client.
+        Sans site (dossier d'appel d'offres interne à GSMS), le workspace ne dépend que de l'organisation.
         """
         client = self.session.get(Organization, client_id)
         if client is None:
             raise WorkspaceManagerError("client introuvable")
-        site = self.session.get(Site, site_id)
-        if site is None or site.organization_id != client_id:
-            raise WorkspaceManagerError("site introuvable pour ce client")
+        site = None
+        if site_id is not None:
+            site = self.session.get(Site, site_id)
+            if site is None or site.organization_id != client_id:
+                raise WorkspaceManagerError("site introuvable pour ce client")
 
         spec = resolve_engagement_type(engagement_type)
         workspace = Workspace(
             organization_id=client_id,
             site_id=site_id,
-            name=f"{site.name} — {title}"[:200],
+            name=(f"{site.name} — {title}" if site else title)[:200],
             kind=WorkspaceKind.TEMPORARY,
             status=WorkspaceStatus.ACTIVE,
+            reference=reference,
         )
         self.session.add(workspace)
         self.session.flush()
@@ -127,7 +132,7 @@ class WorkspaceManager:
                 actor=actor,
                 data={
                     "client_id": str(client_id),
-                    "site_id": str(site_id),
+                    "site_id": str(site_id) if site_id else None,
                     "engagement_id": str(mission.id),
                     "workspace_id": str(workspace.id),
                     "engagement_type": engagement_type,
@@ -144,7 +149,11 @@ class WorkspaceManager:
                 workspace_id=workspace.id,
                 mission_id=mission.id,
                 actor=actor,
-                data={"kind": workspace.kind.value, "site_id": str(site_id)},
+                data={
+                    "kind": workspace.kind.value,
+                    "site_id": str(site_id) if site_id else None,
+                    "reference": reference,
+                },
             ),
         )
         return EngagementWorkspace(

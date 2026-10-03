@@ -12,7 +12,8 @@
  *
  * Ce fichier est la source de vérité côté front : tout endpoint utilisé par
  * l'UI doit y être déclaré. Les endpoints sans route Core correspondante
- * renvoient encore 404 (dashboard ✓ · intake ✓ · tenders spine ✓).
+ * renvoient encore 404 (dashboard ✓ · intake ✓ · dossiers AO : synthèse, pièces, documents, échéances,
+ * historique, statut, go-no-go ✓ ; analyse, exigences, conformité, risques, questions, réponses à venir).
  */
 
 const enc = encodeURIComponent;
@@ -171,22 +172,42 @@ export const ENDPOINTS = {
    * L'UI n'appelle jamais les moteurs directement.
    */
   tenders: {
+    /** GET → TenderListItem[] de tous les workspaces accessibles {workspace_id, reference, dossier_status…} ;
+     *  POST {title, buyer?, consultation_ref?, submission_deadline?} → crée un workspace AO dédié
+     *  (organisation GSMS, référence WS-AO-AAAA-NNNN). Réservé à l'équipe GSMS. */
+    all: () => "/tenders",
+    /** GET → {profile, qualifications, missing[]} ; PUT CompanyProfile (agrément CNAPS, effectifs, certifications,
+     *  CA, délai de mobilisation…) — profil GSMS lu par la matrice de faisabilité. Équipe GSMS uniquement. */
+    profile: () => "/tenders/profile",
+    /** GET → TenderSummary du dossier AO de ce workspace (un workspace AO = un dossier) */
+    current: (workspaceId: string) => `${ws(workspaceId)}/tenders/current`,
     /** GET → TenderMission[] (dossiers AO du workspace) */
     list: (workspaceId: string) => `${ws(workspaceId)}/tenders`,
     /** GET ?q=&cpv=&nuts=&min_amount=&max_amount=&deadline_before= → Opportunity[] (veille) */
     opportunities: (workspaceId: string) => `${ws(workspaceId)}/tenders/opportunities`,
-    /** GET → TenderSummary {mission, buyer, lots[], amount, status, next_deadlines[]} */
+    /** GET → TenderSummary {mission, buyer, lots[], amount, status, next_deadlines[]} ;
+     *  PATCH {title?, buyer?, consultation_ref?, submission_deadline?, estimated_amount?} */
     summary: (workspaceId: string, missionId: string) => tender(workspaceId, missionId),
-    /** GET → Piece[] {kind: RC|CCTP|CCAP|AE|BPU|DPGF|annexe, required, provided, document_id} ; POST upload zip */
+    /** GET → Piece[] {kind, label, title, required, provided, parse_status, document_id} (Digest + pièces attendues) */
     pieces: (workspaceId: string, missionId: string) => `${tender(workspaceId, missionId)}/pieces`,
+    /** POST multipart files[] (fichiers ou ZIP) → {files[], skipped[]} : rangés dans « Dossier de consultation »,
+     *  puis analysés (Docling + Digest). Une pièce de même nom devient une nouvelle version (rectificatif). */
+    dce: (workspaceId: string, missionId: string) => `${tender(workspaceId, missionId)}/dce`,
+    /** GET → {status, label, decision, transitions[], history[]} ; POST {to, comment?} (décision humaine) */
+    status: (workspaceId: string, missionId: string) => `${tender(workspaceId, missionId)}/status`,
     /** GET → {sections[], criteria[]} ; POST /analysis/run déclenche l'analyse du RC/CCTP */
     analysis: (workspaceId: string, missionId: string) => `${tender(workspaceId, missionId)}/analysis`,
     /** GET → Requirement[] {id, text, owner, status} */
     requirements: (workspaceId: string, missionId: string) => `${tender(workspaceId, missionId)}/requirements`,
     /** GET → ComplianceRow[] (statut final décidé par l'humain) */
     compliance: (workspaceId: string, missionId: string) => `${tender(workspaceId, missionId)}/compliance`,
-    /** GET → {criteria[], score, recommendation, assistant_opinion?, decision?} ; POST /go-no-go/decision */
+    /** GET → {criteria[], score, recommendation, decision?, feasibility: {status READY|WARNING|BLOCKED,
+     *  dimensions[{key, label, status, justification, sources[]}], profile_missing[]}} */
     goNoGo: (workspaceId: string, missionId: string) => `${tender(workspaceId, missionId)}/go-no-go`,
+    /** PUT {criteria: [{code, label, weight, score 0-5, eliminatory}]} → GoNoGo (grille de notation, avant décision) */
+    goNoGoCriteria: (workspaceId: string, missionId: string) => `${tender(workspaceId, missionId)}/go-no-go/criteria`,
+    /** POST {decision: GO|NO_GO, rationale} → GoNoGo (humain uniquement, une seule fois) */
+    goNoGoDecision: (workspaceId: string, missionId: string) => `${tender(workspaceId, missionId)}/go-no-go/decision`,
     /** GET → Risk[] */
     risks: (workspaceId: string, missionId: string) => `${tender(workspaceId, missionId)}/risks`,
     /** GET → Question[] + questions_deadline */
@@ -195,11 +216,11 @@ export const ENDPOINTS = {
     technicalResponse: (workspaceId: string, missionId: string) => `${tender(workspaceId, missionId)}/technical-response`,
     /** GET → {quotes[], bom[], pricing, proposal_document_id?} */
     financialResponse: (workspaceId: string, missionId: string) => `${tender(workspaceId, missionId)}/financial-response`,
-    /** GET → Document[] (versions générées et déposées) */
+    /** GET → Document[] {title, kind, folder, version, sha256, origin, parse_status, updated_at} */
     documents: (workspaceId: string, missionId: string) => `${tender(workspaceId, missionId)}/documents`,
-    /** GET → Deadline[] (questions, visite, remise) */
+    /** GET → Deadline[] {title, kind, due_at, status a_venir|depassee, source} (saisie + Digest) */
     deadlines: (workspaceId: string, missionId: string) => `${tender(workspaceId, missionId)}/deadlines`,
-    /** GET → Event[] (event store + journal d'audit) */
+    /** GET → HistoryEntry[] {at, type, actor, summary} (journal d'audit du workspace AO) */
     history: (workspaceId: string, missionId: string) => `${tender(workspaceId, missionId)}/history`,
     /** GET → AgentRun[] (actions proposées par l'assistant, à valider) */
     agents: (workspaceId: string, missionId: string) => `${tender(workspaceId, missionId)}/agents`,
