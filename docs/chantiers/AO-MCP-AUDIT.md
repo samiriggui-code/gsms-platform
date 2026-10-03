@@ -162,6 +162,9 @@ directement `mcp.lexsocket.ai`, donc ce paquet est hors périmètre.
 - `Deal` porte `sourceSystem` et `externalId`, uniques ensemble : c'est le point d'ancrage naturel du
   `workspace_id`.
 - `DealStage` n'a pas d'étape AO (dossier en préparation, déposé, attribué).
+  *Mise à jour du 2026-10-03 (PR #15 du CRM)* : `DealStage` devient PROSPECT, QUALIFICATION, NOT_QUALIFIED,
+  NEEDS_ANALYSIS, QUOTE_SENT, NEGOTIATION, CLOSED_WON, CLOSED_LOST. Devise EUR. Nouveaux champs d'affaire :
+  `type_de_mission`, `r_f_rence_ao`, `date_limite_de_remise_des_offres`.
 - `Activity` sert aux relances et tâches (`dueAt`).
 - Eve : `AgentTask`, agents déclenchés sur `deal.stage.changed`, aucun outil AO.
 - API REST `/rest/*` authentifiée par `x-api-key`. Intake public `POST /api/public/tender-request`, idempotent
@@ -405,7 +408,7 @@ Branches `cursor/ao-mcp-<étape>`. Chaque étape est livrable, testée et déplo
 | 8 | **GRACE et plan de prévention** | Côté GRACE : authentification de service et endpoint « analyse pour ce workspace / ce site / ce CCTP » (risques, mesures, prescriptions). Côté Core : connecteur et étape du workflow. Squelette du plan de prévention (gabarit Python) enrichi par GRACE et rattaché aux exigences. |
 | 9 | **Contrôles QAtrial et checklist finale** | Côté QAtrial : authentification de service et endpoint « contrôle ce dossier contre cette matrice » (couverture, preuves, pièces manquantes, CAPA si anomalie grave). Côté Core : connecteur corrigé. Checklist finale du §12 en Python déterministe (pièces, totaux, dates, raison sociale, nommage, formats, tailles), plus contrôles QAtrial et incohérences signalées par le LLM. Onglet Contrôles. |
 | 10 | **Dossier final et dépôt** | Package `Administratif/ Technique/ Financier/ Annexes/ Checklist/` avec originaux, fichiers générés, manifeste (versions, hash, provenance, journal de production). ZIP, ainsi que DOCX, XLSX et PDF. APPROVED puis SUBMITTED uniquement par un humain. Événement `tender.submitted`, worker d'outbox. Onglet Dossier final. |
-| 11 | **CRM / Eve** (coordonné avec la session CRM) | Côté Core : connecteur corrigé (`/rest`, `x-api-key`, `externalId = workspace`), opportunité CRM → dossier AO, envoi des événements AO. Côté CRM (autre session) : étapes AO du deal, webhook vers le Core, suivi par Eve du dépôt, des relances et du résultat. |
+| 11 | **CRM / Eve** (coordonné avec la session CRM) | Côté Core : connecteur corrigé (`/rest`, `x-api-key`, `externalId = workspace`), opportunité CRM → dossier AO, envoi des événements `tender.*`. Côté CRM (autre session, déjà convenu) : champ d'affaire « Statut dossier AO » (en préparation / déposé / attribué / non retenu), mis à jour par les événements `tender.*` ; `DealStage` reste le pipeline commercial. L'étape 2 du CRM ajoute le webhook signé vers `/api/v1/events/ingest/crm` (`deal.created`, `deal.stage.changed`) et le filtre `externalId` sur `/rest/deals`. L'étape 4 du CRM ajoute les outils Eve de suivi (`tender.go_no_go.decided`, `tender.submitted`). |
 
 L'étape 4 peut passer avant la 3 si Samir préfère voir le MCP branché plus tôt ; les étapes 1 à 3 n'en dépendent
 pas.
