@@ -308,3 +308,82 @@ export function GoNoGoDecision({ workspaceId, missionId }: { workspaceId: string
     </form>
   );
 }
+
+
+/** Montant estimé et date limite du dossier : servent à la matrice de faisabilité (capacité financière, délai). */
+export function TenderFactsForm({
+  workspaceId,
+  missionId,
+  amount,
+  deadline,
+}: {
+  workspaceId: string;
+  missionId: string;
+  amount: number | null;
+  deadline: string | null;
+}) {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [pending, startTransition] = useTransition();
+  const local = deadline ? new Date(deadline) : null;
+  const localValue = local
+    ? new Date(local.getTime() - local.getTimezoneOffset() * 60000).toISOString().slice(0, 16)
+    : "";
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError(null);
+    const form = new FormData(event.currentTarget);
+    const rawAmount = String(form.get("estimated_amount") ?? "").replace(/\s/g, "").replace(",", ".");
+    const rawDeadline = String(form.get("submission_deadline") ?? "");
+    const res = await fetch(`/api/core/workspaces/${workspaceId}/tenders/${missionId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        estimated_amount: rawAmount ? Number(rawAmount) : null,
+        submission_deadline: rawDeadline ? new Date(rawDeadline).toISOString() : null,
+      }),
+    }).catch(() => null);
+    const body = await res?.json().catch(() => ({}));
+    if (!res || !res.ok) {
+      setError(typeof body?.error === "string" ? body.error : "Modification refusée.");
+      return;
+    }
+    setOpen(false);
+    startTransition(() => router.refresh());
+  }
+
+  if (!open) {
+    return (
+      <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
+        Modifier le montant ou la date
+      </Button>
+    );
+  }
+  return (
+    <form onSubmit={submit} className="grid gap-3 rounded-[12px] border border-border p-3 sm:grid-cols-2">
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="estimated_amount">Montant annuel estimé (€ HT)</Label>
+        <Input id="estimated_amount" name="estimated_amount" inputMode="decimal" defaultValue={amount ?? ""} />
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="submission_deadline">Date limite de remise</Label>
+        <Input id="submission_deadline" name="submission_deadline" type="datetime-local" defaultValue={localValue} />
+      </div>
+      <div className="flex justify-end gap-2 sm:col-span-2">
+        <Button type="button" size="sm" variant="outline" onClick={() => setOpen(false)}>
+          Annuler
+        </Button>
+        <Button type="submit" size="sm" variant="contrast" disabled={pending}>
+          Enregistrer
+        </Button>
+      </div>
+      {error ? (
+        <p role="alert" className="text-[12.5px] text-destructive sm:col-span-2">
+          {error}
+        </p>
+      ) : null}
+    </form>
+  );
+}

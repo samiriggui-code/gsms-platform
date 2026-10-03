@@ -413,7 +413,8 @@ Branches `cursor/ao-mcp-<étape>`. Chaque étape est livrable, testée et déplo
 **Avancement**
 - Étape 0 : livrée (PR #14).
 - Étape 1 : livrée (PR #17). Le cycle de validation est une machine à états dédiée (`tenders/lifecycle.py`), parce qu'elle n'avance que sur décision humaine. WF-TENDER, l'orchestration des moteurs, viendra avec ces derniers à partir de l'étape 4.
-- Étape 2 : livrée (branche `cursor/ao-mcp-exigences`). Matrice synchronisée par l'EventBus (`digest.updated`).
+- Étape 2 : livrée (PR #18). Matrice synchronisée par l'EventBus (`digest.updated`).
+- Étape 3 : livrée (branche `cursor/ao-mcp-go-no-go`). Profil GSMS saisi dans les paramètres du portail ; matrice de faisabilité déterministe en 11 dimensions.
 
 L'étape 4 peut passer avant la 3 si Samir préfère voir le MCP branché plus tôt ; les étapes 1 à 3 n'en dépendent
 pas.

@@ -25,6 +25,17 @@ class TenderCreateIn(BaseModel):
     buyer: str | None = Field(default=None, max_length=300)
     consultation_ref: str | None = Field(default=None, max_length=120)
     submission_deadline: datetime | None = None
+    estimated_amount: float | None = Field(default=None, ge=0)
+
+
+class TenderPatch(BaseModel):
+    """Informations du dossier modifiables par l'équipe ; seuls les champs envoyés changent."""
+
+    title: str | None = Field(default=None, min_length=1, max_length=300)
+    buyer: str | None = Field(default=None, max_length=300)
+    consultation_ref: str | None = Field(default=None, max_length=120)
+    submission_deadline: datetime | None = None
+    estimated_amount: float | None = Field(default=None, ge=0)
 
 
 class TenderListItem(BaseModel):
@@ -84,6 +95,20 @@ class GoNoGoOut(BaseModel):
     recommendation: GoNoGo
     decision: DecisionOut | None = None
     assistant_opinion: str | None = None
+    # Matrice de faisabilité : status READY | WARNING | BLOCKED, dimensions justifiées et sourcées.
+    feasibility: dict[str, Any] | None = None
+
+
+class CriterionIn(BaseModel):
+    code: str = Field(min_length=1, max_length=60)
+    label: str = Field(min_length=1, max_length=200)
+    weight: float = Field(ge=0, le=100)
+    score: float = Field(ge=0, le=5)
+    eliminatory: bool = False
+
+
+class CriteriaIn(BaseModel):
+    criteria: list[CriterionIn] = Field(max_length=30)
 
 
 class DecisionIn(BaseModel):

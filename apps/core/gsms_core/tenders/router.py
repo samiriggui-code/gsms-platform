@@ -19,6 +19,7 @@ from fastapi import (
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from gsms_core.db import utcnow
 from gsms_core.deps import (
     Principal,
     WorkspaceContext,
@@ -32,12 +33,14 @@ from gsms_core.identity.models import CONTRIBUTE_ROLES, MANAGE_ROLES, Workspace
 from gsms_core.identity.service import accessible_workspaces, staff_role
 from gsms_core.missions import service as missions
 from gsms_core.settings import Settings
-from gsms_core.tenders import dossier, lifecycle, service, views
+from gsms_core.tenders import dossier, feasibility, lifecycle, service, views
+from gsms_core.tenders import profile as company
 from gsms_core.tenders import requirements as matrix
 from gsms_core.tenders.models import GoNoGo, TenderCase, TenderRequirement
 from gsms_core.tenders.opportunities import fetch_opportunities
 from gsms_core.tenders.schemas import (
     ComplianceOut,
+    CriteriaIn,
     CriterionOut,
     DceFileOut,
     DceIngestOut,
@@ -57,6 +60,7 @@ from gsms_core.tenders.schemas import (
     TenderCreateIn,
     TenderListItem,
     TenderOpenIn,
+    TenderPatch,
     TenderSummaryOut,
 )
 from gsms_core.vault.folders import CLIENT_ROLES
@@ -90,6 +94,7 @@ def _list_item(db: Session, case: TenderCase) -> TenderListItem:
         workspace_id=case.workspace_id,
         reference=_reference(db, case),
         dossier_status=case.status,
+        amount=case.estimated_amount,
     )
 
 
@@ -101,6 +106,7 @@ def _summary(db: Session, case: TenderCase) -> TenderSummaryOut:
         reference=_reference(db, case),
         buyer=case.buyer,
         status=_status(case),
+        amount=case.estimated_amount,
         submission_deadline=case.submission_deadline,
         next_deadlines=[
             {"id": d["id"], "title": d["title"], "due_at": d["due_at"], "source": d["source"]}
@@ -180,6 +186,7 @@ def create_dossier(
             buyer=body.buyer,
             consultation_ref=body.consultation_ref,
             submission_deadline=body.submission_deadline,
+            estimated_amount=body.estimated_amount,
         )
     except dossier.DossierError as exc:
         raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
@@ -414,7 +421,9 @@ def post_dossier_status(
 
 @router.get("/{mission_id}/go-no-go", response_model=GoNoGoOut)
 def get_go_no_go(case: TenderCase = Depends(_load_case), db: Session = Depends(get_db)) -> GoNoGoOut:
-    return _go_no_go(db, case)
+    out = _go_no_go(db, case)
+    out.feasibility = _feasibility(db, case)
+    return out
 
 
 @router.post("/{mission_id}/go-no-go/decision", response_model=GoNoGoOut)
@@ -425,12 +434,21 @@ def post_go_no_go_decision(
     db: Session = Depends(get_db),
 ) -> GoNoGoOut:
     try:
-        service.decide(db, case, body.decision, decided_by=ctx.actor, rationale=body.rationale)
+        assessed = _feasibility(db, case)
+        snapshot = {
+            "status": assessed["status"],
+            "dimensions": {d["key"]: d["status"] for d in assessed["dimensions"]},
+        }
+        service.decide(
+            db, case, body.decision, decided_by=ctx.actor, rationale=body.rationale, feasibility=snapshot
+        )
     except service.TenderError as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(exc)) from exc
     db.commit()
     db.refresh(case)
-    return _go_no_go(db, case)
+    out = _go_no_go(db, case)
+    out.feasibility = _feasibility(db, case)
+    return out
 
 
 def _requirement_out(row: TenderRequirement) -> RequirementOut:
@@ -555,3 +573,78 @@ def compliance_matrix(
         targets=matrix.TARGET_LABELS,
         rows=_rows_out(db, rows),
     )
+
+
+def _feasibility(db: Session, case: TenderCase) -> dict[str, Any]:
+    profile, _meta = company.load_profile(db)
+    return feasibility.assess(
+        case,
+        views.digest_of(db, case.workspace_id),
+        matrix.list_requirements(db, case),
+        profile,
+        utcnow().date(),
+    )
+
+
+@router.put("/{mission_id}/go-no-go/criteria", response_model=GoNoGoOut)
+def put_go_no_go_criteria(
+    body: CriteriaIn,
+    case: TenderCase = Depends(_load_case),
+    ctx: WorkspaceContext = Depends(require_roles(MANAGE_ROLES)),
+    db: Session = Depends(get_db),
+) -> GoNoGoOut:
+    """Grille de notation complémentaire (adéquation, rentabilité…) ; le score est calculé par le Core."""
+    _team(ctx)
+    if case.decision != GoNoGo.PENDING:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "décision déjà prise : grille figée")
+    service.set_grid(db, case, [c.model_dump() for c in body.criteria], ctx.actor)
+    db.commit()
+    out = _go_no_go(db, case)
+    out.feasibility = _feasibility(db, case)
+    return out
+
+
+@router.patch("/{mission_id}", response_model=TenderSummaryOut)
+def patch_tender(
+    body: TenderPatch,
+    case: TenderCase = Depends(_load_case),
+    ctx: WorkspaceContext = Depends(require_roles(MANAGE_ROLES)),
+    db: Session = Depends(get_db),
+) -> TenderSummaryOut:
+    _team(ctx)
+    try:
+        service.update_case(db, case, body.model_dump(exclude_unset=True), ctx.actor)
+    except service.TenderError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(exc)) from exc
+    db.commit()
+    return _summary(db, case)
+
+
+@dossiers_router.get("/profile")
+def get_profile(
+    principal: Principal = Depends(get_current_principal), db: Session = Depends(get_db)
+) -> dict[str, Any]:
+    """Profil GSMS pour les AO (équipe GSMS uniquement)."""
+    if staff_role(db, principal.user.id) is None:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "réservé à l'équipe GSMS")
+    profile, meta = company.load_profile(db)
+    return {
+        "profile": profile.model_dump(mode="json"),
+        "qualifications": company.QUALIFICATION_LABELS,
+        "missing": profile.missing_fields(),
+        **meta,
+    }
+
+
+@dossiers_router.put("/profile")
+def put_profile(
+    body: company.CompanyProfile,
+    principal: Principal = Depends(get_current_principal),
+    db: Session = Depends(get_db),
+) -> dict[str, Any]:
+    role = staff_role(db, principal.user.id)
+    if role is None or role not in MANAGE_ROLES:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "modification réservée à l'équipe GSMS (gestion)")
+    company.save_profile(db, body, principal.actor)
+    db.commit()
+    return get_profile(principal, db)

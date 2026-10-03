@@ -5,6 +5,7 @@ import { formatAmount, formatValue } from "@/components/platform/format";
 import { TabIntro } from "@/components/platform/tender-views";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { tenderTab } from "@/lib/tenders/tabs";
+import { TenderFactsForm } from "@/components/platform/tenders/tender-actions";
 import { getDossierStatus, getTenderSummary } from "./summary";
 
 export const metadata: Metadata = { title: "Dossier d'appel d'offres" };
@@ -46,9 +47,19 @@ export default async function TenderSummaryPage({ params }: { params: Promise<{ 
                 <Fact label="Référence de la consultation" value={result.data.consultation_ref} />
                 <Fact label="Date de remise" value={result.data.submission_deadline} />
                 <Fact label="Go / No-Go" value={result.data.decision ?? "Non décidé"} />
-                <Fact label="Montant estimé" value={formatAmount(result.data.amount)} />
+                <Fact label="Montant annuel estimé" value={formatAmount(result.data.amount)} />
                 <Fact label="Lots" value={result.data.lots?.length ?? 0} />
               </dl>
+              {missionId ? (
+                <div className="mt-5">
+                  <TenderFactsForm
+                    workspaceId={workspaceId}
+                    missionId={missionId}
+                    amount={typeof result.data.amount === "number" ? result.data.amount : null}
+                    deadline={result.data.submission_deadline ?? null}
+                  />
+                </div>
+              ) : null}
               {result.data.lots && result.data.lots.length > 0 ? (
                 <ul className="mt-5 divide-y divide-border/70 border-t border-border/70">
                   {result.data.lots.map((lot, index) => (
