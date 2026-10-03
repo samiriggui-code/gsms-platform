@@ -1,5 +1,20 @@
 # Handoff Cursor → Claude
 
+## 2026-10-03 — DocuLens multi-provider LLM (OpenRouter / Anthropic / OpenAI)
+
+Branche `cursor/doculens-server-gsms-74cc`.
+
+**Pourquoi le warning OpenAI :** classif + embeddings appelaient `OpenAI()` en dur ; le factory supportait déjà OpenRouter/Anthropic mais n’était pas branché sur le chemin prod. De plus le VPS avait `OPENROUTER_API_KEY` dans `/opt/gsms/.env` alors que DocuLens ne lisait que `OPEN_ROUTER_API_KEY`.
+
+**Fait :**
+- `DOCULENS_LLM_PROVIDER=auto|openrouter|anthropic|openai|llama` (+ alias `codex`/`claude`)
+- `DOCULENS_EMBEDDING_PROVIDER=auto|openrouter|openai`
+- Clés multiples OK ; auto = OpenRouter → Anthropic → OpenAI (chat) ; OpenRouter → OpenAI (embeddings)
+- Classif via `LLMFactory` ; pipeline nodes / vector store suivent la résolution
+- `/events/config` expose `llm` (provider actif + keys_configured, sans secrets)
+
+---
+
 ## 2026-10-03 — DocuLens live sur VPS (psycopg2 + Traefik)
 
 Branche `cursor/doculens-server-gsms-74cc` (commit `212eecf`).
