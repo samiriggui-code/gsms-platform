@@ -1,33 +1,16 @@
 "use client";
 
 import { Button } from "@crm/ui/components/button";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 const CONNECT_ERRORS = new Map([
-	[
-		"access_denied",
-		"Slack installation was cancelled before access was granted.",
-	],
-	[
-		"account_already_linked_to_different_user",
-		"That Slack installer is already linked to another CRM account.",
-	],
-	[
-		"email_doesn't_match",
-		"The Slack installer's email must match the CRM account you are signed in with.",
-	],
-	[
-		"oauth_code_verification_failed",
-		"Slack rejected the app credentials or redirect URL. Check the client ID, client secret, and OAuth redirect URL, then try again.",
-	],
-	[
-		"user_info_is_missing",
-		"Slack did not return the installer's profile. Confirm the app has users:read and users:read.email, reinstall it, then try again.",
-	],
-	[
-		"not_authorized",
-		"Only an owner or an admin can connect Slack. One Slack workspace is shared by everyone here, so ask one of them to connect or reconnect it.",
-	],
+	["access_denied", "accessDenied"],
+	["account_already_linked_to_different_user", "alreadyLinked"],
+	["email_doesn't_match", "emailMismatch"],
+	["oauth_code_verification_failed", "oauthFailed"],
+	["user_info_is_missing", "userInfoMissing"],
+	["not_authorized", "notAuthorized"],
 ]);
 
 function startSlackOAuth(slug: string) {
@@ -40,6 +23,7 @@ function startSlackOAuth(slug: string) {
 }
 
 export function SlackReconnectButton({ slug }: { slug: string }) {
+	const t = useTranslations("settingsSlack");
 	const [pending, setPending] = useState(false);
 
 	return (
@@ -52,7 +36,7 @@ export function SlackReconnectButton({ slug }: { slug: string }) {
 			size="xs"
 			variant="contrast"
 		>
-			{pending ? "Opening Slack…" : "Reconnect"}
+			{pending ? t("opening") : t("reconnect")}
 		</Button>
 	);
 }
@@ -66,6 +50,7 @@ export function SlackConnectButton({
 	configured: boolean;
 	connectError?: string;
 }) {
+	const t = useTranslations("settingsSlack");
 	const [pending, setPending] = useState(false);
 
 	return (
@@ -78,15 +63,21 @@ export function SlackConnectButton({
 				disabled={!configured || pending}
 			>
 				{pending
-					? "Opening Slack…"
+					? t("opening")
 					: configured
-						? "Connect Slack"
-						: "Slack is not configured"}
+						? t("connect")
+						: t("notConfigured")}
 			</Button>
 			{connectError ? (
 				<p role="alert" className="max-w-sm text-destructive text-xs">
-					{CONNECT_ERRORS.get(connectError) ??
-						`Slack could not be connected (${connectError.replaceAll("_", " ")}).`}
+					{(() => {
+						const key = CONNECT_ERRORS.get(connectError);
+						return key
+							? t(`errors.${key}`)
+							: t("errors.generic", {
+									reason: connectError.replaceAll("_", " "),
+								});
+					})()}
 				</p>
 			) : null}
 		</div>

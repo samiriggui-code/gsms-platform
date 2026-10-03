@@ -148,9 +148,7 @@ export function AgentCode({
 	if (files.length === 0) {
 		return (
 			<p className="text-muted-foreground text-sm">
-				{code.isPending
-					? t("reading")
-					: t("noFiles")}
+				{code.isPending ? t("reading") : t("noFiles")}
 			</p>
 		);
 	}
@@ -160,10 +158,10 @@ export function AgentCode({
 			<section className="flex flex-col gap-3.5">
 				<div className="flex items-end justify-between gap-4">
 					<div>
-						<h2 className="font-semibold text-lg tracking-tight">{t("title")}</h2>
-						<p className="text-muted-foreground text-sm">
-							{t("description")}
-						</p>
+						<h2 className="font-semibold text-lg tracking-tight">
+							{t("title")}
+						</h2>
+						<p className="text-muted-foreground text-sm">{t("description")}</p>
 					</div>
 
 					<div className="flex items-center gap-2">

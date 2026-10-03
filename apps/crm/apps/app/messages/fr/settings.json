@@ -427,5 +427,141 @@
 		"disconnectConsent": "Microsoft ne nous permet pas de retirer le consentement lui-même — pour cela, supprimez cette application de votre compte Microsoft.",
 		"disconnect": "Déconnecter",
 		"manageAccount": "Gérer dans votre compte Microsoft"
+	},
+	"settingsSlack": {
+		"notConnected": "Non connecté",
+		"intro": "Connecter Slack donne au CRM une porte d’entrée et une porte de sortie. Ce qu’il en fait concrètement dépend de vous ensuite, une automatisation à la fois.",
+		"handingOver": "Ce que vous accordez",
+		"neverTitle": "Ce qu’il ne fera jamais",
+		"never1": "Envoyer quoi que ce soit tant que vous n’avez pas créé et activé une automatisation",
+		"never2": "Publier ailleurs que dans la destination approuvée dans cette automatisation",
+		"never3": "Lire un message direct entre deux personnes",
+		"approveHint": "Vous approuvez l’espace de travail dans Slack. Vous pouvez le déconnecter ici à tout moment.",
+		"suggestionsTitle": "Ensuite, la plupart des équipes commencent par l’une de ces options",
+		"suggestionsHint": "Des suggestions, pas des paramètres. Aucune n’existe tant que vous ne l’avez pas choisie et activée.",
+		"suggestions": {
+			"created": {
+				"name": "Quand une affaire est créée",
+				"description": "Publier l’affaire dans un canal commercial approuvé."
+			},
+			"won": {
+				"name": "Quand une affaire est gagnée",
+				"description": "Annoncer à un canal approuvé que l’affaire est conclue."
+			},
+			"reopened": {
+				"name": "Quand une affaire est rouverte",
+				"description": "Notifier un canal ou un collègue approuvé."
+			}
+		},
+		"groups": {
+			"people": {
+				"label": "Personnes",
+				"summary": "Noms et adresses e-mail, pour rapprocher un compte Slack d’une fiche du CRM."
+			},
+			"read": {
+				"label": "Canaux qu’il peut lire",
+				"summary": "Noms et sujets des canaux publics, et messages de tout canal auquel il a été ajouté."
+			},
+			"send": {
+				"label": "Messages qu’il peut envoyer",
+				"summary": "Publier au nom de l’application, ouvrir un message direct et afficher l’aperçu d’un lien publié."
+			},
+			"change": {
+				"label": "Canaux qu’il peut modifier",
+				"summary": "Rejoindre, créer, renommer et archiver des canaux, et y inviter des personnes."
+			}
+		},
+		"scopes": {
+			"users_read": "Voir les personnes de votre espace de travail",
+			"users_read_email": "Voir leurs adresses e-mail, pour les rapprocher des fiches du CRM",
+			"channels_read": "Voir le nom et le sujet de chaque canal public",
+			"groups_read": "Voir les canaux privés auxquels il a été ajouté",
+			"channels_history": "Lire les messages des canaux publics auxquels il a été ajouté",
+			"groups_history": "Lire les messages des canaux privés auxquels il a été ajouté",
+			"chat_write": "Publier des messages au nom de l’application",
+			"chat_write_public": "Publier dans n’importe quel canal public, y compris ceux qu’il n’a pas rejoints",
+			"im_write": "Ouvrir un message direct avec une personne",
+			"channels_join": "Rejoindre de lui-même un canal public",
+			"channels_manage": "Créer des canaux publics, et renommer ou archiver ceux dont il fait partie",
+			"groups_write": "Créer des canaux privés, et renommer ou archiver ceux dont il fait partie",
+			"channels_write_invites": "Inviter des personnes dans un canal public",
+			"groups_write_invites": "Inviter des personnes dans un canal privé",
+			"conversations_connect_write": "Envoyer et accepter des invitations Slack Connect",
+			"links_write": "Afficher un aperçu sous un lien qu’il publie",
+			"slack_user_invite": "S’ajouter lui-même à un canal privé en votre nom"
+		},
+		"connected": "Connecté",
+		"grantedManage": "Voici ce que Slack nous a accordé. Les agents ne publient que là où leur automatisation l’indique.",
+		"grantedReadOnly": "Voici ce que Slack nous a accordé. Seul un propriétaire ou un administrateur peut le déconnecter.",
+		"grantedTitle": "Ce que cet espace de travail a accordé",
+		"agentsTitle": "Agents qui utilisent Slack",
+		"agentsHint": "Créés dans le chat, pas ici. Ouvrez-en un pour le modifier.",
+		"newAgent": "Nouvel agent",
+		"agentsEmpty": "Aucun agent déployé n’utilise encore Slack.",
+		"running": "Actif",
+		"paused": "En pause",
+		"describeAgent": "Décrire un autre agent dans le chat",
+		"peopleNone": "Aucune personne de l’espace de travail n’a encore été examinée.",
+		"peopleMatched": "{count, plural, one {{matched} personne examinée sur # est rapprochée.} other {{matched} personnes examinées sur # sont rapprochées.}}",
+		"review": "Examiner",
+		"privateUnreachable": "Comp AI ne peut pas accéder aux canaux privés",
+		"heldBack": "{count, plural, one {Slack a refusé # autorisation} other {Slack a refusé # autorisations}}",
+		"reconnectHint": "Reconnectez-vous pour redemander. Vous ne perdez rien.",
+		"scopesHint": "« Étendue » signifie tout l’espace de travail, pas un seul canal. Ouvrez un groupe pour voir le détail.",
+		"broadOf": "{broad} étendue(s) sur {total}",
+		"heldBackOne": "Slack a refusé celle-ci : elle est donc désactivée.",
+		"notGranted": "Non accordée",
+		"opening": "Ouverture de Slack…",
+		"reconnect": "Reconnecter",
+		"connect": "Connecter Slack",
+		"notConfigured": "Slack n’est pas configuré",
+		"errors": {
+			"accessDenied": "L’installation de Slack a été annulée avant que l’accès ne soit accordé.",
+			"alreadyLinked": "Cette personne ayant installé Slack est déjà liée à un autre compte du CRM.",
+			"emailMismatch": "L’e-mail de la personne qui installe Slack doit correspondre au compte CRM avec lequel vous êtes connecté.",
+			"oauthFailed": "Slack a rejeté les identifiants de l’application ou l’URL de redirection. Vérifiez l’ID client, le secret client et l’URL de redirection OAuth, puis réessayez.",
+			"userInfoMissing": "Slack n’a pas renvoyé le profil de la personne qui installe. Vérifiez que l’application dispose de users:read et users:read.email, réinstallez-la, puis réessayez.",
+			"notAuthorized": "Seul un propriétaire ou un administrateur peut connecter Slack. Un même espace Slack est partagé par tout le monde ici : demandez à l’un d’eux de le connecter ou de le reconnecter.",
+			"generic": "Impossible de connecter Slack ({reason})."
+		},
+		"disconnected": "Slack déconnecté.",
+		"disconnect": "Déconnecter",
+		"disconnectTitle": "Déconnecter {workspace} ?",
+		"disconnectDescription": "Les agents cessent immédiatement d’envoyer vers Slack, et la liste des canaux en cache est effacée pour qu’une nouvelle application la relise. Les rapprochements entre personnes et comptes Slack sont conservés : reconnecter le même espace de travail ne vous demandera pas de tout refaire.",
+		"cancel": "Annuler",
+		"disconnecting": "Déconnexion…",
+		"alreadyJoined": "Comp AI est déjà présent dans ce canal.",
+		"joining": "Comp AI rejoint le canal.",
+		"askInside": "Demandez à un membre du canal d’inviter Comp AI.",
+		"readingChannels": "Lecture de la liste des canaux depuis Slack.",
+		"channelsTitle": "Canaux accessibles à Comp AI",
+		"channelsHint": "Les agents choisissent dans cette liste.",
+		"refreshing": "Actualisation…",
+		"refresh": "Actualiser",
+		"stalledChannels": "Comp AI ne lit pas Slack en ce moment. La liste peut ne pas être à jour.",
+		"searchChannels": "Rechercher des canaux",
+		"readingChannelsPending": "Lecture de la liste des canaux depuis Slack…",
+		"noChannelMatch": "Aucun canal ne correspond à « {query} ».",
+		"channelsEmpty": "Aucun canal pour l’instant. Comp AI lit la liste depuis Slack une fois connecté.",
+		"loading": "Chargement…",
+		"loadMore": "Charger plus",
+		"copyFailed": "La copie a échoué. Copiez la commande ci-dessus manuellement.",
+		"commandCopied": "Commande copiée.",
+		"addTitle": "Ajouter Comp AI à #{channel} ?",
+		"askTitle": "Demander à quelqu’un d’ajouter Comp AI",
+		"addDescription": "C’est un canal privé : Comp AI le rejoint en votre nom, comme si vous saisissiez l’invitation vous-même. Tous les membres du canal le voient arriver. Il ne lit rien tant que vous n’activez pas une autorisation.",
+		"askDescription": "Nous ne pouvons pas encore ajouter Comp AI à un canal privé. Une personne déjà présente dans #{channel} doit exécuter cette commande.",
+		"adding": "Ajout…",
+		"addAction": "Ajouter Comp AI",
+		"copyAndMark": "Copier et marquer comme demandé",
+		"peopleTitle": "Slack est connecté",
+		"peopleDescription": "Rapprochez une fois pour toutes les personnes du CRM de leurs comptes Slack. Les agents utiliseront ensuite ces comptes exacts au lieu de deviner à partir d’un nom similaire.",
+		"matchedCount": "{matched} sur {count} rapprochés",
+		"refreshFromSlack": "Actualiser depuis Slack",
+		"stalledMatches": "Comp AI ne lit pas Slack en ce moment. Ces rapprochements peuvent ne pas être à jour.",
+		"matchesEmpty": "Aucun collègue du CRM n’est disponible pour un rapprochement.",
+		"noExactMatch": "Aucune correspondance exacte d’e-mail",
+		"matchesHint": "Actualisez après un changement d’e-mail dans Slack. Le CRM ne rapproche que des adresses e-mail identiques. Une personne sans correspondance exacte reste non rapprochée, et un agent s’arrête plutôt que de deviner à partir d’un nom similaire.",
+		"continue": "Continuer"
 	}
 }

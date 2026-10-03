@@ -184,10 +184,7 @@ export function AgentCapabilities({
 				</Section>
 			) : null}
 
-			<Section
-				summary={t("actionsSummary")}
-				title={t("actionsTitle")}
-			>
+			<Section summary={t("actionsSummary")} title={t("actionsTitle")}>
 				<div className="flex flex-col">
 					{capabilities.actions.map((action) => (
 						<div
@@ -195,9 +192,7 @@ export function AgentCapabilities({
 							key={action.type}
 						>
 							<div className="min-w-0 flex-1">
-								<p className="text-sm">
-									{actionLabel(t, action.type)}
-								</p>
+								<p className="text-sm">{actionLabel(t, action.type)}</p>
 								<p className="text-muted-foreground text-xs">
 									{action.summary || action.provider}
 								</p>
@@ -216,17 +211,13 @@ export function AgentCapabilities({
 						</div>
 					))}
 					{capabilities.actions.length === 0 ? (
-						<p className="text-muted-foreground text-sm">
-							{t("noActions")}
-						</p>
+						<p className="text-muted-foreground text-sm">{t("noActions")}</p>
 					) : null}
 				</div>
 			</Section>
 
 			<Section
-				summary={
-					capabilities.dataScope?.summary || t("scopeSummary")
-				}
+				summary={capabilities.dataScope?.summary || t("scopeSummary")}
 				title={t("scopeTitle")}
 			>
 				<div className="flex flex-wrap gap-2">

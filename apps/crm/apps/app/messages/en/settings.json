@@ -427,5 +427,141 @@
 		"disconnectConsent": "Microsoft has no way for us to withdraw the consent itself — remove this app from your Microsoft account to do that.",
 		"disconnect": "Disconnect",
 		"manageAccount": "Manage in your Microsoft account"
+	},
+	"settingsSlack": {
+		"notConnected": "Not connected",
+		"intro": "Connecting Slack gives the CRM a way in and a way out. What it actually does with that is up to you afterwards, one automation at a time.",
+		"handingOver": "What you are handing over",
+		"neverTitle": "What it will never do",
+		"never1": "Send anything at all until you build an automation and switch it on",
+		"never2": "Post anywhere except the destination approved in that automation",
+		"never3": "Read a direct message between two people",
+		"approveHint": "You approve the workspace in Slack. You can disconnect it here at any time.",
+		"suggestionsTitle": "Afterwards, most teams start with one of these",
+		"suggestionsHint": "Suggestions, not settings. None of them exist until you pick one and switch it on.",
+		"suggestions": {
+			"created": {
+				"name": "When a deal is created",
+				"description": "Post the deal to an approved sales channel."
+			},
+			"won": {
+				"name": "When a deal is won",
+				"description": "Tell an approved channel that the deal closed."
+			},
+			"reopened": {
+				"name": "When a deal reopens",
+				"description": "Notify one approved channel or teammate."
+			}
+		},
+		"groups": {
+			"people": {
+				"label": "People",
+				"summary": "Names and email addresses, so it can match a Slack account to a CRM record."
+			},
+			"read": {
+				"label": "Channels it can read",
+				"summary": "Names and topics of public channels, and the messages in any channel it has been added to."
+			},
+			"send": {
+				"label": "Messages it can send",
+				"summary": "Post as the app, open a direct message, and preview a link it posts."
+			},
+			"change": {
+				"label": "Channels it can change",
+				"summary": "Join, create, rename, archive, and invite people to channels."
+			}
+		},
+		"scopes": {
+			"users_read": "See the people in your workspace",
+			"users_read_email": "See their email addresses, so it can match them to CRM records",
+			"channels_read": "See the name and topic of every public channel",
+			"groups_read": "See private channels it has been added to",
+			"channels_history": "Read messages in public channels it has been added to",
+			"groups_history": "Read messages in private channels it has been added to",
+			"chat_write": "Post messages as the app",
+			"chat_write_public": "Post to any public channel, including ones it has not joined",
+			"im_write": "Open a direct message with a person",
+			"channels_join": "Join a public channel by itself",
+			"channels_manage": "Create public channels, and rename or archive ones it is in",
+			"groups_write": "Create private channels, and rename or archive ones it is in",
+			"channels_write_invites": "Invite people to a public channel",
+			"groups_write_invites": "Invite people to a private channel",
+			"conversations_connect_write": "Send and accept Slack Connect invitations",
+			"links_write": "Show a preview under a link it posts",
+			"slack_user_invite": "Add itself to a private channel on your behalf"
+		},
+		"connected": "Connected",
+		"grantedManage": "Here is what Slack gave us. Agents only post where their automation says.",
+		"grantedReadOnly": "Here is what Slack gave us. Only an owner or an admin can disconnect it.",
+		"grantedTitle": "What this workspace granted",
+		"agentsTitle": "Agents that use Slack",
+		"agentsHint": "Built in chat, not here. Open one to change it.",
+		"newAgent": "New agent",
+		"agentsEmpty": "No deployed agents use Slack yet.",
+		"running": "Running",
+		"paused": "Paused",
+		"describeAgent": "Describe another agent in chat",
+		"peopleNone": "No workspace people have been reviewed yet.",
+		"peopleMatched": "{count, plural, one {{matched} of # reviewed person is matched.} other {{matched} of # reviewed people are matched.}}",
+		"review": "Review",
+		"privateUnreachable": "Comp AI cannot reach private channels",
+		"heldBack": "{count, plural, one {Slack held back # permission} other {Slack held back # permissions}}",
+		"reconnectHint": "Reconnect to ask again. You lose nothing.",
+		"scopesHint": "Broad means the whole workspace, not one channel. Open a group to see the details.",
+		"broadOf": "{broad} broad of {total}",
+		"heldBackOne": "Slack held this one back, so it is off.",
+		"notGranted": "Not granted",
+		"opening": "Opening Slack…",
+		"reconnect": "Reconnect",
+		"connect": "Connect Slack",
+		"notConfigured": "Slack is not configured",
+		"errors": {
+			"accessDenied": "Slack installation was cancelled before access was granted.",
+			"alreadyLinked": "That Slack installer is already linked to another CRM account.",
+			"emailMismatch": "The Slack installer's email must match the CRM account you are signed in with.",
+			"oauthFailed": "Slack rejected the app credentials or redirect URL. Check the client ID, client secret, and OAuth redirect URL, then try again.",
+			"userInfoMissing": "Slack did not return the installer's profile. Confirm the app has users:read and users:read.email, reinstall it, then try again.",
+			"notAuthorized": "Only an owner or an admin can connect Slack. One Slack workspace is shared by everyone here, so ask one of them to connect or reconnect it.",
+			"generic": "Slack could not be connected ({reason})."
+		},
+		"disconnected": "Slack disconnected.",
+		"disconnect": "Disconnect",
+		"disconnectTitle": "Disconnect {workspace}?",
+		"disconnectDescription": "Agents stop sending to Slack immediately, and the cached channel list is cleared so a new app re-reads it. Who is matched to which Slack account is kept, so reconnecting the same workspace does not ask you to match everyone again.",
+		"cancel": "Cancel",
+		"disconnecting": "Disconnecting…",
+		"alreadyJoined": "Comp AI is already in there.",
+		"joining": "Comp AI is joining.",
+		"askInside": "Ask someone inside to invite Comp AI.",
+		"readingChannels": "Reading the channel list from Slack.",
+		"channelsTitle": "Channels Comp AI can reach",
+		"channelsHint": "Agents pick from this list.",
+		"refreshing": "Refreshing…",
+		"refresh": "Refresh",
+		"stalledChannels": "Comp AI is not reading Slack right now. The list can be out of date.",
+		"searchChannels": "Search channels",
+		"readingChannelsPending": "Reading the channel list from Slack…",
+		"noChannelMatch": "No channel matches “{query}”.",
+		"channelsEmpty": "No channels yet. Comp AI reads the list from Slack after it connects.",
+		"loading": "Loading…",
+		"loadMore": "Load more",
+		"copyFailed": "Copying failed. Copy the command above by hand.",
+		"commandCopied": "Command copied.",
+		"addTitle": "Add Comp AI to #{channel}?",
+		"askTitle": "Ask someone to add Comp AI",
+		"addDescription": "It is a private channel, so Comp AI joins as you. Same as typing the invite yourself. Everyone in the channel sees it join. It reads nothing until you turn a permission on.",
+		"askDescription": "We cannot add Comp AI to a private channel yet. Someone already in #{channel} has to run this.",
+		"adding": "Adding…",
+		"addAction": "Add Comp AI",
+		"copyAndMark": "Copy and mark as asked",
+		"peopleTitle": "Slack is connected",
+		"peopleDescription": "Match your CRM people to Slack once. Agents use these exact accounts later instead of guessing from a similar name.",
+		"matchedCount": "{matched} of {count} matched",
+		"refreshFromSlack": "Refresh from Slack",
+		"stalledMatches": "Comp AI is not reading Slack right now. These matches can be out of date.",
+		"matchesEmpty": "No CRM teammates are available to match.",
+		"noExactMatch": "No exact email match",
+		"matchesHint": "Refresh after a Slack email changes. The CRM matches exact email addresses only. Someone with no exact match stays unmatched, and an agent stops instead of guessing at a similar name.",
+		"continue": "Continue"
 	}
 }

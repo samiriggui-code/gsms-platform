@@ -53,9 +53,7 @@ export function AgentRunsDrawer({
 			<SheetContent className="flex flex-col gap-0 p-0" side="right" size="xl">
 				<SheetHeader className="gap-1 border-b px-5 py-4">
 					<SheetTitle>{t("title")}</SheetTitle>
-					<SheetDescription>
-						{t("description")}
-					</SheetDescription>
+					<SheetDescription>{t("description")}</SheetDescription>
 				</SheetHeader>
 
 				<div className="flex h-9 shrink-0 items-end gap-5 border-b px-5">

@@ -102,7 +102,6 @@
 	},
 	"agentsHome": {
 		"title": "What can I help with, {name}?",
-		"fallbackName": "there",
 		"subtitle": "Ask about your CRM, tag a record or integration, or describe an agent to build to automate a task.",
 		"privacyNote": "Chats and agent drafts stay private to you. Deploying an agent makes it available to the whole team.",
 		"suggestedAgents": "Suggested agents",
@@ -110,7 +109,8 @@
 			"renewalBrief": "Brief every deal owner before a renewal call",
 			"staleDeals": "Flag deals with no activity for 14 days",
 			"onboardingHandoff": "Hand new customers from Sales to Onboarding"
-		}
+		},
+		"titleNoName": "What can I help with?"
 	},
 	"agentsList": {
 		"noDescription": "No description",
@@ -411,5 +411,32 @@
 		"deleted": "Deleted",
 		"noDeployedVersion": "This agent has no deployed version yet.",
 		"draftNotice": "This is a draft. Deploy it to the team before you change what it can do."
+	},
+	"agentsToolLabels": {
+		"writingFile": "{artifact, select, instructions {Writing instructions} manifest {Writing the manifest} readme {Writing the readme} other {Writing {path}}}",
+		"wroteFile": "{artifact, select, instructions {Wrote instructions} manifest {Wrote the manifest} readme {Wrote the readme} other {Wrote {path}}}",
+		"savingDraft": "Saving draft",
+		"savedDraft": "Saved draft",
+		"namingChat": "Naming this chat",
+		"namedChat": "Named this chat"
+	},
+	"agentsRunFailure": {
+		"unknown": "This run failed without saying why.",
+		"codes": {
+			"ACTION_NOT_PERFORMED": "The agent finished without doing what it was built to do. Open the run to see which step it skipped.",
+			"NO_EXECUTOR": "This agent asks for something the CRM cannot do yet. It needs rebuilding.",
+			"DEPENDENCY_UNAVAILABLE": "A connection this agent needs is missing. Reconnect it, then run again.",
+			"NOT_AUTHORISED": "The connection refused this. Its access may have been revoked or narrowed.",
+			"PROVIDER_ERROR": "The outside service rejected this. It is usually worth trying again.",
+			"NEVER_SETTLED": "The agent stopped without reporting a result. Nothing was left half-done.",
+			"TURN_FAILED": "The model failed part-way through this run.",
+			"DELIVERY_FAILED": "The run never reached the agent.",
+			"DELIVERY_EXHAUSTED": "This never reached the agent after three attempts. Nothing ran.",
+			"ACTION_REJECTED": "The agent tried the action and the CRM refused it. Nothing was written.",
+			"AGENT_UNAVAILABLE": "The agent was paused or archived when this run started.",
+			"AGENT_DELETED": "The agent was deleted before this run finished.",
+			"CANCELLED_BY_USER": "Someone stopped this run.",
+			"RUN_TIMED_OUT": "This run took too long and was stopped so later runs could start."
+		}
 	}
 }

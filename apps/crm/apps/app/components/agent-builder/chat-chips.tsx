@@ -199,7 +199,10 @@ export function ChatCommandChip({
 				<Icon icon={icon} className="size-3.5" />
 				<span className="font-medium">{label}</span>
 				{onRemove ? (
-					<TokenFieldAction aria-label={t("remove", { label })} onClick={onRemove}>
+					<TokenFieldAction
+						aria-label={t("remove", { label })}
+						onClick={onRemove}
+					>
 						<Icon icon={Close} className="size-3" />
 					</TokenFieldAction>
 				) : null}

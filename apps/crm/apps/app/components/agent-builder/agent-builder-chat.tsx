@@ -62,7 +62,7 @@ import {
 	latestCompletedArtifactVersionId,
 	reviewVersionId,
 } from "@/lib/agent-builder-state";
-import { toolLabel } from "@/lib/agent-tool-display";
+import { TOOL_LABEL_NAMESPACE, toolLabel } from "@/lib/agent-tool-display";
 import {
 	type AgentTurnFailure,
 	conversationTimeline,
@@ -70,7 +70,10 @@ import {
 	latestTurnFailure,
 	messagesFromEvents,
 	splitMarkdownTable,
+	TOOL_VERB_NAMESPACE,
+	TOOL_VERBS,
 	type TranscriptItem,
+	toolVerbKey,
 	toTranscript,
 } from "@/lib/agent-transcript";
 import { isSharedChatToken } from "@/lib/chat-route";
@@ -632,6 +635,14 @@ function AgentToolStep({
 }: {
 	item: Extract<TranscriptItem, { kind: "did" }>;
 }) {
+	const tLabels = useTranslations(TOOL_LABEL_NAMESPACE);
+	const tVerbs = useTranslations(TOOL_VERB_NAMESPACE);
+	const verbKey = toolVerbKey(item.tool);
+	const englishVerb = verbKey ? TOOL_VERBS[verbKey] : undefined;
+	const fallback =
+		verbKey && englishVerb && tVerbs.has(verbKey)
+			? `${tVerbs(verbKey)}${item.label.startsWith(englishVerb) ? item.label.slice(englishVerb.length) : ""}`
+			: item.label;
 	return (
 		<div className="flex min-w-0 flex-col gap-1">
 			<div className="flex min-w-0 items-start gap-2 text-sm">
@@ -642,7 +653,9 @@ function AgentToolStep({
 				) : (
 					<Icon icon={Checkmark} className="size-3.5 text-ring" />
 				)}
-				<span className="min-w-0 wrap-break-word">{toolLabel(item)}</span>
+				<span className="min-w-0 wrap-break-word">
+					{toolLabel(item, tLabels, fallback)}
+				</span>
 			</div>
 			{item.errorText ? (
 				<p className="pl-[22px] wrap-break-word text-destructive text-xs leading-5">
@@ -685,9 +698,7 @@ function SharedAgentChat({
 		<main className="flex min-h-0 flex-1 flex-col">
 			<header className="flex h-12 shrink-0 items-center gap-3 border-b px-5">
 				<h1 className="min-w-0 flex-1 truncate font-medium text-sm">
-					{conversation.agent?.name ??
-						conversation.title ??
-						t("agentBuilder")}
+					{conversation.agent?.name ?? conversation.title ?? t("agentBuilder")}
 				</h1>
 				<span className="text-muted-foreground text-xs">{t("readOnly")}</span>
 			</header>

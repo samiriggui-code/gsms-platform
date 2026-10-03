@@ -95,9 +95,7 @@ export function NewAgentDialog({ children }: { children: React.ReactNode }) {
 			});
 		} catch (error) {
 			toast.error(
-				error instanceof InvalidInput
-					? error.message
-					: t("handoffFailed"),
+				error instanceof InvalidInput ? error.message : t("handoffFailed"),
 			);
 		}
 	};
@@ -109,9 +107,7 @@ export function NewAgentDialog({ children }: { children: React.ReactNode }) {
 			<DialogContent className="sm:max-w-(--container-sheet)">
 				<DialogHeader>
 					<DialogTitle>{t("title")}</DialogTitle>
-					<DialogDescription>
-						{t("description")}
-					</DialogDescription>
+					<DialogDescription>{t("description")}</DialogDescription>
 				</DialogHeader>
 
 				<div className="flex flex-col gap-4">

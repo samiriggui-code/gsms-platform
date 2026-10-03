@@ -21,7 +21,10 @@ import { cn } from "@crm/ui/lib/utils";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { z } from "zod";
-import { runFailureReason } from "@/lib/agent-run-failure";
+import {
+	RUN_FAILURE_NAMESPACE,
+	runFailureReason,
+} from "@/lib/agent-run-failure";
 import type { RouterOutputs } from "@/lib/trpc/types";
 
 type Runs = RouterOutputs["agents"]["history"];
@@ -80,6 +83,7 @@ export function AgentRuns({
 	retryingRunId?: string;
 }) {
 	const t = useTranslations("agentsRuns");
+	const tFailure = useTranslations(RUN_FAILURE_NAMESPACE);
 	const [outcome, setOutcome] = useState("ALL");
 	const [expanded, setExpanded] = useState<string | null>(null);
 	const [confirming, setConfirming] = useState<string | null>(null);
@@ -152,7 +156,11 @@ export function AgentRuns({
 											className="mt-px size-3.5 shrink-0 text-destructive"
 										/>
 										<span className="min-w-0 wrap-break-word text-destructive text-xs leading-5">
-											{runFailureReason(run.errorCode, run.errorMessage)}
+											{runFailureReason(
+												run.errorCode,
+												run.errorMessage,
+												tFailure,
+											)}
 										</span>
 									</span>
 								) : null}

@@ -102,7 +102,6 @@
 	},
 	"agentsHome": {
 		"title": "Comment puis-je vous aider, {name} ?",
-		"fallbackName": "à vous",
 		"subtitle": "Posez une question sur votre CRM, mentionnez un enregistrement ou une intégration, ou décrivez un agent à créer pour automatiser une tâche.",
 		"privacyNote": "Les discussions et les brouillons d'agents restent privés. Déployer un agent le rend disponible pour toute l'équipe.",
 		"suggestedAgents": "Agents suggérés",
@@ -110,7 +109,8 @@
 			"renewalBrief": "Préparer chaque responsable d'affaire avant un appel de renouvellement",
 			"staleDeals": "Signaler les affaires sans activité depuis 14 jours",
 			"onboardingHandoff": "Transmettre les nouveaux clients des Ventes à l'Onboarding"
-		}
+		},
+		"titleNoName": "Comment puis-je vous aider ?"
 	},
 	"agentsList": {
 		"noDescription": "Aucune description",
@@ -411,5 +411,32 @@
 		"deleted": "Supprimé",
 		"noDeployedVersion": "Cet agent n'a pas encore de version déployée.",
 		"draftNotice": "Ceci est un brouillon. Déployez-le pour l'équipe avant de modifier ses capacités."
+	},
+	"agentsToolLabels": {
+		"writingFile": "{artifact, select, instructions {Rédaction des instructions} manifest {Rédaction du manifeste} readme {Rédaction du readme} other {Rédaction de {path}}}",
+		"wroteFile": "{artifact, select, instructions {Instructions rédigées} manifest {Manifeste rédigé} readme {Readme rédigé} other {{path} rédigé}}",
+		"savingDraft": "Enregistrement du brouillon",
+		"savedDraft": "Brouillon enregistré",
+		"namingChat": "Nommage de la discussion",
+		"namedChat": "Discussion nommée"
+	},
+	"agentsRunFailure": {
+		"unknown": "Cette exécution a échoué sans en indiquer la raison.",
+		"codes": {
+			"ACTION_NOT_PERFORMED": "L'agent s'est terminé sans faire ce pour quoi il a été conçu. Ouvrez l'exécution pour voir l'étape ignorée.",
+			"NO_EXECUTOR": "Cet agent demande quelque chose que le CRM ne sait pas encore faire. Il doit être recréé.",
+			"DEPENDENCY_UNAVAILABLE": "Une connexion nécessaire à cet agent est manquante. Reconnectez-la, puis relancez l'exécution.",
+			"NOT_AUTHORISED": "La connexion a refusé cette action. Son accès a peut-être été révoqué ou restreint.",
+			"PROVIDER_ERROR": "Le service externe a rejeté cette action. Il vaut généralement la peine de réessayer.",
+			"NEVER_SETTLED": "L'agent s'est arrêté sans indiquer de résultat. Rien n'a été laissé à moitié fait.",
+			"TURN_FAILED": "Le modèle a échoué en cours d'exécution.",
+			"DELIVERY_FAILED": "L'exécution n'a jamais atteint l'agent.",
+			"DELIVERY_EXHAUSTED": "L'exécution n'a pas atteint l'agent après trois tentatives. Rien n'a été exécuté.",
+			"ACTION_REJECTED": "L'agent a tenté l'action et le CRM l'a refusée. Rien n'a été enregistré.",
+			"AGENT_UNAVAILABLE": "L'agent était en pause ou archivé au démarrage de cette exécution.",
+			"AGENT_DELETED": "L'agent a été supprimé avant la fin de cette exécution.",
+			"CANCELLED_BY_USER": "Quelqu'un a arrêté cette exécution.",
+			"RUN_TIMED_OUT": "Cette exécution a pris trop de temps et a été arrêtée pour laisser démarrer les suivantes."
+		}
 	}
 }

@@ -211,9 +211,7 @@ export function ShareChatDialog({
 											pendingLabel={
 												shareToken ? t("copying") : t("creatingLink")
 											}
-											successLabel={
-												shareToken ? t("copied") : t("linkCreated")
-											}
+											successLabel={shareToken ? t("copied") : t("linkCreated")}
 											errorLabel={t("tryAgain")}
 										>
 											{shareToken ? (

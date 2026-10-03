@@ -92,7 +92,10 @@ export function AgentBuilderSidebar({
 				</Button>
 			</div>
 
-			<nav aria-label={t("agentChats")} className="min-h-0 flex-1 overflow-y-auto">
+			<nav
+				aria-label={t("agentChats")}
+				className="min-h-0 flex-1 overflow-y-auto"
+			>
 				{groups.map((group) => (
 					<div key={group.label}>
 						<div className="flex h-8 items-end pb-1 pl-2 font-medium text-[11px] text-muted-foreground uppercase tracking-[0.08em]">

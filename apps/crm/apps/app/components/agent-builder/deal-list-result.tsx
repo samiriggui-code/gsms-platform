@@ -110,11 +110,7 @@ export function DealListResultTable({ result }: { result: DealListResult }) {
 								</TableCell>
 								<TableCell
 									className="overflow-hidden px-3 py-3 text-right text-muted-foreground tabular-nums"
-									title={
-										deal.neverActive
-											? t("neverActive")
-											: undefined
-									}
+									title={deal.neverActive ? t("neverActive") : undefined}
 								>
 									{t("idleDays", { days: deal.daysSinceLastActivity })}
 								</TableCell>

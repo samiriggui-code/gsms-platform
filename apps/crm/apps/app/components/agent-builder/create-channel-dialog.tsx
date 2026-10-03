@@ -58,9 +58,7 @@ export function CreateChannelDialog({
 			<DialogContent className="sm:max-w-(--container-narrow)">
 				<DialogHeader>
 					<DialogTitle>{t("title")}</DialogTitle>
-					<DialogDescription>
-						{t("description")}
-					</DialogDescription>
+					<DialogDescription>{t("description")}</DialogDescription>
 				</DialogHeader>
 
 				<div className="flex flex-col gap-4">
@@ -85,9 +83,7 @@ export function CreateChannelDialog({
 							id="channel-private"
 							onCheckedChange={setIsPrivate}
 						/>
-						<Label htmlFor="channel-private">
-							{t("private")}
-						</Label>
+						<Label htmlFor="channel-private">{t("private")}</Label>
 					</div>
 				</div>
 
