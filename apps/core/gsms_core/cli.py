@@ -113,6 +113,102 @@ def _vault_migrate(settings, db: Database) -> int:
     return 1 if report.errors else 0
 
 
+# Un compte par rôle DocuLens aux permissions distinctes (manager = analyst, developer = admin).
+BOOTSTRAP_ROLES = (
+    ("admin", "Administrateur GSMS", "admin"),
+    ("analyste", "Analyste GSMS", "analyst"),
+    ("relecteur", "Relecteur GSMS", "reviewer"),
+    ("lecteur", "Lecteur GSMS", "viewer"),
+)
+
+
+def _new_password() -> str:
+    import secrets
+
+    return secrets.token_urlsafe(12)
+
+
+def _bootstrap(settings, db: Database, args) -> int:
+    rows: list[tuple[str, str, str]] = []
+    with db.session_factory() as session:
+
+        def ensure(email: str, name: str, role: Role) -> None:
+            exists = session.scalar(select(User).where(User.email == email.lower()))
+            if exists and not args.reset:
+                create_member_role_only(session, exists, role)
+                rows.append((email, role.value, "(existant, mot de passe inchangé)"))
+                return
+            password = _new_password()
+            create_member(session, email, name, password, role)
+            rows.append((email, role.value, password))
+
+        ensure(args.super_admin, args.super_admin_name, Role.OWNER)
+        for local, name, doculens in BOOTSTRAP_ROLES:
+            ensure(f"{local}@{args.domain}", name, TEAM_ROLES[doculens])
+
+    demo_password = None
+    if not args.no_demo:
+        from gsms_core.documents.parsers import DoclingAdapter
+        from gsms_core.documents.storage import build_storage
+        from gsms_core.scripts.demo import run_demo
+        from gsms_core.vault.storage import Vault
+
+        demo_password = _new_password()
+        vault = Vault.from_settings(build_storage(settings), settings)
+        with db.session_factory() as session:
+            run_demo(session, vault, DoclingAdapter(), demo_password)
+            for email in DEMO_CLIENT_ACCOUNTS:
+                user = session.scalar(select(User).where(User.email == email))
+                if user is not None:
+                    user.password_hash = hash_password(demo_password)
+            session.commit()
+
+    with db.session_factory() as session:
+        # Ancien compte équipe de démo (mot de passe connu) : désactivé, l'équipe utilise de vrais comptes.
+        legacy = session.scalar(select(User).where(User.email == "consultant@gsms.example"))
+        if legacy is not None and legacy.is_active:
+            legacy.is_active = False
+            session.commit()
+            print("Compte de démo consultant@gsms.example désactivé.")
+
+    print("\nACCÈS ÉQUIPE GSMS (notez-les maintenant : ils ne seront plus affichés)")
+    print(f"{'compte':<38} {'rôle':<12} mot de passe")
+    for email, role, password in rows:
+        print(f"{email:<38} {role:<12} {password}")
+    if demo_password:
+        print("\nCLIENT DÉMO « ABC Retail » (fictif) — même mot de passe pour les 3 comptes")
+        for email, label in DEMO_CLIENT_ACCOUNTS.items():
+            print(f"{email:<38} {label:<26} {demo_password}")
+    print("\nPortail : https://gsms-security.com   DocuLens : https://doculens.gsms-security.com")
+    return 0
+
+
+DEMO_CLIENT_ACCOUNTS = {
+    "direction@abc-retail.example": "admin client (Lyon+Paris)",
+    "responsable.lyon@abc-retail.example": "membre client (Lyon)",
+    "responsable.paris@abc-retail.example": "membre client (Paris)",
+}
+
+
+def create_member_role_only(session: Session, user: User, role: Role) -> None:
+    """Aligne le rôle d'équipe d'un compte existant sans toucher à son mot de passe."""
+    gsms = session.scalar(select(Organization).where(Organization.kind == OrganizationKind.GSMS))
+    if gsms is None:
+        return
+    membership = session.scalar(
+        select(Membership).where(
+            Membership.user_id == user.id,
+            Membership.organization_id == gsms.id,
+            Membership.workspace_id.is_(None),
+        )
+    )
+    if membership is None:
+        session.add(Membership(user_id=user.id, organization_id=gsms.id, workspace_id=None, role=role))
+    else:
+        membership.role = role
+    session.commit()
+
+
 def _mail_test(settings, db: Database, to: str) -> int:
     from gsms_core.communications import service, templates
     from gsms_core.communications.models import MessageStatus
@@ -127,7 +223,7 @@ def _mail_test(settings, db: Database, to: str) -> int:
         msg = service.create_message(
             session, templates.smtp_test(sent_by="cli"), to=to, to_name=None, actor="cli", external=False
         )
-        service.send(session, msg, SmtpSender(settings), settings, "cli")
+        service.send(session, msg, SmtpSender(settings), settings.mail_enabled, "cli")
         session.commit()
         if msg.status == MessageStatus.SENT:
             print(f"Envoyé à {to} ({msg.reference}).")
@@ -176,6 +272,17 @@ def main(argv: list[str] | None = None) -> int:
     member.add_argument("name")
     member.add_argument("--role", required=True, choices=sorted(TEAM_ROLES), help="rôle DocuLens")
     sub.add_parser("seed-demo", help="installer l'organisation de démonstration")
+    boot = sub.add_parser(
+        "bootstrap-access",
+        help="créer le super admin, un compte par rôle DocuLens et le client démo (mots de passe générés)",
+    )
+    boot.add_argument("--super-admin", default="samir.iggui@gsms-security.com")
+    boot.add_argument("--super-admin-name", default="Samir Iggui")
+    boot.add_argument("--domain", default="gsms-security.com", help="domaine des comptes de rôle")
+    boot.add_argument(
+        "--reset", action="store_true", help="régénérer les mots de passe des comptes existants"
+    )
+    boot.add_argument("--no-demo", action="store_true", help="ne pas créer le client démo")
     mail = sub.add_parser("mail-test", help="envoyer un e-mail de test avec le SMTP configuré")
     mail.add_argument("to")
     sub.add_parser("vault-migrate", help="chiffrer les fichiers existants et les ranger dans le coffre-fort")
@@ -192,6 +299,8 @@ def main(argv: list[str] | None = None) -> int:
             print(seed(session, password))
         return 0
 
+    if args.command == "bootstrap-access":
+        return _bootstrap(settings, db, args)
     if args.command == "mail-test":
         return _mail_test(settings, db, args.to)
     if args.command == "vault-migrate":

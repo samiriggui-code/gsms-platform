@@ -1,6 +1,7 @@
 import { Bell, Plug, ShieldCheck, Users } from "lucide-react";
 import type { Metadata } from "next";
 import { StatusBadge } from "@/components/platform/format";
+import { CoreDiagnostics, LlmSettingsForm, MailSettingsForm, type LlmSettings, type MailSettings } from "@/components/platform/admin-settings";
 import { PageHeader } from "@/components/platform/page-header";
 import { ResourcePanel } from "@/components/platform/resource-panel";
 import { coreFetch, getWorkspaceContext } from "@/lib/core/client";
@@ -18,10 +19,26 @@ export default async function SettingsPage() {
         coreFetch<unknown>(ENDPOINTS.settings.integrations(ws), { workspaceId: ws }),
       ])
     : [failure, failure, failure, failure];
+  // Réglages plateforme : seulement pour le super admin et les administrateurs de l'équipe (403 sinon).
+  const [mail, llm] = await Promise.all([
+    coreFetch<MailSettings>(ENDPOINTS.admin.mail()),
+    coreFetch<LlmSettings>(ENDPOINTS.admin.llm()),
+  ]);
+  const isPlatformAdmin = mail.ok && llm.ok;
 
   return (
     <>
       <PageHeader title="Paramètres" description="Équipe, sites, rôles, notifications et intégrations." />
+      {isPlatformAdmin ? (
+        <div className="mb-8 flex flex-col gap-5">
+          <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-foreground">Plateforme — administrateurs</p>
+          <CoreDiagnostics />
+          <div className="grid gap-5 xl:grid-cols-2">
+            <MailSettingsForm initial={mail.data} />
+            <LlmSettingsForm initial={llm.data} />
+          </div>
+        </div>
+      ) : null}
       <div className="grid gap-5 xl:grid-cols-2">
         <ResourcePanel
           title="Équipe"

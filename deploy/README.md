@@ -100,32 +100,38 @@ chiffrés. Le Core sait aussi écrire dans un stockage compatible S3 (`GSMS_STOR
 MinIO n'est **pas** utilisé : depuis octobre 2025, MinIO ne publie plus d'images Docker maintenues. Si un
 stockage S3 devient nécessaire, préférer une solution maintenue comme Garage ou SeaweedFS.
 
-## Messagerie (e-mails)
+## Accès (équipe et client démo)
 
-Le Core envoie les e-mails de la plateforme. Le module est repris de gsms-qualiopi.
-- **Relances des pièces manquantes :** préparées à partir du Digest, puis validées par l'équipe dans le menu **Messagerie**.
-- **Règle de validation :** rien ne part chez un client sans validation.
-- **Traçabilité :** chaque message porte une référence `MSG-000001`, un statut et un historique, et figure au journal d'audit.
+Une seule commande crée :
+- ton compte super admin ;
+- un compte par rôle DocuLens dont les permissions diffèrent : admin, analyste, relecteur, lecteur ;
+- le client démo « ABC Retail », avec sa prestation et son coffre-fort.
 
-Serveur : Hostinger (`smtp.hostinger.com`, port 465, SSL). Tant que `GSMS_MAIL_ENABLED=false`, les messages
-sont préparés et journalisés, mais rien ne part.
+Les mots de passe sont générés et affichés **une seule fois**. Relancée, la commande ne change pas les comptes existants (`--reset` pour régénérer leurs mots de passe).
 
 ```bash
-cd /opt/gsms-platform
-read -rsp "Mot de passe de la boîte : " P && echo
-cat >> .env <<ENV
-GSMS_MAIL_ENABLED=true
-GSMS_SMTP_USER=admin@gsms-security.com
-GSMS_SMTP_FROM=admin@gsms-security.com
-GSMS_SMTP_PASSWORD=$P
-ENV
-unset P
-docker compose up -d core
-docker compose exec core python -m gsms_core.cli mail-test vous@exemple.fr
+docker compose exec core python -m gsms_core.cli bootstrap-access
 ```
 
-Plus tard, pour passer à `no-reply@gsms-security.com`, remplacer `GSMS_SMTP_USER`, `GSMS_SMTP_FROM` et
-`GSMS_SMTP_PASSWORD` dans `.env`, puis relancer `docker compose up -d core`.
+Un membre supplémentaire de l'équipe :
+`docker compose exec core python -m gsms_core.cli create-member prenom@gsms-security.com "Prénom Nom" --role analyst`.
+
+## Paramétrage (portail)
+
+**Paramètres → Plateforme**, réservé au super admin et aux administrateurs :
+- **Connectivité du Core** : base, coffre-fort chiffré, journal d'audit, Docling, SMTP, IA, connecteurs.
+- **Messagerie (SMTP)** : serveur, compte, mot de passe (chiffré, jamais réaffiché), expéditeur, activation, e-mail de test.
+  Hostinger : `smtp.hostinger.com`, port 465, SSL.
+- **IA — clé API du LLM** : fournisseur (Anthropic, OpenAI ou compatible OpenAI), modèle, clé (chiffrée, seuls ses 4 derniers caractères sont affichés), test de la clé.
+
+Les réglages saisis dans le portail priment sur ceux du `.env`. Les secrets sont chiffrés par la clé maître du coffre-fort.
+
+## Messagerie (e-mails)
+
+Le Core envoie les e-mails de la plateforme (module repris de gsms-qualiopi). Les relances des pièces manquantes sont préparées à partir du Digest, puis validées par l'équipe dans **Messagerie**. Rien ne part chez un client sans validation. Chaque message porte une référence `MSG-000001` et figure au journal d'audit.
+
+Vérification en ligne de commande, avec les réglages du `.env` :
+`docker compose exec core python -m gsms_core.cli mail-test vous@exemple.fr`.
 
 ## Mettre à jour
 

@@ -14,10 +14,12 @@ from sqlalchemy.orm import Session
 
 from gsms_core.communications import service
 from gsms_core.communications.models import Message, MessageStatus
+from gsms_core.communications.sender import SmtpSender
 from gsms_core.deps import WorkspaceContext, get_db, require_roles, require_workspace
 from gsms_core.digest.completeness import _LABELS as PIECE_LABELS
 from gsms_core.digest.service import latest_digest, load_digest
 from gsms_core.identity.models import MANAGE_ROLES, Role
+from gsms_core.platform.service import mail_config
 
 router = APIRouter(prefix="/api/v1/workspaces/{ws}/communications", tags=["communications"])
 _CLIENT = {Role.CLIENT_ADMIN, Role.CLIENT_MEMBER}
@@ -65,6 +67,12 @@ def _message(db: Session, ctx: WorkspaceContext, message_id: uuid.UUID) -> Messa
     return msg
 
 
+def _sender(request: Request, db: Session):
+    """Réglages effectifs (portail, sinon .env) ; ``app.state.mail_sender`` remplace l'envoi réel en test."""
+    cfg = mail_config(db, request.app.state.settings, request.app.state.vault)
+    return request.app.state.mail_sender or SmtpSender(cfg), cfg.mail_enabled
+
+
 def _errors(fn):
     try:
         return fn()
@@ -103,11 +111,7 @@ def validate(
     db: Session = Depends(get_db),
 ):
     msg = _message(db, ctx, message_id)
-    _errors(
-        lambda: service.validate(
-            db, msg, request.app.state.mail_sender, request.app.state.settings, ctx.actor
-        )
-    )
+    _errors(lambda: service.validate(db, msg, *_sender(request, db), ctx.actor))
     db.commit()
     return msg
 
@@ -120,9 +124,7 @@ def resend(
     db: Session = Depends(get_db),
 ):
     msg = _message(db, ctx, message_id)
-    _errors(
-        lambda: service.send(db, msg, request.app.state.mail_sender, request.app.state.settings, ctx.actor)
-    )
+    _errors(lambda: service.send(db, msg, *_sender(request, db), ctx.actor))
     db.commit()
     return msg
 

@@ -47,6 +47,15 @@ class Vault:
             key = DEV_MASTER_KEY
         return cls(storage, key)
 
+    # --- secrets de configuration (mot de passe SMTP, clé API LLM) ------------------------------------
+
+    def seal(self, value: str, context: str) -> str:
+        """Chiffre un secret de configuration (clé maître) ; ``context`` (nom du réglage) est authentifié."""
+        return crypto.wrap_key(self._master, value.encode("utf-8"), context.encode("utf-8"))
+
+    def unseal(self, sealed: str, context: str) -> str:
+        return crypto.unwrap_key(self._master, sealed, context.encode("utf-8")).decode("utf-8")
+
     # --- clés de workspace ---------------------------------------------------------------------------
 
     def _workspace_key(self, session: Session, workspace_id: uuid.UUID, version: int | None = None):

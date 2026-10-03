@@ -41,6 +41,8 @@ def _next_reference(session: Session) -> str:
 
 
 def _event(session: Session, msg: Message, type_: str, actor: str, data: dict | None = None) -> None:
+    if msg.workspace_id is None:  # message technique hors prestation : audit seulement
+        return
     publish(
         session,
         EventEnvelope(
@@ -99,13 +101,13 @@ def create_message(
     return msg
 
 
-def send(session: Session, msg: Message, sender: Sender, settings: Settings, actor: str) -> Message:
+def send(session: Session, msg: Message, sender: Sender, enabled: bool, actor: str) -> Message:
     if msg.status not in (MessageStatus.QUEUED, MessageStatus.FAILED):
         raise MessageError(f"message {msg.reference} non envoyable (statut {msg.status.value})")
     msg.attempts += 1
-    if not settings.mail_enabled:
+    if not enabled:
         msg.status = MessageStatus.FAILED
-        msg.last_error = "messagerie désactivée (GSMS_MAIL_ENABLED=false) : renseigner le SMTP puis renvoyer"
+        msg.last_error = "messagerie désactivée : activer l'envoi dans Paramètres > Messagerie, puis renvoyer"
     else:
         try:
             msg.provider_message_id = sender.send(
@@ -139,13 +141,13 @@ def send(session: Session, msg: Message, sender: Sender, settings: Settings, act
     return msg
 
 
-def validate(session: Session, msg: Message, sender: Sender, settings: Settings, actor: str) -> Message:
+def validate(session: Session, msg: Message, sender: Sender, enabled: bool, actor: str) -> Message:
     if msg.status != MessageStatus.TO_VALIDATE:
         raise MessageError(f"message {msg.reference} déjà traité (statut {msg.status.value})")
     msg.status = MessageStatus.QUEUED
     msg.validated_by = actor
     msg.validated_at = utcnow()
-    return send(session, msg, sender, settings, actor)
+    return send(session, msg, sender, enabled, actor)
 
 
 def cancel(session: Session, msg: Message, reason: str, actor: str) -> Message:

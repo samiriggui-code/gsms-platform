@@ -137,3 +137,22 @@ def test_smtp_sender_builds_a_real_message(monkeypatch, settings):
     assert sent["server"] == ("smtp.hostinger.com", 465) and sent["login"] == "admin@gsms-security.com"
     assert sent["msg"]["From"].addresses[0].addr_spec == "admin@gsms-security.com"
     assert msg_id.endswith("@gsms-security.com>")
+
+
+def test_cli_mail_test_without_workspace(db, settings, monkeypatch, capsys):
+    from gsms_core import cli
+
+    sent = []
+
+    class Fake:
+        def __init__(self, cfg):
+            pass
+
+        def send(self, **kwargs):
+            sent.append(kwargs)
+            return "<1@test>"
+
+    monkeypatch.setattr("gsms_core.communications.sender.SmtpSender", Fake)
+    settings.mail_enabled = True
+    assert cli._mail_test(settings, db, "moi@example.com") == 0
+    assert sent and "Envoyé à moi@example.com" in capsys.readouterr().out
