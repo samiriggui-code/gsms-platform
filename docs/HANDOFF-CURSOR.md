@@ -33,8 +33,14 @@ Branche `cursor/gsms-core-context-authority-74cc` (même PR #3). Reprise depuis 
 - **ContextResolver :** `context.digest` = dernier Digest (id, date, compteurs).
 - **Migration `0003_document_parse_digest`** (validée upgrade/downgrade sur PostgreSQL 16 + SQLite).
 - **Tests :** `tests/test_docling_adapter.py` (8) + `tests/test_digest.py` (11), Docling simulé (`tests/fake_docling.py`). Suite complète **100 verts**, ruff propre.
+- **Validation sur le vrai Docling 2.132 (hors CI) :**
+  - **XLSX :** feuille + cellules A1 exactes (`BPU!D4`), après correction du format de groupe réel (label `sheet`).
+  - **DOCX :** titres, sections et paragraphes corrects.
+  - **Digest réel XLSX + DOCX :** conflit SSIAP1 détecté avec sa provenance.
+  - **PDF :** non validable dans le sandbox. Les modèles (layout HuggingFace, OCR RapidOCR sur modelscope.cn) sont bloqués par le réseau. L'échec remonte proprement en `ParseError` / statut FAILED.
 
 **DEFERRED / CHANTIER SUIVANT (non fait volontairement) :**
+- **Modèles Docling en production :** pré-télécharger les modèles (`docling-tools models download`) dans l'image du worker, avec un accès sortant HuggingFace / modelscope ou un miroir. Prévoir un réglage OCR (désactivé pour les PDF natifs, activé pour les scans), injecté via `converter_factory` de l'adapter.
 - Worker de parsing (l'outbox existe ; Celery/RQ ou worker dédié à l'image Docling) à la place de `BackgroundTasks` ; image Docker Core avec l'extra `docling` ou worker séparé.
 - Brancher DocuLens UI → Core (upload/parse/digest) ; retirer `DOCULENS_DEFAULT_WORKSPACE_ID` côté DocuLens.
 - Orchestration : routes outbox `digest.*` → Tender MCP / GRACE / QAtrial / Eve.

@@ -150,7 +150,7 @@ RC = FakeDoc(
 
 BPU = FakeDoc(
     [
-        (Group("sheet: BPU"), 0),
+        (Group("BPU", Label("sheet")), 0),  # format docling 2.132
         table(
             [["Désignation", "Unité", "Quantité", "Prix unitaire"], ["Agent SSIAP 1", "heure", "1", ""]],
             page=1,
@@ -162,7 +162,7 @@ BPU = FakeDoc(
 
 DPGF = FakeDoc(
     [
-        (Group("sheet: Récapitulatif"), 0),
+        (Group("sheet: Récapitulatif"), 0),  # format des versions antérieures
         table([["Poste", "Effectif"], ["SSIAP 1", "2"]], page=1, ref="#/tables/0"),
     ]
 )

@@ -11,8 +11,9 @@ l'intelligence métier vit dans ``gsms_core.digest``.
   (DoclingDocument) ; ``iterate_items(with_groups=True)`` → (item, niveau) ; ``item.label``,
   ``item.text``, ``item.prov[i].page_no`` / ``.bbox`` ; ``TableItem.data.table_cells`` avec
   ``start_row_offset_idx`` / ``start_col_offset_idx`` / ``column_header``. Pour un classeur Excel,
-  Docling émet un groupe ``sheet: <nom>`` par feuille et place l'ancre du tableau (colonne, ligne)
-  dans ``prov.bbox`` (l, t) : on en déduit la cellule A1 exacte.
+  Docling émet un groupe par feuille (label ``sheet``, nom = nom de la feuille ; ``sheet: <nom>``
+  dans les versions plus anciennes) et place l'ancre du tableau (colonne, ligne) dans
+  ``prov.bbox`` (l, t) : on en déduit la cellule A1 exacte. Vérifié sur docling 2.132.
 """
 
 from __future__ import annotations
@@ -174,11 +175,14 @@ class DoclingAdapter:
         sheet: str | None = None
         n_blocks = n_tables = 0
         for item, level in doc.iterate_items(with_groups=True):
+            label = _label(item)
             name = getattr(item, "name", None)
-            if isinstance(name, str) and name.lower().startswith("sheet:"):
+            if isinstance(name, str) and label == "sheet":  # docling ≥ 2.1xx : groupe « BPU », label sheet
+                sheet = name.strip()
+                continue
+            if isinstance(name, str) and name.lower().startswith("sheet:"):  # versions antérieures
                 sheet = name.split(":", 1)[1].strip()
                 continue
-            label = _label(item)
             prov = _first_prov(item)
             page = getattr(prov, "page_no", None)
             ref = str(getattr(item, "self_ref", "") or "") or None
