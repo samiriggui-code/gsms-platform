@@ -7,7 +7,7 @@ export function formatCount(
 }
 
 const WELL_FORMED_CURRENCY_CODE = /^[A-Za-z]{3}$/;
-const percentFormat = new Intl.NumberFormat("en-US", {
+const percentFormat = new Intl.NumberFormat("fr-FR", {
 	style: "percent",
 	maximumFractionDigits: 0,
 });
@@ -15,7 +15,7 @@ const percentFormat = new Intl.NumberFormat("en-US", {
 function displayCurrencyCode(currency: string): string {
 	return WELL_FORMED_CURRENCY_CODE.test(currency)
 		? currency.toUpperCase()
-		: "USD";
+		: "EUR";
 }
 
 const currencyDigits = new Map<string, number>();
@@ -25,7 +25,7 @@ function fractionDigits(code: string): number {
 	if (cached !== undefined) return cached;
 
 	const digits =
-		new Intl.NumberFormat("en-US", {
+		new Intl.NumberFormat("fr-FR", {
 			style: "currency",
 			currency: code,
 		}).resolvedOptions().maximumFractionDigits ?? 2;
@@ -34,12 +34,12 @@ function fractionDigits(code: string): number {
 	return digits;
 }
 
-export function formatMoney(cents: number, currency = "usd"): string {
+export function formatMoney(cents: number, currency = "eur"): string {
 	const code = displayCurrencyCode(currency);
 	const whole = cents % 100 === 0;
 	const digits = fractionDigits(code);
 
-	return new Intl.NumberFormat(undefined, {
+	return new Intl.NumberFormat("fr-FR", {
 		style: "currency",
 		currency: code,
 		minimumFractionDigits: whole ? 0 : Math.min(2, digits),
@@ -47,8 +47,8 @@ export function formatMoney(cents: number, currency = "usd"): string {
 	}).format(cents / 100);
 }
 
-export function formatMoneyCompact(cents: number, currency = "usd"): string {
-	return new Intl.NumberFormat(undefined, {
+export function formatMoneyCompact(cents: number, currency = "eur"): string {
+	return new Intl.NumberFormat("fr-FR", {
 		style: "currency",
 		currency: displayCurrencyCode(currency),
 		notation: "compact",
@@ -60,7 +60,7 @@ export function formatPercent(rate: number): string {
 	return percentFormat.format(rate);
 }
 
-const dayFormat = new Intl.DateTimeFormat("en-US", {
+const dayFormat = new Intl.DateTimeFormat("fr-FR", {
 	month: "short",
 	day: "numeric",
 	year: "numeric",

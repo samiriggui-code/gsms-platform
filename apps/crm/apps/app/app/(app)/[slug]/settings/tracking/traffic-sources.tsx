@@ -55,10 +55,10 @@ export function TrafficSources() {
 								{row.medium ?? "—"}
 							</TableCell>
 							<TableCell className={`${CELL} text-right tabular-nums`}>
-								{row.views.toLocaleString()}
+								{row.views.toLocaleString("fr-FR")}
 							</TableCell>
 							<TableCell className={`${CELL} text-right tabular-nums`}>
-								{row.contacts.toLocaleString()}
+								{row.contacts.toLocaleString("fr-FR")}
 							</TableCell>
 						</SimpleTableRow>
 					))}

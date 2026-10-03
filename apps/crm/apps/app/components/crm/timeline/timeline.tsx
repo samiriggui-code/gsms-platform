@@ -81,7 +81,7 @@ const EMPTY_ICONS = {
 	done: Checkmark,
 } satisfies Record<TimelineTab, CarbonIcon>;
 
-const dayFormat = new Intl.DateTimeFormat("en-US", {
+const dayFormat = new Intl.DateTimeFormat("fr-FR", {
 	weekday: "short",
 	month: "short",
 	day: "numeric",

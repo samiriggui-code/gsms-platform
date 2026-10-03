@@ -11,6 +11,7 @@ import { EmptyCellValue } from "@crm/ui/components/empty-cell";
 import { useTableSelection } from "@crm/ui/hooks/use-table-selection";
 import { formatMoney } from "@crm/ui/lib/format";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo } from "react";
 import { CLOSING_OPTIONS } from "@/components/crm/closing-window";
 import { CompanyCell } from "@/components/crm/company-cell";
@@ -27,7 +28,6 @@ import { LocalDay, LocalRelativeTime } from "@/components/local-date-time";
 import { DEAL_STAGE_OPTIONS } from "@/lib/deal-stage";
 import { useTRPC } from "@/lib/trpc/client";
 import type { RouterOutputs } from "@/lib/trpc/types";
-import { useTranslations } from "next-intl";
 import { DealsBulkActions } from "./deals-bulk-actions";
 import { dealsSearchParams } from "./deals-search-params";
 
@@ -236,13 +236,13 @@ export function DealsTable() {
 			eyebrow={t("pulseEyebrow")}
 			headline={
 				openPipelineCents === null
-					? t("pulseHeadlineCount", { count: total.toLocaleString() })
+					? t("pulseHeadlineCount", { count: total.toLocaleString("fr-FR") })
 					: t("pulseHeadlineValue", {
 							value: formatMoney(openPipelineCents, reportingCurrency),
 						})
 			}
 			subhead={t("pulseSubhead", {
-				count: total.toLocaleString(),
+				count: total.toLocaleString("fr-FR"),
 				mode: input.archived ? t("pulseModeArchived") : t("pulseModeActive"),
 			})}
 			body={t("pulseBody")}
@@ -259,7 +259,11 @@ export function DealsTable() {
 				},
 			]}
 			stats={[
-				{ label: t("statDeals"), value: String(total), helper: t("statFiltered") },
+				{
+					label: t("statDeals"),
+					value: String(total),
+					helper: t("statFiltered"),
+				},
 				{
 					label: t("statPipeline"),
 					value:
@@ -275,66 +279,66 @@ export function DealsTable() {
 				},
 			]}
 		>
-		<DataTable
-			query={query}
-			search={<ListSearch placeholder={t("search")} />}
-			actions={
-				<Button
-					variant={input.archived ? "contrast" : "outline"}
-					size="sm"
-					className="justify-start sm:justify-center"
-					onClick={() => toggleArchived(!input.archived)}
-				>
-					<Archive data-icon="inline-start" />
-					{t("archived")}
-				</Button>
-			}
-			columns={columns}
-			rows={rows}
-			total={total}
-			facetCounts={facetCounts}
-			facets={facets}
-			tabs={{
-				id: "status",
-				allLabel: t("allDeals"),
-				options: [
-					{ value: "open", label: t("tabOpen") },
-					{ value: "closed", label: t("tabClosed") },
-				],
-			}}
-			selection={{
-				state: selection,
-				actions: (
-					<DealsBulkActions
-						ids={settledIds}
-						onDone={selection.clear}
-						archived={input.archived}
-					/>
-				),
-				rowLabel: (row) => row.name,
-			}}
-			getRowId={(row) => row.id}
-			loading={deals.isFetching}
-			onRowHover={(row) => prefetchRecord({ kind: "deal", id: row.id })}
-			onRowClick={(row) => openRecord({ kind: "deal", id: row.id })}
-			empty={input.archived ? t("emptyArchived") : t("empty")}
-			meta={
-				input.archived || openPipelineCents === null ? undefined : (
-					<span>
-						{total} ·{" "}
-						<span className="tabular-nums">
-							{formatMoney(openPipelineCents, reportingCurrency)}
-						</span>
-						{unconverted && unconverted.count > 0 ? (
-							<span className="text-muted-foreground">
-								{" "}
-								· {unconverted.count} ({unconverted.currencies.join(", ")})
+			<DataTable
+				query={query}
+				search={<ListSearch placeholder={t("search")} />}
+				actions={
+					<Button
+						variant={input.archived ? "contrast" : "outline"}
+						size="sm"
+						className="justify-start sm:justify-center"
+						onClick={() => toggleArchived(!input.archived)}
+					>
+						<Archive data-icon="inline-start" />
+						{t("archived")}
+					</Button>
+				}
+				columns={columns}
+				rows={rows}
+				total={total}
+				facetCounts={facetCounts}
+				facets={facets}
+				tabs={{
+					id: "status",
+					allLabel: t("allDeals"),
+					options: [
+						{ value: "open", label: t("tabOpen") },
+						{ value: "closed", label: t("tabClosed") },
+					],
+				}}
+				selection={{
+					state: selection,
+					actions: (
+						<DealsBulkActions
+							ids={settledIds}
+							onDone={selection.clear}
+							archived={input.archived}
+						/>
+					),
+					rowLabel: (row) => row.name,
+				}}
+				getRowId={(row) => row.id}
+				loading={deals.isFetching}
+				onRowHover={(row) => prefetchRecord({ kind: "deal", id: row.id })}
+				onRowClick={(row) => openRecord({ kind: "deal", id: row.id })}
+				empty={input.archived ? t("emptyArchived") : t("empty")}
+				meta={
+					input.archived || openPipelineCents === null ? undefined : (
+						<span>
+							{total} ·{" "}
+							<span className="tabular-nums">
+								{formatMoney(openPipelineCents, reportingCurrency)}
 							</span>
-						) : null}
-					</span>
-				)
-			}
-		/>
+							{unconverted && unconverted.count > 0 ? (
+								<span className="text-muted-foreground">
+									{" "}
+									· {unconverted.count} ({unconverted.currencies.join(", ")})
+								</span>
+							) : null}
+						</span>
+					)
+				}
+			/>
 		</EntityListShell>
 	);
 }

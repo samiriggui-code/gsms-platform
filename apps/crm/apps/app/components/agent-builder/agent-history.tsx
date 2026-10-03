@@ -47,7 +47,7 @@ const eventSummary = z
 
 const auditChange = z.object({ before: z.json(), after: z.json() });
 
-const DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
+const DATE_FORMATTER = new Intl.DateTimeFormat("fr-FR", {
 	month: "short",
 	day: "numeric",
 	hour: "numeric",
@@ -56,7 +56,7 @@ const DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
 	timeZone: "UTC",
 	timeZoneName: "short",
 });
-const TIME_FORMATTER = new Intl.DateTimeFormat("en-US", {
+const TIME_FORMATTER = new Intl.DateTimeFormat("fr-FR", {
 	hour: "2-digit",
 	minute: "2-digit",
 	second: "2-digit",

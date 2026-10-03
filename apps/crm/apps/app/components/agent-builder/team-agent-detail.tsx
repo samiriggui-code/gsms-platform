@@ -51,7 +51,7 @@ type AgentDetail = RouterOutputs["agents"]["byId"];
 type ReviewVersion = AgentDetail["reviewVersion"];
 type Runs = RouterOutputs["agents"]["history"];
 type Activity = RouterOutputs["agents"]["activity"];
-const DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
+const DATE_FORMATTER = new Intl.DateTimeFormat("fr-FR", {
 	month: "short",
 	day: "numeric",
 	hour: "numeric",
@@ -60,7 +60,7 @@ const DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
 	timeZone: "UTC",
 	timeZoneName: "short",
 });
-const _TIME_FORMATTER = new Intl.DateTimeFormat("en-US", {
+const _TIME_FORMATTER = new Intl.DateTimeFormat("fr-FR", {
 	hour: "2-digit",
 	minute: "2-digit",
 	second: "2-digit",

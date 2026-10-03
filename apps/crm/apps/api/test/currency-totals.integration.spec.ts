@@ -24,7 +24,10 @@ const deals = new DealsService(
 	agent,
 	new ActivityStampService(db),
 	conversion,
-	new FieldsService(db, { fieldBackfill: async () => undefined } as never),
+	new FieldsService(db, {
+		fieldBackfill: async () => undefined,
+		fieldBackfillRecords: async () => ({ queued: 0, merged: 0 }),
+	} as never),
 );
 const dashboard = new DashboardService(db, conversion);
 
@@ -504,7 +507,7 @@ describe("the dashboard only values what it can convert", () => {
 			currency: "USD",
 		});
 
-		const unvalued = await stale("Stale open", DealStage.DEMO_BOOKED);
+		const unvalued = await stale("Stale open", DealStage.PROSPECT);
 
 		const summary = await dashboard.summary(analystId, { scope: "me" });
 
