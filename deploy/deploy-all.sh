@@ -86,12 +86,13 @@ deploy_app() {
   echo "Code de l'application : $app_root"
 
   # Code : depuis ce dépôt (si la stack tourne ailleurs, on copie, après sauvegarde de l'ancien code).
-  local source="$REPO/apps/$app"
+  local source="$REPO/apps/$app" backup=""
   if [[ "$app_root" != "$source" ]]; then
     command -v rsync >/dev/null || { warn "$app : rsync absent (apt install rsync), application ignorée."; return 0; }
     mkdir -p "$BACKUPS"
+    backup="$BACKUPS/$app-$STAMP.tgz"
     tar -C "$app_root" --exclude=node_modules --exclude=.next --exclude=dist \
-      -czf "$BACKUPS/$app-$STAMP.tgz" . 2>/dev/null || true
+      -czf "$backup" . 2>/dev/null || true
     rsync -a \
       --exclude='.env' --exclude='.env.*' \
       --exclude='node_modules/' --exclude='.git/' --exclude='.next/' --exclude='dist/' \
@@ -128,8 +129,17 @@ deploy_app() {
   IFS=',' read -r -a cfgs <<< "$files"
   for f in "${cfgs[@]}"; do compose+=(-f "$f"); done
   [[ -f "$envfile" ]] && compose+=(--env-file "$envfile")
+  # Construction d'abord : si elle échoue, la version en service continue de tourner et l'ancien code est remis.
   # shellcheck disable=SC2086
-  "${compose[@]}" up -d --build --no-deps $services
+  if ! "${compose[@]}" build $services; then
+    if [[ -n "$backup" && -s "$backup" ]]; then
+      tar -C "$app_root" -xzf "$backup"
+    fi
+    warn "$app : la construction a échoué ; l'ancienne version continue de tourner (code d'origine remis)."
+    return 0
+  fi
+  # shellcheck disable=SC2086
+  "${compose[@]}" up -d --no-deps $services
   OK+=("$app : https://$app.$DOMAIN (bouton « Se connecter avec GSMS »)")
 }
 
